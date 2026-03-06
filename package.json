@@ -16,7 +16,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/primevue-components.css"
   },
   "sideEffects": [
     "**/*.css"
