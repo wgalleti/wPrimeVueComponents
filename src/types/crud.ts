@@ -83,6 +83,8 @@ export interface FieldDef {
 
   // fk
   endpoint?: string
+  crudFields?: FieldDef[]
+  crudColumns?: ColumnDef[]
 
   // number / currency
   min?: number

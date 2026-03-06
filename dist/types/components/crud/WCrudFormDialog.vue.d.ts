@@ -8,23 +8,23 @@ type __VLS_Props = {
     saving: boolean;
     width?: string;
 };
-declare var __VLS_11: `field-${string}`, __VLS_12: {
+declare var __VLS_20: `field-${string}`, __VLS_21: {
     field: FieldDef;
     formData: Record<string, unknown>;
     isEditing: boolean;
     setFormField: (f: string, v: unknown) => void;
-}, __VLS_39: `image-${string}`, __VLS_40: {
+}, __VLS_24: `image-${string}`, __VLS_25: {
     field: FieldDef;
     formData: Record<string, unknown>;
-}, __VLS_157: {
+}, __VLS_27: {
     saving: boolean;
 };
 type __VLS_Slots = {} & {
-    [K in NonNullable<typeof __VLS_11>]?: (props: typeof __VLS_12) => any;
+    [K in NonNullable<typeof __VLS_20>]?: (props: typeof __VLS_21) => any;
 } & {
-    [K in NonNullable<typeof __VLS_39>]?: (props: typeof __VLS_40) => any;
+    [K in NonNullable<typeof __VLS_24>]?: (props: typeof __VLS_25) => any;
 } & {
-    footer?: (props: typeof __VLS_157) => any;
+    footer?: (props: typeof __VLS_27) => any;
 };
 declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     "update:visible": (value: boolean) => any;
