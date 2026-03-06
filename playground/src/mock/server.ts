@@ -20,6 +20,23 @@ function filterBySearch<T extends Record<string, unknown>>(items: T[], search: s
   )
 }
 
+function sortItems<T extends Record<string, unknown>>(items: T[], ordering: string): T[] {
+  if (!ordering) return items
+  const desc = ordering.startsWith('-')
+  const field = desc ? ordering.slice(1) : ordering
+  return [...items].sort((a, b) => {
+    const va = a[field] ?? ''
+    const vb = b[field] ?? ''
+    let cmp = 0
+    if (typeof va === 'number' && typeof vb === 'number') {
+      cmp = va - vb
+    } else {
+      cmp = String(va).localeCompare(String(vb))
+    }
+    return desc ? -cmp : cmp
+  })
+}
+
 export function mockHandler(config: InternalAxiosRequestConfig): unknown | null {
   const url = config.url?.replace(/\/$/, '') ?? ''
   const params = config.params ?? {}
@@ -27,11 +44,13 @@ export function mockHandler(config: InternalAxiosRequestConfig): unknown | null 
   const page = Number(params.page) || 1
   const pageSize = Number(params.page_size) || 10
   const search = String(params.search ?? '')
+  const ordering = String(params.ordering ?? '')
 
   // --- Produtos ---
   if (url.match(/^\/api\/produtos$/) && method === 'get') {
-    const filtered = filterBySearch(produtos, search, ['nome'])
-    return paginate(filtered, page, pageSize)
+    let result = filterBySearch(produtos, search, ['nome'])
+    result = sortItems(result, ordering)
+    return paginate(result, page, pageSize)
   }
 
   if (url.match(/^\/api\/produtos\/(\d+)$/) && method === 'get') {
@@ -72,8 +91,9 @@ export function mockHandler(config: InternalAxiosRequestConfig): unknown | null 
 
   // --- Categorias ---
   if (url.match(/^\/api\/categorias$/) && method === 'get') {
-    const filtered = filterBySearch(categorias, search, ['nome'])
-    return paginate(filtered, page, pageSize)
+    let result = filterBySearch(categorias, search, ['nome'])
+    result = sortItems(result, ordering)
+    return paginate(result, page, pageSize)
   }
 
   if (url.match(/^\/api\/categorias\/(\d+)$/) && method === 'get') {
