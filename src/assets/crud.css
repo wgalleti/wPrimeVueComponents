@@ -1,0 +1,408 @@
+/* ============================================================
+   wPrimeVue Components — CSS Classes Reference
+   ============================================================
+   All classes use the `w-` prefix and PrimeVue CSS variables.
+   Override any class in your app's CSS to customize appearance.
+
+   Structure:
+   - w-crud-*              → WCrudView component
+   - w-crud-form-*         → WCrudFormDialog component
+   - w-autocompletefk-*    → WAutoCompleteFK component
+   ============================================================ */
+
+/* ==========================================================
+   WCrudView — .w-crud
+   ========================================================== */
+
+.w-crud {
+  /* root wrapper — no visual styling by default */
+}
+
+/* --- Header --- */
+.w-crud-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.w-crud-header-content {
+  min-width: 0;
+}
+
+.w-crud-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--p-text-color);
+  line-height: 1.3;
+}
+
+.w-crud-subtitle {
+  margin-top: 0.125rem;
+  font-size: 0.8125rem;
+  color: var(--p-text-muted-color);
+}
+
+.w-crud-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* --- KPI Cards --- */
+.w-crud-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.w-crud-kpi {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+}
+
+.w-crud-kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  color: var(--p-primary-color);
+  flex-shrink: 0;
+  font-size: 1.125rem;
+}
+
+.w-crud-kpi-content {
+  min-width: 0;
+}
+
+.w-crud-kpi-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--p-text-muted-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.w-crud-kpi-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--p-text-color);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* --- Table wrapper --- */
+.w-crud-table {
+  border-radius: 0.75rem;
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  overflow: hidden;
+}
+
+.w-crud-table .p-datatable {
+  font-size: 0.8125rem;
+}
+
+.w-crud-table .p-datatable-header {
+  background: transparent;
+  border-bottom: 1px solid var(--p-content-border-color);
+  padding: 0.75rem 1rem;
+}
+
+.w-crud-table .p-datatable-thead > tr > th {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-background);
+}
+
+.w-crud-table .p-datatable-tbody > tr > td {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.w-crud-table .p-datatable-paginator-bottom {
+  border-top: 1px solid var(--p-content-border-color);
+}
+
+/* --- Toolbar (inside DataTable header) --- */
+.w-crud-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+
+.w-crud-toolbar-start {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.w-crud-toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- Actions column --- */
+.w-crud-actions-header .p-datatable-column-header-content {
+  justify-content: center;
+}
+
+.w-crud-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+}
+
+/* --- Empty state --- */
+.w-crud-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.w-crud-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  background: var(--p-content-hover-background);
+  color: var(--p-text-muted-color);
+  font-size: 1.5rem;
+}
+
+.w-crud-empty-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+.w-crud-empty-text {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+  margin-top: 0.25rem;
+}
+
+/* Column alignment helpers (apply via header-class / body-class) */
+.p-datatable-header-cell.text-right .p-datatable-column-header-content {
+  justify-content: flex-end;
+}
+
+.p-datatable-header-cell.text-center .p-datatable-column-header-content {
+  justify-content: center;
+}
+
+/* ==========================================================
+   WCrudFormDialog — .w-crud-form-*
+   ========================================================== */
+
+/* Dialog refinements — uses .p-dialog prefix for specificity over PrimeVue defaults */
+.p-dialog.w-crud-form-dialog > .p-dialog-header {
+  padding-bottom: 0.5rem;
+}
+
+.p-dialog.w-crud-form-dialog > .p-dialog-content {
+  padding-bottom: 0.75rem;
+}
+
+/* Form container */
+.w-crud-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form fields grid */
+.w-crud-form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1rem;
+}
+
+/* Grid span helpers */
+.w-crud-form-col-full {
+  grid-column: span 2;
+}
+
+.w-crud-form-col-half {
+  grid-column: span 1;
+}
+
+/* Field wrapper (label + input) */
+.w-crud-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Required asterisk */
+.w-crud-form-required {
+  color: var(--p-red-400, #f87171);
+  margin-left: 0.125rem;
+}
+
+/* Labels */
+.w-crud-form-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+  color: var(--p-text-color);
+  font-size: 0.75rem;
+}
+
+/* Color picker row */
+.w-crud-form-color-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Switch row */
+.w-crud-form-switch {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--p-content-hover-background);
+}
+
+.w-crud-form-switch-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  user-select: none;
+}
+
+/* Validation error */
+.w-crud-form-error {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--p-red-400, #f87171);
+  margin-top: 0.25rem;
+}
+
+/* Footer */
+.w-crud-form-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  border-top: 1px solid var(--p-content-border-color);
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================
+   WAutoCompleteFK — .w-autocompletefk-*
+   ========================================================== */
+
+/* Inline field: autocomplete + search trigger */
+.w-autocompletefk {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.w-autocompletefk .p-autocomplete {
+  flex: 1;
+}
+
+.w-autocompletefk .p-autocomplete-input {
+  padding-right: 2.5rem;
+}
+
+/* Search trigger button (inside the input) */
+.w-autocompletefk-trigger {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-left: 1px solid var(--p-content-border-color);
+  border-radius: 0 var(--p-border-radius) var(--p-border-radius) 0;
+  transition: color 0.15s, background-color 0.15s;
+  font-size: 0.875rem;
+}
+
+.w-autocompletefk-trigger:hover {
+  color: var(--p-text-color);
+  background: var(--p-content-hover-background);
+}
+
+.w-autocompletefk-trigger:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.w-autocompletefk-trigger i {
+  font-size: 0.875rem;
+}
+
+/* Modal toolbar */
+.w-autocompletefk-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.w-autocompletefk-toolbar-search {
+  flex: 1;
+}
+
+.w-autocompletefk-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Modal empty state */
+.w-autocompletefk-empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--p-text-muted-color);
+  font-size: 0.875rem;
+}
+
+/* Modal footer */
+.w-autocompletefk-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
