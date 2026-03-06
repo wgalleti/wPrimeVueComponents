@@ -187,8 +187,9 @@ onMounted(() => {
         :rows="crud.pagination.pageSize"
         :total-records="crud.pagination.rows"
         :rows-per-page-options="[10, 20, 50]"
-        paginator-template="PrevPageLink PageLinks NextPageLink CurrentPageReport"
-        current-page-report-template="{totalRecords} registros"
+        paginator-template="CurrentPageReport PrevPageLink NextPageLink"
+        current-page-report-template="Página {currentPage} de {totalPages}"
+        :pt="{ pcPaginator: { root: { class: 'w-crud-paginator' } } }"
         lazy
         striped-rows
         removable-sort
