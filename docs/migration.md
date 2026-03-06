@@ -123,6 +123,23 @@ yarn build
 # Testar manualmente as views migradas
 ```
 
+### 6. Configurar heranca de fontes
+
+A biblioteca nao define `font-family` — depende da heranca CSS do host. Como o PrimeVue teleporta Dialogs e overlays para `<body>`, adicione no CSS global:
+
+```css
+html {
+  font-family: 'SuaFonte', system-ui, sans-serif;
+}
+
+body,
+.p-component {
+  font-family: inherit;
+}
+```
+
+Sem isso, modais e overlays renderizarao com a fonte padrao do navegador. Veja detalhes em [Plugin — Heranca de Fontes](./plugin.md#heranca-de-fontes-tipografia).
+
 ## Notas
 
 - A migracao pode ser **incremental** — views nao migradas continuam usando o codigo local

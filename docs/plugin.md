@@ -106,3 +106,76 @@ Sem registro global, importe diretamente:
 import { WCrudView } from '@wgalleti/primevue-components'
 </script>
 ```
+
+## Heranca de Fontes (Tipografia)
+
+A biblioteca **nao define `font-family`** em nenhum componente — ela depende inteiramente da heranca CSS do projeto host. Porem, o PrimeVue **teleporta** certos componentes (Dialog, Popover, OverlayPanel, etc.) diretamente para o `<body>`, quebrando a cadeia de heranca CSS.
+
+### O Problema
+
+Quando voce define uma fonte customizada (ex: Satoshi, Inter, etc.) no elemento raiz da aplicacao (`#app`), os componentes teleportados nao herdam essa fonte porque sao renderizados fora da arvore DOM do `#app`:
+
+```
+<body>
+  <div id="app">          ← fonte customizada aplicada aqui
+    <WCrudView />         ← herda a fonte ✅
+  </div>
+
+  <!-- PrimeVue teleporta Dialogs para ca -->
+  <div class="p-dialog">  ← NAO herda a fonte ❌
+    <WCrudFormDialog />
+  </div>
+</body>
+```
+
+### A Solucao
+
+Adicione no CSS global do seu projeto a regra de heranca tanto no `body` quanto no seletor `.p-component` (classe que o PrimeVue aplica em todos os seus widgets, incluindo overlays teleportados):
+
+```css
+/* Defina a fonte no html */
+html {
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+/* Garanta heranca em componentes teleportados */
+body,
+.p-component {
+  font-family: inherit;
+}
+```
+
+### Por que `.p-component`?
+
+O PrimeVue adiciona a classe `.p-component` em **todos** os seus componentes renderizados, incluindo:
+
+- `Dialog` (teleportado ao `<body>`)
+- `Popover` / `OverlayPanel` (teleportado ao `<body>`)
+- `Toast` (teleportado ao `<body>`)
+- `ConfirmDialog` (teleportado ao `<body>`)
+- Componentes inline (DataTable, InputText, etc.)
+
+Usar `body, .p-component { font-family: inherit; }` garante que **todos** esses componentes respeitem a fonte definida no `html`, independente de onde estejam na arvore DOM.
+
+### Exemplo Completo (Tailwind + PrimeVue)
+
+Se voce usa Tailwind com CSS layers:
+
+```css
+/* styles/base.css */
+@layer components {
+  /* ... seus estilos de componente ... */
+}
+
+html {
+  @apply antialiased scroll-smooth;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+body,
+.p-component {
+  font-family: inherit;
+}
+```
+
+> **Nota:** Esta regra deve ficar **fora** de `@layer` para ter especificidade suficiente e nao ser sobrescrita por estilos do PrimeVue.
