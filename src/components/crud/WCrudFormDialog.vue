@@ -393,6 +393,7 @@ watch(
               :placeholder="field.placeholder"
               :disabled="isFieldDisabled(field)"
               :show-clear="field.showClear !== false"
+              :dialog-header="field.label"
               @update:model-value="(val) => emit('update:field', field.field, val)"
             />
 
