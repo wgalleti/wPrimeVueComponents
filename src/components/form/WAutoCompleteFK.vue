@@ -36,6 +36,7 @@ const props = withDefaults(
     forceSelection?: boolean
     columns?: ColumnMeta[]
     minLength?: number
+    dialogHeader?: string
     // CRUD no modal
     canCreate?: boolean
     canEdit?: boolean
@@ -445,7 +446,7 @@ function confirmDelete(item: Record<string, unknown>) {
   <!-- Modal de Pesquisa + CRUD -->
   <Dialog
     v-model:visible="modalVisible"
-    header="Pesquisar"
+    :header="dialogHeader || 'Pesquisar'"
     :style="{ width: '80vw' }"
     modal
     :draggable="false"
