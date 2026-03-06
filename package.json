@@ -27,7 +27,10 @@
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint \"src/**/*.{vue,js,ts}\" --fix",
     "format": "prettier --write src/",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "peerDependencies": {
     "axios": "^1.0.0",
@@ -49,6 +52,7 @@
     "typescript": "~5.7.0",
     "vite": "^6.0.0",
     "vite-plugin-dts": "^4.0.0",
+    "vitepress": "^1.6.4",
     "vue": "^3.5.0",
     "vue-tsc": "^2.2.0"
   },

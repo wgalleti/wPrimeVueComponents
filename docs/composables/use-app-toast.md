@@ -1,41 +1,34 @@
 # useAppToast
 
-Wrapper sobre o `useToast()` do PrimeVue com defaults para notificacoes padronizadas.
-
-## Import
-
-```typescript
-import { useAppToast } from '@wgalleti/primevue-components'
-```
+Wrapper simplificado do `useToast` do PrimeVue com metodos pre-configurados.
 
 ## Uso
 
-```typescript
+```ts
+import { useAppToast } from '@wgalleti/primevue-components'
+
 const toast = useAppToast()
 
 toast.success('Registro salvo com sucesso')
-toast.error('Erro ao salvar registro')
-toast.warn('Atencao: campos obrigatorios')
-toast.info('Operacao em andamento')
+toast.error('Erro ao conectar com a API')
+toast.warn('Este registro sera excluido permanentemente')
+toast.info('Nova versao disponivel')
 ```
 
-## API
+## Metodos
 
-```typescript
-interface AppToast {
-  success(message: string, title?: string): void  // 3s auto-close
-  error(message: string, title?: string): void    // 5s auto-close
-  warn(message: string, title?: string): void     // 4s auto-close
-  info(message: string, title?: string): void     // 3s auto-close
-}
-```
+| Metodo | Severidade | Duracao | Titulo Padrao |
+|--------|-----------|---------|---------------|
+| `success(message, title?)` | `success` | 3s | `'Sucesso'` |
+| `error(message, title?)` | `error` | 5s | `'Erro'` |
+| `warn(message, title?)` | `warn` | 4s | `'Atencao'` |
+| `info(message, title?)` | `info` | 3s | `'Info'` |
 
-## Requisitos
+## Pre-requisito
 
-O componente `<Toast />` do PrimeVue deve estar no layout raiz da aplicacao:
+O componente `<Toast />` do PrimeVue deve estar no seu `App.vue`:
 
 ```vue
-<!-- App.vue ou layout principal -->
 <template>
   <Toast />
   <router-view />
@@ -44,8 +37,7 @@ O componente `<Toast />` do PrimeVue deve estar no layout raiz da aplicacao:
 
 E o `ToastService` deve estar registrado:
 
-```typescript
-// main.ts
+```ts
 import ToastService from 'primevue/toastservice'
 app.use(ToastService)
 ```

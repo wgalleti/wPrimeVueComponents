@@ -1,211 +1,143 @@
 # useCrudManager
 
-Composable principal para operacoes CRUD completas. Gerencia estado, paginacao, busca, formulario e comunicacao com a API.
+Composable principal que gerencia todo o ciclo de vida de um CRUD: listagem, paginacao, busca, ordenacao, criacao, edicao e exclusao.
 
-## Import
+## Uso
 
-```typescript
+```ts
 import { useCrudManager } from '@wgalleti/primevue-components'
-import type { CrudManagerConfig } from '@wgalleti/primevue-components'
-```
 
-## Uso Basico
-
-```typescript
-const crud = useCrudManager<Produto>({
-  endpoint: '/api/v1/produtos/',
+const crud = useCrudManager({
+  endpoint: '/api/produtos/',
   columns: [
-    { field: 'nome', header: 'Nome' },
+    { field: 'nome', header: 'Nome', sortable: true },
     { field: 'preco', header: 'Preco', type: 'currency' },
+    { field: 'ativo', header: 'Ativo', type: 'boolean' },
   ],
   form: [
     { field: 'nome', label: 'Nome', required: true },
     { field: 'preco', label: 'Preco', type: 'currency' },
+    { field: 'ativo', label: 'Ativo', type: 'switch', defaultValue: true },
   ],
 })
 ```
 
-O composable retorna um objeto reativo (`CrudManagerReturn<T>`) que e passado ao `WCrudView` ou usado diretamente.
+## Configuracao (`CrudManagerConfig`)
 
-## Configuracao Completa
+| Opcao | Tipo | Padrao | Descricao |
+|-------|------|--------|-----------|
+| `endpoint` | `string` | **obrigatorio** | URL base da API |
+| `columns` | `ColumnDef[]` | **obrigatorio** | Definicao das colunas da tabela |
+| `form` | `FieldDef[]` | **obrigatorio** | Definicao dos campos do formulario |
+| `pk` | `string` | `'id'` | Campo de chave primaria |
+| `pageSize` | `number` | `20` | Registros por pagina |
+| `searchDebounce` | `number` | `300` | Debounce da busca (ms) |
+| `canCreate` | `boolean` | `true` | Permite criacao |
+| `canEdit` | `boolean` | `true` | Permite edicao |
+| `canDelete` | `boolean` | `true` | Permite exclusao |
+| `rowActions` | `RowAction[]` | auto | Acoes customizadas por linha |
+| `filterParams` | `() => Record` | — | Parametros extras para a query |
+| `transformPayload` | `(payload, isEditing) => Record` | — | Transforma o payload antes de enviar |
+| `onAfterSave` | `(data, isEditing) => void` | — | Callback apos salvar |
+| `onAfterDelete` | `(item) => void` | — | Callback apos excluir |
+| `labels` | `Partial<CrudLabels>` | pt-BR | Labels customizadas |
 
-Veja [Tipos > CrudManagerConfig](../types.md#crudmanagerconfig) para todas as opcoes.
+## Retorno (`CrudManagerReturn`)
 
-## Estado Reativo
+### Estado
 
 | Propriedade | Tipo | Descricao |
-|---|---|---|
-| `items` | `Ref<T[]>` | Lista de registros da pagina atual |
-| `loading` | `Ref<boolean>` | Carregando dados da API |
+|-------------|------|-----------|
+| `items` | `Ref<T[]>` | Lista de itens carregados |
+| `loading` | `Ref<boolean>` | Carregando dados |
 | `saving` | `Ref<boolean>` | Salvando registro |
 | `search` | `Ref<string>` | Termo de busca atual |
-| `dialogVisible` | `Ref<boolean>` | Dialog de form aberto/fechado |
-| `editingItem` | `Ref<T \| null>` | Item sendo editado (null = criacao) |
-| `formData` | `Record<string, unknown>` | Dados do formulario (reativo) |
-| `pagination` | `PaginationState` | Estado de paginacao |
+| `dialogVisible` | `Ref<boolean>` | Dialog aberto/fechado |
+| `editingItem` | `Ref<T \| null>` | Item sendo editado |
+| `formData` | `Record<string, unknown>` | Dados reativos do formulario |
+| `pagination` | `PaginationState` | Estado da paginacao |
+| `sort` | `SortState` | Estado da ordenacao |
 
-## Computed
+### Computed
 
 | Propriedade | Tipo | Descricao |
-|---|---|---|
-| `isEditing` | `ComputedRef<boolean>` | `true` se editando, `false` se criando |
-| `dialogTitle` | `ComputedRef<string>` | Titulo do dialog baseado no modo |
-| `isFirstPage` | `ComputedRef<boolean>` | Na primeira pagina |
-| `isLastPage` | `ComputedRef<boolean>` | Na ultima pagina |
+|-------------|------|-----------|
+| `isEditing` | `ComputedRef<boolean>` | Se esta em modo edicao |
+| `dialogTitle` | `ComputedRef<string>` | Titulo do dialog |
+| `isFirstPage` | `ComputedRef<boolean>` | Se esta na primeira pagina |
+| `isLastPage` | `ComputedRef<boolean>` | Se esta na ultima pagina |
 
-## Metodos
+### Metodos
 
-### init()
+| Metodo | Descricao |
+|--------|-----------|
+| `init()` | Carrega os dados iniciais |
+| `fetchItems(params?)` | Busca itens com parametros opcionais |
+| `refresh()` | Recarrega a pagina atual |
+| `setSearch(value)` | Define o termo de busca (com debounce) |
+| `onSearch(event)` | Handler para input de busca |
+| `onPage(event)` | Handler para mudanca de pagina |
+| `onSort(event)` | Handler para mudanca de ordenacao |
+| `openCreateDialog()` | Abre dialog para novo registro |
+| `openEditDialog(item)` | Abre dialog para editar item |
+| `save()` | Salva o registro (cria ou atualiza) |
+| `confirmDelete(item)` | Abre confirmacao e exclui |
+| `setFormField(field, value)` | Altera um campo do formulario |
+| `resetForm()` | Reseta formulario para defaults |
+| `goToPage(page)` | Navega para pagina especifica |
+| `firstPage()` | Vai para primeira pagina |
+| `lastPage()` | Vai para ultima pagina |
 
-Carrega os dados iniciais. Chame no `onMounted` ou use `autoInit` no `WCrudView`.
+## Filtros Dinamicos
 
-```typescript
-onMounted(() => crud.init())
-```
+```ts
+const categoriaFilter = ref<number | null>(null)
 
-### fetchItems(params?)
-
-Busca registros com paginacao e filtros. Chamado internamente por `init()`, `refresh()`, `onPage()`, etc.
-
-```typescript
-await crud.fetchItems({ status: 'ativo' })
-```
-
-### refresh()
-
-Recarrega a pagina atual mantendo filtros e busca.
-
-### setSearch(value) / onSearch(event)
-
-Define o termo de busca com debounce (300ms default). Reseta para pagina 1.
-
-```typescript
-crud.setSearch('notebook') // programatico
-// ou
-<InputText @input="crud.onSearch" /> // via evento
-```
-
-### openCreateDialog() / openEditDialog(item)
-
-Abre o dialog de formulario. `openCreateDialog` reseta o form com defaults. `openEditDialog` popula com os dados do item.
-
-### save()
-
-Valida o formulario e envia para a API. Retorna o registro salvo ou `null` em caso de erro.
-
-- **Criacao**: POST no endpoint
-- **Edicao**: PUT no endpoint/{pk}/
-- Detecta automaticamente campos `image` e usa `FormData`
-- Converte `Date` para ISO string
-- Executa `transformPayload` se configurado
-
-### confirmDelete(item)
-
-Exibe dialog de confirmacao e, se aceito, envia DELETE para a API.
-
-### setFormField(field, value)
-
-Atualiza um campo do formulario programaticamente.
-
-```typescript
-crud.setFormField('tipo', 'servico')
-```
-
-### resetForm()
-
-Reseta todos os campos para seus `defaultValue`.
-
-### Paginacao
-
-```typescript
-crud.goToPage(3)
-crud.firstPage()
-crud.lastPage()
-crud.onPage({ page: 2, rows: 20 }) // evento do DataTable
-```
-
-## Exemplos Avancados
-
-### Com filtros dinamicos
-
-```typescript
-const statusFilter = ref('ativo')
-
-const crud = useCrudManager<Produto>({
-  endpoint: '/api/v1/produtos/',
+const crud = useCrudManager({
+  endpoint: '/api/produtos/',
   columns: [...],
   form: [...],
   filterParams: () => ({
-    status: statusFilter.value,
+    categoria: categoriaFilter.value,
   }),
 })
 
-// Ao mudar o filtro, recarrega
-watch(statusFilter, () => crud.refresh())
+// Quando o filtro mudar:
+watch(categoriaFilter, () => crud.refresh())
 ```
 
-### Com transformacao de payload
+## Transform Payload
 
-```typescript
-const crud = useCrudManager<Produto>({
-  endpoint: '/api/v1/produtos/',
+```ts
+const crud = useCrudManager({
+  endpoint: '/api/usuarios/',
   columns: [...],
   form: [...],
   transformPayload: (payload, isEditing) => {
-    // Remove campo temporario
-    delete payload._temp
-
-    // Normaliza valor
-    if (payload.preco) {
-      payload.preco = Number(payload.preco)
+    if (isEditing && !payload.password) {
+      delete payload.password
     }
-
     return payload
   },
 })
 ```
 
-### Com callbacks
+## Upload de Imagens
 
-```typescript
-const crud = useCrudManager<Produto>({
-  endpoint: '/api/v1/produtos/',
-  columns: [...],
-  form: [...],
-  onAfterSave: (data, isEditing) => {
-    if (!isEditing) {
-      // Navega para detalhe apos criar
-      router.push(`/produtos/${data.id}`)
-    }
-  },
-  onAfterDelete: () => {
-    // Atualiza contadores
-    dashboardStore.refreshCounts()
-  },
-})
+Quando um campo `type: 'image'` tem um `File`, o `save()` automaticamente converte para `FormData` e envia como `multipart/form-data`.
+
+```ts
+form: [
+  { field: 'nome', label: 'Nome' },
+  { field: 'foto', label: 'Foto', type: 'image', accept: 'image/png,image/jpeg' },
+]
 ```
 
-### Com row actions customizadas
+## API Esperada
 
-```typescript
-const crud = useCrudManager<Pedido>({
-  endpoint: '/api/v1/pedidos/',
-  columns: [...],
-  form: [...],
-  rowActions: [
-    {
-      action: 'aprovar',
-      icon: 'pi pi-check',
-      tooltip: 'Aprovar',
-      severity: 'success',
-      visible: (data) => data.status === 'pendente',
-      handler: async (data) => {
-        await api.post(`/api/v1/pedidos/${data.id}/aprovar/`)
-        crud.refresh()
-      },
-    },
-    { action: 'edit', icon: 'pi pi-pencil' },
-    { action: 'delete', icon: 'pi pi-trash', severity: 'danger' },
-  ],
-})
-```
+| Acao | Metodo | URL |
+|------|--------|-----|
+| Listar | `GET` | `{endpoint}?page=1&page_size=20&search=...&ordering=...` |
+| Criar | `POST` | `{endpoint}` |
+| Atualizar | `PATCH` | `{endpoint}{pk}/` |
+| Excluir | `DELETE` | `{endpoint}{pk}/` |
