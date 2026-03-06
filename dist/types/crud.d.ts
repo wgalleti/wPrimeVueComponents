@@ -38,6 +38,8 @@ export interface FieldDef {
     optionValue?: string;
     showClear?: boolean;
     endpoint?: string;
+    crudFields?: FieldDef[];
+    crudColumns?: ColumnDef[];
     min?: number;
     max?: number;
     minFractionDigits?: number;

@@ -1,18 +1,18 @@
-import { inject as Me, defineComponent as Ie, openBlock as h, createElementBlock as j, createBlock as T, unref as w, toDisplayString as X, ref as I, watch as Ne, computed as W, reactive as ie, resolveDirective as et, Fragment as ge, createElementVNode as F, createVNode as q, withDirectives as Se, withCtx as J, createCommentVNode as H, renderList as xe, normalizeStyle as Fe, createTextVNode as Be, withModifiers as kt, renderSlot as G, normalizeClass as tt, isRef as wt, onMounted as Dt, createSlots as qe, normalizeProps as Ct, guardReactiveProps as $t } from "vue";
-import at from "primevue/datatable";
+import { inject as Me, defineComponent as Re, openBlock as h, createElementBlock as I, createBlock as T, unref as $, toDisplayString as Q, ref as L, watch as Ne, computed as W, reactive as ie, resolveDirective as at, Fragment as ge, createElementVNode as E, createVNode as q, withDirectives as Se, withCtx as K, createCommentVNode as H, renderList as he, normalizeStyle as Fe, createTextVNode as Be, renderSlot as X, normalizeClass as ot, isRef as Dt, withModifiers as $t, createSlots as Oe, normalizeProps as We, guardReactiveProps as qe, onMounted as Ct } from "vue";
+import lt from "primevue/datatable";
 import Pe from "primevue/column";
 import se from "primevue/button";
 import ve from "primevue/inputtext";
-import ot from "primevue/iconfield";
-import lt from "primevue/inputicon";
+import nt from "primevue/iconfield";
+import rt from "primevue/inputicon";
 import xt from "primevue/tag";
 import Ce from "dayjs";
-import nt from "primevue/dialog";
-import He from "primevue/inputnumber";
+import st from "primevue/dialog";
+import Ze from "primevue/inputnumber";
 import St from "primevue/textarea";
 import Pt from "primevue/select";
-import rt from "primevue/autocomplete";
-import Ke from "primevue/datepicker";
+import it from "primevue/autocomplete";
+import Je from "primevue/datepicker";
 import Mt from "primevue/toggleswitch";
 import Vt from "primevue/colorpicker";
 import At from "primevue/password";
@@ -22,83 +22,83 @@ const je = Symbol("w-axios"), ze = Symbol("w-config");
 function Yt(e) {
   return e && e.__esModule && Object.prototype.hasOwnProperty.call(e, "default") ? e.default : e;
 }
-var Re = { exports: {} }, Tt = Re.exports, Ze;
-function Rt() {
-  return Ze || (Ze = 1, (function(e, a) {
-    (function(t, l) {
+var Le = { exports: {} }, Rt = Le.exports, Xe;
+function Tt() {
+  return Xe || (Xe = 1, (function(e, t) {
+    (function(a, l) {
       e.exports = l();
-    })(Tt, (function() {
-      var t = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, l = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, r = /\d/, c = /\d\d/, u = /\d\d?/, V = /\d*[^-_:/,()\s\d]+/, v = {}, D = function(n) {
+    })(Rt, (function() {
+      var a = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, l = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, r = /\d/, d = /\d\d/, m = /\d\d?/, g = /\d*[^-_:/,()\s\d]+/, c = {}, b = function(n) {
         return (n = +n) + (n > 68 ? 1900 : 2e3);
-      }, x = function(n) {
-        return function(d) {
-          this[n] = +d;
+      }, S = function(n) {
+        return function(f) {
+          this[n] = +f;
         };
-      }, z = [/[+-]\d\d:?(\d\d)?|Z/, function(n) {
-        (this.zone || (this.zone = {})).offset = (function(d) {
-          if (!d || d === "Z") return 0;
-          var C = d.match(/([+-]|\d\d)/g), s = 60 * C[1] + (+C[2] || 0);
+      }, j = [/[+-]\d\d:?(\d\d)?|Z/, function(n) {
+        (this.zone || (this.zone = {})).offset = (function(f) {
+          if (!f || f === "Z") return 0;
+          var C = f.match(/([+-]|\d\d)/g), s = 60 * C[1] + (+C[2] || 0);
           return s === 0 ? 0 : C[0] === "+" ? -s : s;
         })(n);
       }], U = function(n) {
-        var d = v[n];
-        return d && (d.indexOf ? d : d.s.concat(d.f));
-      }, P = function(n, d) {
-        var C, s = v.meridiem;
+        var f = c[n];
+        return f && (f.indexOf ? f : f.s.concat(f.f));
+      }, M = function(n, f) {
+        var C, s = c.meridiem;
         if (s) {
-          for (var b = 1; b <= 24; b += 1) if (n.indexOf(s(b, 0, d)) > -1) {
-            C = b > 12;
+          for (var k = 1; k <= 24; k += 1) if (n.indexOf(s(k, 0, f)) > -1) {
+            C = k > 12;
             break;
           }
-        } else C = n === (d ? "pm" : "PM");
+        } else C = n === (f ? "pm" : "PM");
         return C;
-      }, R = { A: [V, function(n) {
-        this.afternoon = P(n, !1);
-      }], a: [V, function(n) {
-        this.afternoon = P(n, !0);
+      }, Y = { A: [g, function(n) {
+        this.afternoon = M(n, !1);
+      }], a: [g, function(n) {
+        this.afternoon = M(n, !0);
       }], Q: [r, function(n) {
         this.month = 3 * (n - 1) + 1;
       }], S: [r, function(n) {
         this.milliseconds = 100 * +n;
-      }], SS: [c, function(n) {
+      }], SS: [d, function(n) {
         this.milliseconds = 10 * +n;
       }], SSS: [/\d{3}/, function(n) {
         this.milliseconds = +n;
-      }], s: [u, x("seconds")], ss: [u, x("seconds")], m: [u, x("minutes")], mm: [u, x("minutes")], H: [u, x("hours")], h: [u, x("hours")], HH: [u, x("hours")], hh: [u, x("hours")], D: [u, x("day")], DD: [c, x("day")], Do: [V, function(n) {
-        var d = v.ordinal, C = n.match(/\d+/);
-        if (this.day = C[0], d) for (var s = 1; s <= 31; s += 1) d(s).replace(/\[|\]/g, "") === n && (this.day = s);
-      }], w: [u, x("week")], ww: [c, x("week")], M: [u, x("month")], MM: [c, x("month")], MMM: [V, function(n) {
-        var d = U("months"), C = (U("monthsShort") || d.map((function(s) {
+      }], s: [m, S("seconds")], ss: [m, S("seconds")], m: [m, S("minutes")], mm: [m, S("minutes")], H: [m, S("hours")], h: [m, S("hours")], HH: [m, S("hours")], hh: [m, S("hours")], D: [m, S("day")], DD: [d, S("day")], Do: [g, function(n) {
+        var f = c.ordinal, C = n.match(/\d+/);
+        if (this.day = C[0], f) for (var s = 1; s <= 31; s += 1) f(s).replace(/\[|\]/g, "") === n && (this.day = s);
+      }], w: [m, S("week")], ww: [d, S("week")], M: [m, S("month")], MM: [d, S("month")], MMM: [g, function(n) {
+        var f = U("months"), C = (U("monthsShort") || f.map((function(s) {
           return s.slice(0, 3);
         }))).indexOf(n) + 1;
         if (C < 1) throw new Error();
         this.month = C % 12 || C;
-      }], MMMM: [V, function(n) {
-        var d = U("months").indexOf(n) + 1;
-        if (d < 1) throw new Error();
-        this.month = d % 12 || d;
-      }], Y: [/[+-]?\d+/, x("year")], YY: [c, function(n) {
-        this.year = D(n);
-      }], YYYY: [/\d{4}/, x("year")], Z: z, ZZ: z };
-      function L(n) {
-        var d, C;
-        d = n, C = v && v.formats;
-        for (var s = (n = d.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (function(f, M, $) {
-          var E = $ && $.toUpperCase();
-          return M || C[$] || t[$] || C[E].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(_, Q, Z) {
-            return Q || Z.slice(1);
+      }], MMMM: [g, function(n) {
+        var f = U("months").indexOf(n) + 1;
+        if (f < 1) throw new Error();
+        this.month = f % 12 || f;
+      }], Y: [/[+-]?\d+/, S("year")], YY: [d, function(n) {
+        this.year = b(n);
+      }], YYYY: [/\d{4}/, S("year")], Z: j, ZZ: j };
+      function z(n) {
+        var f, C;
+        f = n, C = c && c.formats;
+        for (var s = (n = f.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (function(o, u, x) {
+          var A = x && x.toUpperCase();
+          return u || C[x] || a[x] || C[A].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(_, G, J) {
+            return G || J.slice(1);
           }));
-        }))).match(l), b = s.length, A = 0; A < b; A += 1) {
-          var K = s[A], i = R[K], g = i && i[0], o = i && i[1];
-          s[A] = o ? { regex: g, parser: o } : K.replace(/^\[|\]$/g, "");
+        }))).match(l), k = s.length, V = 0; V < k; V += 1) {
+          var Z = s[V], F = Y[Z], i = F && F[0], w = F && F[1];
+          s[V] = w ? { regex: i, parser: w } : Z.replace(/^\[|\]$/g, "");
         }
-        return function(f) {
-          for (var M = {}, $ = 0, E = 0; $ < b; $ += 1) {
-            var _ = s[$];
-            if (typeof _ == "string") E += _.length;
+        return function(o) {
+          for (var u = {}, x = 0, A = 0; x < k; x += 1) {
+            var _ = s[x];
+            if (typeof _ == "string") A += _.length;
             else {
-              var Q = _.regex, Z = _.parser, ue = f.slice(E), ee = Q.exec(ue)[0];
-              Z.call(M, ee), f = f.replace(ee, "");
+              var G = _.regex, J = _.parser, ue = o.slice(A), ee = G.exec(ue)[0];
+              J.call(u, ee), o = o.replace(ee, "");
             }
           }
           return (function(oe) {
@@ -107,186 +107,186 @@ function Rt() {
               var O = oe.hours;
               te ? O < 12 && (oe.hours += 12) : O === 12 && (oe.hours = 0), delete oe.afternoon;
             }
-          })(M), M;
+          })(u), u;
         };
       }
-      return function(n, d, C) {
-        C.p.customParseFormat = !0, n && n.parseTwoDigitYear && (D = n.parseTwoDigitYear);
-        var s = d.prototype, b = s.parse;
-        s.parse = function(A) {
-          var K = A.date, i = A.utc, g = A.args;
-          this.$u = i;
-          var o = g[1];
-          if (typeof o == "string") {
-            var f = g[2] === !0, M = g[3] === !0, $ = f || M, E = g[2];
-            M && (E = g[2]), v = this.$locale(), !f && E && (v = C.Ls[E]), this.$d = (function(ue, ee, oe, te) {
+      return function(n, f, C) {
+        C.p.customParseFormat = !0, n && n.parseTwoDigitYear && (b = n.parseTwoDigitYear);
+        var s = f.prototype, k = s.parse;
+        s.parse = function(V) {
+          var Z = V.date, F = V.utc, i = V.args;
+          this.$u = F;
+          var w = i[1];
+          if (typeof w == "string") {
+            var o = i[2] === !0, u = i[3] === !0, x = o || u, A = i[2];
+            u && (A = i[2]), c = this.$locale(), !o && A && (c = C.Ls[A]), this.$d = (function(ue, ee, oe, te) {
               try {
                 if (["x", "X"].indexOf(ee) > -1) return new Date((ee === "X" ? 1e3 : 1) * ue);
-                var O = L(ee)(ue), ye = O.year, de = O.month, $e = O.day, Ve = O.hours, le = O.minutes, be = O.seconds, ne = O.milliseconds, ae = O.zone, ce = O.week, fe = /* @__PURE__ */ new Date(), ke = $e || (ye || de ? 1 : fe.getDate()), we = ye || fe.getFullYear(), me = 0;
-                ye && !de || (me = de > 0 ? de - 1 : fe.getMonth());
-                var pe, De = Ve || 0, y = le || 0, S = be || 0, m = ne || 0;
-                return ae ? new Date(Date.UTC(we, me, ke, De, y, S, m + 60 * ae.offset * 1e3)) : oe ? new Date(Date.UTC(we, me, ke, De, y, S, m)) : (pe = new Date(we, me, ke, De, y, S, m), ce && (pe = te(pe).week(ce).toDate()), pe);
+                var O = z(ee)(ue), be = O.year, de = O.month, xe = O.day, Ve = O.hours, le = O.minutes, ke = O.seconds, ne = O.milliseconds, ae = O.zone, ce = O.week, fe = /* @__PURE__ */ new Date(), we = xe || (be || de ? 1 : fe.getDate()), De = be || fe.getFullYear(), me = 0;
+                be && !de || (me = de > 0 ? de - 1 : fe.getMonth());
+                var pe, $e = Ve || 0, y = le || 0, P = ke || 0, p = ne || 0;
+                return ae ? new Date(Date.UTC(De, me, we, $e, y, P, p + 60 * ae.offset * 1e3)) : oe ? new Date(Date.UTC(De, me, we, $e, y, P, p)) : (pe = new Date(De, me, we, $e, y, P, p), ce && (pe = te(pe).week(ce).toDate()), pe);
               } catch {
                 return /* @__PURE__ */ new Date("");
               }
-            })(K, o, i, C), this.init(), E && E !== !0 && (this.$L = this.locale(E).$L), $ && K != this.format(o) && (this.$d = /* @__PURE__ */ new Date("")), v = {};
-          } else if (o instanceof Array) for (var _ = o.length, Q = 1; Q <= _; Q += 1) {
-            g[1] = o[Q - 1];
-            var Z = C.apply(this, g);
-            if (Z.isValid()) {
-              this.$d = Z.$d, this.$L = Z.$L, this.init();
+            })(Z, w, F, C), this.init(), A && A !== !0 && (this.$L = this.locale(A).$L), x && Z != this.format(w) && (this.$d = /* @__PURE__ */ new Date("")), c = {};
+          } else if (w instanceof Array) for (var _ = w.length, G = 1; G <= _; G += 1) {
+            i[1] = w[G - 1];
+            var J = C.apply(this, i);
+            if (J.isValid()) {
+              this.$d = J.$d, this.$L = J.$L, this.init();
               break;
             }
-            Q === _ && (this.$d = /* @__PURE__ */ new Date(""));
+            G === _ && (this.$d = /* @__PURE__ */ new Date(""));
           }
-          else b.call(this, A);
+          else k.call(this, V);
         };
       };
     }));
-  })(Re)), Re.exports;
+  })(Le)), Le.exports;
 }
-var Lt = Rt();
+var Lt = Tt();
 const It = /* @__PURE__ */ Yt(Lt);
 Ce.extend(It);
-function st(e) {
+function ut(e) {
   if (!e) return null;
   if (e instanceof Date) return e;
-  const a = Ce(e, "YYYY-MM-DD", !0);
-  return a.isValid() ? a.toDate() : Ce(e).toDate();
+  const t = Ce(e, "YYYY-MM-DD", !0);
+  return t.isValid() ? t.toDate() : Ce(e).toDate();
 }
-function it(e) {
+function dt(e) {
   return e ? typeof e == "string" ? e : Ce(e).format("YYYY-MM-DD") : null;
 }
-function ut(e) {
+function ct(e) {
   return e ? typeof e == "string" ? e : Ce(e).toISOString() : null;
 }
-function jt(e, a = "DD/MM/YYYY") {
-  return e ? Ce(e).format(a) : "—";
+function jt(e, t = "DD/MM/YYYY") {
+  return e ? Ce(e).format(t) : "—";
 }
 function zt(e) {
   return e ? Ce(e).format("DD/MM/YYYY HH:mm") : "—";
 }
-function he(e) {
+function ye(e) {
   return e.replace(/\D/g, "");
 }
-function dt(e) {
+function ft(e) {
   if (!e) return "—";
-  const a = he(e);
-  return a.length !== 11 ? e : a.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+  const t = ye(e);
+  return t.length !== 11 ? e : t.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
 }
-function ct(e) {
+function mt(e) {
   if (!e) return "—";
-  const a = he(e);
-  return a.length !== 14 ? e : a.replace(
+  const t = ye(e);
+  return t.length !== 14 ? e : t.replace(
     /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
     "$1.$2.$3/$4-$5"
   );
 }
 function Ut(e) {
   if (!e) return "—";
-  const a = he(e);
-  return a.length === 11 ? dt(e) : a.length === 14 ? ct(e) : e;
+  const t = ye(e);
+  return t.length === 11 ? ft(e) : t.length === 14 ? mt(e) : e;
 }
 function Nt(e) {
   if (!e) return "—";
-  const a = he(e);
-  return a.length === 11 ? a.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3") : a.length === 10 ? a.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3") : e;
+  const t = ye(e);
+  return t.length === 11 ? t.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3") : t.length === 10 ? t.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3") : e;
 }
-function ft(e) {
+function pt(e) {
   if (!e) return null;
-  const a = he(e);
-  if (a.length !== 11) return "CPF deve ter 11 dígitos.";
-  if (/^(\d)\1{10}$/.test(a)) return "CPF inválido.";
-  let t = 0;
-  for (let u = 0; u < 9; u++) t += parseInt(a[u]) * (10 - u);
-  let l = t % 11;
+  const t = ye(e);
+  if (t.length !== 11) return "CPF deve ter 11 dígitos.";
+  if (/^(\d)\1{10}$/.test(t)) return "CPF inválido.";
+  let a = 0;
+  for (let m = 0; m < 9; m++) a += parseInt(t[m]) * (10 - m);
+  let l = a % 11;
   const r = l < 2 ? 0 : 11 - l;
-  if (parseInt(a[9]) !== r) return "CPF inválido.";
-  t = 0;
-  for (let u = 0; u < 10; u++) t += parseInt(a[u]) * (11 - u);
-  l = t % 11;
-  const c = l < 2 ? 0 : 11 - l;
-  return parseInt(a[10]) !== c ? "CPF inválido." : null;
+  if (parseInt(t[9]) !== r) return "CPF inválido.";
+  a = 0;
+  for (let m = 0; m < 10; m++) a += parseInt(t[m]) * (11 - m);
+  l = a % 11;
+  const d = l < 2 ? 0 : 11 - l;
+  return parseInt(t[10]) !== d ? "CPF inválido." : null;
 }
-function mt(e) {
+function vt(e) {
   if (!e) return null;
-  const a = he(e);
-  if (a.length !== 14) return "CNPJ deve ter 14 dígitos.";
-  if (/^(\d)\1{13}$/.test(a)) return "CNPJ inválido.";
-  const t = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const t = ye(e);
+  if (t.length !== 14) return "CNPJ deve ter 14 dígitos.";
+  if (/^(\d)\1{13}$/.test(t)) return "CNPJ inválido.";
+  const a = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let l = 0;
-  for (let v = 0; v < 12; v++) l += parseInt(a[v]) * t[v];
+  for (let c = 0; c < 12; c++) l += parseInt(t[c]) * a[c];
   let r = l % 11;
-  const c = r < 2 ? 0 : 11 - r;
-  if (parseInt(a[12]) !== c) return "CNPJ inválido.";
-  const u = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const d = r < 2 ? 0 : 11 - r;
+  if (parseInt(t[12]) !== d) return "CNPJ inválido.";
+  const m = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   l = 0;
-  for (let v = 0; v < 13; v++) l += parseInt(a[v]) * u[v];
+  for (let c = 0; c < 13; c++) l += parseInt(t[c]) * m[c];
   r = l % 11;
-  const V = r < 2 ? 0 : 11 - r;
-  return parseInt(a[13]) !== V ? "CNPJ inválido." : null;
+  const g = r < 2 ? 0 : 11 - r;
+  return parseInt(t[13]) !== g ? "CNPJ inválido." : null;
 }
 function Bt(e) {
   if (!e) return null;
-  const a = he(e);
-  return a.length === 11 ? ft(e) : a.length === 14 ? mt(e) : "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.";
+  const t = ye(e);
+  return t.length === 11 ? pt(e) : t.length === 14 ? vt(e) : "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.";
 }
-const Le = /* @__PURE__ */ new Map();
-function Je(e, a) {
-  const t = `${e}-${a}`;
-  let l = Le.get(t);
+const Ie = /* @__PURE__ */ new Map();
+function Qe(e, t) {
+  const a = `${e}-${t}`;
+  let l = Ie.get(a);
   return l || (l = new Intl.NumberFormat(e, {
-    minimumFractionDigits: a,
-    maximumFractionDigits: a
-  }), Le.set(t, l)), l;
+    minimumFractionDigits: t,
+    maximumFractionDigits: t
+  }), Ie.set(a, l)), l;
 }
-function Ot(e, a) {
-  const t = `${e}-${a}`;
-  let l = Le.get(t);
+function Ot(e, t) {
+  const a = `${e}-${t}`;
+  let l = Ie.get(a);
   return l || (l = new Intl.NumberFormat(e, {
     style: "currency",
-    currency: a
-  }), Le.set(t, l)), l;
+    currency: t
+  }), Ie.set(a, l)), l;
 }
-function pt() {
+function gt() {
   const e = Me(ze, {
     defaultPageSize: 20,
     dateFormat: "DD/MM/YYYY",
     dateTimeFormat: "DD/MM/YYYY HH:mm",
     locale: "pt-BR",
     currency: "BRL"
-  }), a = (e == null ? void 0 : e.locale) ?? "pt-BR", t = (e == null ? void 0 : e.currency) ?? "BRL";
-  function l(v) {
-    return v == null ? "—" : Ot(a, t).format(v);
+  }), t = (e == null ? void 0 : e.locale) ?? "pt-BR", a = (e == null ? void 0 : e.currency) ?? "BRL";
+  function l(c) {
+    return c == null ? "—" : Ot(t, a).format(c);
   }
-  function r(v, D = 2) {
-    return v == null ? "—" : Je(a, D).format(v);
+  function r(c, b = 2) {
+    return c == null ? "—" : Qe(t, b).format(c);
   }
-  function c(v, D) {
-    return jt(v, D ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
+  function d(c, b) {
+    return jt(c, b ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
   }
-  function u(v) {
-    return zt(v);
+  function m(c) {
+    return zt(c);
   }
-  function V(v) {
-    return v == null ? "—" : `${Je(a, 2).format(v)}%`;
+  function g(c) {
+    return c == null ? "—" : `${Qe(t, 2).format(c)}%`;
   }
   return {
     formatCurrency: l,
     formatNumber: r,
-    formatDate: c,
-    formatDateTime: u,
-    formatPercent: V,
-    formatCpf: dt,
-    formatCnpj: ct,
+    formatDate: d,
+    formatDateTime: m,
+    formatPercent: g,
+    formatCpf: ft,
+    formatCnpj: mt,
     formatCpfCnpj: Ut,
     formatTelefone: Nt,
-    validateCpf: ft,
-    validateCnpj: mt,
+    validateCpf: pt,
+    validateCnpj: vt,
     validateCpfCnpj: Bt,
-    parseDate: st,
-    toDateString: it,
-    toDateTimeString: ut
+    parseDate: ut,
+    toDateString: dt,
+    toDateTimeString: ct
   };
 }
 const Wt = {
@@ -307,7 +307,7 @@ const Wt = {
 }, Xt = {
   key: 7,
   class: "text-[0.8125rem]"
-}, Oe = /* @__PURE__ */ Ie({
+}, He = /* @__PURE__ */ Re({
   __name: "WCrudColumnRenderer",
   props: {
     column: {},
@@ -315,64 +315,64 @@ const Wt = {
     rowData: {}
   },
   setup(e) {
-    const { formatDate: a, formatDateTime: t, formatCurrency: l, formatNumber: r } = pt();
-    return (c, u) => e.value == null ? (h(), j("span", Wt, "—")) : e.column.type === "image" ? (h(), j("img", {
+    const { formatDate: t, formatDateTime: a, formatCurrency: l, formatNumber: r } = gt();
+    return (d, m) => e.value == null ? (h(), I("span", Wt, "—")) : e.column.type === "image" ? (h(), I("img", {
       key: 1,
       src: String(e.value),
       alt: e.column.header,
       class: "size-9 rounded-lg object-cover ring-1 ring-surface-200 dark:ring-surface-700"
-    }, null, 8, qt)) : e.column.type === "boolean" ? (h(), T(w(xt), {
+    }, null, 8, qt)) : e.column.type === "boolean" ? (h(), T($(xt), {
       key: 2,
       value: e.column.tagValue ? e.column.tagValue(e.value, e.rowData) : e.value ? "Ativo" : "Inativo",
       severity: e.column.tagSeverity ? e.column.tagSeverity(e.value, e.rowData) : e.value ? "success" : "danger",
       class: "text-xs"
-    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (h(), j("span", Ht, X(w(a)(e.value)), 1)) : e.column.type === "datetime" ? (h(), j("span", Kt, X(w(t)(e.value)), 1)) : e.column.type === "currency" ? (h(), j("span", Zt, X(w(l)(e.value)), 1)) : e.column.type === "number" ? (h(), j("span", Jt, X(e.column.format ? e.column.format(e.value, e.rowData) : w(r)(e.value, e.column.decimals ?? 0)), 1)) : (h(), j("span", Xt, X(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
+    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (h(), I("span", Ht, Q($(t)(e.value)), 1)) : e.column.type === "datetime" ? (h(), I("span", Kt, Q($(a)(e.value)), 1)) : e.column.type === "currency" ? (h(), I("span", Zt, Q($(l)(e.value)), 1)) : e.column.type === "number" ? (h(), I("span", Jt, Q(e.column.format ? e.column.format(e.value, e.rowData) : $(r)(e.value, e.column.decimals ?? 0)), 1)) : (h(), I("span", Xt, Q(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
   }
 });
-var Qt = Object.defineProperty, Gt = (e, a, t) => a in e ? Qt(e, a, { enumerable: !0, configurable: !0, writable: !0, value: t }) : e[a] = t, Ee = (e, a, t) => Gt(e, typeof a != "symbol" ? a + "" : a, t);
-const Xe = {
+var Qt = Object.defineProperty, Gt = (e, t, a) => t in e ? Qt(e, t, { enumerable: !0, configurable: !0, writable: !0, value: a }) : e[t] = a, Ee = (e, t, a) => Gt(e, typeof t != "symbol" ? t + "" : t, a);
+const Ge = {
   "#": { pattern: /[0-9]/ },
   "@": { pattern: /[a-zA-Z]/ },
   "*": { pattern: /[a-zA-Z0-9]/ }
-}, Qe = (e, a, t) => e.replaceAll(a, "").replace(t, ".").replace("..", ".").replace(/[^.\d]/g, ""), Ge = (e, a, t) => {
+}, _e = (e, t, a) => e.replaceAll(t, "").replace(a, ".").replace("..", ".").replace(/[^.\d]/g, ""), et = (e, t, a) => {
   var l;
-  return new Intl.NumberFormat(((l = t.number) == null ? void 0 : l.locale) ?? "en", {
+  return new Intl.NumberFormat(((l = a.number) == null ? void 0 : l.locale) ?? "en", {
     minimumFractionDigits: e,
-    maximumFractionDigits: a,
+    maximumFractionDigits: t,
     roundingMode: "trunc"
   });
-}, _t = (e, a = !0, t) => {
-  var l, r, c, u;
-  const V = ((l = t.number) == null ? void 0 : l.unsigned) !== !0 && e.startsWith("-") ? "-" : "", v = ((r = t.number) == null ? void 0 : r.fraction) ?? 0;
-  let D = Ge(0, v, t);
-  const x = D.formatToParts(1000.12), z = ((c = x.find((n) => n.type === "group")) == null ? void 0 : c.value) ?? " ", U = ((u = x.find((n) => n.type === "decimal")) == null ? void 0 : u.value) ?? ".", P = Qe(e, z, U);
-  if (Number.isNaN(parseFloat(P))) return V;
-  const R = P.split(".");
-  if (R[1] != null && R[1].length >= 1) {
-    const n = R[1].length <= v ? R[1].length : v;
-    D = Ge(n, v, t);
+}, _t = (e, t = !0, a) => {
+  var l, r, d, m;
+  const g = ((l = a.number) == null ? void 0 : l.unsigned) !== !0 && e.startsWith("-") ? "-" : "", c = ((r = a.number) == null ? void 0 : r.fraction) ?? 0;
+  let b = et(0, c, a);
+  const S = b.formatToParts(1000.12), j = ((d = S.find((n) => n.type === "group")) == null ? void 0 : d.value) ?? " ", U = ((m = S.find((n) => n.type === "decimal")) == null ? void 0 : m.value) ?? ".", M = _e(e, j, U);
+  if (Number.isNaN(parseFloat(M))) return g;
+  const Y = M.split(".");
+  if (Y[1] != null && Y[1].length >= 1) {
+    const n = Y[1].length <= c ? Y[1].length : c;
+    b = et(n, c, a);
   }
-  let L = D.format(parseFloat(P));
-  return a ? v > 0 && P.endsWith(".") && !P.slice(0, -1).includes(".") && (L += U) : L = Qe(L, z, U), V + L;
-}, vt = (e) => JSON.parse(e.replaceAll("'", '"')), ea = (e, a = {}) => {
-  const t = { ...a };
-  e.dataset.maska != null && e.dataset.maska !== "" && (t.mask = ta(e.dataset.maska)), e.dataset.maskaEager != null && (t.eager = Te(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (t.reversed = Te(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (t.tokensReplace = Te(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (t.tokens = aa(e.dataset.maskaTokens));
+  let z = b.format(parseFloat(M));
+  return t ? c > 0 && M.endsWith(".") && !M.slice(0, -1).includes(".") && (z += U) : z = _e(z, j, U), g + z;
+}, ht = (e) => JSON.parse(e.replaceAll("'", '"')), ea = (e, t = {}) => {
+  const a = { ...t };
+  e.dataset.maska != null && e.dataset.maska !== "" && (a.mask = ta(e.dataset.maska)), e.dataset.maskaEager != null && (a.eager = Te(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (a.reversed = Te(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (a.tokensReplace = Te(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (a.tokens = aa(e.dataset.maskaTokens));
   const l = {};
-  return e.dataset.maskaNumberLocale != null && (l.locale = e.dataset.maskaNumberLocale), e.dataset.maskaNumberFraction != null && (l.fraction = parseInt(e.dataset.maskaNumberFraction)), e.dataset.maskaNumberUnsigned != null && (l.unsigned = Te(e.dataset.maskaNumberUnsigned)), (e.dataset.maskaNumber != null || Object.values(l).length > 0) && (t.number = l), t;
-}, Te = (e) => e !== "" ? !!JSON.parse(e) : !0, ta = (e) => e.startsWith("[") && e.endsWith("]") ? vt(e) : e, aa = (e) => {
+  return e.dataset.maskaNumberLocale != null && (l.locale = e.dataset.maskaNumberLocale), e.dataset.maskaNumberFraction != null && (l.fraction = parseInt(e.dataset.maskaNumberFraction)), e.dataset.maskaNumberUnsigned != null && (l.unsigned = Te(e.dataset.maskaNumberUnsigned)), (e.dataset.maskaNumber != null || Object.values(l).length > 0) && (a.number = l), a;
+}, Te = (e) => e !== "" ? !!JSON.parse(e) : !0, ta = (e) => e.startsWith("[") && e.endsWith("]") ? ht(e) : e, aa = (e) => {
   if (e.startsWith("{") && e.endsWith("}"))
-    return vt(e);
-  const a = {};
-  return e.split("|").forEach((t) => {
-    const l = t.split(":");
-    a[l[0]] = {
-      pattern: gt() ? new RegExp(l[1], "u") : new RegExp(l[1]),
+    return ht(e);
+  const t = {};
+  return e.split("|").forEach((a) => {
+    const l = a.split(":");
+    t[l[0]] = {
+      pattern: yt() ? new RegExp(l[1], "u") : new RegExp(l[1]),
       optional: l[2] === "optional",
       multiple: l[2] === "multiple",
       repeated: l[2] === "repeated"
     };
-  }), a;
-}, gt = () => {
+  }), t;
+}, yt = () => {
   try {
     return new RegExp("\\p{L}", "u"), !0;
   } catch {
@@ -380,22 +380,22 @@ const Xe = {
   }
 };
 class oa {
-  constructor(a = {}) {
+  constructor(t = {}) {
     Ee(this, "opts", {}), Ee(this, "memo", /* @__PURE__ */ new Map());
-    const t = { ...a };
-    if (t.tokens != null) {
-      t.tokens = t.tokensReplace ? { ...t.tokens } : { ...Xe, ...t.tokens };
-      for (const l of Object.values(t.tokens))
-        typeof l.pattern == "string" && (l.pattern = gt() ? new RegExp(l.pattern, "u") : new RegExp(l.pattern));
+    const a = { ...t };
+    if (a.tokens != null) {
+      a.tokens = a.tokensReplace ? { ...a.tokens } : { ...Ge, ...a.tokens };
+      for (const l of Object.values(a.tokens))
+        typeof l.pattern == "string" && (l.pattern = yt() ? new RegExp(l.pattern, "u") : new RegExp(l.pattern));
     } else
-      t.tokens = Xe;
-    Array.isArray(t.mask) && (t.mask.length > 1 ? t.mask = [...t.mask].sort((l, r) => l.length - r.length) : t.mask = t.mask[0] ?? ""), t.mask === "" && (t.mask = null), this.opts = t;
+      a.tokens = Ge;
+    Array.isArray(a.mask) && (a.mask.length > 1 ? a.mask = [...a.mask].sort((l, r) => l.length - r.length) : a.mask = a.mask[0] ?? ""), a.mask === "" && (a.mask = null), this.opts = a;
   }
-  masked(a) {
-    return this.process(String(a), this.findMask(String(a)));
+  masked(t) {
+    return this.process(String(t), this.findMask(String(t)));
   }
-  unmasked(a) {
-    return this.process(String(a), this.findMask(String(a)), !1);
+  unmasked(t) {
+    return this.process(String(t), this.findMask(String(t)), !1);
   }
   isEager() {
     return this.opts.eager === !0;
@@ -403,134 +403,134 @@ class oa {
   isReversed() {
     return this.opts.reversed === !0;
   }
-  completed(a) {
-    const t = this.findMask(String(a));
-    if (this.opts.mask == null || t == null) return !1;
-    const l = this.process(String(a), t).length;
-    return typeof this.opts.mask == "string" ? l >= this.opts.mask.length : l >= t.length;
+  completed(t) {
+    const a = this.findMask(String(t));
+    if (this.opts.mask == null || a == null) return !1;
+    const l = this.process(String(t), a).length;
+    return typeof this.opts.mask == "string" ? l >= this.opts.mask.length : l >= a.length;
   }
-  findMask(a) {
-    const t = this.opts.mask;
-    if (t == null)
+  findMask(t) {
+    const a = this.opts.mask;
+    if (a == null)
       return null;
-    if (typeof t == "string")
-      return t;
-    if (typeof t == "function")
-      return t(a);
-    const l = this.process(a, t.slice(-1).pop() ?? "", !1);
-    return t.find((r) => this.process(a, r, !1).length >= l.length) ?? "";
+    if (typeof a == "string")
+      return a;
+    if (typeof a == "function")
+      return a(t);
+    const l = this.process(t, a.slice(-1).pop() ?? "", !1);
+    return a.find((r) => this.process(t, r, !1).length >= l.length) ?? "";
   }
-  escapeMask(a) {
-    const t = [], l = [];
-    return a.split("").forEach((r, c) => {
-      r === "!" && a[c - 1] !== "!" ? l.push(c - l.length) : t.push(r);
-    }), { mask: t.join(""), escaped: l };
+  escapeMask(t) {
+    const a = [], l = [];
+    return t.split("").forEach((r, d) => {
+      r === "!" && t[d - 1] !== "!" ? l.push(d - l.length) : a.push(r);
+    }), { mask: a.join(""), escaped: l };
   }
-  process(a, t, l = !0) {
-    if (this.opts.number != null) return _t(a, l, this.opts);
-    if (t == null) return a;
-    const r = `v=${a},mr=${t},m=${l ? 1 : 0}`;
+  process(t, a, l = !0) {
+    if (this.opts.number != null) return _t(t, l, this.opts);
+    if (a == null) return t;
+    const r = `v=${t},mr=${a},m=${l ? 1 : 0}`;
     if (this.memo.has(r)) return this.memo.get(r);
-    const { mask: c, escaped: u } = this.escapeMask(t), V = [], v = this.opts.tokens != null ? this.opts.tokens : {}, D = this.isReversed() ? -1 : 1, x = this.isReversed() ? "unshift" : "push", z = this.isReversed() ? 0 : c.length - 1, U = this.isReversed() ? () => n > -1 && d > -1 : () => n < c.length && d < a.length, P = (s) => !this.isReversed() && s <= z || this.isReversed() && s >= z;
-    let R, L = -1, n = this.isReversed() ? c.length - 1 : 0, d = this.isReversed() ? a.length - 1 : 0, C = !1;
+    const { mask: d, escaped: m } = this.escapeMask(a), g = [], c = this.opts.tokens != null ? this.opts.tokens : {}, b = this.isReversed() ? -1 : 1, S = this.isReversed() ? "unshift" : "push", j = this.isReversed() ? 0 : d.length - 1, U = this.isReversed() ? () => n > -1 && f > -1 : () => n < d.length && f < t.length, M = (s) => !this.isReversed() && s <= j || this.isReversed() && s >= j;
+    let Y, z = -1, n = this.isReversed() ? d.length - 1 : 0, f = this.isReversed() ? t.length - 1 : 0, C = !1;
     for (; U(); ) {
-      const s = c.charAt(n), b = v[s], A = (b == null ? void 0 : b.transform) != null ? b.transform(a.charAt(d)) : a.charAt(d);
-      if (!u.includes(n) && b != null ? (A.match(b.pattern) != null ? (V[x](A), b.repeated ? (L === -1 ? L = n : n === z && n !== L && (n = L - D), z === L && (n -= D)) : b.multiple && (C = !0, n -= D), n += D) : b.multiple ? C && (n += D, d -= D, C = !1) : A === R ? R = void 0 : b.optional && (n += D, d -= D), d += D) : (l && !this.isEager() && V[x](s), A === s && !this.isEager() ? d += D : R = s, this.isEager() || (n += D)), this.isEager())
-        for (; P(n) && (v[c.charAt(n)] == null || u.includes(n)); ) {
+      const s = d.charAt(n), k = c[s], V = (k == null ? void 0 : k.transform) != null ? k.transform(t.charAt(f)) : t.charAt(f);
+      if (!m.includes(n) && k != null ? (V.match(k.pattern) != null ? (g[S](V), k.repeated ? (z === -1 ? z = n : n === j && n !== z && (n = z - b), j === z && (n -= b)) : k.multiple && (C = !0, n -= b), n += b) : k.multiple ? C && (n += b, f -= b, C = !1) : V === Y ? Y = void 0 : k.optional && (n += b, f -= b), f += b) : (l && !this.isEager() && g[S](s), V === s && !this.isEager() ? f += b : Y = s, this.isEager() || (n += b)), this.isEager())
+        for (; M(n) && (c[d.charAt(n)] == null || m.includes(n)); ) {
           if (l) {
-            if (V[x](c.charAt(n)), a.charAt(d) === c.charAt(n)) {
-              n += D, d += D;
+            if (g[S](d.charAt(n)), t.charAt(f) === d.charAt(n)) {
+              n += b, f += b;
               continue;
             }
-          } else c.charAt(n) === a.charAt(d) && (d += D);
-          n += D;
+          } else d.charAt(n) === t.charAt(f) && (f += b);
+          n += b;
         }
     }
-    return this.memo.set(r, V.join("")), this.memo.get(r);
+    return this.memo.set(r, g.join("")), this.memo.get(r);
   }
 }
 class la {
-  constructor(a, t = {}) {
+  constructor(t, a = {}) {
     Ee(this, "items", /* @__PURE__ */ new Map()), Ee(this, "eventAbortController"), Ee(this, "onInput", (l) => {
       if (l instanceof CustomEvent && l.type === "input" && !l.isTrusted && !l.bubbles)
         return;
-      const r = l.target, c = this.items.get(r);
-      if (c === void 0) return;
-      const u = "inputType" in l && l.inputType.startsWith("delete"), V = c.isEager(), v = u && V && c.unmasked(r.value) === "" ? "" : r.value;
-      this.fixCursor(r, u, () => this.setValue(r, v));
-    }), this.options = t, this.eventAbortController = new AbortController(), this.init(this.getInputs(a));
+      const r = l.target, d = this.items.get(r);
+      if (d === void 0) return;
+      const m = "inputType" in l && l.inputType.startsWith("delete"), g = d.isEager(), c = m && g && d.unmasked(r.value) === "" ? "" : r.value;
+      this.fixCursor(r, m, () => this.setValue(r, c));
+    }), this.options = a, this.eventAbortController = new AbortController(), this.init(this.getInputs(t));
   }
-  update(a = {}) {
-    this.options = { ...a }, this.init(Array.from(this.items.keys()));
+  update(t = {}) {
+    this.options = { ...t }, this.init(Array.from(this.items.keys()));
   }
-  updateValue(a) {
-    var t;
-    a.value !== "" && a.value !== ((t = this.processInput(a)) == null ? void 0 : t.masked) && this.setValue(a, a.value);
+  updateValue(t) {
+    var a;
+    t.value !== "" && t.value !== ((a = this.processInput(t)) == null ? void 0 : a.masked) && this.setValue(t, t.value);
   }
   destroy() {
     this.eventAbortController.abort(), this.items.clear();
   }
-  init(a) {
-    const t = this.getOptions(this.options);
-    for (const l of a) {
+  init(t) {
+    const a = this.getOptions(this.options);
+    for (const l of t) {
       if (!this.items.has(l)) {
-        const { signal: c } = this.eventAbortController;
-        l.addEventListener("input", this.onInput, { capture: !0, signal: c });
+        const { signal: d } = this.eventAbortController;
+        l.addEventListener("input", this.onInput, { capture: !0, signal: d });
       }
-      const r = new oa(ea(l, t));
+      const r = new oa(ea(l, a));
       this.items.set(l, r), queueMicrotask(() => this.updateValue(l)), l.selectionStart === null && r.isEager() && console.warn("Maska: input of `%s` type is not supported", l.type);
     }
   }
-  getInputs(a) {
-    return typeof a == "string" ? Array.from(document.querySelectorAll(a)) : "length" in a ? Array.from(a) : [a];
+  getInputs(t) {
+    return typeof t == "string" ? Array.from(document.querySelectorAll(t)) : "length" in t ? Array.from(t) : [t];
   }
-  getOptions(a) {
-    const { onMaska: t, preProcess: l, postProcess: r, ...c } = a;
-    return c;
+  getOptions(t) {
+    const { onMaska: a, preProcess: l, postProcess: r, ...d } = t;
+    return d;
   }
-  fixCursor(a, t, l) {
-    var r, c;
-    const u = a.selectionStart, V = a.value;
-    if (l(), u === null || u === V.length && !t) return;
-    const v = a.value, D = V.slice(0, u), x = v.slice(0, u), z = (r = this.processInput(a, D)) == null ? void 0 : r.unmasked, U = (c = this.processInput(a, x)) == null ? void 0 : c.unmasked;
-    if (z === void 0 || U === void 0) return;
-    let P = u;
-    D !== x && (P += t ? v.length - V.length : z.length - U.length), a.setSelectionRange(P, P);
+  fixCursor(t, a, l) {
+    var r, d;
+    const m = t.selectionStart, g = t.value;
+    if (l(), m === null || m === g.length && !a) return;
+    const c = t.value, b = g.slice(0, m), S = c.slice(0, m), j = (r = this.processInput(t, b)) == null ? void 0 : r.unmasked, U = (d = this.processInput(t, S)) == null ? void 0 : d.unmasked;
+    if (j === void 0 || U === void 0) return;
+    let M = m;
+    b !== S && (M += a ? c.length - g.length : j.length - U.length), t.setSelectionRange(M, M);
   }
-  setValue(a, t) {
-    const l = this.processInput(a, t);
-    l !== void 0 && (a.value = l.masked, this.options.onMaska != null && (Array.isArray(this.options.onMaska) ? this.options.onMaska.forEach((r) => r(l)) : this.options.onMaska(l)), a.dispatchEvent(new CustomEvent("maska", { detail: l })), a.dispatchEvent(new CustomEvent("input", { detail: l.masked })));
+  setValue(t, a) {
+    const l = this.processInput(t, a);
+    l !== void 0 && (t.value = l.masked, this.options.onMaska != null && (Array.isArray(this.options.onMaska) ? this.options.onMaska.forEach((r) => r(l)) : this.options.onMaska(l)), t.dispatchEvent(new CustomEvent("maska", { detail: l })), t.dispatchEvent(new CustomEvent("input", { detail: l.masked })));
   }
-  processInput(a, t) {
-    const l = this.items.get(a);
+  processInput(t, a) {
+    const l = this.items.get(t);
     if (l === void 0) return;
-    let r = t ?? a.value;
+    let r = a ?? t.value;
     this.options.preProcess != null && (r = this.options.preProcess(r));
-    let c = l.masked(r);
-    return this.options.postProcess != null && (c = this.options.postProcess(c)), {
-      masked: c,
+    let d = l.masked(r);
+    return this.options.postProcess != null && (d = this.options.postProcess(d)), {
+      masked: d,
       unmasked: l.unmasked(r),
       completed: l.completed(r)
     };
   }
 }
-const Ue = /* @__PURE__ */ new WeakMap(), na = (e, a) => {
+const Ue = /* @__PURE__ */ new WeakMap(), na = (e, t) => {
   if (e.arg == null || e.instance == null) return;
-  const t = "setup" in e.instance.$.type;
-  e.arg in e.instance ? e.instance[e.arg] = a : t && console.warn("Maska: please expose `%s` using defineExpose", e.arg);
-}, _e = (e, a) => {
-  var t;
+  const a = "setup" in e.instance.$.type;
+  e.arg in e.instance ? e.instance[e.arg] = t : a && console.warn("Maska: please expose `%s` using defineExpose", e.arg);
+}, tt = (e, t) => {
+  var a;
   const l = e instanceof HTMLInputElement ? e : e.querySelector("input");
   if (l == null || (l == null ? void 0 : l.type) === "file") return;
   let r = {};
-  if (a.value != null && (r = typeof a.value == "string" ? { mask: a.value } : { ...a.value }), a.arg != null) {
-    const c = (u) => {
-      const V = a.modifiers.unmasked ? u.unmasked : a.modifiers.completed ? u.completed : u.masked;
-      na(a, V);
+  if (t.value != null && (r = typeof t.value == "string" ? { mask: t.value } : { ...t.value }), t.arg != null) {
+    const d = (m) => {
+      const g = t.modifiers.unmasked ? m.unmasked : t.modifiers.completed ? m.completed : m.masked;
+      na(t, g);
     };
-    r.onMaska = r.onMaska == null ? c : Array.isArray(r.onMaska) ? [...r.onMaska, c] : [r.onMaska, c];
+    r.onMaska = r.onMaska == null ? d : Array.isArray(r.onMaska) ? [...r.onMaska, d] : [r.onMaska, d];
   }
-  Ue.has(l) ? (t = Ue.get(l)) == null || t.update(r) : Ue.set(l, new la(l, r));
+  Ue.has(l) ? (a = Ue.get(l)) == null || a.update(r) : Ue.set(l, new la(l, r));
 }, ra = {
   string: "text",
   integer: "number",
@@ -548,19 +548,19 @@ const Ue = /* @__PURE__ */ new WeakMap(), na = (e, a) => {
 };
 function sa(e) {
   var l;
-  const a = ra[e.type] ?? "text", t = {
+  const t = ra[e.type] ?? "text", a = {
     field: e.name,
     label: e.label,
-    type: a,
+    type: t,
     required: e.required ?? !1
   };
-  return (e.type === "decimal" || e.type === "float") && (t.minFractionDigits = 2, t.maxFractionDigits = 2), e.type === "boolean" && (t.defaultValue = !1), e.type === "choice" && ((l = e.choices) != null && l.length) && (t.options = e.choices.map((r) => ({
+  return (e.type === "decimal" || e.type === "float") && (a.minFractionDigits = 2, a.maxFractionDigits = 2), e.type === "boolean" && (a.defaultValue = !1), e.type === "choice" && ((l = e.choices) != null && l.length) && (a.options = e.choices.map((r) => ({
     label: r.label,
     value: r.value
-  }))), e.type === "fk" && (t.endpoint = e.endpoint, e.option_label && (t.optionLabel = e.option_label), e.option_value && (t.optionValue = e.option_value)), t;
+  }))), e.type === "fk" && (a.endpoint = e.endpoint, e.option_label && (a.optionLabel = e.option_label), e.option_value && (a.optionValue = e.option_value)), a;
 }
 function ia(e) {
-  return e.filter((a) => !a.read_only && a.name !== "id").map(sa);
+  return e.filter((t) => !t.read_only && t.name !== "id").map(sa);
 }
 const ua = {
   boolean: "boolean",
@@ -578,28 +578,28 @@ function da(e) {
     sortable: !0
   };
 }
-function ca(e, a = 6) {
-  return e.filter((t) => !t.read_only && t.name !== "id").slice(0, a).map(da);
+function ca(e, t = 6) {
+  return e.filter((a) => !a.read_only && a.name !== "id").slice(0, t).map(da);
 }
-function ht() {
+function bt() {
   const e = Ft();
-  function a(c, u = "Sucesso") {
-    e.add({ severity: "success", summary: u, detail: c, life: 3e3 });
+  function t(d, m = "Sucesso") {
+    e.add({ severity: "success", summary: m, detail: d, life: 3e3 });
   }
-  function t(c, u = "Erro") {
-    e.add({ severity: "error", summary: u, detail: c, life: 5e3 });
+  function a(d, m = "Erro") {
+    e.add({ severity: "error", summary: m, detail: d, life: 5e3 });
   }
-  function l(c, u = "Atenção") {
-    e.add({ severity: "warn", summary: u, detail: c, life: 4e3 });
+  function l(d, m = "Atenção") {
+    e.add({ severity: "warn", summary: m, detail: d, life: 4e3 });
   }
-  function r(c, u = "Info") {
-    e.add({ severity: "info", summary: u, detail: c, life: 3e3 });
+  function r(d, m = "Info") {
+    e.add({ severity: "info", summary: m, detail: d, life: 3e3 });
   }
-  return { success: a, error: t, warn: l, info: r };
+  return { success: t, error: a, warn: l, info: r };
 }
-function yt() {
+function kt() {
   const e = Et();
-  function a(l, r = "Deseja realmente excluir este registro?") {
+  function t(l, r = "Deseja realmente excluir este registro?") {
     e.require({
       message: r,
       header: "Confirmar Exclusão",
@@ -616,10 +616,10 @@ function yt() {
       accept: l
     });
   }
-  function t(l, r, c = "Confirmação") {
+  function a(l, r, d = "Confirmação") {
     e.require({
       message: l,
-      header: c,
+      header: d,
       icon: "pi pi-question-circle",
       rejectLabel: "Cancelar",
       rejectProps: {
@@ -630,49 +630,49 @@ function yt() {
       accept: r
     });
   }
-  return { confirmDelete: a, confirmAction: t };
+  return { confirmDelete: t, confirmAction: a };
 }
 function fa(e) {
-  return e.replace(/_/g, " ").replace(/^\w/, (a) => a.toUpperCase());
+  return e.replace(/_/g, " ").replace(/^\w/, (t) => t.toUpperCase());
 }
 function ma(e) {
   if (typeof e == "string")
     return e;
   if (Array.isArray(e)) {
-    const a = e.filter((t) => typeof t == "string");
-    return a.length > 0 ? a.join(" ") : null;
+    const t = e.filter((a) => typeof a == "string");
+    return t.length > 0 ? t.join(" ") : null;
   }
   if (typeof e == "object" && e !== null) {
-    const a = e;
-    if (Array.isArray(a.non_field_errors) && a.non_field_errors.length > 0)
-      return a.non_field_errors.filter((l) => typeof l == "string").join(" ");
-    const t = [];
-    for (const [l, r] of Object.entries(a)) {
+    const t = e;
+    if (Array.isArray(t.non_field_errors) && t.non_field_errors.length > 0)
+      return t.non_field_errors.filter((l) => typeof l == "string").join(" ");
+    const a = [];
+    for (const [l, r] of Object.entries(t)) {
       if (l === "non_field_errors") continue;
-      const c = fa(l);
+      const d = fa(l);
       if (Array.isArray(r)) {
-        const u = r.filter((V) => typeof V == "string");
-        u.length > 0 && t.push(`${c}: ${u.join(" ")}`);
-      } else typeof r == "string" && t.push(`${c}: ${r}`);
+        const m = r.filter((g) => typeof g == "string");
+        m.length > 0 && a.push(`${d}: ${m.join(" ")}`);
+      } else typeof r == "string" && a.push(`${d}: ${r}`);
     }
-    return t.length > 0 ? t.join(`
+    return a.length > 0 ? a.join(`
 `) : null;
   }
   return null;
 }
-function Ye(e, a = "Erro inesperado") {
-  var c;
-  if (!e || typeof e != "object") return a;
-  const t = e, l = (c = t.response) == null ? void 0 : c.data;
+function Ye(e, t = "Erro inesperado") {
+  var d;
+  if (!e || typeof e != "object") return t;
+  const a = e, l = (d = a.response) == null ? void 0 : d.data;
   if (!l || typeof l != "object")
-    return t.message || a;
+    return a.message || t;
   const r = l.detail ?? l;
-  return ma(r) || a;
+  return ma(r) || t;
 }
-function bo() {
+function ko() {
   return { extractApiError: Ye };
 }
-const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-autocompletefk-toolbar" }, ha = { class: "w-autocompletefk-toolbar-actions" }, ya = { class: "flex items-center justify-end gap-1" }, ba = { class: "w-autocompletefk-footer" }, bt = /* @__PURE__ */ Ie({
+const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-autocompletefk-toolbar" }, ha = { class: "w-autocompletefk-toolbar-actions" }, ya = { class: "flex items-center justify-end gap-1" }, ba = { class: "w-autocompletefk-footer" }, wt = /* @__PURE__ */ Re({
   __name: "WAutoCompleteFK",
   props: {
     modelValue: {},
@@ -694,211 +694,211 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
     dialogWidth: { default: "480px" }
   },
   emits: ["update:modelValue"],
-  setup(e, { emit: a }) {
-    const t = e, l = a, r = Me(je);
+  setup(e, { emit: t }) {
+    const a = e, l = t, r = Me(je);
     if (!r)
       throw new Error("[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin.");
-    const c = r, u = ht(), { confirmDelete: V } = yt(), v = I(null), D = I([]), x = I(!1);
-    let z = null;
-    async function U(m) {
+    const d = r, m = bt(), { confirmDelete: g } = kt(), c = L(null), b = L([]), S = L(!1);
+    let j = null;
+    async function U(p) {
       try {
-        const p = await c.get(`${t.endpoint}${m}/`);
-        v.value = p.data;
+        const v = await d.get(`${a.endpoint}${p}/`);
+        c.value = v.data;
       } catch {
-        v.value = null;
+        c.value = null;
       }
     }
-    async function P(m) {
-      x.value = !0;
+    async function M(p) {
+      S.value = !0;
       try {
-        const p = { page_size: 20 };
-        m && (p.search = m);
-        const k = (await c.get(t.endpoint, { params: p })).data;
-        D.value = k.data ?? k.results ?? k;
+        const v = { page_size: 20 };
+        p && (v.search = p);
+        const D = (await d.get(a.endpoint, { params: v })).data;
+        b.value = D.data ?? D.results ?? D;
       } catch {
-        D.value = [];
+        b.value = [];
       } finally {
-        x.value = !1;
+        S.value = !1;
       }
     }
-    function R(m) {
-      const p = m.query || "";
-      if (p.length < t.minLength) {
-        D.value = [];
+    function Y(p) {
+      const v = p.query || "";
+      if (v.length < a.minLength) {
+        b.value = [];
         return;
       }
-      z && clearTimeout(z), z = setTimeout(() => P(p), 300);
+      j && clearTimeout(j), j = setTimeout(() => M(v), 300);
     }
-    function L(m) {
-      v.value = m.value, l("update:modelValue", m.value);
+    function z(p) {
+      c.value = p.value, l("update:modelValue", p.value);
     }
     function n() {
-      v.value = null, l("update:modelValue", null);
+      c.value = null, l("update:modelValue", null);
     }
     Ne(
-      () => t.modelValue,
-      async (m) => {
-        if (m != null) {
-          if (typeof m == "object" && m !== null && t.optionLabel in m) {
-            v.value = m;
+      () => a.modelValue,
+      async (p) => {
+        if (p != null) {
+          if (typeof p == "object" && p !== null && a.optionLabel in p) {
+            c.value = p;
             return;
           }
-          (!v.value || v.value[t.optionValue] !== m) && await U(m);
+          (!c.value || c.value[a.optionValue] !== p) && await U(p);
         } else
-          v.value = null;
+          c.value = null;
       },
       { immediate: !0 }
     );
-    const d = I(!1), C = I([]), s = I(!1), b = I(""), A = I(1), K = I(15), i = I(0), g = I(null), o = I(null), f = I(0);
-    let M = null;
-    const $ = I([]), E = W(() => {
-      var m;
-      return (m = t.crudFields) != null && m.length ? !0 : $.value.length > 0;
-    }), _ = W(() => t.canCreate ?? E.value), Q = W(() => t.canEdit ?? E.value), Z = W(() => t.canDelete ?? E.value), ue = W(() => Q.value || Z.value), ee = W(() => {
-      var m;
-      return (m = t.crudFields) != null && m.length ? t.crudFields : ia($.value);
+    const f = L(!1), C = L([]), s = L(!1), k = L(""), V = L(1), Z = L(15), F = L(0), i = L(null), w = L(null), o = L(0);
+    let u = null;
+    const x = L([]), A = W(() => {
+      var p;
+      return (p = a.crudFields) != null && p.length ? !0 : x.value.length > 0;
+    }), _ = W(() => a.canCreate ?? A.value), G = W(() => a.canEdit ?? A.value), J = W(() => a.canDelete ?? A.value), ue = W(() => G.value || J.value), ee = W(() => {
+      var p;
+      return (p = a.crudFields) != null && p.length ? a.crudFields : ia(x.value);
     }), oe = W(() => {
-      var m, p;
-      return (m = t.crudColumns) != null && m.length ? t.crudColumns : (p = t.columns) != null && p.length ? t.columns.map((N) => ({
+      var p, v;
+      return (p = a.crudColumns) != null && p.length ? a.crudColumns : (v = a.columns) != null && v.length ? a.columns.map((N) => ({
         field: N.field,
         header: N.header,
         sortable: !0
-      })) : $.value.length ? ca($.value) : [{ field: t.optionLabel, header: t.optionLabel, sortable: !0 }];
+      })) : x.value.length ? ca(x.value) : [{ field: a.optionLabel, header: a.optionLabel, sortable: !0 }];
     });
     async function te() {
-      var m, p, N;
+      var p, v, N;
       s.value = !0;
       try {
-        const k = {
-          page: A.value,
-          page_size: K.value
+        const D = {
+          page: V.value,
+          page_size: Z.value
         };
-        b.value && (k.search = b.value), o.value && f.value !== 0 && (k.ordering = f.value === -1 ? `-${o.value}` : o.value);
-        const B = (await c.get(t.endpoint, { params: k })).data;
-        C.value = B.data ?? B.results ?? B, i.value = B.count ?? B.rows ?? 0, (m = B.extras) != null && m.fields && !((p = t.columns) != null && p.length) && !((N = t.crudFields) != null && N.length) && ($.value = B.extras.fields);
+        k.value && (D.search = k.value), w.value && o.value !== 0 && (D.ordering = o.value === -1 ? `-${w.value}` : w.value);
+        const B = (await d.get(a.endpoint, { params: D })).data;
+        C.value = B.data ?? B.results ?? B, F.value = B.count ?? B.rows ?? 0, (p = B.extras) != null && p.fields && !((v = a.columns) != null && v.length) && !((N = a.crudFields) != null && N.length) && (x.value = B.extras.fields);
       } catch {
-        C.value = [], i.value = 0;
+        C.value = [], F.value = 0;
       } finally {
         s.value = !1;
       }
     }
     function O() {
-      t.disabled || (b.value = "", A.value = 1, o.value = null, f.value = 0, g.value = null, d.value = !0, te());
+      a.disabled || (k.value = "", V.value = 1, w.value = null, o.value = 0, i.value = null, f.value = !0, te());
     }
-    function ye(m) {
-      A.value = m.page + 1, K.value = m.rows, te();
+    function be(p) {
+      V.value = p.page + 1, Z.value = p.rows, te();
     }
-    function de(m) {
-      o.value = m.sortField ?? null, f.value = m.sortOrder ?? 0, A.value = 1, te();
+    function de(p) {
+      w.value = p.sortField ?? null, o.value = p.sortOrder ?? 0, V.value = 1, te();
     }
-    function $e() {
-      g.value && (v.value = g.value, l("update:modelValue", g.value), d.value = !1);
+    function xe() {
+      i.value && (c.value = i.value, l("update:modelValue", i.value), f.value = !1);
     }
-    function Ve(m) {
-      v.value = m.data, l("update:modelValue", m.data), d.value = !1;
+    function Ve(p) {
+      c.value = p.data, l("update:modelValue", p.data), f.value = !1;
     }
-    Ne(b, () => {
-      M && clearTimeout(M), M = setTimeout(() => {
-        A.value = 1, te();
+    Ne(k, () => {
+      u && clearTimeout(u), u = setTimeout(() => {
+        V.value = 1, te();
       }, 300);
     });
-    const le = I(!1), be = I(!1), ne = I(null), ae = ie({}), ce = W(() => ne.value !== null), fe = W(
+    const le = L(!1), ke = L(!1), ne = L(null), ae = ie({}), ce = W(() => ne.value !== null), fe = W(
       () => ce.value ? "Editar Registro" : "Novo Registro"
     );
-    function ke() {
-      const m = {};
-      for (const p of ee.value)
-        m[p.field] = p.defaultValue !== void 0 ? typeof p.defaultValue == "function" ? p.defaultValue() : p.defaultValue : null;
-      return m;
-    }
     function we() {
-      const m = ke();
-      for (const p of Object.keys(ae))
-        delete ae[p];
-      for (const [p, N] of Object.entries(m))
-        ae[p] = N;
+      const p = {};
+      for (const v of ee.value)
+        p[v.field] = v.defaultValue !== void 0 ? typeof v.defaultValue == "function" ? v.defaultValue() : v.defaultValue : null;
+      return p;
+    }
+    function De() {
+      const p = we();
+      for (const v of Object.keys(ae))
+        delete ae[v];
+      for (const [v, N] of Object.entries(p))
+        ae[v] = N;
     }
     function me() {
-      ne.value = null, we(), le.value = !0;
+      ne.value = null, De(), le.value = !0;
     }
-    function pe(m) {
-      ne.value = m;
-      for (const p of ee.value)
-        ae[p.field] = m[p.field] !== void 0 ? m[p.field] : null;
+    function pe(p) {
+      ne.value = p;
+      for (const v of ee.value)
+        ae[v.field] = p[v.field] !== void 0 ? p[v.field] : null;
       le.value = !0;
     }
-    function De(m, p) {
-      ae[m] = p;
+    function $e(p, v) {
+      ae[p] = v;
     }
     async function y() {
-      be.value = !0;
+      ke.value = !0;
       try {
-        const m = { ...ae };
+        const p = { ...ae };
         for (const N of ee.value) {
-          const k = m[N.field];
-          if (N.type === "fk" && k !== null && typeof k == "object") {
-            const Y = N.optionValue || "id";
-            m[N.field] = k[Y] ?? k;
+          const D = p[N.field];
+          if (N.type === "fk" && D !== null && typeof D == "object") {
+            const R = N.optionValue || "id";
+            p[N.field] = D[R] ?? D;
           }
         }
-        let p;
+        let v;
         if (ce.value && ne.value) {
-          const N = ne.value[t.optionValue];
-          p = await c.patch(
-            `${t.endpoint}${N}/`,
-            m
+          const N = ne.value[a.optionValue];
+          v = await d.patch(
+            `${a.endpoint}${N}/`,
+            p
           );
-          const k = C.value.findIndex(
-            (Y) => Y[t.optionValue] === N
+          const D = C.value.findIndex(
+            (R) => R[a.optionValue] === N
           );
-          k !== -1 && (C.value[k] = p.data), u.success("Registro atualizado com sucesso");
+          D !== -1 && (C.value[D] = v.data), m.success("Registro atualizado com sucesso");
         } else
-          p = await c.post(t.endpoint, m), C.value.unshift(p.data), i.value++, u.success("Registro criado com sucesso");
-        le.value = !1, ne.value = null, g.value = p.data;
-      } catch (m) {
-        u.error(Ye(m, "Erro ao salvar registro"));
+          v = await d.post(a.endpoint, p), C.value.unshift(v.data), F.value++, m.success("Registro criado com sucesso");
+        le.value = !1, ne.value = null, i.value = v.data;
+      } catch (p) {
+        m.error(Ye(p, "Erro ao salvar registro"));
       } finally {
-        be.value = !1;
+        ke.value = !1;
       }
     }
-    function S(m) {
-      V(async () => {
+    function P(p) {
+      g(async () => {
         try {
-          const p = m[t.optionValue];
-          await c.delete(`${t.endpoint}${p}/`);
+          const v = p[a.optionValue];
+          await d.delete(`${a.endpoint}${v}/`);
           const N = C.value.findIndex(
-            (k) => k[t.optionValue] === p
+            (D) => D[a.optionValue] === v
           );
-          N !== -1 && (C.value.splice(N, 1), i.value--), v.value && v.value[t.optionValue] === p && (v.value = null, l("update:modelValue", null)), g.value && g.value[t.optionValue] === p && (g.value = null), u.success("Registro excluído com sucesso");
-        } catch (p) {
-          u.error(Ye(p, "Erro ao excluir registro"));
+          N !== -1 && (C.value.splice(N, 1), F.value--), c.value && c.value[a.optionValue] === v && (c.value = null, l("update:modelValue", null)), i.value && i.value[a.optionValue] === v && (i.value = null), m.success("Registro excluído com sucesso");
+        } catch (v) {
+          m.error(Ye(v, "Erro ao excluir registro"));
         }
       });
     }
-    return (m, p) => {
-      const N = et("tooltip");
-      return h(), j(ge, null, [
-        F("div", pa, [
-          q(w(rt), {
-            "model-value": v.value,
-            suggestions: D.value,
+    return (p, v) => {
+      const N = at("tooltip");
+      return h(), I(ge, null, [
+        E("div", pa, [
+          q($(it), {
+            "model-value": c.value,
+            suggestions: b.value,
             "option-label": e.optionLabel,
             placeholder: e.placeholder,
             disabled: e.disabled,
             "force-selection": e.forceSelection,
-            loading: x.value,
+            loading: S.value,
             fluid: "",
-            onComplete: R,
-            onItemSelect: L,
+            onComplete: Y,
+            onItemSelect: z,
             onClear: n
           }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "force-selection", "loading"]),
-          Se((h(), j("button", {
+          Se((h(), I("button", {
             type: "button",
             disabled: e.disabled,
             class: "w-autocompletefk-trigger",
             onClick: O
-          }, [...p[6] || (p[6] = [
-            F("i", { class: "pi pi-search" }, null, -1)
+          }, [...v[6] || (v[6] = [
+            E("i", { class: "pi pi-search" }, null, -1)
           ])], 8, va)), [
             [
               N,
@@ -908,47 +908,47 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
             ]
           ])
         ]),
-        q(w(nt), {
-          visible: d.value,
-          "onUpdate:visible": p[4] || (p[4] = (k) => d.value = k),
+        q($(st), {
+          visible: f.value,
+          "onUpdate:visible": v[4] || (v[4] = (D) => f.value = D),
           header: e.dialogHeader || "Pesquisar",
           style: { width: "80vw" },
           modal: "",
           draggable: !1,
           class: "w-autocompletefk-dialog"
         }, {
-          footer: J(() => [
-            F("div", ba, [
-              q(w(se), {
+          footer: K(() => [
+            E("div", ba, [
+              q($(se), {
                 label: "Cancelar",
                 severity: "secondary",
                 text: "",
-                onClick: p[3] || (p[3] = (k) => d.value = !1)
+                onClick: v[3] || (v[3] = (D) => f.value = !1)
               }),
-              q(w(se), {
+              q($(se), {
                 label: "Selecionar",
                 icon: "pi pi-check",
-                disabled: !g.value,
-                onClick: $e
+                disabled: !i.value,
+                onClick: xe
               }, null, 8, ["disabled"])
             ])
           ]),
-          default: J(() => [
-            F("div", ga, [
-              q(w(ot), { class: "w-autocompletefk-toolbar-search" }, {
-                default: J(() => [
-                  q(w(lt), { class: "pi pi-search" }),
-                  q(w(ve), {
-                    modelValue: b.value,
-                    "onUpdate:modelValue": p[0] || (p[0] = (k) => b.value = k),
+          default: K(() => [
+            E("div", ga, [
+              q($(nt), { class: "w-autocompletefk-toolbar-search" }, {
+                default: K(() => [
+                  q($(rt), { class: "pi pi-search" }),
+                  q($(ve), {
+                    modelValue: k.value,
+                    "onUpdate:modelValue": v[0] || (v[0] = (D) => k.value = D),
                     placeholder: "Pesquisar...",
                     class: "w-full"
                   }, null, 8, ["modelValue"])
                 ]),
                 _: 1
               }),
-              F("div", ha, [
-                _.value ? (h(), T(w(se), {
+              E("div", ha, [
+                _.value ? (h(), T($(se), {
                   key: 0,
                   label: "Novo",
                   icon: "pi pi-plus",
@@ -957,9 +957,9 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
                 })) : H("", !0)
               ])
             ]),
-            q(w(at), {
-              selection: g.value,
-              "onUpdate:selection": p[1] || (p[1] = (k) => g.value = k),
+            q($(lt), {
+              selection: i.value,
+              "onUpdate:selection": v[1] || (v[1] = (D) => i.value = D),
               value: C.value,
               loading: s.value,
               paginator: "",
@@ -967,57 +967,57 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
               "striped-rows": "",
               "removable-sort": "",
               size: "small",
-              rows: K.value,
-              "total-records": i.value,
-              "sort-field": o.value ?? void 0,
-              "sort-order": f.value,
+              rows: Z.value,
+              "total-records": F.value,
+              "sort-field": w.value ?? void 0,
+              "sort-order": o.value,
               "selection-mode": "single",
               "data-key": e.optionValue,
-              onPage: ye,
-              onSort: p[2] || (p[2] = (k) => de({ sortField: k.sortField, sortOrder: k.sortOrder })),
+              onPage: be,
+              onSort: v[2] || (v[2] = (D) => de({ sortField: D.sortField, sortOrder: D.sortOrder })),
               onRowDblclick: Ve
             }, {
-              empty: J(() => [...p[7] || (p[7] = [
-                F("div", { class: "w-autocompletefk-empty" }, " Nenhum registro encontrado ", -1)
+              empty: K(() => [...v[7] || (v[7] = [
+                E("div", { class: "w-autocompletefk-empty" }, " Nenhum registro encontrado ", -1)
               ])]),
-              default: J(() => [
-                q(w(Pe), {
+              default: K(() => [
+                q($(Pe), {
                   "selection-mode": "single",
                   "header-style": "width: 3rem"
                 }),
-                (h(!0), j(ge, null, xe(oe.value, (k) => (h(), T(w(Pe), {
-                  key: k.field,
-                  field: k.field,
-                  header: k.header,
-                  sortable: k.sortable ?? !0,
-                  style: Fe(k.style)
+                (h(!0), I(ge, null, he(oe.value, (D) => (h(), T($(Pe), {
+                  key: D.field,
+                  field: D.field,
+                  header: D.header,
+                  sortable: D.sortable ?? !0,
+                  style: Fe(D.style)
                 }, {
-                  body: J(({ data: Y }) => [
-                    k.type ? (h(), T(Oe, {
+                  body: K(({ data: R }) => [
+                    D.type ? (h(), T(He, {
                       key: 0,
-                      column: k,
-                      value: Y[k.field],
-                      "row-data": Y
-                    }, null, 8, ["column", "value", "row-data"])) : (h(), j(ge, { key: 1 }, [
-                      Be(X(Y[k.field]), 1)
+                      column: D,
+                      value: R[D.field],
+                      "row-data": R
+                    }, null, 8, ["column", "value", "row-data"])) : (h(), I(ge, { key: 1 }, [
+                      Be(Q(R[D.field]), 1)
                     ], 64))
                   ]),
                   _: 2
                 }, 1032, ["field", "header", "sortable", "style"]))), 128)),
-                ue.value ? (h(), T(w(Pe), {
+                ue.value ? (h(), T($(Pe), {
                   key: 0,
                   header: "",
                   style: { width: "6rem" }
                 }, {
-                  body: J(({ data: k }) => [
-                    F("div", ya, [
-                      Q.value ? Se((h(), T(w(se), {
+                  body: K(({ data: D }) => [
+                    E("div", ya, [
+                      G.value ? Se((h(), T($(se), {
                         key: 0,
                         icon: "pi pi-pencil",
                         text: "",
                         rounded: "",
                         size: "small",
-                        onClick: (Y) => pe(k)
+                        onClick: (R) => pe(D)
                       }, null, 8, ["onClick"])), [
                         [
                           N,
@@ -1026,14 +1026,14 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
                           { top: !0 }
                         ]
                       ]) : H("", !0),
-                      Z.value ? Se((h(), T(w(se), {
+                      J.value ? Se((h(), T($(se), {
                         key: 1,
                         icon: "pi pi-trash",
                         text: "",
                         rounded: "",
                         size: "small",
                         severity: "danger",
-                        onClick: (Y) => S(k)
+                        onClick: (R) => P(D)
                       }, null, 8, ["onClick"])), [
                         [
                           N,
@@ -1052,19 +1052,19 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
           ]),
           _: 1
         }, 8, ["visible", "header"]),
-        E.value ? (h(), T(We, {
+        A.value ? (h(), T(Ke, {
           key: 0,
           visible: le.value,
           title: fe.value,
           fields: ee.value,
           "form-data": ae,
           "is-editing": ce.value,
-          saving: be.value,
+          saving: ke.value,
           width: e.dialogWidth,
-          "onUpdate:visible": p[5] || (p[5] = (k) => {
-            le.value = k, k || (ne.value = null);
+          "onUpdate:visible": v[5] || (v[5] = (D) => {
+            le.value = D, D || (ne.value = null);
           }),
-          "onUpdate:field": De,
+          "onUpdate:field": $e,
           onSave: y
         }, null, 8, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])) : H("", !0)
       ], 64);
@@ -1073,10 +1073,10 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
 }), ka = { class: "w-crud-form-fields" }, wa = {
   key: 0,
   class: "w-crud-form-switch"
-}, Da = { class: "w-crud-form-switch-label" }, Ca = {
+}, Da = { class: "w-crud-form-switch-label" }, $a = {
   key: 1,
   class: "w-crud-form-col-full"
-}, $a = { class: "w-crud-form-label" }, xa = {
+}, Ca = { class: "w-crud-form-label" }, xa = {
   key: 0,
   class: "w-crud-form-required"
 }, Sa = { class: "w-crud-form-color-row" }, Pa = {
@@ -1088,7 +1088,308 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
 }, Ea = {
   key: 14,
   class: "w-crud-form-error"
-}, Ya = { class: "w-crud-form-footer" }, We = /* @__PURE__ */ Ie({
+}, Ya = /* @__PURE__ */ Re({
+  __name: "WFormRenderer",
+  props: {
+    fields: {},
+    formData: {},
+    isEditing: { type: Boolean },
+    disabled: { type: Boolean, default: !1 }
+  },
+  emits: ["update:field"],
+  setup(e, { expose: t, emit: a }) {
+    const l = e, r = a, d = ie({}), m = W(
+      () => l.fields.filter((i) => i.visible === void 0 || i.visible === !0 ? !0 : typeof i.visible == "function" ? i.visible(l.formData, l.isEditing) : i.visible)
+    );
+    function g(i) {
+      return l.disabled || i.disabledOnEdit && l.isEditing ? !0 : typeof i.disabled == "function" ? i.disabled(l.formData, l.isEditing) : !!i.disabled;
+    }
+    function c(i) {
+      return Dt(i) ? i.value : i;
+    }
+    const b = W(() => {
+      const i = l.isEditing ? "edit" : "create", w = l.fields.find(
+        (u) => u.autofocus === !0 || u.autofocus === i
+      );
+      if (w) return w.field;
+      const o = m.value.find((u) => !(u.type === "switch" || u.type === "fk" || u.type === "select" || u.type === "image" || u.disabled === !0 || u.disabledOnEdit && l.isEditing));
+      return (o == null ? void 0 : o.field) ?? null;
+    });
+    function S(i) {
+      return i.field === b.value;
+    }
+    function j(i) {
+      if (i)
+        return i.replace(/9/g, "#").replace(/a/g, "S").replace(/\*/g, "X");
+    }
+    function U(i) {
+      if (!i) return "";
+      const w = String(i).replace(/\D/g, "").slice(0, 14);
+      return w.length <= 11 ? w.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2") : w.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+    }
+    function M(i, w) {
+      const o = w.target.value.replace(/\D/g, "").slice(0, 14);
+      r("update:field", i, o);
+    }
+    const Y = ie({});
+    function z(i) {
+      const w = l.formData[i.field];
+      if (w == null) return null;
+      const o = i.optionValue || "value";
+      return (c(i.options) || []).find(
+        (x) => x[o] === w
+      ) ?? null;
+    }
+    function n(i) {
+      return Y[i.field] || [];
+    }
+    function f(i, w) {
+      const o = (w.query || "").toLowerCase(), u = c(i.options) || [], x = i.optionLabel || "label";
+      Y[i.field] = u.filter(
+        (A) => String(A[x] || "").toLowerCase().includes(o)
+      );
+    }
+    function C(i, w) {
+      const o = i.optionValue || "value";
+      r("update:field", i.field, w.value[o]);
+    }
+    function s(i) {
+      const w = l.formData[i.field];
+      return w ? String(w).replace("#", "") : "FFFFFF";
+    }
+    function k(i, w) {
+      r("update:field", i.field, `#${w}`);
+    }
+    function V(i) {
+      if (typeof i.validate == "function") {
+        const w = i.validate(l.formData[i.field]);
+        d[i.field] = w || null;
+      }
+    }
+    function Z() {
+      const i = [];
+      for (const w of l.fields)
+        if (typeof w.validate == "function") {
+          const o = w.validate(l.formData[w.field]);
+          d[w.field] = o || null, o && i.push(o);
+        }
+      return i;
+    }
+    function F() {
+      Object.keys(d).forEach((i) => delete d[i]);
+    }
+    return t({ validateAll: Z, clearErrors: F }), (i, w) => (h(), I("div", ka, [
+      (h(!0), I(ge, null, he(m.value, (o) => X(i.$slots, `field-${o.field}`, {
+        key: o.field,
+        field: o,
+        formData: e.formData,
+        isEditing: e.isEditing,
+        setFormField: (u, x) => r("update:field", u, x)
+      }, () => [
+        o.type === "switch" ? (h(), I("div", wa, [
+          q($(Mt), {
+            "model-value": e.formData[o.field],
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
+          E("label", Da, Q(o.switchLabel || o.label), 1)
+        ])) : o.type === "color" ? (h(), I("div", $a, [
+          E("label", Ca, [
+            Be(Q(o.label) + " ", 1),
+            o.required ? (h(), I("span", xa, "*")) : H("", !0)
+          ]),
+          E("div", Sa, [
+            q($(Vt), {
+              "model-value": s(o),
+              disabled: g(o),
+              "onUpdate:modelValue": (u) => k(o, u)
+            }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
+            q($(ve), {
+              "model-value": e.formData[o.field],
+              class: "w-28",
+              maxlength: "7",
+              placeholder: "#000000",
+              disabled: g(o),
+              "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+            }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"])
+          ])
+        ])) : o.type === "image" ? (h(), I("div", Pa, [
+          E("label", Ma, Q(o.label), 1),
+          X(i.$slots, `image-${o.field}`, {
+            field: o,
+            formData: e.formData
+          }, () => [
+            E("input", {
+              type: "file",
+              accept: o.accept || "image/*",
+              disabled: g(o),
+              onChange: (u) => {
+                var A;
+                const x = ((A = u.target.files) == null ? void 0 : A[0]) ?? null;
+                r("update:field", o.field, x);
+              }
+            }, null, 40, Va)
+          ])
+        ])) : (h(), I("div", {
+          key: 3,
+          class: ot(o.colSpan === 0.5 ? "w-crud-form-col-half" : "w-crud-form-col-full")
+        }, [
+          E("label", Aa, [
+            Be(Q(o.label) + " ", 1),
+            o.required ? (h(), I("span", Fa, "*")) : H("", !0)
+          ]),
+          (!o.type || o.type === "text") && o.mask ? Se((h(), T($(ve), {
+            key: 0,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            autofocus: S(o) || void 0,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])), [
+            [$(tt), { mask: j(o.mask) }]
+          ]) : !o.type || o.type === "text" ? (h(), T($(ve), {
+            key: 1,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            autofocus: S(o) || void 0,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "email" ? (h(), T($(ve), {
+            key: 2,
+            "model-value": e.formData[o.field],
+            type: "email",
+            fluid: "",
+            autofocus: S(o) || void 0,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "password" ? (h(), T($(At), {
+            key: 3,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            "toggle-mask": "",
+            feedback: o.feedback !== !1,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "feedback", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "number" ? (h(), T($(Ze), {
+            key: 4,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            locale: "pt-BR",
+            min: o.min,
+            max: o.max,
+            "min-fraction-digits": o.minFractionDigits,
+            "max-fraction-digits": o.maxFractionDigits,
+            suffix: o.suffix,
+            prefix: o.prefix,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "min", "max", "min-fraction-digits", "max-fraction-digits", "suffix", "prefix", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "currency" ? (h(), T($(Ze), {
+            key: 5,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            mode: "currency",
+            currency: "BRL",
+            locale: "pt-BR",
+            min: o.min,
+            max: o.max,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "select" ? (h(), T($(Pt), {
+            key: 6,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            options: c(o.options),
+            "option-label": o.optionLabel || "label",
+            "option-value": o.optionValue || "value",
+            "show-clear": o.showClear !== !1,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "options", "option-label", "option-value", "show-clear", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "autocomplete" ? (h(), T($(it), {
+            key: 7,
+            "model-value": z(o),
+            fluid: "",
+            suggestions: n(o),
+            "option-label": o.optionLabel || "label",
+            dropdown: "",
+            placeholder: o.placeholder,
+            disabled: g(o),
+            onComplete: (u) => f(o, u),
+            onItemSelect: (u) => C(o, u),
+            onClear: (u) => r("update:field", o.field, null)
+          }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "onComplete", "onItemSelect", "onClear"])) : o.type === "fk" ? (h(), T(wt, {
+            key: 8,
+            "model-value": e.formData[o.field],
+            endpoint: o.endpoint,
+            "option-label": o.optionLabel || "nome",
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "show-clear": o.showClear !== !1,
+            "dialog-header": o.label,
+            "crud-fields": o.crudFields,
+            "crud-columns": o.crudColumns,
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "endpoint", "option-label", "placeholder", "disabled", "show-clear", "dialog-header", "crud-fields", "crud-columns", "onUpdate:modelValue"])) : o.type === "date" ? (h(), T($(Je), {
+            key: 9,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            "date-format": o.dateFormat || "dd/mm/yy",
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "datetime" ? (h(), T($(Je), {
+            key: 10,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            "show-time": "",
+            "hour-format": o.hourFormat || "24",
+            "date-format": o.dateFormat || "dd/mm/yy",
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "hour-format", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "cpf_cnpj" ? (h(), T($(ve), {
+            key: 11,
+            "model-value": U(e.formData[o.field]),
+            fluid: "",
+            maxlength: "18",
+            placeholder: o.placeholder || "000.000.000-00",
+            disabled: g(o),
+            invalid: !!d[o.field],
+            onInput: (u) => M(o.field, u),
+            onBlur: (u) => V(o)
+          }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput", "onBlur"])) : o.type === "mask" ? Se((h(), T($(ve), {
+            key: 12,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            placeholder: o.placeholder,
+            disabled: g(o),
+            invalid: !!d[o.field],
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u),
+            onBlur: (u) => V(o)
+          }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onUpdate:modelValue", "onBlur"])), [
+            [$(tt), { mask: j(o.mask) }]
+          ]) : o.type === "textarea" ? (h(), T($(St), {
+            key: 13,
+            "model-value": e.formData[o.field],
+            fluid: "",
+            autofocus: S(o) || void 0,
+            rows: o.rows || 3,
+            placeholder: o.placeholder,
+            disabled: g(o),
+            "onUpdate:modelValue": (u) => r("update:field", o.field, u)
+          }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : H("", !0),
+          d[o.field] ? (h(), I("small", Ea, Q(d[o.field]), 1)) : H("", !0)
+        ], 2))
+      ])), 128))
+    ]));
+  }
+}), Ra = { class: "w-crud-form-footer" }, Ke = /* @__PURE__ */ Re({
   __name: "WCrudFormDialog",
   props: {
     visible: { type: Boolean },
@@ -1100,325 +1401,62 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
     width: { default: "480px" }
   },
   emits: ["update:visible", "update:field", "save"],
-  setup(e, { emit: a }) {
-    const t = e, l = a, r = ie({}), c = W(
-      () => t.fields.filter((i) => i.visible === void 0 || i.visible === !0 ? !0 : typeof i.visible == "function" ? i.visible(t.formData, t.isEditing) : i.visible)
-    );
-    function u(i) {
-      return i.disabledOnEdit && t.isEditing ? !0 : typeof i.disabled == "function" ? i.disabled(t.formData, t.isEditing) : !!i.disabled;
-    }
-    function V(i) {
-      return wt(i) ? i.value : i;
-    }
-    const v = W(() => {
-      const i = t.isEditing ? "edit" : "create", g = t.fields.find(
-        (f) => f.autofocus === !0 || f.autofocus === i
-      );
-      if (g) return g.field;
-      const o = c.value.find((f) => !(f.type === "switch" || f.type === "fk" || f.type === "select" || f.type === "image" || f.disabled === !0 || f.disabledOnEdit && t.isEditing));
-      return (o == null ? void 0 : o.field) ?? null;
-    });
-    function D(i) {
-      return i.field === v.value;
-    }
-    function x(i) {
-      if (i)
-        return i.replace(/9/g, "#").replace(/a/g, "S").replace(/\*/g, "X");
-    }
-    function z(i) {
-      if (!i) return "";
-      const g = String(i).replace(/\D/g, "").slice(0, 14);
-      return g.length <= 11 ? g.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2") : g.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
-    }
-    function U(i, g) {
-      const o = g.target.value.replace(/\D/g, "").slice(0, 14);
-      l("update:field", i, o);
-    }
-    const P = ie({});
-    function R(i) {
-      const g = t.formData[i.field];
-      if (g == null) return null;
-      const o = i.optionValue || "value";
-      return (V(i.options) || []).find(
-        (M) => M[o] === g
-      ) ?? null;
-    }
-    function L(i) {
-      return P[i.field] || [];
-    }
-    function n(i, g) {
-      const o = (g.query || "").toLowerCase(), f = V(i.options) || [], M = i.optionLabel || "label";
-      P[i.field] = f.filter(
-        ($) => String($[M] || "").toLowerCase().includes(o)
-      );
-    }
-    function d(i, g) {
-      const o = i.optionValue || "value";
-      l("update:field", i.field, g.value[o]);
-    }
-    function C(i) {
-      const g = t.formData[i.field];
-      return g ? String(g).replace("#", "") : "FFFFFF";
-    }
-    function s(i, g) {
-      l("update:field", i.field, `#${g}`);
-    }
-    function b(i) {
-      if (typeof i.validate == "function") {
-        const g = i.validate(t.formData[i.field]);
-        r[i.field] = g || null;
-      }
-    }
-    function A() {
-      let i = !0;
-      for (const g of t.fields)
-        if (typeof g.validate == "function") {
-          const o = g.validate(t.formData[g.field]);
-          r[g.field] = o || null, o && (i = !1);
-        }
-      return i;
-    }
-    function K() {
-      A() && l("save");
+  setup(e, { emit: t }) {
+    const a = e, l = t, r = L(null);
+    function d() {
+      r.value ? r.value.validateAll().length === 0 && l("save") : l("save");
     }
     return Ne(
-      () => t.visible,
-      (i) => {
-        i && Object.keys(r).forEach((g) => delete r[g]);
+      () => a.visible,
+      (m) => {
+        m && r.value && r.value.clearErrors();
       }
-    ), (i, g) => (h(), T(w(nt), {
+    ), (m, g) => (h(), T($(st), {
       visible: e.visible,
       header: e.title,
       style: Fe({ width: e.width }),
       modal: "",
       draggable: !1,
       class: "w-crud-form-dialog",
-      "onUpdate:visible": g[1] || (g[1] = (o) => l("update:visible", o))
+      "onUpdate:visible": g[2] || (g[2] = (c) => l("update:visible", c))
     }, {
-      default: J(() => [
-        F("form", {
+      default: K(() => [
+        E("form", {
           class: "w-crud-form",
-          onSubmit: kt(K, ["prevent"])
+          onSubmit: $t(d, ["prevent"])
         }, [
-          F("div", ka, [
-            (h(!0), j(ge, null, xe(c.value, (o) => G(i.$slots, `field-${o.field}`, {
-              key: o.field,
-              field: o,
-              formData: e.formData,
-              isEditing: e.isEditing,
-              setFormField: (f, M) => l("update:field", f, M)
-            }, () => [
-              o.type === "switch" ? (h(), j("div", wa, [
-                q(w(Mt), {
-                  "model-value": e.formData[o.field],
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
-                F("label", Da, X(o.switchLabel || o.label), 1)
-              ])) : o.type === "color" ? (h(), j("div", Ca, [
-                F("label", $a, [
-                  Be(X(o.label) + " ", 1),
-                  o.required ? (h(), j("span", xa, "*")) : H("", !0)
-                ]),
-                F("div", Sa, [
-                  q(w(Vt), {
-                    "model-value": C(o),
-                    disabled: u(o),
-                    "onUpdate:modelValue": (f) => s(o, f)
-                  }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
-                  q(w(ve), {
-                    "model-value": e.formData[o.field],
-                    class: "w-28",
-                    maxlength: "7",
-                    placeholder: "#000000",
-                    disabled: u(o),
-                    "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                  }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"])
-                ])
-              ])) : o.type === "image" ? (h(), j("div", Pa, [
-                F("label", Ma, X(o.label), 1),
-                G(i.$slots, `image-${o.field}`, {
-                  field: o,
-                  formData: e.formData
-                }, () => [
-                  F("input", {
-                    type: "file",
-                    accept: o.accept || "image/*",
-                    disabled: u(o),
-                    onChange: (f) => {
-                      var $;
-                      const M = (($ = f.target.files) == null ? void 0 : $[0]) ?? null;
-                      l("update:field", o.field, M);
-                    }
-                  }, null, 40, Va)
-                ])
-              ])) : (h(), j("div", {
-                key: 3,
-                class: tt(o.colSpan === 0.5 ? "w-crud-form-col-half" : "w-crud-form-col-full")
-              }, [
-                F("label", Aa, [
-                  Be(X(o.label) + " ", 1),
-                  o.required ? (h(), j("span", Fa, "*")) : H("", !0)
-                ]),
-                (!o.type || o.type === "text") && o.mask ? Se((h(), T(w(ve), {
-                  key: 0,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  autofocus: D(o) || void 0,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])), [
-                  [w(_e), { mask: x(o.mask) }]
-                ]) : !o.type || o.type === "text" ? (h(), T(w(ve), {
-                  key: 1,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  autofocus: D(o) || void 0,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "email" ? (h(), T(w(ve), {
-                  key: 2,
-                  "model-value": e.formData[o.field],
-                  type: "email",
-                  fluid: "",
-                  autofocus: D(o) || void 0,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "password" ? (h(), T(w(At), {
-                  key: 3,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  "toggle-mask": "",
-                  feedback: o.feedback !== !1,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "feedback", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "number" ? (h(), T(w(He), {
-                  key: 4,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  locale: "pt-BR",
-                  min: o.min,
-                  max: o.max,
-                  "min-fraction-digits": o.minFractionDigits,
-                  "max-fraction-digits": o.maxFractionDigits,
-                  suffix: o.suffix,
-                  prefix: o.prefix,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "min", "max", "min-fraction-digits", "max-fraction-digits", "suffix", "prefix", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "currency" ? (h(), T(w(He), {
-                  key: 5,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  mode: "currency",
-                  currency: "BRL",
-                  locale: "pt-BR",
-                  min: o.min,
-                  max: o.max,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "select" ? (h(), T(w(Pt), {
-                  key: 6,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  options: V(o.options),
-                  "option-label": o.optionLabel || "label",
-                  "option-value": o.optionValue || "value",
-                  "show-clear": o.showClear !== !1,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "options", "option-label", "option-value", "show-clear", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "autocomplete" ? (h(), T(w(rt), {
-                  key: 7,
-                  "model-value": R(o),
-                  fluid: "",
-                  suggestions: L(o),
-                  "option-label": o.optionLabel || "label",
-                  dropdown: "",
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  onComplete: (f) => n(o, f),
-                  onItemSelect: (f) => d(o, f),
-                  onClear: (f) => l("update:field", o.field, null)
-                }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "onComplete", "onItemSelect", "onClear"])) : o.type === "fk" ? (h(), T(bt, {
-                  key: 8,
-                  "model-value": e.formData[o.field],
-                  endpoint: o.endpoint,
-                  "option-label": o.optionLabel || "nome",
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "show-clear": o.showClear !== !1,
-                  "dialog-header": o.label,
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "endpoint", "option-label", "placeholder", "disabled", "show-clear", "dialog-header", "onUpdate:modelValue"])) : o.type === "date" ? (h(), T(w(Ke), {
-                  key: 9,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  "date-format": o.dateFormat || "dd/mm/yy",
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "datetime" ? (h(), T(w(Ke), {
-                  key: 10,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  "show-time": "",
-                  "hour-format": o.hourFormat || "24",
-                  "date-format": o.dateFormat || "dd/mm/yy",
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "hour-format", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "cpf_cnpj" ? (h(), T(w(ve), {
-                  key: 11,
-                  "model-value": z(e.formData[o.field]),
-                  fluid: "",
-                  maxlength: "18",
-                  placeholder: o.placeholder || "000.000.000-00",
-                  disabled: u(o),
-                  invalid: !!r[o.field],
-                  onInput: (f) => U(o.field, f),
-                  onBlur: (f) => b(o)
-                }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput", "onBlur"])) : o.type === "mask" ? Se((h(), T(w(ve), {
-                  key: 12,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  invalid: !!r[o.field],
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f),
-                  onBlur: (f) => b(o)
-                }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onUpdate:modelValue", "onBlur"])), [
-                  [w(_e), { mask: x(o.mask) }]
-                ]) : o.type === "textarea" ? (h(), T(w(St), {
-                  key: 13,
-                  "model-value": e.formData[o.field],
-                  fluid: "",
-                  autofocus: D(o) || void 0,
-                  rows: o.rows || 3,
-                  placeholder: o.placeholder,
-                  disabled: u(o),
-                  "onUpdate:modelValue": (f) => l("update:field", o.field, f)
-                }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : H("", !0),
-                r[o.field] ? (h(), j("small", Ea, X(r[o.field]), 1)) : H("", !0)
-              ], 2))
-            ])), 128))
-          ]),
-          F("div", Ya, [
-            G(i.$slots, "footer", { saving: e.saving }, () => [
-              q(w(se), {
+          q(Ya, {
+            ref_key: "rendererRef",
+            ref: r,
+            fields: e.fields,
+            "form-data": e.formData,
+            "is-editing": e.isEditing,
+            "onUpdate:field": g[0] || (g[0] = (c, b) => l("update:field", c, b))
+          }, Oe({ _: 2 }, [
+            he(e.fields, (c) => ({
+              name: `field-${c.field}`,
+              fn: K((b) => [
+                X(m.$slots, `field-${c.field}`, We(qe(b)))
+              ])
+            })),
+            he(e.fields.filter((c) => c.type === "image"), (c) => ({
+              name: `image-${c.field}`,
+              fn: K((b) => [
+                X(m.$slots, `image-${c.field}`, We(qe(b)))
+              ])
+            }))
+          ]), 1032, ["fields", "form-data", "is-editing"]),
+          E("div", Ra, [
+            X(m.$slots, "footer", { saving: e.saving }, () => [
+              q($(se), {
                 type: "button",
                 label: "Cancelar",
                 severity: "secondary",
                 text: "",
                 disabled: e.saving,
-                onClick: g[0] || (g[0] = (o) => l("update:visible", !1))
+                onClick: g[1] || (g[1] = (c) => l("update:visible", !1))
               }, null, 8, ["disabled"]),
-              q(w(se), {
+              q($(se), {
                 type: "submit",
                 label: e.isEditing ? "Atualizar" : "Salvar",
                 icon: "pi pi-check",
@@ -1431,16 +1469,16 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
       _: 3
     }, 8, ["visible", "header", "style"]));
   }
-}), Ta = { class: "w-crud" }, Ra = {
+}), Ta = { class: "w-crud" }, La = {
   key: 0,
   class: "w-crud-header"
-}, La = { class: "w-crud-header-content" }, Ia = { class: "w-crud-title" }, ja = {
+}, Ia = { class: "w-crud-header-content" }, ja = { class: "w-crud-title" }, za = {
   key: 0,
   class: "w-crud-subtitle"
-}, za = { class: "w-crud-header-actions" }, Ua = {
+}, Ua = { class: "w-crud-header-actions" }, Na = {
   key: 0,
   class: "w-crud-kpis"
-}, Na = { class: "w-crud-kpi-icon" }, Ba = { class: "w-crud-kpi-content" }, Oa = { class: "w-crud-kpi-label" }, Wa = { class: "w-crud-kpi-value" }, qa = { class: "w-crud-table" }, Ha = { class: "w-crud-toolbar" }, Ka = { class: "w-crud-toolbar-start" }, Za = { class: "w-crud-toolbar-end" }, Ja = { class: "w-crud-actions" }, Xa = /* @__PURE__ */ Ie({
+}, Ba = { class: "w-crud-kpi-icon" }, Oa = { class: "w-crud-kpi-content" }, Wa = { class: "w-crud-kpi-label" }, qa = { class: "w-crud-kpi-value" }, Ha = { class: "w-crud-table" }, Ka = { class: "w-crud-toolbar" }, Za = { class: "w-crud-toolbar-start" }, Ja = { class: "w-crud-toolbar-end" }, Xa = { class: "w-crud-actions" }, Qa = /* @__PURE__ */ Re({
   __name: "WCrudView",
   props: {
     crud: {},
@@ -1457,89 +1495,89 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
     expandable: { type: Boolean, default: !1 }
   },
   emits: ["row-expand", "row-collapse"],
-  setup(e, { emit: a }) {
-    const t = e, l = a, { formatNumber: r } = pt(), c = I({}), u = W(
-      () => t.crud.config.columns.filter((n) => n.visible !== !1).map((n) => n.type === "number" && !n.align ? { ...n, align: "right" } : n.type === "currency" && !n.align ? { ...n, align: "right" } : n)
+  setup(e, { emit: t }) {
+    const a = e, l = t, { formatNumber: r } = gt(), d = L({}), m = W(
+      () => a.crud.config.columns.filter((n) => n.visible !== !1).map((n) => n.type === "number" && !n.align ? { ...n, align: "right" } : n.type === "currency" && !n.align ? { ...n, align: "right" } : n)
     );
-    function V(n) {
+    function g(n) {
       if (n.align === "right") return "text-right";
       if (n.align === "center") return "text-center";
     }
-    const v = W(() => {
+    const c = W(() => {
       const n = [];
-      return t.crud.config.canCreate !== !1 && t.crud.config.canEdit !== !1 && n.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), t.crud.config.canDelete !== !1 && n.push({
+      return a.crud.config.canCreate !== !1 && a.crud.config.canEdit !== !1 && n.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), a.crud.config.canDelete !== !1 && n.push({
         action: "delete",
         icon: "pi pi-trash",
         tooltip: "Excluir",
         severity: "danger"
       }), n;
-    }), D = W(
-      () => t.crud.config.rowActions ?? v.value
-    ), x = W(() => D.value.length > 0);
-    function z(n, d) {
-      n.action === "edit" ? t.crud.openEditDialog(d) : n.action === "delete" ? t.crud.confirmDelete(d) : n.handler && n.handler(d);
+    }), b = W(
+      () => a.crud.config.rowActions ?? c.value
+    ), S = W(() => b.value.length > 0);
+    function j(n, f) {
+      n.action === "edit" ? a.crud.openEditDialog(f) : n.action === "delete" ? a.crud.confirmDelete(f) : n.handler && n.handler(f);
     }
-    function U(n, d) {
-      return n.visible ? n.visible(d) : !0;
+    function U(n, f) {
+      return n.visible ? n.visible(f) : !0;
     }
-    function P(n, d) {
-      return n.disabled ? n.disabled(d) : !1;
+    function M(n, f) {
+      return n.disabled ? n.disabled(f) : !1;
     }
-    const R = W(() => {
+    const Y = W(() => {
       const n = [];
-      return t.showKpi && n.push({
-        icon: t.kpiIcon,
-        label: t.kpiLabel,
-        value: r(t.crud.pagination.rows, 0)
-      }), n.push(...t.extraKpis), n;
+      return a.showKpi && n.push({
+        icon: a.kpiIcon,
+        label: a.kpiLabel,
+        value: r(a.crud.pagination.rows, 0)
+      }), n.push(...a.extraKpis), n;
     });
-    W(() => t.crud.config.labels ?? {});
-    const L = W(() => t.crud.config.canCreate !== !1);
-    return Dt(() => {
-      t.autoInit && t.crud.init();
-    }), (n, d) => {
-      const C = et("tooltip");
-      return h(), j("div", Ta, [
-        e.showHeader ? (h(), j("div", Ra, [
-          F("div", La, [
-            F("h1", Ia, X(e.title), 1),
-            e.subtitle ? (h(), j("p", ja, X(e.subtitle), 1)) : H("", !0)
+    W(() => a.crud.config.labels ?? {});
+    const z = W(() => a.crud.config.canCreate !== !1);
+    return Ct(() => {
+      a.autoInit && a.crud.init();
+    }), (n, f) => {
+      const C = at("tooltip");
+      return h(), I("div", Ta, [
+        e.showHeader ? (h(), I("div", La, [
+          E("div", Ia, [
+            E("h1", ja, Q(e.title), 1),
+            e.subtitle ? (h(), I("p", za, Q(e.subtitle), 1)) : H("", !0)
           ]),
-          F("div", za, [
-            G(n.$slots, "header-actions"),
-            L.value ? (h(), T(w(se), {
+          E("div", Ua, [
+            X(n.$slots, "header-actions"),
+            z.value ? (h(), T($(se), {
               key: 0,
               label: "Novo",
               icon: "pi pi-plus",
-              onClick: d[0] || (d[0] = (s) => e.crud.openCreateDialog())
+              onClick: f[0] || (f[0] = (s) => e.crud.openCreateDialog())
             })) : H("", !0)
           ])
         ])) : H("", !0),
-        G(n.$slots, "before-table", {}, () => [
-          R.value.length ? (h(), j("div", Ua, [
-            (h(!0), j(ge, null, xe(R.value, (s, b) => (h(), j("div", {
-              key: b,
+        X(n.$slots, "before-table", {}, () => [
+          Y.value.length ? (h(), I("div", Na, [
+            (h(!0), I(ge, null, he(Y.value, (s, k) => (h(), I("div", {
+              key: k,
               class: "w-crud-kpi"
             }, [
-              F("div", Na, [
-                F("i", {
-                  class: tt([s.icon]),
+              E("div", Ba, [
+                E("i", {
+                  class: ot([s.icon]),
                   style: Fe(s.color ? `color: ${s.color}` : "")
                 }, null, 6)
               ]),
-              F("div", Ba, [
-                F("div", Oa, X(s.label), 1),
-                F("div", Wa, X(s.value), 1)
+              E("div", Oa, [
+                E("div", Wa, Q(s.label), 1),
+                E("div", qa, Q(s.value), 1)
               ])
             ]))), 128))
           ])) : H("", !0)
         ]),
-        F("div", qa, [
-          q(w(at), {
+        E("div", Ha, [
+          q($(lt), {
             value: e.crud.items.value,
             loading: e.crud.loading.value,
-            "expanded-rows": c.value,
-            "onUpdate:expandedRows": d[2] || (d[2] = (s) => c.value = s),
+            "expanded-rows": d.value,
+            "onUpdate:expandedRows": f[2] || (f[2] = (s) => d.value = s),
             paginator: "",
             rows: e.crud.pagination.pageSize,
             "total-records": e.crud.pagination.rows,
@@ -1555,17 +1593,17 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
             "sort-order": e.crud.sort.order,
             "data-key": e.crud.config.pk || "id",
             onPage: e.crud.onPage,
-            onSort: d[3] || (d[3] = (s) => e.crud.onSort({ sortField: s.sortField, sortOrder: s.sortOrder })),
-            onRowExpand: d[4] || (d[4] = (s) => l("row-expand", s.data)),
-            onRowCollapse: d[5] || (d[5] = (s) => l("row-collapse", s.data))
-          }, qe({
-            header: J(() => [
-              F("div", Ha, [
-                F("div", Ka, [
-                  e.showSearch ? (h(), T(w(ot), { key: 0 }, {
-                    default: J(() => [
-                      q(w(lt), { class: "pi pi-search" }),
-                      q(w(ve), {
+            onSort: f[3] || (f[3] = (s) => e.crud.onSort({ sortField: s.sortField, sortOrder: s.sortOrder })),
+            onRowExpand: f[4] || (f[4] = (s) => l("row-expand", s.data)),
+            onRowCollapse: f[5] || (f[5] = (s) => l("row-collapse", s.data))
+          }, Oe({
+            header: K(() => [
+              E("div", Ka, [
+                E("div", Za, [
+                  e.showSearch ? (h(), T($(nt), { key: 0 }, {
+                    default: K(() => [
+                      q($(rt), { class: "pi pi-search" }),
+                      q($(ve), {
                         "model-value": e.crud.search.value,
                         placeholder: "Buscar...",
                         class: "w-72",
@@ -1574,87 +1612,87 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
                     ]),
                     _: 1
                   })) : H("", !0),
-                  G(n.$slots, "toolbar-start"),
-                  G(n.$slots, "toolbar-filters")
+                  X(n.$slots, "toolbar-start"),
+                  X(n.$slots, "toolbar-filters")
                 ]),
-                F("div", Za, [
-                  G(n.$slots, "toolbar-actions"),
-                  !e.showHeader && L.value ? (h(), T(w(se), {
+                E("div", Ja, [
+                  X(n.$slots, "toolbar-actions"),
+                  !e.showHeader && z.value ? (h(), T($(se), {
                     key: 0,
                     label: "Novo",
                     icon: "pi pi-plus",
-                    onClick: d[1] || (d[1] = (s) => e.crud.openCreateDialog())
+                    onClick: f[1] || (f[1] = (s) => e.crud.openCreateDialog())
                   })) : H("", !0)
                 ])
               ])
             ]),
-            empty: J(() => [
-              G(n.$slots, "empty", {}, () => [
-                d[9] || (d[9] = F("div", { class: "w-crud-empty" }, [
-                  F("div", { class: "w-crud-empty-icon" }, [
-                    F("i", { class: "pi pi-inbox" })
+            empty: K(() => [
+              X(n.$slots, "empty", {}, () => [
+                f[9] || (f[9] = E("div", { class: "w-crud-empty" }, [
+                  E("div", { class: "w-crud-empty-icon" }, [
+                    E("i", { class: "pi pi-inbox" })
                   ]),
-                  F("p", { class: "w-crud-empty-title" }, "Nenhum registro encontrado"),
-                  F("p", { class: "w-crud-empty-text" }, "Tente ajustar sua busca ou crie um novo registro")
+                  E("p", { class: "w-crud-empty-title" }, "Nenhum registro encontrado"),
+                  E("p", { class: "w-crud-empty-text" }, "Tente ajustar sua busca ou crie um novo registro")
                 ], -1))
               ])
             ]),
-            default: J(() => [
-              e.expandable ? (h(), T(w(Pe), {
+            default: K(() => [
+              e.expandable ? (h(), T($(Pe), {
                 key: 0,
                 expander: "",
                 style: { width: "3rem" }
               })) : H("", !0),
-              (h(!0), j(ge, null, xe(u.value, (s) => (h(), T(w(Pe), {
+              (h(!0), I(ge, null, he(m.value, (s) => (h(), T($(Pe), {
                 key: s.field,
                 field: s.field,
                 header: s.header,
                 sortable: s.sortable,
                 style: Fe(s.style),
-                "header-class": V(s),
-                "body-class": V(s)
+                "header-class": g(s),
+                "body-class": g(s)
               }, {
-                body: J(({ data: b }) => [
-                  G(n.$slots, `column-${s.field}`, {
-                    data: b,
-                    value: b[s.field]
+                body: K(({ data: k }) => [
+                  X(n.$slots, `column-${s.field}`, {
+                    data: k,
+                    value: k[s.field]
                   }, () => [
-                    q(Oe, {
+                    q(He, {
                       column: s,
-                      value: b[s.field],
-                      "row-data": b
+                      value: k[s.field],
+                      "row-data": k
                     }, null, 8, ["column", "value", "row-data"])
                   ])
                 ]),
                 _: 2
               }, 1032, ["field", "header", "sortable", "style", "header-class", "body-class"]))), 128)),
-              x.value ? (h(), T(w(Pe), {
+              S.value ? (h(), T($(Pe), {
                 key: 1,
                 "header-class": "w-crud-actions-header",
-                style: Fe({ width: `${D.value.length * 2.5 + 1}rem` })
+                style: Fe({ width: `${b.value.length * 2.5 + 1}rem` })
               }, {
-                body: J(({ data: s }) => [
-                  G(n.$slots, "row-actions", {
+                body: K(({ data: s }) => [
+                  X(n.$slots, "row-actions", {
                     data: s,
                     crud: e.crud
                   }, () => [
-                    F("div", Ja, [
-                      (h(!0), j(ge, null, xe(D.value, (b) => (h(), j(ge, {
-                        key: b.action
+                    E("div", Xa, [
+                      (h(!0), I(ge, null, he(b.value, (k) => (h(), I(ge, {
+                        key: k.action
                       }, [
-                        U(b, s) ? Se((h(), T(w(se), {
+                        U(k, s) ? Se((h(), T($(se), {
                           key: 0,
-                          icon: b.icon,
+                          icon: k.icon,
                           text: "",
                           rounded: "",
                           size: "small",
-                          severity: b.severity,
-                          disabled: P(b, s),
-                          onClick: (A) => z(b, s)
+                          severity: k.severity,
+                          disabled: M(k, s),
+                          onClick: (V) => j(k, s)
                         }, null, 8, ["icon", "severity", "disabled", "onClick"])), [
                           [
                             C,
-                            b.tooltip,
+                            k.tooltip,
                             void 0,
                             { top: !0 }
                           ]
@@ -1670,8 +1708,8 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
           }, [
             e.expandable ? {
               name: "expansion",
-              fn: J((s) => [
-                G(n.$slots, "expansion", {
+              fn: K((s) => [
+                X(n.$slots, "expansion", {
                   data: s.data
                 })
               ]),
@@ -1679,11 +1717,11 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
             } : void 0
           ]), 1032, ["value", "loading", "expanded-rows", "rows", "total-records", "sort-field", "sort-order", "data-key", "onPage"])
         ]),
-        G(n.$slots, "form-dialog", {
+        X(n.$slots, "form-dialog", {
           crud: e.crud,
           dialogWidth: e.dialogWidth
         }, () => [
-          q(We, {
+          q(Ke, {
             visible: e.crud.dialogVisible.value,
             title: e.crud.dialogTitle.value,
             fields: e.crud.config.form,
@@ -1691,16 +1729,16 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
             "is-editing": e.crud.isEditing.value,
             saving: e.crud.saving.value,
             width: e.dialogWidth,
-            "onUpdate:visible": d[6] || (d[6] = (s) => {
+            "onUpdate:visible": f[6] || (f[6] = (s) => {
               e.crud.dialogVisible.value = s, s || (e.crud.editingItem.value = null);
             }),
-            "onUpdate:field": d[7] || (d[7] = (s, b) => e.crud.setFormField(s, b)),
-            onSave: d[8] || (d[8] = (s) => e.crud.save())
-          }, qe({ _: 2 }, [
-            xe(e.crud.config.form, (s) => ({
+            "onUpdate:field": f[7] || (f[7] = (s, k) => e.crud.setFormField(s, k)),
+            onSave: f[8] || (f[8] = (s) => e.crud.save())
+          }, Oe({ _: 2 }, [
+            he(e.crud.config.form, (s) => ({
               name: `field-${s.field}`,
-              fn: J((b) => [
-                G(n.$slots, `field-${s.field}`, Ct($t(b)))
+              fn: K((k) => [
+                X(n.$slots, `field-${s.field}`, We(qe(k)))
               ])
             }))
           ]), 1032, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])
@@ -1708,23 +1746,23 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
       ]);
     };
   }
-}), ko = {
-  install(e, a) {
-    if (!(a != null && a.axios))
+}), wo = {
+  install(e, t) {
+    if (!(t != null && t.axios))
       throw new Error(
         '[wPrimeVueComponents] A opção "axios" é obrigatória. Passe sua instância axios configurada.'
       );
-    const t = {
-      axios: a.axios,
-      defaultPageSize: a.defaultPageSize ?? 20,
-      dateFormat: a.dateFormat ?? "DD/MM/YYYY",
-      dateTimeFormat: a.dateTimeFormat ?? "DD/MM/YYYY HH:mm",
-      locale: a.locale ?? "pt-BR",
-      currency: a.currency ?? "BRL"
+    const a = {
+      axios: t.axios,
+      defaultPageSize: t.defaultPageSize ?? 20,
+      dateFormat: t.dateFormat ?? "DD/MM/YYYY",
+      dateTimeFormat: t.dateTimeFormat ?? "DD/MM/YYYY HH:mm",
+      locale: t.locale ?? "pt-BR",
+      currency: t.currency ?? "BRL"
     };
-    e.provide(je, a.axios), e.provide(ze, t), a.registerComponents !== !1 && (e.component("WCrudView", Xa), e.component("WCrudFormDialog", We), e.component("WCrudColumnRenderer", Oe), e.component("WAutoCompleteFK", bt));
+    e.provide(je, t.axios), e.provide(ze, a), t.registerComponents !== !1 && (e.component("WCrudView", Qa), e.component("WCrudFormDialog", Ke), e.component("WCrudColumnRenderer", He), e.component("WAutoCompleteFK", wt));
   }
-}, Qa = {
+}, Ga = {
   createTitle: "Novo Registro",
   editTitle: "Editar Registro",
   createButton: "Novo",
@@ -1739,143 +1777,143 @@ const pa = { class: "w-autocompletefk" }, va = ["disabled"], ga = { class: "w-au
   successUpdate: "Registro atualizado com sucesso",
   successDelete: "Registro excluído com sucesso"
 };
-function wo(e) {
+function Do(e) {
   const {
-    endpoint: a,
-    columns: t,
+    endpoint: t,
+    columns: a,
     form: l,
     pk: r = "id",
-    searchDebounce: c = 300,
-    canCreate: u = !0,
-    canEdit: V = !0,
-    canDelete: v = !0,
-    rowActions: D = void 0,
-    filterParams: x = void 0,
-    transformPayload: z = void 0,
+    searchDebounce: d = 300,
+    canCreate: m = !0,
+    canEdit: g = !0,
+    canDelete: c = !0,
+    rowActions: b = void 0,
+    filterParams: S = void 0,
+    transformPayload: j = void 0,
     onAfterSave: U = void 0,
-    onAfterDelete: P = void 0
-  } = e, R = Me(je);
-  if (!R)
+    onAfterDelete: M = void 0
+  } = e, Y = Me(je);
+  if (!Y)
     throw new Error(
       "[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager."
     );
-  const L = R, n = Me(ze), d = e.pageSize ?? (n == null ? void 0 : n.defaultPageSize) ?? 20, C = { ...Qa, ...e.labels }, s = ht(), { confirmDelete: b } = yt(), A = I([]), K = I(!1), i = I(!1), g = I(""), o = I(!1), f = I(null), M = ie({}), $ = ie({
+  const z = Y, n = Me(ze), f = e.pageSize ?? (n == null ? void 0 : n.defaultPageSize) ?? 20, C = { ...Ga, ...e.labels }, s = bt(), { confirmDelete: k } = kt(), V = L([]), Z = L(!1), F = L(!1), i = L(""), w = L(!1), o = L(null), u = ie({}), x = ie({
     page: 1,
-    pageSize: d,
+    pageSize: f,
     rows: 0,
     totalPages: 0
-  }), E = ie({
+  }), A = ie({
     field: null,
     order: 0
   });
   function _() {
     const y = {};
-    for (const S of l)
-      y[S.field] = S.defaultValue !== void 0 ? typeof S.defaultValue == "function" ? S.defaultValue() : S.defaultValue : null;
+    for (const P of l)
+      y[P.field] = P.defaultValue !== void 0 ? typeof P.defaultValue == "function" ? P.defaultValue() : P.defaultValue : null;
     return y;
   }
-  const Q = _();
-  for (const y of Object.keys(Q))
-    M[y] = Q[y];
-  const Z = W(() => f.value !== null), ue = W(
-    () => Z.value ? C.editTitle : C.createTitle
-  ), ee = W(() => $.page <= 1), oe = W(() => $.page >= $.totalPages);
+  const G = _();
+  for (const y of Object.keys(G))
+    u[y] = G[y];
+  const J = W(() => o.value !== null), ue = W(
+    () => J.value ? C.editTitle : C.createTitle
+  ), ee = W(() => x.page <= 1), oe = W(() => x.page >= x.totalPages);
   let te = null;
   async function O(y = {}) {
-    K.value = !0;
+    Z.value = !0;
     try {
-      const S = {
-        page: $.page,
-        page_size: $.pageSize,
+      const P = {
+        page: x.page,
+        page_size: x.pageSize,
         ...y
       };
-      g.value && (S.search = g.value), E.field && E.order !== 0 && (S.ordering = E.order === -1 ? `-${E.field}` : E.field), x && Object.assign(S, x());
-      const p = (await L.get(a, { params: S })).data;
-      Array.isArray(p.results) ? (A.value = p.results, $.rows = p.count ?? 0) : (A.value = p.data ?? [], $.rows = p.rows ?? 0), p.page && ($.page = p.page), p.page_size && ($.pageSize = p.page_size), $.totalPages = Math.ceil($.rows / $.pageSize) || 0;
+      i.value && (P.search = i.value), A.field && A.order !== 0 && (P.ordering = A.order === -1 ? `-${A.field}` : A.field), S && Object.assign(P, S());
+      const v = (await z.get(t, { params: P })).data;
+      Array.isArray(v.results) ? (V.value = v.results, x.rows = v.count ?? 0) : (V.value = v.data ?? [], x.rows = v.rows ?? 0), v.page && (x.page = v.page), v.page_size && (x.pageSize = v.page_size), x.totalPages = Math.ceil(x.rows / x.pageSize) || 0;
     } finally {
-      K.value = !1;
+      Z.value = !1;
     }
   }
-  async function ye() {
+  async function be() {
     await O();
   }
   async function de() {
     await O();
   }
-  function $e(y) {
-    g.value = y, te && clearTimeout(te), te = setTimeout(() => {
-      $.page = 1, O();
-    }, c);
+  function xe(y) {
+    i.value = y, te && clearTimeout(te), te = setTimeout(() => {
+      x.page = 1, O();
+    }, d);
   }
   function Ve(y) {
-    const S = y.target;
-    $e(S.value);
+    const P = y.target;
+    xe(P.value);
   }
   function le(y) {
-    $.page = y, O();
+    x.page = y, O();
   }
-  function be() {
+  function ke() {
     le(1);
   }
   function ne() {
-    le($.totalPages);
+    le(x.totalPages);
   }
   function ae(y) {
-    $.page = y.page + 1, $.pageSize = y.rows, O();
+    x.page = y.page + 1, x.pageSize = y.rows, O();
   }
   function ce(y) {
-    E.field = y.sortField ?? null, E.order = y.sortOrder ?? 0, $.page = 1, O();
+    A.field = y.sortField ?? null, A.order = y.sortOrder ?? 0, x.page = 1, O();
   }
   function fe() {
     const y = _();
-    for (const S of Object.keys(y))
-      M[S] = y[S];
+    for (const P of Object.keys(y))
+      u[P] = y[P];
   }
-  function ke(y, S) {
-    M[y] = S;
+  function we(y, P) {
+    u[y] = P;
   }
-  function we() {
-    f.value = null, fe(), o.value = !0;
+  function De() {
+    o.value = null, fe(), w.value = !0;
   }
   function me(y) {
-    f.value = y;
-    for (const S of l) {
-      let m = y[S.field] !== void 0 ? y[S.field] : null;
-      m && (S.type === "date" || S.type === "datetime") && typeof m == "string" && (m = st(m)), M[S.field] = m;
+    o.value = y;
+    for (const P of l) {
+      let p = y[P.field] !== void 0 ? y[P.field] : null;
+      p && (P.type === "date" || P.type === "datetime") && typeof p == "string" && (p = ut(p)), u[P.field] = p;
     }
-    o.value = !0;
+    w.value = !0;
   }
   async function pe() {
     for (const y of l) {
       if (y.validate) {
-        const S = y.validate(M[y.field]);
-        if (S)
-          return s.error(S), null;
+        const P = y.validate(u[y.field]);
+        if (P)
+          return s.error(P), null;
       }
       if (y.required) {
-        const S = M[y.field];
-        if (S == null || S === "")
+        const P = u[y.field];
+        if (P == null || P === "")
           return s.error(`${y.label} é obrigatório`), null;
       }
     }
-    i.value = !0;
+    F.value = !0;
     try {
-      let y = { ...M };
-      for (const Y of l) {
-        const B = y[Y.field];
-        if (Y.type === "date" && B instanceof Date ? y[Y.field] = it(B) : Y.type === "datetime" && B instanceof Date && (y[Y.field] = ut(B)), Y.type === "fk" && B !== null && typeof B == "object") {
-          const re = Y.optionValue || "id";
-          y[Y.field] = B[re] ?? B;
+      let y = { ...u };
+      for (const R of l) {
+        const B = y[R.field];
+        if (R.type === "date" && B instanceof Date ? y[R.field] = dt(B) : R.type === "datetime" && B instanceof Date && (y[R.field] = ct(B)), R.type === "fk" && B !== null && typeof B == "object") {
+          const re = R.optionValue || "id";
+          y[R.field] = B[re] ?? B;
         }
-        (Y.type === "mask" || Y.type === "cpf_cnpj") && typeof B == "string" && (y[Y.field] = he(B));
+        (R.type === "mask" || R.type === "cpf_cnpj") && typeof B == "string" && (y[R.field] = ye(B));
       }
-      z && (y = z(y, Z.value));
-      const S = l.some(
-        (Y) => Y.type === "image" && y[Y.field] instanceof File
+      j && (y = j(y, J.value));
+      const P = l.some(
+        (R) => R.type === "image" && y[R.field] instanceof File
       );
-      let m = y, p;
-      if (S) {
-        const Y = new Set(
+      let p = y, v;
+      if (P) {
+        const R = new Set(
           l.filter((re) => re.type === "image").map((re) => re.field)
         ), B = new FormData();
         for (const [re, Ae] of Object.entries(y))
@@ -1883,161 +1921,162 @@ function wo(e) {
             if (Ae instanceof File)
               B.append(re, Ae);
             else {
-              if (Y.has(re))
+              if (R.has(re))
                 continue;
               B.append(re, String(Ae));
             }
-        m = B, p = { "Content-Type": "multipart/form-data" };
+        p = B, v = { "Content-Type": "multipart/form-data" };
       }
-      const N = p ? { headers: p } : void 0;
-      let k;
-      if (Z.value && f.value) {
-        const Y = f.value[r];
-        k = await L.patch(
-          `${a}${Y}/`,
-          m,
+      const N = v ? { headers: v } : void 0;
+      let D;
+      if (J.value && o.value) {
+        const R = o.value[r];
+        D = await z.patch(
+          `${t}${R}/`,
+          p,
           N
         );
-        const B = A.value.findIndex(
-          (re) => re[r] === Y
+        const B = V.value.findIndex(
+          (re) => re[r] === R
         );
-        B !== -1 && (A.value[B] = k.data), s.success(C.successUpdate);
+        B !== -1 && (V.value[B] = D.data), s.success(C.successUpdate);
       } else
-        k = await L.post(a, m, N), A.value.unshift(k.data), $.rows++, s.success(C.successCreate);
-      return o.value = !1, f.value = null, U && U(k.data, Z.value), k.data;
+        D = await z.post(t, p, N), V.value.unshift(D.data), x.rows++, s.success(C.successCreate);
+      return w.value = !1, o.value = null, U && U(D.data, J.value), D.data;
     } catch (y) {
       return s.error(Ye(y, "Erro ao salvar registro")), null;
     } finally {
-      i.value = !1;
+      F.value = !1;
     }
   }
-  function De(y) {
-    b(async () => {
+  function $e(y) {
+    k(async () => {
       try {
-        const S = y[r];
-        await L.delete(`${a}${S}/`);
-        const m = A.value.findIndex(
-          (p) => p[r] === S
+        const P = y[r];
+        await z.delete(`${t}${P}/`);
+        const p = V.value.findIndex(
+          (v) => v[r] === P
         );
-        m !== -1 && (A.value.splice(m, 1), $.rows--), s.success(C.successDelete), P && P(y);
-      } catch (S) {
-        s.error(Ye(S, "Erro ao excluir registro"));
+        p !== -1 && (V.value.splice(p, 1), x.rows--), s.success(C.successDelete), M && M(y);
+      } catch (P) {
+        s.error(Ye(P, "Erro ao excluir registro"));
       }
     }, C.deleteConfirmMessage);
   }
   return {
-    items: A,
-    loading: K,
-    saving: i,
-    search: g,
-    dialogVisible: o,
-    editingItem: f,
-    formData: M,
-    pagination: $,
-    sort: E,
-    isEditing: Z,
+    items: V,
+    loading: Z,
+    saving: F,
+    search: i,
+    dialogVisible: w,
+    editingItem: o,
+    formData: u,
+    pagination: x,
+    sort: A,
+    isEditing: J,
     dialogTitle: ue,
     isFirstPage: ee,
     isLastPage: oe,
-    init: ye,
+    init: be,
     fetchItems: O,
     refresh: de,
-    setSearch: $e,
+    setSearch: xe,
     onSearch: Ve,
     onPage: ae,
     onSort: ce,
-    openCreateDialog: we,
+    openCreateDialog: De,
     openEditDialog: me,
     save: pe,
-    confirmDelete: De,
-    setFormField: ke,
+    confirmDelete: $e,
+    setFormField: we,
     resetForm: fe,
     goToPage: le,
-    firstPage: be,
+    firstPage: ke,
     lastPage: ne,
     config: e
   };
 }
-function Do(e) {
-  const { endpoint: a, searchDebounce: t = 300, immediate: l = !1 } = e, r = Me(je);
+function $o(e) {
+  const { endpoint: t, searchDebounce: a = 300, immediate: l = !1 } = e, r = Me(je);
   if (!r)
     throw new Error(
       "[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin antes de usar useApi."
     );
-  const c = r, u = Me(ze), V = e.pageSize ?? (u == null ? void 0 : u.defaultPageSize) ?? 20, v = I([]), D = I(!1), x = I(""), z = I({}), U = ie({}), P = ie({
+  const d = r, m = Me(ze), g = e.pageSize ?? (m == null ? void 0 : m.defaultPageSize) ?? 20, c = L([]), b = L(!1), S = L(""), j = L({}), U = ie({}), M = ie({
     page: 1,
-    pageSize: V,
+    pageSize: g,
     rows: 0,
     totalPages: 0
-  }), R = ie({
+  }), Y = ie({
     field: null,
     order: 0
   });
-  let L = null;
-  async function n(i = {}) {
-    D.value = !0;
+  let z = null;
+  async function n(F = {}) {
+    b.value = !0;
     try {
-      const g = {
-        page: P.page,
-        page_size: P.pageSize,
-        ...i
+      const i = {
+        page: M.page,
+        page_size: M.pageSize,
+        ...F
       };
-      x.value && (g.search = x.value), R.field && R.order !== 0 && (g.ordering = R.order === -1 ? `-${R.field}` : R.field);
-      for (const [$, E] of Object.entries(U))
-        E != null && E !== "" && (g[$] = E);
-      const M = (await c.get(a, {
-        params: g
+      S.value && (i.search = S.value), Y.field && Y.order !== 0 && (i.ordering = Y.order === -1 ? `-${Y.field}` : Y.field);
+      for (const [x, A] of Object.entries(U))
+        A != null && A !== "" && (i[x] = A);
+      const u = (await d.get(t, {
+        params: i
       })).data;
-      Array.isArray(M.results) ? (v.value = M.results, P.rows = M.count ?? 0) : (v.value = M.data ?? [], P.rows = M.rows ?? 0), M.page && (P.page = M.page), M.page_size && (P.pageSize = M.page_size), P.totalPages = Math.ceil(P.rows / P.pageSize) || 0, z.value = M.extras ?? {};
+      Array.isArray(u.results) ? (c.value = u.results, M.rows = u.count ?? 0) : (c.value = u.data ?? [], M.rows = u.rows ?? 0), u.page && (M.page = u.page), u.page_size && (M.pageSize = u.page_size), M.totalPages = Math.ceil(M.rows / M.pageSize) || 0, j.value = u.extras ?? {};
     } finally {
-      D.value = !1;
+      b.value = !1;
     }
   }
-  async function d() {
+  async function f() {
     await n();
   }
-  function C(i) {
-    x.value = i, L && clearTimeout(L), L = setTimeout(() => {
-      P.page = 1, n();
-    }, t);
+  function C(F) {
+    S.value = F, z && clearTimeout(z), z = setTimeout(() => {
+      M.page = 1, n();
+    }, a);
   }
-  function s(i, g) {
-    U[i] = g, P.page = 1, n();
+  function s(F, i) {
+    U[F] = i, M.page = 1, n();
   }
-  function b() {
-    for (const i of Object.keys(U))
-      delete U[i];
-    P.page = 1, n();
+  function k() {
+    for (const F of Object.keys(U))
+      delete U[F];
+    M.page = 1, n();
   }
-  function A(i) {
-    P.page = i.page + 1, P.pageSize = i.rows, n();
+  function V(F) {
+    M.page = F.page + 1, M.pageSize = F.rows, n();
   }
-  function K(i) {
-    R.field = i.sortField ?? null, R.order = i.sortOrder ?? 0, P.page = 1, n();
+  function Z(F) {
+    Y.field = F.sortField ?? null, Y.order = F.sortOrder ?? 0, M.page = 1, n();
   }
   return l && n(), {
-    items: v,
-    loading: D,
-    search: x,
-    pagination: P,
-    sort: R,
-    extras: z,
+    items: c,
+    loading: b,
+    search: S,
+    pagination: M,
+    sort: Y,
+    extras: j,
     fetchItems: n,
-    refresh: d,
+    refresh: f,
     setSearch: C,
     setFilter: s,
-    clearFilters: b,
-    onPage: A,
-    onSort: K
+    clearFilters: k,
+    onPage: V,
+    onSort: Z
   };
 }
 export {
-  Qa as DEFAULT_CRUD_LABELS,
-  bt as WAutoCompleteFK,
-  Oe as WCrudColumnRenderer,
-  We as WCrudFormDialog,
-  Xa as WCrudView,
-  ko as WPrimeVuePlugin,
+  Ga as DEFAULT_CRUD_LABELS,
+  wt as WAutoCompleteFK,
+  He as WCrudColumnRenderer,
+  Ke as WCrudFormDialog,
+  Qa as WCrudView,
+  Ya as WFormRenderer,
+  wo as WPrimeVuePlugin,
   je as W_AXIOS_KEY,
   ze as W_CONFIG_KEY,
   Ye as extractApiError,
@@ -2045,11 +2084,11 @@ export {
   sa as mapApiFieldToFieldDef,
   ca as mapApiFieldsToColumnDefs,
   ia as mapApiFieldsToFieldDefs,
-  Do as useApi,
-  bo as useApiError,
-  yt as useAppConfirm,
-  ht as useAppToast,
-  wo as useCrudManager,
-  pt as useFormatters
+  $o as useApi,
+  ko as useApiError,
+  kt as useAppConfirm,
+  bt as useAppToast,
+  Do as useCrudManager,
+  gt as useFormatters
 };
 //# sourceMappingURL=index.js.map

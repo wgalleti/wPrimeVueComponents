@@ -10,6 +10,7 @@ export {
   WCrudFormDialog,
   WCrudColumnRenderer,
   WAutoCompleteFK,
+  WFormRenderer,
 } from './components'
 
 // Composables
