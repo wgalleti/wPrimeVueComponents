@@ -141,6 +141,17 @@
   border-top: 1px solid var(--p-content-border-color);
 }
 
+/* Paginator — compact: "Página X de Y  < >" aligned right */
+.w-crud-paginator .p-paginator-content {
+  justify-content: flex-end;
+}
+
+.w-crud-paginator .p-paginator-current {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+  margin-right: auto !important;
+}
+
 /* --- Toolbar (inside DataTable header) --- */
 .w-crud-toolbar {
   display: flex;
