@@ -1,61 +1,56 @@
 # useApiError
 
-Composable para extrair mensagens de erro legiveis de respostas da API (Django REST Framework).
-
-## Import
-
-```typescript
-import { useApiError } from '@wgalleti/primevue-components'
-```
+Extrai mensagens de erro legiveis de respostas da API (especialmente Django REST Framework).
 
 ## Uso
 
-```typescript
-const { extractApiError } = useApiError()
+```ts
+import { extractApiError } from '@wgalleti/primevue-components'
 
 try {
-  await api.post('/api/v1/produtos/', data)
-} catch (error) {
-  const message = extractApiError(error, 'Erro ao salvar produto')
+  await api.post('/items/', data)
+} catch (err) {
+  const message = extractApiError(err, 'Erro ao salvar')
   toast.error(message)
 }
 ```
 
-## API
+## `extractApiError(error, fallback?)`
 
-```typescript
-interface ApiError {
-  /**
-   * Extrai mensagem legivel de um erro Axios/DRF.
-   * @param error - Erro capturado (AxiosError, Error, ou unknown)
-   * @param fallback - Mensagem padrao se nao conseguir extrair. Default: 'Erro inesperado'
-   * @returns Mensagem de erro formatada
-   */
-  extractApiError(error: unknown, fallback?: string): string
-}
-```
+| Param | Tipo | Padrao |
+|-------|------|--------|
+| `error` | `unknown` | **obrigatorio** |
+| `fallback` | `string` | `'Erro inesperado'` |
 
-## Formatos DRF Suportados
+### Formatos Suportados
 
+**DRF - campo `detail`:**
 ```json
-// String simples
-{ "detail": "Not found." }
+{ "detail": "Token invalido." }
+```
+Resultado: `"Token invalido."`
 
-// Array de erros
-["Campo obrigatorio", "Valor invalido"]
-
-// Erros por campo
+**DRF - erros de validacao:**
+```json
 {
-  "email": ["Este campo e obrigatorio"],
-  "nome": ["Valor muito longo"]
-}
-
-// Nested
-{
-  "detail": {
-    "non_field_errors": ["Combinacao ja existe"]
-  }
+  "nome": ["Este campo e obrigatorio."],
+  "email": ["Email invalido."]
 }
 ```
+Resultado: `"Nome: Este campo e obrigatorio.\nEmail: Email invalido."`
 
-Todos sao normalizados para uma unica string legivel.
+**DRF - `non_field_errors`:**
+```json
+{
+  "non_field_errors": ["As senhas nao conferem."]
+}
+```
+Resultado: `"As senhas nao conferem."`
+
+## `useApiError()`
+
+Composable que retorna `{ extractApiError }`:
+
+```ts
+const { extractApiError } = useApiError()
+```

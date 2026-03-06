@@ -7,3 +7,5 @@ playground/dist/
 .yarn/
 .playwright-mcp/
 *.png
+docs/.vitepress/cache/
+docs/.vitepress/dist/

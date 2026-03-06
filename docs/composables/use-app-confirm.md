@@ -1,72 +1,62 @@
 # useAppConfirm
 
-Wrapper sobre o `useConfirm()` do PrimeVue para dialogs de confirmacao padronizados.
-
-## Import
-
-```typescript
-import { useAppConfirm } from '@wgalleti/primevue-components'
-```
+Wrapper do `useConfirm` do PrimeVue com dialogs de confirmacao pre-configurados.
 
 ## Uso
 
-```typescript
-const confirm = useAppConfirm()
+```ts
+import { useAppConfirm } from '@wgalleti/primevue-components'
 
-// Confirmacao de exclusao (estilo padrao)
-confirm.confirmDelete(() => {
-  await api.delete(`/api/v1/produtos/${id}/`)
+const { confirmDelete, confirmAction } = useAppConfirm()
+
+// Confirmacao de exclusao
+confirmDelete(async () => {
+  await api.delete(`/items/${id}/`)
 })
 
 // Confirmacao generica
-confirm.confirmAction(
-  'Deseja realmente aprovar este pedido?',
-  () => aprovarPedido(id),
-  'Confirmar Aprovacao',
-)
+confirmAction('Deseja realmente aprovar este pedido?', async () => {
+  await api.post(`/pedidos/${id}/aprovar/`)
+}, 'Aprovar Pedido')
 ```
 
-## API
+## Metodos
 
-```typescript
-interface AppConfirm {
-  /**
-   * Dialog de confirmacao de exclusao.
-   * Icone de alerta, botao vermelho "Excluir".
-   */
-  confirmDelete(
-    onAccept: () => void,
-    message?: string,  // Default: 'Deseja realmente excluir este registro?'
-  ): void
+### `confirmDelete(onAccept, message?)`
 
-  /**
-   * Dialog de confirmacao generico.
-   */
-  confirmAction(
-    message: string,
-    onAccept: () => void,
-    header?: string,   // Default: 'Confirmacao'
-  ): void
-}
-```
+| Param | Tipo | Padrao |
+|-------|------|--------|
+| `onAccept` | `() => void` | **obrigatorio** |
+| `message` | `string` | `'Deseja realmente excluir este registro?'` |
 
-## Requisitos
+Exibe dialog com:
+- Header: "Confirmar Exclusao"
+- Icone: `pi pi-trash`
+- Botao "Cancelar" (secondary, text)
+- Botao "Excluir" (danger)
 
-O componente `<ConfirmDialog />` do PrimeVue deve estar no layout raiz:
+### `confirmAction(message, onAccept, header?)`
+
+| Param | Tipo | Padrao |
+|-------|------|--------|
+| `message` | `string` | **obrigatorio** |
+| `onAccept` | `() => void` | **obrigatorio** |
+| `header` | `string` | `'Confirmacao'` |
+
+## Pre-requisito
+
+O componente `<ConfirmDialog />` deve estar no `App.vue`:
 
 ```vue
-<!-- App.vue -->
 <template>
-  <Toast />
   <ConfirmDialog />
   <router-view />
 </template>
 ```
 
-E o `ConfirmationService` deve estar registrado:
+E o `ConfirmationService`:
 
-```typescript
-// main.ts
+```ts
 import ConfirmationService from 'primevue/confirmationservice'
 app.use(ConfirmationService)
 ```

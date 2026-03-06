@@ -1,16 +1,12 @@
 # useFormatters
 
-Composable com funcoes de formatacao e validacao para locale brasileiro (pt-BR).
-
-## Import
-
-```typescript
-import { useFormatters } from '@wgalleti/primevue-components'
-```
+Composable com funcoes de formatacao para datas, numeros, moeda, CPF/CNPJ e telefone.
 
 ## Uso
 
-```typescript
+```ts
+import { useFormatters } from '@wgalleti/primevue-components'
+
 const {
   formatCurrency,
   formatNumber,
@@ -21,69 +17,122 @@ const {
   formatCnpj,
   formatCpfCnpj,
   formatTelefone,
-  parseDate,
-  toDateString,
-  toDateTimeString,
   validateCpf,
   validateCnpj,
   validateCpfCnpj,
 } = useFormatters()
 ```
 
-## Formatadores
+## Funcoes de Formatacao
 
-| Funcao | Entrada | Saida | Exemplo |
-|---|---|---|---|
-| `formatCurrency(val)` | `number` | `string` | `1500.5` → `R$ 1.500,50` |
-| `formatNumber(val, decimals?)` | `number, number` | `string` | `1500.5, 2` → `1.500,50` |
-| `formatDate(val, format?)` | `string \| Date` | `string` | `'2024-03-15'` → `15/03/2024` |
-| `formatDateTime(val)` | `string \| Date` | `string` | → `15/03/2024 14:30` |
-| `formatPercent(val)` | `number` | `string` | `0.15` → `15,00%` |
-| `formatCpf(val)` | `string` | `string` | `'12345678900'` → `123.456.789-00` |
-| `formatCnpj(val)` | `string` | `string` | → `12.345.678/0001-00` |
-| `formatCpfCnpj(val)` | `string` | `string` | Auto-detecta por tamanho |
-| `formatTelefone(val)` | `string` | `string` | → `(11) 99999-9999` |
+### `formatCurrency(value)`
 
-## Conversores de Data
-
-| Funcao | Descricao |
-|---|---|
-| `parseDate(val)` | ISO string ou Date → `Date \| null` |
-| `toDateString(val)` | Date → `'YYYY-MM-DD'` (para API) |
-| `toDateTimeString(val)` | Date → ISO 8601 completo (para API) |
-
-## Validadores
-
-Retornam `string` (mensagem de erro) ou `null` (valido).
-
-| Funcao | Descricao |
-|---|---|
-| `validateCpf(val)` | Valida CPF com digitos verificadores |
-| `validateCnpj(val)` | Valida CNPJ com digitos verificadores |
-| `validateCpfCnpj(val)` | Auto-detecta e valida |
-
-### Uso com FieldDef
-
-```typescript
-const { validateCpfCnpj } = useFormatters()
-
-const form: FieldDef[] = [
-  {
-    field: 'documento',
-    label: 'CPF/CNPJ',
-    type: 'cpf_cnpj',
-    validate: validateCpfCnpj,
-  },
-]
+```ts
+formatCurrency(1234.5)   // "R$ 1.234,50"
+formatCurrency(null)     // "—"
 ```
 
-### Uso em colunas
+### `formatNumber(value, decimals?)`
 
-```typescript
-const { formatCurrency, formatDate } = useFormatters()
+```ts
+formatNumber(1234.567)      // "1.234,57"
+formatNumber(1234.567, 0)   // "1.235"
+formatNumber(null)          // "—"
+```
 
-const columns: ColumnDef[] = [
-  { field: 'valor', header: 'Valor', format: (v) => formatCurrency(v as number) },
-  { field: 'vencimento', header: 'Vencimento', format: (v) => formatDate(v as string) },
-]
+### `formatDate(value, format?)`
+
+```ts
+formatDate('2024-03-15')           // "15/03/2024"
+formatDate('2024-03-15', 'YYYY')   // "2024"
+formatDate(null)                   // "—"
+```
+
+### `formatDateTime(value)`
+
+```ts
+formatDateTime('2024-03-15T14:30:00') // "15/03/2024 14:30"
+```
+
+### `formatPercent(value)`
+
+```ts
+formatPercent(85.5) // "85,50%"
+```
+
+### `formatCpf(value)`
+
+```ts
+formatCpf('12345678901') // "123.456.789-01"
+```
+
+### `formatCnpj(value)`
+
+```ts
+formatCnpj('12345678000195') // "12.345.678/0001-95"
+```
+
+### `formatCpfCnpj(value)`
+
+Detecta automaticamente se e CPF (11 digitos) ou CNPJ (14 digitos).
+
+### `formatTelefone(value)`
+
+```ts
+formatTelefone('11999887766')  // "(11) 99988-7766"
+formatTelefone('1133445566')   // "(11) 3344-5566"
+```
+
+## Funcoes de Validacao
+
+### `validateCpf(value)`
+
+```ts
+validateCpf('12345678901')  // null (valido) ou "CPF invalido."
+validateCpf('111')          // "CPF deve ter 11 digitos."
+```
+
+### `validateCnpj(value)`
+
+```ts
+validateCnpj('12345678000195')  // null ou "CNPJ invalido."
+```
+
+### `validateCpfCnpj(value)`
+
+Valida como CPF ou CNPJ automaticamente.
+
+## Funcoes de Data
+
+### `parseDate(value)`
+
+Converte string ISO para `Date`:
+
+```ts
+parseDate('2024-03-15')  // Date object
+parseDate(null)          // null
+```
+
+### `toDateString(value)`
+
+Converte `Date` para string `YYYY-MM-DD`:
+
+```ts
+toDateString(new Date(2024, 2, 15))  // "2024-03-15"
+```
+
+### `toDateTimeString(value)`
+
+Converte `Date` para ISO string.
+
+## Configuracao
+
+O locale e moeda usam os valores do plugin:
+
+```ts
+app.use(WPrimeVuePlugin, {
+  axios: api,
+  locale: 'pt-BR',
+  currency: 'BRL',
+})
 ```

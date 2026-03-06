@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <rect width="128" height="128" rx="24" fill="#10b981"/>
+  <path d="M32 40h64L64 96 32 40z" fill="#fff" opacity="0.9"/>
+  <path d="M48 40h32L64 80 48 40z" fill="#059669"/>
+  <text x="64" y="115" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="700" fill="#fff">w</text>
+</svg>
