@@ -1,0 +1,9 @@
+node_modules/
+dist/
+playground/node_modules/
+playground/dist/
+*.local
+.DS_Store
+.yarn/
+.playwright-mcp/
+*.png
