@@ -1,0 +1,140 @@
+/* CSS Layer ordering: Tailwind base < PrimeVue < Tailwind utilities */
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+/* ============================================================
+   DESIGN TOKENS (baseado no WorkHard)
+   ============================================================ */
+
+:root {
+  /* Accent (Laranja Seguranca) */
+  --color-accent-50: #FDF4EB;
+  --color-accent-100: #FBEBD7;
+  --color-accent-200: #F6D2A7;
+  --color-accent-300: #F0B978;
+  --color-accent-400: #EB9F48;
+  --color-accent-500: #E67E22;
+  --color-accent-600: #C96C1C;
+  --color-accent-700: #A85A17;
+  --color-accent-800: #874812;
+  --color-accent-900: #66360D;
+  --color-accent-950: #452409;
+
+  /* Status Colors */
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fee2e2;
+  --color-info: #3b82f6;
+  --color-info-soft: #eff6ff;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.16);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 2px var(--p-primary-100, #C8D1DC), 0 0 0 4px var(--p-primary-400, #5D7A99);
+}
+
+.dark {
+  --color-success-soft: rgba(22, 163, 74, 0.12);
+  --color-warning-soft: rgba(217, 119, 6, 0.12);
+  --color-danger-soft: rgba(220, 38, 38, 0.12);
+  --color-info-soft: rgba(37, 99, 235, 0.12);
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+  --focus-ring: 0 0 0 2px var(--p-surface-800, #1E1F1D), 0 0 0 4px var(--p-primary-400, #5D7A99);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+html {
+  @apply antialiased scroll-smooth;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
+}
+
+*:focus-visible {
+  @apply outline-none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--p-primary-200);
+  color: var(--p-primary-950);
+}
+
+/* ============================================================
+   PLAYGROUND UTILITIES (badges, animations, etc)
+   ============================================================ */
+
+@layer components {
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    background: var(--color-success-soft);
+    color: var(--color-success);
+  }
+
+  .badge-warning {
+    background: var(--color-warning-soft);
+    color: var(--color-warning);
+  }
+
+  .badge-danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  .badge-info {
+    background: var(--color-info-soft);
+    color: var(--color-info);
+  }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+.fade-enter-active { transition: opacity var(--transition-normal); }
+.fade-leave-active { transition: opacity var(--transition-fast); }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.fade-slide-enter-active { transition: opacity 300ms ease-out, transform 300ms ease-out; }
+.fade-slide-leave-active { transition: opacity 150ms ease-in; }
+.fade-slide-enter-from { opacity: 0; transform: translateY(6px); }
+.fade-slide-leave-to { opacity: 0; }
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { @apply w-[5px]; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { @apply rounded-full; background: rgba(255, 255, 255, 0.1); }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }

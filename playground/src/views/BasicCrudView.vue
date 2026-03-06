@@ -13,9 +13,9 @@ interface Produto {
 
 const columns: ColumnDef[] = [
   { field: 'id', header: '#', style: 'width: 60px', align: 'center' },
-  { field: 'nome', header: 'Nome' },
-  { field: 'preco', header: 'Preco', type: 'currency' },
-  { field: 'estoque', header: 'Estoque', type: 'number', align: 'center' },
+  { field: 'nome', header: 'Nome', sortable: true },
+  { field: 'preco', header: 'Preco', type: 'currency', sortable: true },
+  { field: 'estoque', header: 'Estoque', type: 'number', align: 'center', sortable: true },
   { field: 'ativo', header: 'Status', type: 'boolean' },
   { field: 'created_at', header: 'Criado em', type: 'date' },
 ]

@@ -34,6 +34,19 @@
           row actions customizadas, mascara de input.
         </p>
       </router-link>
+      <router-link
+        to="/real-api"
+        class="block p-6 rounded-lg border border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors no-underline"
+      >
+        <div class="flex items-center gap-3 mb-2">
+          <i class="pi pi-server text-2xl text-primary" />
+          <h3 class="text-lg font-semibold">API Real</h3>
+        </div>
+        <p class="text-sm text-surface-500">
+          Conecte a uma API real (ex: WorkHard) para testar CRUD com dados reais.
+          Configure URL base e token JWT.
+        </p>
+      </router-link>
     </div>
   </div>
 </template>

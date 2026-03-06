@@ -18,5 +18,10 @@ export const router = createRouter({
       name: 'advanced-crud',
       component: () => import('./views/AdvancedCrudView.vue'),
     },
+    {
+      path: '/real-api',
+      name: 'real-api',
+      component: () => import('./views/real-api/RealApiCrudView.vue'),
+    },
   ],
 })
