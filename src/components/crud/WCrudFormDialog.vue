@@ -81,6 +81,13 @@ function shouldAutofocus(field: FieldDef): boolean {
   return field.field === autofocusField.value
 }
 
+// --- Mask format conversion (PrimeVue InputMask → maska) ---
+
+function convertMask(mask?: string): string | undefined {
+  if (!mask) return undefined
+  return mask.replace(/9/g, '#').replace(/a/g, 'S').replace(/\*/g, 'X')
+}
+
 // --- CPF/CNPJ inline mask ---
 
 function displayCpfCnpj(value: unknown): string {
@@ -272,7 +279,7 @@ watch(
             <!-- Text with mask (maska) -->
             <InputText
               v-if="(!field.type || field.type === 'text') && field.mask"
-              v-maska="{ mask: field.mask }"
+              v-maska="{ mask: convertMask(field.mask) }"
               :model-value="formData[field.field] as string"
               fluid
               :autofocus="shouldAutofocus(field) || undefined"
@@ -429,7 +436,7 @@ watch(
             <!-- Mask (maska) -->
             <InputText
               v-else-if="field.type === 'mask'"
-              v-maska="{ mask: field.mask }"
+              v-maska="{ mask: convertMask(field.mask) }"
               :model-value="formData[field.field] as string"
               fluid
               :placeholder="field.placeholder"
