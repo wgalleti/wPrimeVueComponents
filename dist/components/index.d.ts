@@ -3,3 +3,8 @@ export { default as WCrudFormDialog } from './crud/WCrudFormDialog.vue';
 export { default as WCrudColumnRenderer } from './crud/WCrudColumnRenderer.vue';
 export { default as WAutoCompleteFK } from './form/WAutoCompleteFK.vue';
 export { default as WFormRenderer } from './form/WFormRenderer.vue';
+export { default as WStatusTag } from './ui/WStatusTag.vue';
+export { default as WPageHeader } from './ui/WPageHeader.vue';
+export { default as WEmptyState } from './ui/WEmptyState.vue';
+export { default as WDetailHeader } from './ui/WDetailHeader.vue';
+export { default as WInfoCard } from './ui/WInfoCard.vue';
