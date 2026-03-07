@@ -11,6 +11,11 @@ export {
   WCrudColumnRenderer,
   WAutoCompleteFK,
   WFormRenderer,
+  WStatusTag,
+  WPageHeader,
+  WDetailHeader,
+  WEmptyState,
+  WInfoCard,
 } from './components'
 
 // Composables
@@ -44,6 +49,9 @@ export type {
   WPluginOptions,
   WPluginConfig,
 } from './types'
+
+export type { StatusMapping } from './components/ui/WStatusTag.vue'
+export type { InfoField } from './components/ui/WInfoCard.vue'
 
 export { DEFAULT_CRUD_LABELS, W_AXIOS_KEY, W_CONFIG_KEY } from './types'
 
