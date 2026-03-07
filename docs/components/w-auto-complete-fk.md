@@ -21,6 +21,9 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 | `placeholder` | `string` | `'Buscar...'` | Placeholder do input |
 | `disabled` | `boolean` | `false` | Desabilitar campo |
 | `showClear` | `boolean` | `true` | Mostrar botao limpar |
+| `dialogHeader` | `string` | `undefined` | Titulo do modal de busca |
+| `crudFields` | `FieldDef[]` | `undefined` | Campos do formulario para CRUD inline no modal (v0.2.0+) |
+| `crudColumns` | `ColumnDef[]` | `undefined` | Colunas da tabela para CRUD inline no modal (v0.2.0+) |
 
 ## Eventos
 
@@ -47,6 +50,35 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 - Aceita objeto completo: exibe direto
 - Se valor muda externamente, re-resolve
 
+## CRUD Inline no Modal (v0.2.0+)
+
+Quando `crudFields` e `crudColumns` sao fornecidos, o modal de busca inclui botoes para criar e editar registros diretamente, sem sair do formulario atual.
+
+### Comportamento com CRUD inline
+- Botao "Novo" aparece no modal de busca
+- Botao de editar aparece em cada linha da tabela
+- Criar/editar abre um sub-dialog com formulario gerado pelo `WFormRenderer`
+- Apos salvar, a tabela e atualizada automaticamente
+- O registro criado/editado pode ser selecionado imediatamente
+
+### Standalone com CRUD inline
+
+```vue
+<script setup>
+import { pessoaColumns, pessoaForm } from '@/schemas/core/pessoa'
+</script>
+
+<WAutoCompleteFK
+  v-model="selectedFornecedor"
+  endpoint="/api/v1/pessoas/"
+  option-label="nome"
+  placeholder="Buscar fornecedor..."
+  dialog-header="Selecionar Fornecedor"
+  :crud-fields="pessoaForm"
+  :crud-columns="pessoaColumns"
+/>
+```
+
 ## Uso com FieldDef
 
 ```typescript
@@ -58,6 +90,25 @@ const form: FieldDef[] = [
     endpoint: '/api/v1/categorias/',
     optionLabel: 'nome',
     required: true,
+  },
+]
+```
+
+### FieldDef com CRUD inline
+
+```typescript
+import { pessoaColumns, pessoaForm } from '@/schemas/core/pessoa'
+
+const form: FieldDef[] = [
+  {
+    field: 'fornecedor',
+    label: 'Fornecedor',
+    type: 'fk',
+    endpoint: '/api/v1/pessoas/',
+    optionLabel: 'nome',
+    required: true,
+    crudFields: pessoaForm,
+    crudColumns: pessoaColumns,
   },
 ]
 ```

@@ -4,6 +4,8 @@ Componente de dialog modal com formulario gerado automaticamente a partir da def
 
 Usado internamente pelo `WCrudView`, mas pode ser usado standalone.
 
+> **Nota (v0.2.0+):** Internamente, este componente usa o [`WFormRenderer`](./w-form-renderer.md) para renderizar os campos. Se voce precisa de um formulario **sem dialog** (ex: dentro de um Card ou uma area da pagina), use o `WFormRenderer` diretamente.
+
 ## Import
 
 ```vue

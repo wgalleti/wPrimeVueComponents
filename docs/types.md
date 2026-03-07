@@ -159,6 +159,12 @@ interface FieldDef {
   /** Endpoint da API para buscar opcoes do FK */
   endpoint?: string
 
+  /** Campos do formulario para CRUD inline no modal FK (v0.2.0+) */
+  crudFields?: FieldDef[]
+
+  /** Colunas da tabela para CRUD inline no modal FK (v0.2.0+) */
+  crudColumns?: ColumnDef[]
+
   // --- Opcoes para 'number' e 'currency' ---
 
   min?: number
@@ -231,6 +237,16 @@ interface FieldDef {
   type: 'fk',
   endpoint: '/api/v1/categorias/',
   optionLabel: 'nome',
+}
+
+// FK com CRUD inline no modal de busca (v0.2.0+)
+{
+  field: 'fornecedor',
+  label: 'Fornecedor',
+  type: 'fk',
+  endpoint: '/api/v1/pessoas/',
+  crudFields: pessoaForm,     // FieldDef[] do schema de pessoa
+  crudColumns: pessoaColumns,  // ColumnDef[] do schema de pessoa
 }
 
 // Campo condicional
