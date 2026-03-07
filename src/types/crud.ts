@@ -52,8 +52,6 @@ export type FieldType =
   | 'image'
 
 export interface SelectOption {
-  label: string
-  value: unknown
   [key: string]: unknown
 }
 
