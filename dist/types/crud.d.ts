@@ -16,8 +16,6 @@ export interface ColumnDef {
 }
 export type FieldType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk' | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image';
 export interface SelectOption {
-    label: string;
-    value: unknown;
     [key: string]: unknown;
 }
 export interface FieldDef {
