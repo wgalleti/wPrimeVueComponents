@@ -62,6 +62,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   const saving = ref(false)
   const search = ref('')
   const dialogVisible = ref(false)
+  const viewMode = ref(false)
   const editingItem = ref<T | null>(null) as import('vue').Ref<T | null>
   const formData = reactive<Record<string, unknown>>({})
 
@@ -104,9 +105,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // Computed
   // ---------------------------------------------------------------------------
 
-  const isEditing = computed(() => editingItem.value !== null)
+  const isEditing = computed(() => editingItem.value !== null && !viewMode.value)
+  const isViewing = computed(() => viewMode.value)
   const dialogTitle = computed(() =>
-    isEditing.value ? labels.editTitle : labels.createTitle,
+    viewMode.value ? labels.viewTitle ?? 'Visualizar Registro' : isEditing.value ? labels.editTitle : labels.createTitle,
   )
   const isFirstPage = computed(() => pagination.page <= 1)
   const isLastPage = computed(() => pagination.page >= pagination.totalPages)
@@ -235,12 +237,27 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   }
 
   function openCreateDialog(): void {
+    viewMode.value = false
     editingItem.value = null
     resetForm()
     dialogVisible.value = true
   }
 
   function openEditDialog(item: T): void {
+    viewMode.value = false
+    editingItem.value = item
+    for (const f of formFields) {
+      let value = item[f.field] !== undefined ? item[f.field] : null
+      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
+        value = parseDate(value)
+      }
+      formData[f.field] = value
+    }
+    dialogVisible.value = true
+  }
+
+  function openViewDialog(item: T): void {
+    viewMode.value = true
     editingItem.value = item
     for (const f of formFields) {
       let value = item[f.field] !== undefined ? item[f.field] : null
@@ -411,6 +428,8 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     pagination,
     sort,
     isEditing,
+    isViewing,
+    viewMode,
     dialogTitle,
     isFirstPage,
     isLastPage,
@@ -423,6 +442,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     onSort,
     openCreateDialog,
     openEditDialog,
+    openViewDialog,
     save,
     confirmDelete,
     setFormField,

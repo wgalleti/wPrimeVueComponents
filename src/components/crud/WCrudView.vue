@@ -93,6 +93,8 @@ const hasActions = computed(() => effectiveRowActions.value.length > 0)
 function handleRowAction(action: RowAction, data: Record<string, unknown>) {
   if (action.action === 'edit') {
     props.crud.openEditDialog(data)
+  } else if (action.action === 'view') {
+    props.crud.openViewDialog(data)
   } else if (action.action === 'delete') {
     props.crud.confirmDelete(data)
   } else if (action.handler) {
@@ -309,6 +311,7 @@ onMounted(() => {
         :form-data="crud.formData"
         :is-editing="crud.isEditing.value"
         :saving="crud.saving.value"
+        :disabled="crud.viewMode?.value ?? false"
         :width="dialogWidth"
         @update:visible="(v) => { crud.dialogVisible.value = v; if (!v) crud.editingItem.value = null }"
         @update:field="(field, val) => crud.setFormField(field, val)"

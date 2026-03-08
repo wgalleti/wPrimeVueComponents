@@ -13,10 +13,12 @@ const props = withDefaults(
     formData: Record<string, unknown>
     isEditing: boolean
     saving: boolean
+    disabled?: boolean
     width?: string
   }>(),
   {
     width: '480px',
+    disabled: false,
   },
 )
 
@@ -66,6 +68,7 @@ watch(
         :fields="fields"
         :form-data="formData"
         :is-editing="isEditing"
+        :disabled="disabled"
         @update:field="(f, v) => emit('update:field', f, v)"
       >
         <!-- Forward field-* slots from parent -->
@@ -88,16 +91,17 @@ watch(
 
       <!-- Footer -->
       <div class="w-crud-form-footer">
-        <slot name="footer" :saving="saving">
+        <slot name="footer" :saving="saving" :disabled="disabled">
           <Button
             type="button"
-            label="Cancelar"
+            :label="disabled ? 'Fechar' : 'Cancelar'"
             severity="secondary"
             text
             :disabled="saving"
             @click="emit('update:visible', false)"
           />
           <Button
+            v-if="!disabled"
             type="submit"
             :label="isEditing ? 'Atualizar' : 'Salvar'"
             icon="pi pi-check"

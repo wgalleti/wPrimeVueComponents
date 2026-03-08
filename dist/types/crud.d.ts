@@ -64,6 +64,7 @@ export interface RowAction<T = Record<string, unknown>> {
 export interface CrudLabels {
     createTitle: string;
     editTitle: string;
+    viewTitle?: string;
     createButton: string;
     saveButton: string;
     updateButton: string;
@@ -113,6 +114,8 @@ export interface CrudManagerReturn<T> {
     pagination: PaginationState;
     sort: SortState;
     isEditing: ComputedRef<boolean>;
+    isViewing: ComputedRef<boolean>;
+    viewMode: Ref<boolean>;
     dialogTitle: ComputedRef<string>;
     isFirstPage: ComputedRef<boolean>;
     isLastPage: ComputedRef<boolean>;
@@ -131,6 +134,7 @@ export interface CrudManagerReturn<T> {
     }): void;
     openCreateDialog(): void;
     openEditDialog(item: T): void;
+    openViewDialog(item: T): void;
     save(): Promise<T | null>;
     confirmDelete(item: T): void;
     setFormField(field: string, value: unknown): void;

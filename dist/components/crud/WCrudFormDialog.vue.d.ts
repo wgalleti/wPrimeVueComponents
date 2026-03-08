@@ -6,6 +6,7 @@ type __VLS_Props = {
     formData: Record<string, unknown>;
     isEditing: boolean;
     saving: boolean;
+    disabled?: boolean;
     width?: string;
 };
 declare function __VLS_template(): {
@@ -21,6 +22,7 @@ declare function __VLS_template(): {
     }) => any>> & {
         footer?(_: {
             saving: boolean;
+            disabled: boolean;
         }): any;
     };
     refs: {
@@ -118,6 +120,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
     "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
     onSave?: (() => any) | undefined;
 }>, {
+    disabled: boolean;
     width: string;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {
     rendererRef: ({
