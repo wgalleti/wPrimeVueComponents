@@ -32,6 +32,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     canDelete = true,
     rowActions = undefined,
     filterParams = undefined,
+    createDefaults = undefined,
     transformPayload = undefined,
     onAfterSave = undefined,
     onAfterDelete = undefined,
@@ -240,6 +241,13 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     viewMode.value = false
     editingItem.value = null
     resetForm()
+    // Apply createDefaults (e.g. parent FK) on top of field defaults
+    if (createDefaults) {
+      const extra = createDefaults()
+      for (const [key, val] of Object.entries(extra)) {
+        formData[key] = val
+      }
+    }
     dialogVisible.value = true
   }
 
@@ -295,6 +303,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     saving.value = true
     try {
       let payload: Record<string, unknown> = { ...formData }
+
+      // Merge createDefaults into payload for new records (hidden parent FKs, etc.)
+      if (!isEditing.value && createDefaults) {
+        Object.assign(payload, createDefaults())
+      }
 
       // Conversões automáticas
       for (const f of formFields) {

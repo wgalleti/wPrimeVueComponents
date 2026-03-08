@@ -1,5 +1,5 @@
-import { ComputedRef, Ref } from 'vue';
-import { PaginationState, SortState } from './api';
+import type { ComputedRef, Ref } from 'vue';
+import type { PaginationState, SortState } from './api';
 export type ColumnType = 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom';
 export interface ColumnDef {
     field: string;

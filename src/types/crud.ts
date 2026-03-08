@@ -201,6 +201,7 @@ export interface CrudManagerConfig<T> {
     payload: Record<string, unknown>,
     isEditing: boolean,
   ) => Record<string, unknown>
+  createDefaults?: () => Record<string, unknown>
   onAfterSave?: (data: T, isEditing: boolean) => void
   onAfterDelete?: (item: T) => void
   labels?: Partial<CrudLabels>
