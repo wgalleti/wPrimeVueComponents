@@ -166,7 +166,7 @@ onMounted(() => {
           :key="idx"
           class="w-crud-kpi"
         >
-          <div class="w-crud-kpi-icon">
+          <div :class="['w-crud-kpi-icon', kpi.severity ? `w-crud-kpi-icon--${kpi.severity}` : '']">
             <i :class="[kpi.icon]" :style="kpi.color ? `color: ${kpi.color}` : ''" />
           </div>
           <div class="w-crud-kpi-content">

@@ -57,6 +57,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // ---------------------------------------------------------------------------
 
   const items = ref<T[]>([]) as import('vue').Ref<T[]>
+  const extras = ref<Record<string, unknown>>({})
   const loading = ref(false)
   const saving = ref(false)
   const search = ref('')
@@ -147,6 +148,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       } else {
         items.value = responseData.data ?? []
         pagination.rows = responseData.rows ?? 0
+      }
+
+      if (responseData.extras) {
+        extras.value = responseData.extras
       }
 
       if (responseData.page) pagination.page = responseData.page
@@ -396,6 +401,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
   return {
     items,
+    extras,
     loading,
     saving,
     search,
