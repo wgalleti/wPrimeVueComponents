@@ -177,6 +177,7 @@ export interface KpiItem {
   label: string
   value: string | number
   color?: string
+  severity?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
 }
 
 // ---------------------------------------------------------------------------
@@ -211,6 +212,7 @@ export interface CrudManagerConfig<T> {
 export interface CrudManagerReturn<T> {
   // state
   items: Ref<T[]>
+  extras: Ref<Record<string, unknown>>
   loading: Ref<boolean>
   saving: Ref<boolean>
   search: Ref<string>

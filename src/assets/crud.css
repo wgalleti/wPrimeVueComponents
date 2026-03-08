@@ -83,6 +83,32 @@
   font-size: 1.125rem;
 }
 
+/* KPI severity variants */
+.w-crud-kpi-icon--primary {
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  color: var(--p-primary-color);
+}
+
+.w-crud-kpi-icon--success {
+  background: color-mix(in srgb, var(--p-green-500, #22c55e) 10%, transparent);
+  color: var(--p-green-500, #22c55e);
+}
+
+.w-crud-kpi-icon--warning {
+  background: color-mix(in srgb, var(--p-yellow-500, #eab308) 10%, transparent);
+  color: var(--p-yellow-500, #eab308);
+}
+
+.w-crud-kpi-icon--danger {
+  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
+  color: var(--p-red-500, #ef4444);
+}
+
+.w-crud-kpi-icon--info {
+  background: color-mix(in srgb, var(--p-blue-500, #3b82f6) 10%, transparent);
+  color: var(--p-blue-500, #3b82f6);
+}
+
 .w-crud-kpi-content {
   min-width: 0;
 }

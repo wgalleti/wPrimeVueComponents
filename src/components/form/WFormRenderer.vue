@@ -350,7 +350,6 @@ defineExpose({ validateAll, clearErrors })
             fluid
             :suggestions="getFilteredSuggestions(field) as any[]"
             :option-label="field.optionLabel || 'label'"
-            dropdown
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             @complete="onAutocompleteSearch(field, $event)"
