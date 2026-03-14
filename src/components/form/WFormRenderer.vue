@@ -362,6 +362,7 @@ defineExpose({ validateAll, clearErrors })
             v-else-if="field.type === 'fk'"
             :model-value="formData[field.field] as any"
             :endpoint="field.endpoint!"
+            :endpoint-params="field.endpointParams"
             :option-label="field.optionLabel || 'nome'"
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"

@@ -36,6 +36,7 @@ export interface FieldDef {
     optionValue?: string;
     showClear?: boolean;
     endpoint?: string;
+    endpointParams?: Record<string, string | number | boolean>;
     crudFields?: FieldDef[];
     crudColumns?: ColumnDef[];
     min?: number;
