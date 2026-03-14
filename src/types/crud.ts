@@ -81,6 +81,7 @@ export interface FieldDef {
 
   // fk
   endpoint?: string
+  endpointParams?: Record<string, string | number | boolean>
   crudFields?: FieldDef[]
   crudColumns?: ColumnDef[]
 

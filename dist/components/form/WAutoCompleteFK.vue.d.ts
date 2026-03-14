@@ -6,6 +6,7 @@ interface ColumnMeta {
 type __VLS_Props = {
     modelValue: string | number | Record<string, unknown> | null;
     endpoint: string;
+    endpointParams?: Record<string, string | number | boolean>;
     optionLabel?: string;
     optionValue?: string;
     placeholder?: string;

@@ -28,6 +28,7 @@ const props = withDefaults(
   defineProps<{
     modelValue: string | number | Record<string, unknown> | null
     endpoint: string
+    endpointParams?: Record<string, string | number | boolean>
     optionLabel?: string
     optionValue?: string
     placeholder?: string
@@ -94,7 +95,7 @@ async function fetchById(id: string | number) {
 async function search(query: string) {
   searching.value = true
   try {
-    const params: Record<string, unknown> = { page_size: 20 }
+    const params: Record<string, unknown> = { page_size: 20, ...props.endpointParams }
     if (query) params.search = query
     const response = await axios.get(props.endpoint, { params })
     const rd = response.data
@@ -208,6 +209,7 @@ async function fetchModalData() {
     const params: Record<string, unknown> = {
       page: modalPage.value,
       page_size: modalPageSize.value,
+      ...props.endpointParams,
     }
     if (modalSearch.value) params.search = modalSearch.value
     if (modalSortField.value && modalSortOrder.value !== 0) {
