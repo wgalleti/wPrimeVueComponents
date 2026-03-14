@@ -159,6 +159,10 @@ interface FieldDef {
   /** Endpoint da API para buscar opcoes do FK */
   endpoint?: string
 
+  /** Parametros extras para query string nas buscas FK (v0.3.3+).
+   *  Nao incluidos na URL de detalhe (GET /{id}/). */
+  endpointParams?: Record<string, string | number | boolean>
+
   /** Campos do formulario para CRUD inline no modal FK (v0.2.0+) */
   crudFields?: FieldDef[]
 

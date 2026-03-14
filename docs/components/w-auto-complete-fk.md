@@ -15,7 +15,8 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 | Prop | Tipo | Default | Descricao |
 |---|---|---|---|
 | `modelValue` | `unknown` | — | Valor selecionado (ID ou objeto) |
-| `endpoint` | `string` | **obrigatorio** | Endpoint da API para buscar opcoes |
+| `endpoint` | `string` | **obrigatorio** | Endpoint base da API (sem query string — veja `endpointParams`) |
+| `endpointParams` | `Record<string, string \| number \| boolean>` | `undefined` | Parametros extras enviados como query string nas buscas (autocomplete e modal). **Nao** sao incluidos na URL de detalhe (`GET /{id}/`). Veja [endpointParams](#endpointparams). |
 | `optionLabel` | `string` | `'nome'` | Propriedade do objeto para exibicao |
 | `optionValue` | `string` | `'id'` | Propriedade do objeto para valor |
 | `placeholder` | `string` | `'Buscar...'` | Placeholder do input |
@@ -78,6 +79,40 @@ import { pessoaColumns, pessoaForm } from '@/schemas/core/pessoa'
   :crud-columns="pessoaColumns"
 />
 ```
+
+## endpointParams
+
+Adicionado na **v0.3.3** para resolver um bug onde query strings no `endpoint` (ex: `/api/v1/produtos/?categoria=combustivel`) quebravam a URL de detalhe. O componente constroi URLs de detalhe concatenando `endpoint + id + /`, entao query strings no endpoint geravam URLs invalidas como `/api/v1/produtos/?categoria=combustivel019cea52.../`.
+
+Com `endpointParams`, os filtros sao passados separadamente:
+- **Busca e modal**: `GET /api/v1/produtos/?page_size=20&categoria=combustivel&search=diesel`
+- **Detalhe**: `GET /api/v1/produtos/019cea52.../` (sem os params extras)
+
+### Standalone
+
+```vue
+<WAutoCompleteFK
+  v-model="selectedProduto"
+  endpoint="/api/v1/produtos/"
+  :endpoint-params="{ categoria: 'combustivel' }"
+  option-label="nome"
+/>
+```
+
+### FieldDef
+
+```typescript
+{
+  field: 'produto',
+  label: 'Combustivel',
+  type: 'fk',
+  endpoint: '/api/v1/produtos/',
+  endpointParams: { categoria: 'combustivel' },
+  optionLabel: 'nome',
+}
+```
+
+> **Importante**: nunca coloque query strings diretamente no `endpoint`. Use `endpointParams` para filtros fixos.
 
 ## Uso com FieldDef
 
