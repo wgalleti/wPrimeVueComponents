@@ -3,7 +3,7 @@ import type { WPluginOptions, WPluginConfig } from './types/plugin'
 import { W_AXIOS_KEY, W_CONFIG_KEY } from './types/plugin'
 import { WCrudView, WCrudFormDialog, WCrudColumnRenderer, WAutoCompleteFK } from './components'
 
-export const WPrimeVuePlugin: Plugin<[WPluginOptions]> = {
+export const WPrimeVuePlugin: Plugin = {
   install(app: App, options: WPluginOptions) {
     if (!options?.axios) {
       throw new Error(
