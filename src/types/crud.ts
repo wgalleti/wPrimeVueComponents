@@ -50,6 +50,7 @@ export type FieldType =
   | 'cpf_cnpj'
   | 'mask'
   | 'image'
+  | 'cep'
 
 export interface SelectOption {
   [key: string]: unknown
@@ -111,6 +112,29 @@ export interface FieldDef {
 
   // image
   accept?: string
+
+  // cep
+  /** For type 'cep' — maps ViaCEP response fields to form field names.
+   *  Keys are ViaCEP response names (logradouro, bairro, localidade, uf, complemento).
+   *  Values are the form field names to populate. Omit keys to skip fields. */
+  cepFields?: {
+    logradouro?: string
+    bairro?: string
+    localidade?: string  // cidade
+    uf?: string
+    complemento?: string
+  }
+
+  // field group
+  /** Optional visual grouping. Fields with the same group.id render together
+   *  under a titled section. Ungrouped fields render in a default section at the top.
+   *  `order` controls the display order of groups; defaults to the order of first occurrence. */
+  fieldGroup?: {
+    id: string
+    title: string
+    description?: string
+    order?: number
+  }
 }
 
 // ---------------------------------------------------------------------------
