@@ -14,7 +14,7 @@ export interface ColumnDef {
     tagValue?: (value: unknown, rowData?: Record<string, unknown>) => string;
     tagSeverity?: (value: unknown, rowData?: Record<string, unknown>) => string;
 }
-export type FieldType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk' | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image';
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk' | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image' | 'cep';
 export interface SelectOption {
     [key: string]: unknown;
 }
@@ -52,6 +52,25 @@ export interface FieldDef {
     switchLabel?: string;
     feedback?: boolean;
     accept?: string;
+    /** For type 'cep' — maps ViaCEP response fields to form field names.
+     *  Keys are ViaCEP response names (logradouro, bairro, localidade, uf, complemento).
+     *  Values are the form field names to populate. Omit keys to skip fields. */
+    cepFields?: {
+        logradouro?: string;
+        bairro?: string;
+        localidade?: string;
+        uf?: string;
+        complemento?: string;
+    };
+    /** Optional visual grouping. Fields with the same group.id render together
+     *  under a titled section. Ungrouped fields render in a default section at the top.
+     *  `order` controls the display order of groups; defaults to the order of first occurrence. */
+    fieldGroup?: {
+        id: string;
+        title: string;
+        description?: string;
+        order?: number;
+    };
 }
 export interface RowAction<T = Record<string, unknown>> {
     action: string;

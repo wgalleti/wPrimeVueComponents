@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef, watch } from 'vue'
+import { computed, reactive, isRef, watch, ref } from 'vue'
 import { vMaska } from 'maska/vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -12,6 +12,7 @@ import ColorPicker from 'primevue/colorpicker'
 import Password from 'primevue/password'
 import type { FieldDef } from '@/types/crud'
 import WAutoCompleteFK from '@/components/form/WAutoCompleteFK.vue'
+import { lookupCep } from '@/utils/cep'
 
 const props = withDefaults(
   defineProps<{
@@ -30,6 +31,53 @@ const emit = defineEmits<{
 }>()
 
 const fieldErrors = reactive<Record<string, string | null>>({})
+
+// --- CEP state ---
+const cepLoading = reactive<Record<string, boolean>>({})
+const cepError = reactive<Record<string, string | null>>({})
+const cepTimers = reactive<Record<string, ReturnType<typeof setTimeout> | null>>({})
+
+function onCepInput(field: FieldDef, event: Event) {
+  const raw = (event.target as HTMLInputElement).value
+  const digits = raw.replace(/\D/g, '')
+  emit('update:field', field.field, raw)
+
+  // Clear previous error
+  cepError[field.field] = null
+
+  // Clear pending timer
+  if (cepTimers[field.field]) {
+    clearTimeout(cepTimers[field.field]!)
+    cepTimers[field.field] = null
+  }
+
+  if (digits.length === 8) {
+    cepTimers[field.field] = setTimeout(async () => {
+      cepLoading[field.field] = true
+      cepError[field.field] = null
+      try {
+        const result = await lookupCep(digits)
+        if (!result) {
+          cepError[field.field] = 'CEP não encontrado. Preencha os campos manualmente.'
+        } else {
+          // Fill mapped fields, but only when currently empty
+          const mapping = field.cepFields || {}
+          const keys = Object.keys(mapping) as Array<keyof typeof mapping>
+          for (const key of keys) {
+            const targetField = mapping[key]
+            if (!targetField) continue
+            const existing = props.formData[targetField]
+            if (existing == null || existing === '') {
+              emit('update:field', targetField, result[key] ?? '')
+            }
+          }
+        }
+      } finally {
+        cepLoading[field.field] = false
+      }
+    }, 400)
+  }
+}
 
 // --- Visibility & Disabled ---
 
@@ -173,273 +221,343 @@ function clearErrors() {
   Object.keys(fieldErrors).forEach((k) => delete fieldErrors[k])
 }
 
+// --- Field Groups ---
+
+interface FieldGroup {
+  id: string
+  title?: string
+  description?: string
+  fields: FieldDef[]
+}
+
+const groupedFields = computed((): FieldGroup[] => {
+  const groupMap = new Map<string, FieldGroup>()
+  const groupOrder: string[] = []
+  const groupExplicitOrder = new Map<string, number>()
+
+  for (const field of visibleFields.value) {
+    const groupId = field.fieldGroup?.id ?? '__default__'
+
+    if (!groupMap.has(groupId)) {
+      groupMap.set(groupId, {
+        id: groupId,
+        title: field.fieldGroup?.title,
+        description: field.fieldGroup?.description,
+        fields: [],
+      })
+      groupOrder.push(groupId)
+      if (field.fieldGroup?.order != null) {
+        groupExplicitOrder.set(groupId, field.fieldGroup.order)
+      }
+    }
+
+    groupMap.get(groupId)!.fields.push(field)
+  }
+
+  return groupOrder
+    .slice()
+    .sort((a, b) => {
+      const orderA = groupExplicitOrder.get(a)
+      const orderB = groupExplicitOrder.get(b)
+      if (orderA != null && orderB != null) return orderA - orderB
+      if (orderA != null) return -1
+      if (orderB != null) return 1
+      return groupOrder.indexOf(a) - groupOrder.indexOf(b)
+    })
+    .map((id) => groupMap.get(id)!)
+})
+
 defineExpose({ validateAll, clearErrors })
 </script>
 
 <template>
-  <div class="w-crud-form-fields">
-    <template v-for="field in visibleFields" :key="field.field">
-      <slot
-        :name="`field-${field.field}`"
-        :field="field"
-        :form-data="formData"
-        :is-editing="isEditing"
-        :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
-      >
-        <!-- Switch -->
-        <div
-          v-if="field.type === 'switch'"
-          class="w-crud-form-switch"
-        >
-          <ToggleSwitch
-            :model-value="formData[field.field] as boolean"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-          <label class="w-crud-form-switch-label">{{ field.switchLabel || field.label }}</label>
-        </div>
+  <div class="w-crud-form">
+    <div v-for="group in groupedFields" :key="group.id" class="w-crud-form-group">
+      <div v-if="group.title" class="w-crud-form-group-header">
+        <h3 class="w-crud-form-group-title">{{ group.title }}</h3>
+        <p v-if="group.description" class="w-crud-form-group-desc">{{ group.description }}</p>
+      </div>
+      <div class="w-crud-form-fields">
+        <template v-for="field in group.fields" :key="field.field">
+          <slot
+            :name="`field-${field.field}`"
+            :field="field"
+            :form-data="formData"
+            :is-editing="isEditing"
+            :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
+          >
+            <!-- Switch -->
+            <div
+              v-if="field.type === 'switch'"
+              class="w-crud-form-switch"
+            >
+              <ToggleSwitch
+                :model-value="formData[field.field] as boolean"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+              <label class="w-crud-form-switch-label">{{ field.switchLabel || field.label }}</label>
+            </div>
 
-        <!-- Color -->
-        <div v-else-if="field.type === 'color'" class="w-crud-form-col-full">
-          <label class="w-crud-form-label">
-            {{ field.label }}
-            <span v-if="field.required" class="w-crud-form-required">*</span>
-          </label>
-          <div class="w-crud-form-color-row">
-            <ColorPicker
-              :model-value="getColorPickerValue(field)"
-              :disabled="isFieldDisabled(field)"
-              @update:model-value="onColorChange(field, $event as string)"
-            />
-            <InputText
-              :model-value="formData[field.field] as string"
-              class="w-28"
-              maxlength="7"
-              placeholder="#000000"
-              :disabled="isFieldDisabled(field)"
-              @update:model-value="(val) => emit('update:field', field.field, val)"
-            />
-          </div>
-        </div>
+            <!-- Color -->
+            <div v-else-if="field.type === 'color'" class="w-crud-form-col-full">
+              <label class="w-crud-form-label">
+                {{ field.label }}
+                <span v-if="field.required" class="w-crud-form-required">*</span>
+              </label>
+              <div class="w-crud-form-color-row">
+                <ColorPicker
+                  :model-value="getColorPickerValue(field)"
+                  :disabled="isFieldDisabled(field)"
+                  @update:model-value="onColorChange(field, $event as string)"
+                />
+                <InputText
+                  :model-value="formData[field.field] as string"
+                  class="w-28"
+                  maxlength="7"
+                  placeholder="#000000"
+                  :disabled="isFieldDisabled(field)"
+                  @update:model-value="(val) => emit('update:field', field.field, val)"
+                />
+              </div>
+            </div>
 
-        <!-- Image -->
-        <div v-else-if="field.type === 'image'" class="w-crud-form-col-full">
-          <label class="w-crud-form-label">
-            {{ field.label }}
-          </label>
-          <slot :name="`image-${field.field}`" :field="field" :form-data="formData">
-            <input
-              type="file"
-              :accept="field.accept || 'image/*'"
-              :disabled="isFieldDisabled(field)"
-              @change="(e) => {
-                const file = (e.target as HTMLInputElement).files?.[0] ?? null
-                emit('update:field', field.field, file)
-              }"
-            />
+            <!-- Image -->
+            <div v-else-if="field.type === 'image'" class="w-crud-form-col-full">
+              <label class="w-crud-form-label">
+                {{ field.label }}
+              </label>
+              <slot :name="`image-${field.field}`" :field="field" :form-data="formData">
+                <input
+                  type="file"
+                  :accept="field.accept || 'image/*'"
+                  :disabled="isFieldDisabled(field)"
+                  @change="(e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0] ?? null
+                    emit('update:field', field.field, file)
+                  }"
+                />
+              </slot>
+            </div>
+
+            <!-- All other types -->
+            <div
+              v-else
+              :class="field.colSpan === 0.5 ? 'w-crud-form-col-half' : 'w-crud-form-col-full'"
+            >
+              <label class="w-crud-form-label">
+                {{ field.label }}
+                <span v-if="field.required" class="w-crud-form-required">*</span>
+                <i v-if="cepLoading[field.field]" class="pi pi-spin pi-spinner w-crud-form-cep-spinner" />
+              </label>
+
+              <!-- Text with mask (maska) -->
+              <InputText
+                v-if="(!field.type || field.type === 'text') && field.mask"
+                v-maska="{ mask: convertMask(field.mask) }"
+                :model-value="formData[field.field] as string"
+                fluid
+                :autofocus="shouldAutofocus(field) || undefined"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Text -->
+              <InputText
+                v-else-if="!field.type || field.type === 'text'"
+                :model-value="formData[field.field] as string"
+                fluid
+                :autofocus="shouldAutofocus(field) || undefined"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Email -->
+              <InputText
+                v-else-if="field.type === 'email'"
+                :model-value="formData[field.field] as string"
+                type="email"
+                fluid
+                :autofocus="shouldAutofocus(field) || undefined"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Password -->
+              <Password
+                v-else-if="field.type === 'password'"
+                :model-value="formData[field.field] as string"
+                fluid
+                toggle-mask
+                :feedback="field.feedback !== false"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Number -->
+              <InputNumber
+                v-else-if="field.type === 'number'"
+                :model-value="formData[field.field] as number"
+                fluid
+                locale="pt-BR"
+                :min="field.min"
+                :max="field.max"
+                :min-fraction-digits="field.minFractionDigits"
+                :max-fraction-digits="field.maxFractionDigits"
+                :suffix="field.suffix"
+                :prefix="field.prefix"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Currency -->
+              <InputNumber
+                v-else-if="field.type === 'currency'"
+                :model-value="formData[field.field] as number"
+                fluid
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR"
+                :min="field.min"
+                :max="field.max"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Select -->
+              <Select
+                v-else-if="field.type === 'select'"
+                :model-value="formData[field.field]"
+                fluid
+                :options="unwrapRef(field.options) as any[]"
+                :option-label="field.optionLabel || 'label'"
+                :option-value="field.optionValue || 'value'"
+                :show-clear="field.showClear !== false"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- AutoComplete (options locais) -->
+              <AutoComplete
+                v-else-if="field.type === 'autocomplete'"
+                :model-value="getAutocompleteValue(field)"
+                fluid
+                :suggestions="getFilteredSuggestions(field) as any[]"
+                :option-label="field.optionLabel || 'label'"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @complete="onAutocompleteSearch(field, $event)"
+                @item-select="onAutocompleteSelect(field, $event)"
+                @clear="emit('update:field', field.field, null)"
+              />
+
+              <!-- FK (busca na API) -->
+              <WAutoCompleteFK
+                v-else-if="field.type === 'fk'"
+                :model-value="formData[field.field] as any"
+                :endpoint="field.endpoint!"
+                :endpoint-params="field.endpointParams"
+                :option-label="field.optionLabel || 'nome'"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :show-clear="field.showClear !== false"
+                :dialog-header="field.label"
+                :crud-fields="field.crudFields"
+                :crud-columns="field.crudColumns"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Date -->
+              <DatePicker
+                v-else-if="field.type === 'date'"
+                :model-value="formData[field.field] as Date"
+                fluid
+                :date-format="field.dateFormat || 'dd/mm/yy'"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Datetime -->
+              <DatePicker
+                v-else-if="field.type === 'datetime'"
+                :model-value="formData[field.field] as Date"
+                fluid
+                show-time
+                :hour-format="field.hourFormat || '24'"
+                :date-format="field.dateFormat || 'dd/mm/yy'"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- CPF/CNPJ -->
+              <InputText
+                v-else-if="field.type === 'cpf_cnpj'"
+                :model-value="displayCpfCnpj(formData[field.field])"
+                fluid
+                maxlength="18"
+                :placeholder="field.placeholder || '000.000.000-00'"
+                :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldErrors[field.field]"
+                @input="onCpfCnpjInput(field.field, $event)"
+                @blur="validateField(field)"
+              />
+
+              <!-- Mask (maska) -->
+              <InputText
+                v-else-if="field.type === 'mask'"
+                v-maska="{ mask: convertMask(field.mask) }"
+                :model-value="formData[field.field] as string"
+                fluid
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldErrors[field.field]"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+                @blur="validateField(field)"
+              />
+
+              <!-- CEP -->
+              <InputText
+                v-else-if="field.type === 'cep'"
+                v-maska="{ mask: '#####-###' }"
+                :model-value="formData[field.field] as string"
+                fluid
+                :placeholder="field.placeholder || '00000-000'"
+                :disabled="isFieldDisabled(field)"
+                :invalid="!!cepError[field.field]"
+                @input="onCepInput(field, $event)"
+              />
+
+              <!-- Textarea -->
+              <Textarea
+                v-else-if="field.type === 'textarea'"
+                :model-value="formData[field.field] as string"
+                fluid
+                :autofocus="shouldAutofocus(field) || undefined"
+                :rows="field.rows || 3"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <small v-if="cepError[field.field]" class="w-crud-form-cep-error">
+                {{ cepError[field.field] }}
+              </small>
+              <small v-else-if="fieldErrors[field.field]" class="w-crud-form-error">
+                {{ fieldErrors[field.field] }}
+              </small>
+            </div>
           </slot>
-        </div>
-
-        <!-- All other types -->
-        <div
-          v-else
-          :class="field.colSpan === 0.5 ? 'w-crud-form-col-half' : 'w-crud-form-col-full'"
-        >
-          <label class="w-crud-form-label">
-            {{ field.label }}
-            <span v-if="field.required" class="w-crud-form-required">*</span>
-          </label>
-
-          <!-- Text with mask (maska) -->
-          <InputText
-            v-if="(!field.type || field.type === 'text') && field.mask"
-            v-maska="{ mask: convertMask(field.mask) }"
-            :model-value="formData[field.field] as string"
-            fluid
-            :autofocus="shouldAutofocus(field) || undefined"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Text -->
-          <InputText
-            v-else-if="!field.type || field.type === 'text'"
-            :model-value="formData[field.field] as string"
-            fluid
-            :autofocus="shouldAutofocus(field) || undefined"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Email -->
-          <InputText
-            v-else-if="field.type === 'email'"
-            :model-value="formData[field.field] as string"
-            type="email"
-            fluid
-            :autofocus="shouldAutofocus(field) || undefined"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Password -->
-          <Password
-            v-else-if="field.type === 'password'"
-            :model-value="formData[field.field] as string"
-            fluid
-            toggle-mask
-            :feedback="field.feedback !== false"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Number -->
-          <InputNumber
-            v-else-if="field.type === 'number'"
-            :model-value="formData[field.field] as number"
-            fluid
-            locale="pt-BR"
-            :min="field.min"
-            :max="field.max"
-            :min-fraction-digits="field.minFractionDigits"
-            :max-fraction-digits="field.maxFractionDigits"
-            :suffix="field.suffix"
-            :prefix="field.prefix"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Currency -->
-          <InputNumber
-            v-else-if="field.type === 'currency'"
-            :model-value="formData[field.field] as number"
-            fluid
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            :min="field.min"
-            :max="field.max"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Select -->
-          <Select
-            v-else-if="field.type === 'select'"
-            :model-value="formData[field.field]"
-            fluid
-            :options="unwrapRef(field.options) as any[]"
-            :option-label="field.optionLabel || 'label'"
-            :option-value="field.optionValue || 'value'"
-            :show-clear="field.showClear !== false"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- AutoComplete (options locais) -->
-          <AutoComplete
-            v-else-if="field.type === 'autocomplete'"
-            :model-value="getAutocompleteValue(field)"
-            fluid
-            :suggestions="getFilteredSuggestions(field) as any[]"
-            :option-label="field.optionLabel || 'label'"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @complete="onAutocompleteSearch(field, $event)"
-            @item-select="onAutocompleteSelect(field, $event)"
-            @clear="emit('update:field', field.field, null)"
-          />
-
-          <!-- FK (busca na API) -->
-          <WAutoCompleteFK
-            v-else-if="field.type === 'fk'"
-            :model-value="formData[field.field] as any"
-            :endpoint="field.endpoint!"
-            :endpoint-params="field.endpointParams"
-            :option-label="field.optionLabel || 'nome'"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            :show-clear="field.showClear !== false"
-            :dialog-header="field.label"
-            :crud-fields="field.crudFields"
-            :crud-columns="field.crudColumns"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Date -->
-          <DatePicker
-            v-else-if="field.type === 'date'"
-            :model-value="formData[field.field] as Date"
-            fluid
-            :date-format="field.dateFormat || 'dd/mm/yy'"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- Datetime -->
-          <DatePicker
-            v-else-if="field.type === 'datetime'"
-            :model-value="formData[field.field] as Date"
-            fluid
-            show-time
-            :hour-format="field.hourFormat || '24'"
-            :date-format="field.dateFormat || 'dd/mm/yy'"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <!-- CPF/CNPJ -->
-          <InputText
-            v-else-if="field.type === 'cpf_cnpj'"
-            :model-value="displayCpfCnpj(formData[field.field])"
-            fluid
-            maxlength="18"
-            :placeholder="field.placeholder || '000.000.000-00'"
-            :disabled="isFieldDisabled(field)"
-            :invalid="!!fieldErrors[field.field]"
-            @input="onCpfCnpjInput(field.field, $event)"
-            @blur="validateField(field)"
-          />
-
-          <!-- Mask (maska) -->
-          <InputText
-            v-else-if="field.type === 'mask'"
-            v-maska="{ mask: convertMask(field.mask) }"
-            :model-value="formData[field.field] as string"
-            fluid
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            :invalid="!!fieldErrors[field.field]"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-            @blur="validateField(field)"
-          />
-
-          <!-- Textarea -->
-          <Textarea
-            v-else-if="field.type === 'textarea'"
-            :model-value="formData[field.field] as string"
-            fluid
-            :autofocus="shouldAutofocus(field) || undefined"
-            :rows="field.rows || 3"
-            :placeholder="field.placeholder"
-            :disabled="isFieldDisabled(field)"
-            @update:model-value="(val) => emit('update:field', field.field, val)"
-          />
-
-          <small v-if="fieldErrors[field.field]" class="w-crud-form-error">
-            {{ fieldErrors[field.field] }}
-          </small>
-        </div>
-      </slot>
-    </template>
+        </template>
+      </div>
+    </div>
   </div>
 </template>
