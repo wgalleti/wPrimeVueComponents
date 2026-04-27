@@ -16,7 +16,7 @@ type __VLS_Props = {
 declare var __VLS_1: {}, __VLS_11: {}, __VLS_40: {}, __VLS_42: {}, __VLS_44: {}, __VLS_54: {}, __VLS_65: `column-${string}`, __VLS_66: {
     data: any;
     value: any;
-}, __VLS_75: {
+}, __VLS_83: {
     data: any;
     crud: CrudManagerReturn<any>;
 }, __VLS_85: {
@@ -47,7 +47,7 @@ type __VLS_Slots = {} & {
 } & {
     empty?: (props: typeof __VLS_54) => any;
 } & {
-    'row-actions'?: (props: typeof __VLS_75) => any;
+    'row-actions'?: (props: typeof __VLS_83) => any;
 } & {
     expansion?: (props: typeof __VLS_85) => any;
 } & {

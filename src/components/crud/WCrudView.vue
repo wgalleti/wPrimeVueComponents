@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, useSlots } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -9,6 +9,7 @@ import InputIcon from 'primevue/inputicon'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn, RowAction, KpiItem } from '@/types/crud'
+import type { Slots } from 'vue'
 import { useFormatters } from '@/composables/useFormatters'
 
 const props = withDefaults(
@@ -44,6 +45,7 @@ const emit = defineEmits<{
   'row-collapse': [data: unknown]
 }>()
 
+const slots: Slots = useSlots()
 const { formatNumber } = useFormatters()
 
 const expandedRows = ref({})
@@ -88,7 +90,7 @@ const effectiveRowActions = computed<RowAction[]>(
   () => props.crud.config.rowActions ?? defaultActions.value,
 )
 
-const hasActions = computed(() => effectiveRowActions.value.length > 0)
+const hasActions = computed(() => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']))
 
 function handleRowAction(action: RowAction, data: Record<string, unknown>) {
   if (action.action === 'edit') {
@@ -272,26 +274,25 @@ onMounted(() => {
         <Column
           v-if="hasActions"
           header-class="w-crud-actions-header"
-          :style="{ width: `${effectiveRowActions.length * 2.5 + 1}rem` }"
+          :style="{ width: `${(effectiveRowActions.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem` }"
         >
           <template #body="{ data }">
-            <slot name="row-actions" :data="data" :crud="crud">
-              <div class="w-crud-actions">
-                <template v-for="action in effectiveRowActions" :key="action.action">
-                  <Button
-                    v-if="isActionVisible(action, data)"
-                    v-tooltip.top="action.tooltip"
-                    :icon="action.icon"
-                    text
-                    rounded
-                    size="small"
-                    :severity="action.severity as any"
-                    :disabled="isActionDisabled(action, data)"
-                    @click="handleRowAction(action, data)"
-                  />
-                </template>
-              </div>
-            </slot>
+            <div class="w-crud-actions">
+              <template v-for="action in effectiveRowActions" :key="action.action">
+                <Button
+                  v-if="isActionVisible(action, data)"
+                  v-tooltip.top="action.tooltip"
+                  :icon="action.icon"
+                  text
+                  rounded
+                  size="small"
+                  :severity="action.severity as any"
+                  :disabled="isActionDisabled(action, data)"
+                  @click="handleRowAction(action, data)"
+                />
+              </template>
+              <slot name="row-actions" :data="data" :crud="crud" />
+            </div>
           </template>
         </Column>
 
