@@ -1605,7 +1605,7 @@ const Ra = { class: "w-crud-form" }, Ta = {
     }
     const S = q(() => {
       const u = [];
-      return a.crud.config.canCreate !== !1 && a.crud.config.canEdit !== !1 && u.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), a.crud.config.canDelete !== !1 && u.push({
+      return a.crud.config.canEdit !== !1 && u.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), a.crud.config.canDelete !== !1 && u.push({
         action: "delete",
         icon: "pi pi-trash",
         tooltip: "Excluir",
