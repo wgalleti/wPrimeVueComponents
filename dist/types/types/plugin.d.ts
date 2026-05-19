@@ -1,6 +1,8 @@
 import type { AxiosInstance } from 'axios';
+import type { DataProvider } from './dataProvider';
 export interface WPluginOptions {
-    axios: AxiosInstance;
+    axios?: AxiosInstance;
+    dataProvider?: DataProvider;
     defaultPageSize?: number;
     dateFormat?: string;
     dateTimeFormat?: string;
@@ -9,7 +11,8 @@ export interface WPluginOptions {
     registerComponents?: boolean;
 }
 export interface WPluginConfig {
-    axios: AxiosInstance;
+    axios?: AxiosInstance;
+    dataProvider: DataProvider;
     defaultPageSize: number;
     dateFormat: string;
     dateTimeFormat: string;
@@ -17,4 +20,5 @@ export interface WPluginConfig {
     currency: string;
 }
 export declare const W_AXIOS_KEY: unique symbol;
+export declare const W_DATA_PROVIDER_KEY: unique symbol;
 export declare const W_CONFIG_KEY: unique symbol;

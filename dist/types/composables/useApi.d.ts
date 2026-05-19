@@ -1,8 +1,2 @@
-import type { UseApiReturn } from '@/types/api';
-export interface UseApiOptions {
-    endpoint: string;
-    pageSize?: number;
-    searchDebounce?: number;
-    immediate?: boolean;
-}
+import type { UseApiOptions, UseApiReturn } from '@/types/api';
 export declare function useApi<T = Record<string, unknown>>(options: UseApiOptions): UseApiReturn<T>;

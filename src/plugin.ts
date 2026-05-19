@@ -1,18 +1,28 @@
 import type { App, Plugin } from 'vue'
 import type { WPluginOptions, WPluginConfig } from './types/plugin'
-import { W_AXIOS_KEY, W_CONFIG_KEY } from './types/plugin'
-import { WCrudView, WCrudFormDialog, WCrudColumnRenderer, WAutoCompleteFK } from './components'
+import { W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from './types/plugin'
+import {
+  WCrudView,
+  WCrudFormDialog,
+  WCrudColumnRenderer,
+  WAutoCompleteFK,
+} from './components'
+import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
 
 export const WPrimeVuePlugin: Plugin = {
   install(app: App, options: WPluginOptions) {
-    if (!options?.axios) {
+    if (!options?.axios && !options?.dataProvider) {
       throw new Error(
-        '[wPrimeVueComponents] A opção "axios" é obrigatória. Passe sua instância axios configurada.',
+        '[wPrimeVueComponents] Informe "axios" ou "dataProvider" ao registrar o WPrimeVuePlugin.',
       )
     }
 
+    const dataProvider =
+      options.dataProvider ?? createAxiosDataProvider(options.axios!)
+
     const config: WPluginConfig = {
       axios: options.axios,
+      dataProvider,
       defaultPageSize: options.defaultPageSize ?? 20,
       dateFormat: options.dateFormat ?? 'DD/MM/YYYY',
       dateTimeFormat: options.dateTimeFormat ?? 'DD/MM/YYYY HH:mm',
@@ -20,7 +30,10 @@ export const WPrimeVuePlugin: Plugin = {
       currency: options.currency ?? 'BRL',
     }
 
-    app.provide(W_AXIOS_KEY, options.axios)
+    if (options.axios) {
+      app.provide(W_AXIOS_KEY, options.axios)
+    }
+    app.provide(W_DATA_PROVIDER_KEY, dataProvider)
     app.provide(W_CONFIG_KEY, config)
 
     if (options.registerComponents !== false) {

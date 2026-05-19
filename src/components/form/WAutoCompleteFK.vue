@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch, computed, inject, reactive } from 'vue'
-import type { AxiosInstance } from 'axios'
 import AutoComplete from 'primevue/autocomplete'
 import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
@@ -9,10 +8,14 @@ import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import { W_AXIOS_KEY } from '@/types/plugin'
+import { W_DATA_PROVIDER_KEY } from '@/types/plugin'
+import type { DataProvider } from '@/types/dataProvider'
 import type { FieldDef, ColumnDef } from '@/types/crud'
 import type { ApiFieldMeta } from '@/utils/fieldMapper'
-import { mapApiFieldsToFieldDefs, mapApiFieldsToColumnDefs } from '@/utils/fieldMapper'
+import {
+  mapApiFieldsToFieldDefs,
+  mapApiFieldsToColumnDefs,
+} from '@/utils/fieldMapper'
 import { useAppToast } from '@/composables/useAppToast'
 import { useAppConfirm } from '@/composables/useAppConfirm'
 import { extractApiError } from '@/composables/useApiError'
@@ -65,11 +68,13 @@ const emit = defineEmits<{
   'update:modelValue': [value: Record<string, unknown> | null]
 }>()
 
-const injectedAxios = inject<AxiosInstance>(W_AXIOS_KEY)
-if (!injectedAxios) {
-  throw new Error('[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin.')
+const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
+if (!dataProvider) {
+  throw new Error(
+    '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin.',
+  )
 }
-const axios = injectedAxios
+const provider = dataProvider
 
 const toast = useAppToast()
 const { confirmDelete: confirmDeleteDialog } = useAppConfirm()
@@ -85,7 +90,7 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 async function fetchById(id: string | number) {
   try {
-    const response = await axios.get(`${props.endpoint}${id}/`)
+    const response = await provider.get(props.endpoint, id)
     selectedItem.value = response.data
   } catch {
     selectedItem.value = null
@@ -95,11 +100,13 @@ async function fetchById(id: string | number) {
 async function search(query: string) {
   searching.value = true
   try {
-    const params: Record<string, unknown> = { page_size: 20, ...props.endpointParams }
+    const params: Record<string, unknown> = {
+      page_size: 20,
+      ...props.endpointParams,
+    }
     if (query) params.search = query
-    const response = await axios.get(props.endpoint, { params })
-    const rd = response.data
-    suggestions.value = rd.data ?? rd.results ?? rd
+    const response = await provider.list(props.endpoint, params)
+    suggestions.value = response.data
   } catch {
     suggestions.value = []
   } finally {
@@ -132,11 +139,18 @@ watch(
   () => props.modelValue,
   async (newVal) => {
     if (newVal != null) {
-      if (typeof newVal === 'object' && newVal !== null && props.optionLabel in newVal) {
+      if (
+        typeof newVal === 'object' &&
+        newVal !== null &&
+        props.optionLabel in newVal
+      ) {
         selectedItem.value = newVal as Record<string, unknown>
         return
       }
-      if (!selectedItem.value || selectedItem.value[props.optionValue] !== newVal) {
+      if (
+        !selectedItem.value ||
+        selectedItem.value[props.optionValue] !== newVal
+      ) {
         await fetchById(newVal as string | number)
       }
     } else {
@@ -196,7 +210,9 @@ const modalColumns = computed<ColumnDef[]>(() => {
   if (apiFields.value.length) {
     return mapApiFieldsToColumnDefs(apiFields.value)
   }
-  return [{ field: props.optionLabel, header: props.optionLabel, sortable: true }]
+  return [
+    { field: props.optionLabel, header: props.optionLabel, sortable: true },
+  ]
 })
 
 // ---------------------------------------------------------------------------
@@ -218,14 +234,17 @@ async function fetchModalData() {
           ? `-${modalSortField.value}`
           : modalSortField.value
     }
-    const response = await axios.get(props.endpoint, { params })
-    const rd = response.data
-    modalData.value = rd.data ?? rd.results ?? rd
-    modalTotalRecords.value = rd.count ?? rd.rows ?? 0
+    const response = await provider.list(props.endpoint, params)
+    modalData.value = response.data
+    modalTotalRecords.value = response.rows
 
     // Captura metadata de campos na primeira requisição
-    if (rd.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
-      apiFields.value = rd.extras.fields
+    if (
+      response.extras?.fields &&
+      !props.columns?.length &&
+      !props.crudFields?.length
+    ) {
+      apiFields.value = response.extras.fields as ApiFieldMeta[]
     }
   } catch {
     modalData.value = []
@@ -353,20 +372,19 @@ async function saveForm() {
 
     if (isEditing.value && editingItem.value) {
       const pk = editingItem.value[props.optionValue]
-      response = await axios.patch(
-        `${props.endpoint}${pk}/`,
+      response = await provider.update(
+        props.endpoint,
+        pk as string | number,
         payload,
       )
       // Atualiza na lista do modal
-      const idx = modalData.value.findIndex(
-        (i) => i[props.optionValue] === pk,
-      )
+      const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
         modalData.value[idx] = response.data
       }
       toast.success('Registro atualizado com sucesso')
     } else {
-      response = await axios.post(props.endpoint, payload)
+      response = await provider.create(props.endpoint, payload)
       // Adiciona na lista e seleciona automaticamente
       modalData.value.unshift(response.data)
       modalTotalRecords.value++
@@ -389,19 +407,14 @@ function confirmDelete(item: Record<string, unknown>) {
   confirmDeleteDialog(async () => {
     try {
       const pk = item[props.optionValue]
-      await axios.delete(`${props.endpoint}${pk}/`)
-      const idx = modalData.value.findIndex(
-        (i) => i[props.optionValue] === pk,
-      )
+      await provider.delete(props.endpoint, pk as string | number)
+      const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
         modalData.value.splice(idx, 1)
         modalTotalRecords.value--
       }
       // Se o item deletado era a seleção atual, limpa
-      if (
-        selectedItem.value &&
-        selectedItem.value[props.optionValue] === pk
-      ) {
+      if (selectedItem.value && selectedItem.value[props.optionValue] === pk) {
         selectedItem.value = null
         emit('update:modelValue', null)
       }
@@ -457,7 +470,11 @@ function confirmDelete(item: Record<string, unknown>) {
     <div class="w-autocompletefk-toolbar">
       <IconField class="w-autocompletefk-toolbar-search">
         <InputIcon class="pi pi-search" />
-        <InputText v-model="modalSearch" placeholder="Pesquisar..." class="w-full" />
+        <InputText
+          v-model="modalSearch"
+          placeholder="Pesquisar..."
+          class="w-full"
+        />
       </IconField>
       <div class="w-autocompletefk-toolbar-actions">
         <Button
@@ -486,7 +503,10 @@ function confirmDelete(item: Record<string, unknown>) {
       selection-mode="single"
       :data-key="optionValue"
       @page="onModalPage"
-      @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
+      @sort="
+        (e: any) =>
+          onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })
+      "
       @row-dblclick="onRowDblClick"
     >
       <Column selection-mode="single" header-style="width: 3rem" />
@@ -512,11 +532,7 @@ function confirmDelete(item: Record<string, unknown>) {
       </Column>
 
       <!-- Coluna de ações CRUD -->
-      <Column
-        v-if="hasRowActions"
-        header=""
-        :style="{ width: '6rem' }"
-      >
+      <Column v-if="hasRowActions" header="" :style="{ width: '6rem' }">
         <template #body="{ data }">
           <div class="flex items-center justify-end gap-1">
             <Button
@@ -543,15 +559,18 @@ function confirmDelete(item: Record<string, unknown>) {
       </Column>
 
       <template #empty>
-        <div class="w-autocompletefk-empty">
-          Nenhum registro encontrado
-        </div>
+        <div class="w-autocompletefk-empty">Nenhum registro encontrado</div>
       </template>
     </DataTable>
 
     <template #footer>
       <div class="w-autocompletefk-footer">
-        <Button label="Cancelar" severity="secondary" text @click="modalVisible = false" />
+        <Button
+          label="Cancelar"
+          severity="secondary"
+          text
+          @click="modalVisible = false"
+        />
         <Button
           label="Selecionar"
           icon="pi pi-check"
@@ -572,9 +591,13 @@ function confirmDelete(item: Record<string, unknown>) {
     :is-editing="isEditing"
     :saving="formSaving"
     :width="dialogWidth"
-    @update:visible="(v) => { formDialogVisible = v; if (!v) editingItem = null }"
+    @update:visible="
+      (v) => {
+        formDialogVisible = v
+        if (!v) editingItem = null
+      }
+    "
     @update:field="setFormField"
     @save="saveForm"
   />
 </template>
-

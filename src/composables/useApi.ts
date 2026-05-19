@@ -1,28 +1,26 @@
-import { ref, reactive, computed, watch, inject } from 'vue'
-import type { AxiosInstance } from 'axios'
-import type { PaginatedResponse, PaginationState, SortState, UseApiReturn } from '@/types/api'
-import { W_AXIOS_KEY, W_CONFIG_KEY } from '@/types/plugin'
+import { ref, reactive, inject } from 'vue'
+import type {
+  PaginationState,
+  SortState,
+  UseApiOptions,
+  UseApiReturn,
+} from '@/types/api'
+import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
-
-export interface UseApiOptions {
-  endpoint: string
-  pageSize?: number
-  searchDebounce?: number
-  immediate?: boolean
-}
+import type { DataProvider } from '@/types/dataProvider'
 
 export function useApi<T = Record<string, unknown>>(
   options: UseApiOptions,
 ): UseApiReturn<T> {
   const { endpoint, searchDebounce = 300, immediate = false } = options
 
-  const injectedAxios = inject<AxiosInstance>(W_AXIOS_KEY)
-  if (!injectedAxios) {
+  const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
+  if (!dataProvider) {
     throw new Error(
-      '[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin antes de usar useApi.',
+      '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useApi.',
     )
   }
-  const axios = injectedAxios
+  const provider = dataProvider
 
   const config = inject<WPluginConfig>(W_CONFIG_KEY)
   const defaultPageSize = options.pageSize ?? config?.defaultPageSize ?? 20
@@ -49,7 +47,9 @@ export function useApi<T = Record<string, unknown>>(
   // Debounce
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-  async function fetchItems(params: Record<string, unknown> = {}): Promise<void> {
+  async function fetchItems(
+    params: Record<string, unknown> = {},
+  ): Promise<void> {
     loading.value = true
     try {
       const queryParams: Record<string, unknown> = {
@@ -72,25 +72,15 @@ export function useApi<T = Record<string, unknown>>(
         }
       }
 
-      const response = await axios.get<PaginatedResponse<T>>(endpoint, {
-        params: queryParams,
-      })
-      const responseData = response.data
+      const responseData = await provider.list<T>(endpoint, queryParams)
 
-      // Suporta ambos os formatos: { data, page, rows } e { results, count }
-      const rd = responseData as unknown as Record<string, unknown>
-      if (Array.isArray(rd.results)) {
-        items.value = rd.results as T[]
-        pagination.rows = (rd.count as number) ?? 0
-      } else {
-        items.value = (rd.data as T[]) ?? []
-        pagination.rows = (rd.rows as number) ?? 0
-      }
-
-      if (rd.page) pagination.page = rd.page as number
-      if (rd.page_size) pagination.pageSize = rd.page_size as number
-      pagination.totalPages = Math.ceil(pagination.rows / pagination.pageSize) || 0
-      extras.value = (rd.extras as Record<string, unknown>) ?? {}
+      items.value = responseData.data
+      pagination.rows = responseData.rows
+      if (responseData.page) pagination.page = responseData.page
+      if (responseData.page_size) pagination.pageSize = responseData.page_size
+      pagination.totalPages =
+        Math.ceil(pagination.rows / pagination.pageSize) || 0
+      extras.value = responseData.extras ?? {}
     } finally {
       loading.value = false
     }
