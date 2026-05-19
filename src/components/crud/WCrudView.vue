@@ -72,7 +72,7 @@ function colAlignClass(col: { align?: string }) {
 
 const defaultActions = computed<RowAction[]>(() => {
   const actions: RowAction[] = []
-  if (props.crud.config.canCreate !== false && props.crud.config.canEdit !== false) {
+  if (props.crud.config.canEdit !== false) {
     actions.push({ action: 'edit', icon: 'pi pi-pencil', tooltip: 'Editar' })
   }
   if (props.crud.config.canDelete !== false) {
