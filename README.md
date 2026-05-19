@@ -18,8 +18,10 @@ cd seu-projeto && yarn link @wgalleti/primevue-components
 Certifique-se de ter instalado no seu projeto:
 
 ```bash
-yarn add vue@^3.4 primevue@^4.0 axios@^1.0 dayjs@^1.11
+yarn add vue@^3.4 primevue@^4.0 dayjs@^1.11
 ```
+
+Se o projeto usar a camada Axios padrao, instale tambem `axios@^1.0`.
 
 ## Setup
 
@@ -39,10 +41,39 @@ app.use(ToastService)
 app.use(ConfirmationService)
 
 app.use(WPrimeVuePlugin, {
-  axios: api,              // obrigatório: instância axios do projeto
-  defaultPageSize: 20,     // opcional (default: 20)
+  axios: api, // compatibilidade: cria um dataProvider Axios automaticamente
+  defaultPageSize: 20, // opcional (default: 20)
   dateFormat: 'DD/MM/YYYY', // opcional (default: 'DD/MM/YYYY')
-  locale: 'pt-BR',         // opcional (default: 'pt-BR')
+  locale: 'pt-BR', // opcional (default: 'pt-BR')
+})
+```
+
+### Setup com Supabase
+
+Projetos sem backend REST podem registrar um `dataProvider` Supabase. Os endpoints usados em `useCrudManager`, `useApi` e `WAutoCompleteFK` continuam sendo strings, mas precisam estar mapeados em `resources`.
+
+```typescript
+import {
+  createSupabaseDataProvider,
+  WPrimeVuePlugin,
+} from '@wgalleti/primevue-components'
+import { supabase } from './plugins/supabase'
+
+const dataProvider = createSupabaseDataProvider({
+  client: supabase,
+  resources: {
+    produtos: {
+      table: 'produtos',
+      searchFields: ['nome', 'descricao'],
+      defaultOrdering: 'nome',
+      softDelete: true,
+    },
+  },
+})
+
+app.use(WPrimeVuePlugin, {
+  dataProvider,
+  defaultPageSize: 20,
 })
 ```
 
@@ -87,6 +118,7 @@ const crud = useCrudManager<Produto>({
 ```
 
 Isso gera automaticamente:
+
 - Tabela paginada com busca
 - Botão "Novo" que abre dialog de criação
 - Botões de editar/excluir em cada linha
@@ -103,7 +135,12 @@ O `WFormRenderer` renderiza formularios a partir de `FieldDef[]` sem dialog, ide
 import { WFormRenderer } from '@wgalleti/primevue-components'
 import { compraHeaderForm } from '@/schemas/estoque/compra'
 
-const form = reactive({ data: new Date(), fornecedor: null, numero_nf: '', observacoes: '' })
+const form = reactive({
+  data: new Date(),
+  fornecedor: null,
+  numero_nf: '',
+  observacoes: '',
+})
 </script>
 
 <template>
@@ -113,7 +150,11 @@ const form = reactive({ data: new Date(), fornecedor: null, numero_nf: '', obser
         :fields="compraHeaderForm"
         :form-data="form"
         :is-editing="false"
-        @update:field="(f, v) => { (form as Record<string, unknown>)[f] = v }"
+        @update:field="
+          (f, v) => {
+            ;(form as Record<string, unknown>)[f] = v
+          }
+        "
       />
     </template>
   </Card>

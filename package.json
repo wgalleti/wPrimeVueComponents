@@ -39,6 +39,11 @@
     "primevue": "^4.2.0",
     "vue": "^3.4.0"
   },
+  "peerDependenciesMeta": {
+    "axios": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "maska": "^3.2.0"
   },

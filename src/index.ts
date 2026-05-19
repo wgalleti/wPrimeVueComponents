@@ -35,6 +35,12 @@ export {
   useFormatters,
 } from './composables'
 
+// Data providers
+export {
+  createAxiosDataProvider,
+  createSupabaseDataProvider,
+} from './data-providers'
+
 // Types
 export type {
   PaginatedResponse,
@@ -54,12 +60,27 @@ export type {
   CrudManagerReturn,
   WPluginOptions,
   WPluginConfig,
+  DataProvider,
+  DataProviderListParams,
+  DataProviderListResponse,
+  DataProviderRequestConfig,
+  DataProviderResponse,
 } from './types'
 
 export type { StatusMapping } from './components/ui/WStatusTag.vue'
 export type { InfoField } from './components/ui/WInfoCard.vue'
+export type {
+  CreateSupabaseDataProviderOptions,
+  SupabaseDataProviderClient,
+  SupabaseResourceConfig,
+} from './data-providers'
 
-export { DEFAULT_CRUD_LABELS, W_AXIOS_KEY, W_CONFIG_KEY } from './types'
+export {
+  DEFAULT_CRUD_LABELS,
+  W_AXIOS_KEY,
+  W_CONFIG_KEY,
+  W_DATA_PROVIDER_KEY,
+} from './types'
 
 // Utils
 export type { ApiFieldMeta } from './utils/fieldMapper'

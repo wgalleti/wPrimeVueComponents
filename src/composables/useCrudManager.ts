@@ -1,7 +1,7 @@
 import { ref, reactive, computed, inject } from 'vue'
-import type { AxiosInstance } from 'axios'
-import { W_AXIOS_KEY, W_CONFIG_KEY } from '@/types/plugin'
+import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
+import type { DataProvider } from '@/types/dataProvider'
 import type { PaginationState, SortState } from '@/types/api'
 import type {
   CrudManagerConfig,
@@ -18,9 +18,9 @@ import { extractApiError } from './useApiError'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
 import { stripMask } from '@/utils/masks'
 
-export function useCrudManager<T extends Record<string, unknown> = Record<string, unknown>>(
-  config: CrudManagerConfig<T>,
-): CrudManagerReturn<T> {
+export function useCrudManager<
+  T extends Record<string, unknown> = Record<string, unknown>,
+>(config: CrudManagerConfig<T>): CrudManagerReturn<T> {
   const {
     endpoint,
     columns,
@@ -38,13 +38,13 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     onAfterDelete = undefined,
   } = config
 
-  const injectedAxios = inject<AxiosInstance>(W_AXIOS_KEY)
-  if (!injectedAxios) {
+  const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
+  if (!dataProvider) {
     throw new Error(
-      '[wPrimeVueComponents] axios não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager.',
+      '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager.',
     )
   }
-  const axios = injectedAxios
+  const provider = dataProvider
 
   const pluginConfig = inject<WPluginConfig>(W_CONFIG_KEY)
   const defaultPageSize = config.pageSize ?? pluginConfig?.defaultPageSize ?? 20
@@ -106,10 +106,16 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // Computed
   // ---------------------------------------------------------------------------
 
-  const isEditing = computed(() => editingItem.value !== null && !viewMode.value)
+  const isEditing = computed(
+    () => editingItem.value !== null && !viewMode.value,
+  )
   const isViewing = computed(() => viewMode.value)
   const dialogTitle = computed(() =>
-    viewMode.value ? labels.viewTitle ?? 'Visualizar Registro' : isEditing.value ? labels.editTitle : labels.createTitle,
+    viewMode.value
+      ? (labels.viewTitle ?? 'Visualizar Registro')
+      : isEditing.value
+        ? labels.editTitle
+        : labels.createTitle,
   )
   const isFirstPage = computed(() => pagination.page <= 1)
   const isLastPage = computed(() => pagination.page >= pagination.totalPages)
@@ -120,7 +126,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-  async function fetchItems(params: Record<string, unknown> = {}): Promise<void> {
+  async function fetchItems(
+    params: Record<string, unknown> = {},
+  ): Promise<void> {
     loading.value = true
     try {
       const queryParams: Record<string, unknown> = {
@@ -141,22 +149,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
         Object.assign(queryParams, filterParams())
       }
 
-      const response = await axios.get(endpoint, { params: queryParams })
-      const responseData = response.data
-
-      // Suporta { data, page, rows } (custom) e { results, count } (DRF padrão)
-      if (Array.isArray(responseData.results)) {
-        items.value = responseData.results
-        pagination.rows = responseData.count ?? 0
-      } else {
-        items.value = responseData.data ?? []
-        pagination.rows = responseData.rows ?? 0
-      }
-
-      if (responseData.extras) {
-        extras.value = responseData.extras
-      }
-
+      const responseData = await provider.list<T>(endpoint, queryParams)
+      items.value = responseData.data
+      pagination.rows = responseData.rows
+      extras.value = responseData.extras ?? {}
       if (responseData.page) pagination.page = responseData.page
       if (responseData.page_size) pagination.pageSize = responseData.page_size
       pagination.totalPages =
@@ -215,7 +211,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     fetchItems()
   }
 
-  function onSort(event: { sortField?: string | null; sortOrder?: 1 | -1 | 0 | null }): void {
+  function onSort(event: {
+    sortField?: string | null
+    sortOrder?: 1 | -1 | 0 | null
+  }): void {
     sort.field = event.sortField ?? null
     sort.order = event.sortOrder ?? 0
     pagination.page = 1
@@ -256,7 +255,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     editingItem.value = item
     for (const f of formFields) {
       let value = item[f.field] !== undefined ? item[f.field] : null
-      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
+      if (
+        value &&
+        (f.type === 'date' || f.type === 'datetime') &&
+        typeof value === 'string'
+      ) {
         value = parseDate(value)
       }
       formData[f.field] = value
@@ -269,7 +272,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     editingItem.value = item
     for (const f of formFields) {
       let value = item[f.field] !== undefined ? item[f.field] : null
-      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
+      if (
+        value &&
+        (f.type === 'date' || f.type === 'datetime') &&
+        typeof value === 'string'
+      ) {
         value = parseDate(value)
       }
       formData[f.field] = value
@@ -327,7 +334,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
         }
 
         // Máscaras — strip para enviar só dígitos
-        if ((f.type === 'mask' || f.type === 'cpf_cnpj') && typeof val === 'string') {
+        if (
+          (f.type === 'mask' || f.type === 'cpf_cnpj') &&
+          typeof val === 'string'
+        ) {
           payload[f.field] = stripMask(val)
         }
       }
@@ -369,20 +379,19 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
       if (isEditing.value && editingItem.value) {
         const itemPk = editingItem.value[pk as keyof T]
-        response = await axios.patch<T>(
-          `${endpoint}${itemPk}/`,
+        response = await provider.update<T>(
+          endpoint,
+          itemPk as string | number,
           body,
           requestConfig,
         )
-        const index = items.value.findIndex(
-          (i) => i[pk as keyof T] === itemPk,
-        )
+        const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
         if (index !== -1) {
           items.value[index] = response.data
         }
         toast.success(labels.successUpdate)
       } else {
-        response = await axios.post<T>(endpoint, body, requestConfig)
+        response = await provider.create<T>(endpoint, body, requestConfig)
         items.value.unshift(response.data)
         pagination.rows++
         toast.success(labels.successCreate)
@@ -409,10 +418,8 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     confirmDeleteDialog(async () => {
       try {
         const itemPk = item[pk as keyof T]
-        await axios.delete(`${endpoint}${itemPk}/`)
-        const index = items.value.findIndex(
-          (i) => i[pk as keyof T] === itemPk,
-        )
+        await provider.delete(endpoint, itemPk as string | number)
+        const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
         if (index !== -1) {
           items.value.splice(index, 1)
           pagination.rows--

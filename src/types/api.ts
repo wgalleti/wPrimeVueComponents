@@ -36,6 +36,7 @@ export interface UseApiOptions {
   endpoint: string
   pageSize?: number
   searchDebounce?: number
+  immediate?: boolean
 }
 
 /**
