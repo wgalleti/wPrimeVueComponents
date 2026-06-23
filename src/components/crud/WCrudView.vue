@@ -7,11 +7,14 @@ import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
+import ContextMenu from 'primevue/contextmenu'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn, RowAction, KpiItem } from '@/types/crud'
+import type { MenuItem } from 'primevue/menuitem'
 import type { Slots } from 'vue'
 import { useFormatters } from '@/composables/useFormatters'
+import { toCsv, downloadCsv } from '@/utils/csv'
 
 const props = withDefaults(
   defineProps<{
@@ -30,6 +33,12 @@ const props = withDefaults(
     viewToggle?: boolean
     defaultView?: 'table' | 'cards'
     cardFields?: number
+    actionRail?: boolean
+    contextMenu?: boolean
+    exportCsv?: boolean
+    csvFilename?: string
+    csvScope?: 'all' | 'page'
+    csvPageSize?: number
   }>(),
   {
     showSearch: true,
@@ -41,15 +50,22 @@ const props = withDefaults(
     kpiLabel: 'Total de Registros',
     extraKpis: () => [],
     expandable: false,
-    viewToggle: false,
+    viewToggle: true,
     defaultView: 'table',
     cardFields: 4,
+    actionRail: true,
+    contextMenu: true,
+    exportCsv: true,
+    csvFilename: 'export.csv',
+    csvScope: 'all',
+    csvPageSize: 200,
   },
 )
 
 const emit = defineEmits<{
   'row-expand': [data: unknown]
   'row-collapse': [data: unknown]
+  print: [data: Record<string, unknown>]
 }>()
 
 const slots: Slots = useSlots()
@@ -97,6 +113,14 @@ const defaultActions = computed<RowAction[]>(() => {
   if (props.crud.config.canEdit !== false) {
     actions.push({ action: 'edit', icon: 'pi pi-pencil', tooltip: 'Editar' })
   }
+  if (props.crud.config.canCreate !== false) {
+    actions.push({
+      action: 'duplicate',
+      icon: 'pi pi-copy',
+      tooltip: 'Duplicar',
+      severity: 'info',
+    })
+  }
   if (props.crud.config.canDelete !== false) {
     actions.push({
       action: 'delete',
@@ -115,14 +139,19 @@ const effectiveRowActions = computed<RowAction[]>(
 const hasActions = computed(() => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']))
 
 function handleRowAction(action: RowAction, data: Record<string, unknown>) {
+  // Custom handler tem prioridade — permite sobrescrever ações nomeadas.
+  if (action.handler) {
+    action.handler(data)
+    return
+  }
   if (action.action === 'edit') {
     props.crud.openEditDialog(data)
   } else if (action.action === 'view') {
     props.crud.openViewDialog(data)
+  } else if (action.action === 'duplicate') {
+    props.crud.openDuplicateDialog(data)
   } else if (action.action === 'delete') {
     props.crud.confirmDelete(data)
-  } else if (action.handler) {
-    action.handler(data)
   }
 }
 
@@ -155,6 +184,90 @@ const allKpis = computed<KpiItem[]>(() => {
 
 const labels = computed(() => props.crud.config.labels ?? {})
 const canCreate = computed(() => props.crud.config.canCreate !== false)
+
+// --- Selection (drives action rail + context menu) ---
+
+const selectedRow = ref<Record<string, unknown> | null>(null)
+const cm = ref<InstanceType<typeof ContextMenu> | null>(null)
+
+function selectRow(row: Record<string, unknown>) {
+  selectedRow.value = row
+}
+
+function onRowContextMenu(event: { originalEvent: Event; data: Record<string, unknown> }) {
+  if (!props.contextMenu) return
+  selectedRow.value = event.data
+  cm.value?.show(event.originalEvent)
+}
+
+function onCardContextMenu(event: MouseEvent, row: Record<string, unknown>) {
+  if (!props.contextMenu) return
+  event.preventDefault()
+  selectedRow.value = row
+  cm.value?.show(event)
+}
+
+const contextMenuItems = computed<MenuItem[]>(() => {
+  const row = selectedRow.value
+  if (!row) return []
+  const items: MenuItem[] = [
+    {
+      label: 'Ver detalhes',
+      icon: 'pi pi-eye',
+      command: () => props.crud.openViewDialog(row),
+    },
+  ]
+  // Todas as actions (default + customizadas) entram aqui.
+  for (const action of effectiveRowActions.value) {
+    if (!isActionVisible(action, row)) continue
+    items.push({
+      label: action.tooltip ?? action.action,
+      icon: action.icon,
+      class: action.severity === 'danger' ? 'w-crud-ctx-danger' : undefined,
+      disabled: isActionDisabled(action, row),
+      command: () => handleRowAction(action, row),
+    })
+  }
+  items.push({
+    label: 'Imprimir',
+    icon: 'pi pi-print',
+    command: () => emit('print', row),
+  })
+  if (props.exportCsv) {
+    items.push({ separator: true })
+    items.push({
+      label: props.csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)',
+      icon: 'pi pi-download',
+      command: () => doExportCsv(),
+    })
+  }
+  return items
+})
+
+// --- Action rail handlers ---
+
+function railPrint() {
+  if (selectedRow.value) emit('print', selectedRow.value)
+}
+
+// --- CSV export (visible columns) ---
+
+const exporting = ref(false)
+
+async function doExportCsv() {
+  if (exporting.value) return
+  exporting.value = true
+  try {
+    const rows =
+      props.csvScope === 'page'
+        ? props.crud.items.value
+        : await props.crud.fetchAll(props.csvPageSize)
+    const csv = toCsv(rows, visibleColumns.value)
+    downloadCsv(csv, props.csvFilename)
+  } finally {
+    exporting.value = false
+  }
+}
 
 // --- Init ---
 
@@ -203,6 +316,9 @@ onMounted(() => {
       </div>
     </slot>
 
+    <!-- Content (table/cards + optional action rail) -->
+    <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
+    <div class="w-crud-content-main">
     <!-- Table -->
     <div v-if="displayMode === 'table'" class="w-crud-table">
       <DataTable
@@ -223,6 +339,13 @@ onMounted(() => {
         :sort-field="crud.sort.field ?? undefined"
         :sort-order="crud.sort.order"
         :data-key="crud.config.pk || 'id'"
+        :selection="(actionRail || contextMenu) ? selectedRow : undefined"
+        :selection-mode="(actionRail || contextMenu) ? 'single' : undefined"
+        :context-menu="contextMenu"
+        :context-menu-selection="contextMenu ? selectedRow : undefined"
+        @update:selection="(v: any) => (selectedRow = v)"
+        @update:context-menu-selection="(v: any) => (selectedRow = v)"
+        @row-contextmenu="onRowContextMenu"
         @page="crud.onPage"
         @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
         @row-expand="(e) => emit('row-expand', e.data)"
@@ -245,6 +368,15 @@ onMounted(() => {
             </div>
             <div class="w-crud-toolbar-end">
               <slot name="toolbar-actions" />
+              <Button
+                v-if="exportCsv"
+                v-tooltip.top="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
+                icon="pi pi-download"
+                text
+                size="small"
+                :loading="exporting"
+                @click="doExportCsv"
+              />
               <div v-if="viewToggle" class="w-crud-view-toggle">
                 <Button
                   icon="pi pi-table"
@@ -308,9 +440,9 @@ onMounted(() => {
           </template>
         </Column>
 
-        <!-- Actions column -->
+        <!-- Actions column (oculta quando a action rail está ativa) -->
         <Column
-          v-if="hasActions"
+          v-if="hasActions && !actionRail"
           header-class="w-crud-actions-header"
           :style="{ width: `${(effectiveRowActions.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem` }"
         >
@@ -359,6 +491,15 @@ onMounted(() => {
         </div>
         <div class="w-crud-toolbar-end">
           <slot name="toolbar-actions" />
+          <Button
+            v-if="exportCsv"
+            v-tooltip.top="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
+            icon="pi pi-download"
+            text
+            size="small"
+            :loading="exporting"
+            @click="doExportCsv"
+          />
           <div v-if="viewToggle" class="w-crud-view-toggle">
             <Button
               icon="pi pi-table"
@@ -403,7 +544,10 @@ onMounted(() => {
           v-for="(row, idx) in crud.items.value"
           :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
           class="w-crud-card"
+          :class="{ 'w-crud-card--selected': selectedRow === row }"
+          @click="selectRow(row)"
           @dblclick="crud.config.canEdit !== false && crud.openEditDialog(row)"
+          @contextmenu="onCardContextMenu($event, row)"
         >
           <div class="w-crud-card-body">
             <div
@@ -420,7 +564,7 @@ onMounted(() => {
               </span>
             </div>
           </div>
-          <div v-if="hasActions" class="w-crud-card-actions">
+          <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
             <template v-for="action in effectiveRowActions" :key="action.action">
               <Button
                 v-if="isActionVisible(action, row)"
@@ -451,6 +595,57 @@ onMounted(() => {
         @page="crud.onPage"
       />
     </div>
+    </div><!-- /.w-crud-content-main -->
+
+      <!-- Floating action rail (todas as actions vivem aqui) -->
+      <aside v-if="actionRail" class="w-crud-rail">
+        <Button
+          v-if="canCreate"
+          v-tooltip.left="'Novo'"
+          icon="pi pi-plus"
+          rounded
+          @click="crud.openCreateDialog()"
+        />
+        <div
+          v-if="canCreate && effectiveRowActions.length"
+          class="w-crud-rail-sep"
+        />
+        <template v-for="action in effectiveRowActions" :key="action.action">
+          <Button
+            v-if="!selectedRow || isActionVisible(action, selectedRow)"
+            v-tooltip.left="action.tooltip"
+            :icon="action.icon"
+            text
+            rounded
+            :severity="action.severity as any"
+            :disabled="!selectedRow || isActionDisabled(action, selectedRow)"
+            @click="selectedRow && handleRowAction(action, selectedRow)"
+          />
+        </template>
+        <slot name="rail-actions" :selected="selectedRow" :crud="crud" />
+        <div class="w-crud-rail-sep" />
+        <Button
+          v-tooltip.left="'Imprimir'"
+          icon="pi pi-print"
+          text
+          rounded
+          :disabled="!selectedRow"
+          @click="railPrint"
+        />
+        <Button
+          v-if="exportCsv"
+          v-tooltip.left="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
+          icon="pi pi-download"
+          text
+          rounded
+          :loading="exporting"
+          @click="doExportCsv"
+        />
+      </aside>
+    </div><!-- /.w-crud-content -->
+
+    <!-- Context menu -->
+    <ContextMenu v-if="contextMenu" ref="cm" :model="contextMenuItems" />
 
     <!-- Form Dialog -->
     <slot name="form-dialog" :crud="crud" :dialog-width="dialogWidth">

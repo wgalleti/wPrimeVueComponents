@@ -92,3 +92,5 @@ export {
   mapApiFieldToColumnDef,
   mapApiFieldsToColumnDefs,
 } from './utils/fieldMapper'
+export type { ToCsvOptions } from './utils/csv'
+export { toCsv, downloadCsv } from './utils/csv'

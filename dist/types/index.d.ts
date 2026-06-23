@@ -10,3 +10,5 @@ export type { CreateSupabaseDataProviderOptions, SupabaseDataProviderClient, Sup
 export { DEFAULT_CRUD_LABELS, W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY, } from './types';
 export type { ApiFieldMeta } from './utils/fieldMapper';
 export { mapApiFieldToFieldDef, mapApiFieldsToFieldDefs, mapApiFieldToColumnDef, mapApiFieldsToColumnDefs, } from './utils/fieldMapper';
+export type { ToCsvOptions } from './utils/csv';
+export { toCsv, downloadCsv } from './utils/csv';
