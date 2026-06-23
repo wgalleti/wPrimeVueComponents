@@ -42,6 +42,7 @@ export function useCrudManager<
     pk = 'id',
     searchDebounce = 300,
     partialUpdate = true,
+    refetchOnSave = true,
     canCreate = true,
     canEdit = true,
     canDelete = true,
@@ -481,21 +482,34 @@ export function useCrudManager<
           body,
           requestConfig,
         )
-        const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
-        if (index !== -1) {
-          items.value[index] = response.data
+        if (!refetchOnSave) {
+          const index = items.value.findIndex(
+            (i) => i[pk as keyof T] === itemPk,
+          )
+          if (index !== -1) {
+            items.value[index] = response.data
+          }
         }
         toast.success(labels.successUpdate)
       } else {
         response = await provider.create<T>(endpoint, body, requestConfig)
-        items.value.unshift(response.data)
-        pagination.rows++
+        if (!refetchOnSave) {
+          items.value.unshift(response.data)
+          pagination.rows++
+        }
         toast.success(labels.successCreate)
       }
 
       dialogVisible.value = false
       editingItem.value = null
       editingOriginal = null
+
+      // Re-busca a página atual para refletir o estado real do backend
+      // (campos derivados, ordenação, etc.) sem perder a posição da paginação,
+      // busca ou filtros — todos preservados em `pagination`/`search`/`sort`.
+      if (refetchOnSave) {
+        await fetchItems()
+      }
 
       if (onAfterSave) onAfterSave(response.data, isEditing.value)
       return response.data
