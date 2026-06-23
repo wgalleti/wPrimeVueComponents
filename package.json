@@ -1,9 +1,11 @@
 {
   "name": "@wgalleti/primevue-components",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "type": "module",
-  "private": true,
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "packageManager": "yarn@1.22.22",
   "files": [
     "dist"
@@ -29,6 +31,10 @@
     "lint": "eslint \"src/**/*.{vue,js,ts}\" --fix",
     "format": "prettier --write src/",
     "prepublishOnly": "yarn build",
+    "release": "yarn type-check && yarn build && npm publish",
+    "release:patch": "yarn version --patch && yarn release",
+    "release:minor": "yarn version --minor && yarn release",
+    "release:major": "yarn version --major && yarn release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
