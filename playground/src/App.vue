@@ -11,6 +11,7 @@ const links = [
   { label: 'Home', to: '/', icon: 'pi pi-home' },
   { label: 'CRUD Básico', to: '/basic-crud', icon: 'pi pi-table' },
   { label: 'CRUD Avançado', to: '/advanced-crud', icon: 'pi pi-cog' },
+  { label: 'Showcase (novidades)', to: '/showcase', icon: 'pi pi-sparkles' },
   { label: 'API Real', to: '/real-api', icon: 'pi pi-server' },
 ]
 

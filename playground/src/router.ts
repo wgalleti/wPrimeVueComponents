@@ -19,6 +19,11 @@ export const router = createRouter({
       component: () => import('./views/AdvancedCrudView.vue'),
     },
     {
+      path: '/showcase',
+      name: 'showcase',
+      component: () => import('./views/ShowcaseView.vue'),
+    },
+    {
       path: '/real-api',
       name: 'real-api',
       component: () => import('./views/real-api/RealApiCrudView.vue'),

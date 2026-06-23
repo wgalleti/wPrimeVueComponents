@@ -187,6 +187,36 @@ export function useCrudManager<
     await fetchItems()
   }
 
+  /**
+   * Fetch every record across all pages (respeitando search, sort e
+   * filterParams atuais) sem alterar o estado da lista. Útil para exportações.
+   */
+  async function fetchAll(pageSize = 200): Promise<T[]> {
+    const base: Record<string, unknown> = {}
+    if (search.value) base.search = search.value
+    if (sort.field && sort.order !== 0) {
+      base.ordering = sort.order === -1 ? `-${sort.field}` : sort.field
+    }
+    if (filterParams) Object.assign(base, filterParams())
+
+    const all: T[] = []
+    let page = 1
+    // Hard cap para evitar loop infinito caso o backend não pagine corretamente.
+    const maxPages = 10000
+    while (page <= maxPages) {
+      const res = await provider.list<T>(endpoint, {
+        ...base,
+        page,
+        page_size: pageSize,
+      })
+      all.push(...res.data)
+      const total = res.rows ?? all.length
+      if (res.data.length === 0 || all.length >= total) break
+      page++
+    }
+    return all
+  }
+
   // ---------------------------------------------------------------------------
   // Search
   // ---------------------------------------------------------------------------
@@ -296,6 +326,35 @@ export function useCrudManager<
     viewMode.value = true
     editingItem.value = item
     loadItemIntoForm(item)
+    dialogVisible.value = true
+  }
+
+  function openDuplicateDialog(item: T): void {
+    // Abre o diálogo em modo criação, pré-preenchido com os dados do registro
+    // (exceto a chave primária).
+    viewMode.value = false
+    editingItem.value = null
+    editingOriginal = null
+    resetForm()
+    for (const f of formFields) {
+      if (f.field === pk) continue
+      let value = item[f.field] !== undefined ? item[f.field] : formData[f.field]
+      if (
+        value &&
+        (f.type === 'date' || f.type === 'datetime') &&
+        typeof value === 'string'
+      ) {
+        value = parseDate(value)
+      }
+      formData[f.field] = value
+    }
+    // createDefaults (ex: FK do pai) sobrepõe os valores duplicados.
+    if (createDefaults) {
+      const extra = createDefaults()
+      for (const [key, val] of Object.entries(extra)) {
+        formData[key] = val
+      }
+    }
     dialogVisible.value = true
   }
 
@@ -493,6 +552,7 @@ export function useCrudManager<
     isLastPage,
     init,
     fetchItems,
+    fetchAll,
     refresh,
     setSearch,
     onSearch,
@@ -501,6 +561,7 @@ export function useCrudManager<
     openCreateDialog,
     openEditDialog,
     openViewDialog,
+    openDuplicateDialog,
     save,
     confirmDelete,
     setFormField,

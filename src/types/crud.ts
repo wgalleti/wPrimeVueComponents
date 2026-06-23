@@ -278,6 +278,7 @@ export interface CrudManagerReturn<T> {
   // methods
   init(): Promise<void>
   fetchItems(params?: Record<string, unknown>): Promise<void>
+  fetchAll(pageSize?: number): Promise<T[]>
   refresh(): Promise<void>
   setSearch(value: string): void
   onSearch(event: Event): void
@@ -286,6 +287,7 @@ export interface CrudManagerReturn<T> {
   openCreateDialog(): void
   openEditDialog(item: T): void
   openViewDialog(item: T): void
+  openDuplicateDialog(item: T): void
   save(): Promise<T | null>
   confirmDelete(item: T): void
   setFormField(field: string, value: unknown): void
