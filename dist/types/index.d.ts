@@ -1,6 +1,6 @@
 import './assets/crud.css';
 export { WPrimeVuePlugin } from './plugin';
-export { WCrudView, WCrudFormDialog, WCrudColumnRenderer, WAutoCompleteFK, WFormRenderer, WStatusTag, WPageHeader, WDetailHeader, WEmptyState, WInfoCard, WKpiCard, WKpiGrid, WSectionHeader, WFormSection, WActionBar, WProgressFlow, } from './components';
+export { WCrudView, WCrudFormDialog, WCrudColumnRenderer, WAutoCompleteFK, WFormRenderer, WMoneyInput, WTransferList, WStatusTag, WPageHeader, WDetailHeader, WEmptyState, WInfoCard, WKpiCard, WKpiGrid, WSectionHeader, WFormSection, WActionBar, WProgressFlow, } from './components';
 export { useCrudManager, useApi, useAppToast, useAppConfirm, useApiError, extractApiError, useFormatters, } from './composables';
 export { createAxiosDataProvider, createSupabaseDataProvider, } from './data-providers';
 export type { PaginatedResponse, PaginationState, SortState, UseApiOptions, UseApiReturn, ColumnDef, ColumnType, FieldDef, FieldType, SelectOption, RowAction, CrudLabels, KpiItem, CrudManagerConfig, CrudManagerReturn, WPluginOptions, WPluginConfig, DataProvider, DataProviderListParams, DataProviderListResponse, DataProviderRequestConfig, DataProviderResponse, } from './types';

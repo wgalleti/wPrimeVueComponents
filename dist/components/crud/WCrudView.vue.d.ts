@@ -12,10 +12,16 @@ type __VLS_Props = {
     kpiLabel?: string;
     extraKpis?: KpiItem[];
     expandable?: boolean;
+    viewToggle?: boolean;
+    defaultView?: 'table' | 'cards';
+    cardFields?: number;
 };
 declare function __VLS_template(): {
     attrs: Partial<{}>;
     slots: Partial<Record<`column-${string}`, (_: {
+        data: any;
+        value: any;
+    }) => any>> & Partial<Record<`column-${string}`, (_: {
         data: any;
         value: any;
     }) => any>> & Partial<Record<`field-${string}`, (_: {
@@ -27,9 +33,17 @@ declare function __VLS_template(): {
         'header-actions'?(_: {}): any;
         'before-table'?(_: {}): any;
         'toolbar-start'?(_: {}): any;
+        'toolbar-start'?(_: {}): any;
+        'toolbar-filters'?(_: {}): any;
         'toolbar-filters'?(_: {}): any;
         'toolbar-actions'?(_: {}): any;
+        'toolbar-actions'?(_: {}): any;
         empty?(_: {}): any;
+        empty?(_: {}): any;
+        'row-actions'?(_: {
+            data: any;
+            crud: CrudManagerReturn<any>;
+        }): any;
         'row-actions'?(_: {
             data: any;
             crud: CrudManagerReturn<any>;
@@ -62,6 +76,9 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
     kpiLabel: string;
     extraKpis: KpiItem[];
     expandable: boolean;
+    viewToggle: boolean;
+    defaultView: "table" | "cards";
+    cardFields: number;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, HTMLDivElement>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 export default _default;

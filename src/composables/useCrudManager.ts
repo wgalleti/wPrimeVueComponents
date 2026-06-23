@@ -18,6 +18,20 @@ import { extractApiError } from './useApiError'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
 import { stripMask } from '@/utils/masks'
 
+/** Shallow diff: returns only the keys whose value changed between two records. */
+function diffRecord(
+  original: Record<string, unknown>,
+  current: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  for (const key of Object.keys(current)) {
+    if (JSON.stringify(original[key]) !== JSON.stringify(current[key])) {
+      out[key] = current[key]
+    }
+  }
+  return out
+}
+
 export function useCrudManager<
   T extends Record<string, unknown> = Record<string, unknown>,
 >(config: CrudManagerConfig<T>): CrudManagerReturn<T> {
@@ -27,6 +41,7 @@ export function useCrudManager<
     form: formFields,
     pk = 'id',
     searchDebounce = 300,
+    partialUpdate = true,
     canCreate = true,
     canEdit = true,
     canDelete = true,
@@ -66,6 +81,8 @@ export function useCrudManager<
   const viewMode = ref(false)
   const editingItem = ref<T | null>(null) as import('vue').Ref<T | null>
   const formData = reactive<Record<string, unknown>>({})
+  // Snapshot of the form values when an edit dialog opens — used for diff-based PATCH.
+  let editingOriginal: Record<string, unknown> | null = null
 
   const pagination: PaginationState = reactive({
     page: 1,
@@ -239,6 +256,7 @@ export function useCrudManager<
   function openCreateDialog(): void {
     viewMode.value = false
     editingItem.value = null
+    editingOriginal = null
     resetForm()
     // Apply createDefaults (e.g. parent FK) on top of field defaults
     if (createDefaults) {
@@ -250,9 +268,8 @@ export function useCrudManager<
     dialogVisible.value = true
   }
 
-  function openEditDialog(item: T): void {
-    viewMode.value = false
-    editingItem.value = item
+  function loadItemIntoForm(item: T): void {
+    const snapshot: Record<string, unknown> = {}
     for (const f of formFields) {
       let value = item[f.field] !== undefined ? item[f.field] : null
       if (
@@ -263,30 +280,61 @@ export function useCrudManager<
         value = parseDate(value)
       }
       formData[f.field] = value
+      snapshot[f.field] = value
     }
+    editingOriginal = snapshot
+  }
+
+  function openEditDialog(item: T): void {
+    viewMode.value = false
+    editingItem.value = item
+    loadItemIntoForm(item)
     dialogVisible.value = true
   }
 
   function openViewDialog(item: T): void {
     viewMode.value = true
     editingItem.value = item
-    for (const f of formFields) {
-      let value = item[f.field] !== undefined ? item[f.field] : null
-      if (
-        value &&
-        (f.type === 'date' || f.type === 'datetime') &&
-        typeof value === 'string'
-      ) {
-        value = parseDate(value)
-      }
-      formData[f.field] = value
-    }
+    loadItemIntoForm(item)
     dialogVisible.value = true
   }
 
   // ---------------------------------------------------------------------------
   // Save
   // ---------------------------------------------------------------------------
+
+  // Apply automatic conversions (dates, FK objects, masks) to a record,
+  // returning a fresh plain object suitable for the API payload.
+  function convertRecord(
+    record: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const out: Record<string, unknown> = { ...record }
+    for (const f of formFields) {
+      const val = out[f.field]
+
+      // Datas
+      if (f.type === 'date' && val instanceof Date) {
+        out[f.field] = toDateString(val)
+      } else if (f.type === 'datetime' && val instanceof Date) {
+        out[f.field] = toDateTimeString(val)
+      }
+
+      // FK — extrair o ID do objeto selecionado
+      if (f.type === 'fk' && val !== null && typeof val === 'object') {
+        const key = f.optionValue || 'id'
+        out[f.field] = (val as Record<string, unknown>)[key] ?? val
+      }
+
+      // Máscaras — strip para enviar só dígitos
+      if (
+        (f.type === 'mask' || f.type === 'cpf_cnpj') &&
+        typeof val === 'string'
+      ) {
+        out[f.field] = stripMask(val)
+      }
+    }
+    return out
+  }
 
   async function save(): Promise<T | null> {
     // Validação
@@ -309,36 +357,25 @@ export function useCrudManager<
 
     saving.value = true
     try {
-      let payload: Record<string, unknown> = { ...formData }
+      let payload: Record<string, unknown> = convertRecord(formData)
 
       // Merge createDefaults into payload for new records (hidden parent FKs, etc.)
       if (!isEditing.value && createDefaults) {
         Object.assign(payload, createDefaults())
       }
 
-      // Conversões automáticas
-      for (const f of formFields) {
-        const val = payload[f.field]
+      // Edição: enviar apenas os campos alterados (diff) quando partialUpdate.
+      if (isEditing.value && partialUpdate && editingOriginal) {
+        const originalPayload = convertRecord(editingOriginal)
+        payload = diffRecord(originalPayload, payload)
 
-        // Datas
-        if (f.type === 'date' && val instanceof Date) {
-          payload[f.field] = toDateString(val)
-        } else if (f.type === 'datetime' && val instanceof Date) {
-          payload[f.field] = toDateTimeString(val)
-        }
-
-        // FK — extrair o ID do objeto selecionado
-        if (f.type === 'fk' && val !== null && typeof val === 'object') {
-          const key = f.optionValue || 'id'
-          payload[f.field] = (val as Record<string, unknown>)[key] ?? val
-        }
-
-        // Máscaras — strip para enviar só dígitos
-        if (
-          (f.type === 'mask' || f.type === 'cpf_cnpj') &&
-          typeof val === 'string'
-        ) {
-          payload[f.field] = stripMask(val)
+        // Nada mudou — fecha sem chamar a API.
+        if (Object.keys(payload).length === 0 && !transformPayload) {
+          dialogVisible.value = false
+          const current = editingItem.value
+          editingItem.value = null
+          editingOriginal = null
+          return current
         }
       }
 
@@ -399,6 +436,7 @@ export function useCrudManager<
 
       dialogVisible.value = false
       editingItem.value = null
+      editingOriginal = null
 
       if (onAfterSave) onAfterSave(response.data, isEditing.value)
       return response.data

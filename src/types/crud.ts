@@ -51,6 +51,7 @@ export type FieldType =
   | 'mask'
   | 'image'
   | 'cep'
+  | 'transfer'
 
 export interface SelectOption {
   [key: string]: unknown
@@ -74,11 +75,14 @@ export interface FieldDef {
   validate?: (value: unknown) => string | null
   autofocus?: boolean | 'create' | 'edit'
 
-  // select / autocomplete
+  // select / autocomplete / transfer
   options?: SelectOption[] | Ref<SelectOption[]>
   optionLabel?: string
   optionValue?: string
   showClear?: boolean
+  /** For 'transfer' fields — option keys to match against when searching
+   *  (defaults to [optionLabel]). */
+  searchFields?: string[]
 
   // fk
   endpoint?: string
@@ -93,6 +97,11 @@ export interface FieldDef {
   maxFractionDigits?: number
   prefix?: string
   suffix?: string
+  /** For 'currency' fields — render WMoneyInput (digit entry filled from the
+   *  right, like a calculator/POS) instead of the default InputNumber. */
+  fillFromRight?: boolean
+  /** Fixed decimal places for 'currency' fillFromRight mode (default: 2). */
+  decimals?: number
 
   // date / datetime
   dateFormat?: string
@@ -223,6 +232,9 @@ export interface CrudManagerConfig<T> {
   pk?: string
   pageSize?: number
   searchDebounce?: number
+  /** When editing, send only the changed fields (diff) instead of the whole
+   *  record. Defaults to `true`. Set `false` to always send the full payload. */
+  partialUpdate?: boolean
   canCreate?: boolean
   canEdit?: boolean
   canDelete?: boolean

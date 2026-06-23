@@ -11,6 +11,8 @@ export {
   WCrudColumnRenderer,
   WAutoCompleteFK,
   WFormRenderer,
+  WMoneyInput,
+  WTransferList,
   WStatusTag,
   WPageHeader,
   WDetailHeader,

@@ -4,7 +4,8 @@
   "type": "module",
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "packageManager": "yarn@1.22.22",
   "files": [
@@ -31,7 +32,7 @@
     "lint": "eslint \"src/**/*.{vue,js,ts}\" --fix",
     "format": "prettier --write src/",
     "prepublishOnly": "yarn build",
-    "release": "yarn type-check && yarn build && npm publish",
+    "release": "yarn type-check && yarn build && npm publish --registry https://registry.npmjs.org/",
     "release:patch": "yarn version --patch && yarn release",
     "release:minor": "yarn version --minor && yarn release",
     "release:major": "yarn version --major && yarn release",

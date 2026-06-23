@@ -6,6 +6,8 @@ import {
   WCrudFormDialog,
   WCrudColumnRenderer,
   WAutoCompleteFK,
+  WMoneyInput,
+  WTransferList,
 } from './components'
 import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
 
@@ -41,6 +43,8 @@ export const WPrimeVuePlugin: Plugin = {
       app.component('WCrudFormDialog', WCrudFormDialog)
       app.component('WCrudColumnRenderer', WCrudColumnRenderer)
       app.component('WAutoCompleteFK', WAutoCompleteFK)
+      app.component('WMoneyInput', WMoneyInput)
+      app.component('WTransferList', WTransferList)
     }
   },
 }
