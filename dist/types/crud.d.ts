@@ -14,7 +14,7 @@ export interface ColumnDef {
     tagValue?: (value: unknown, rowData?: Record<string, unknown>) => string;
     tagSeverity?: (value: unknown, rowData?: Record<string, unknown>) => string;
 }
-export type FieldType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk' | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image' | 'cep';
+export type FieldType = 'text' | 'email' | 'password' | 'number' | 'currency' | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk' | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image' | 'cep' | 'transfer';
 export interface SelectOption {
     [key: string]: unknown;
 }
@@ -35,6 +35,9 @@ export interface FieldDef {
     optionLabel?: string;
     optionValue?: string;
     showClear?: boolean;
+    /** For 'transfer' fields — option keys to match against when searching
+     *  (defaults to [optionLabel]). */
+    searchFields?: string[];
     endpoint?: string;
     endpointParams?: Record<string, string | number | boolean>;
     crudFields?: FieldDef[];
@@ -45,6 +48,11 @@ export interface FieldDef {
     maxFractionDigits?: number;
     prefix?: string;
     suffix?: string;
+    /** For 'currency' fields — render WMoneyInput (digit entry filled from the
+     *  right, like a calculator/POS) instead of the default InputNumber. */
+    fillFromRight?: boolean;
+    /** Fixed decimal places for 'currency' fillFromRight mode (default: 2). */
+    decimals?: number;
     dateFormat?: string;
     hourFormat?: '12' | '24';
     mask?: string;
@@ -118,6 +126,9 @@ export interface CrudManagerConfig<T> {
     pk?: string;
     pageSize?: number;
     searchDebounce?: number;
+    /** When editing, send only the changed fields (diff) instead of the whole
+     *  record. Defaults to `true`. Set `false` to always send the full payload. */
+    partialUpdate?: boolean;
     canCreate?: boolean;
     canEdit?: boolean;
     canDelete?: boolean;

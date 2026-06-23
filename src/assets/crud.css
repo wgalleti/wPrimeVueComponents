@@ -1025,6 +1025,223 @@
   color: var(--p-green-500, #22c55e);
 }
 
+/* ==========================================================
+   WCrudView — display toggle (table / cards)
+   ========================================================== */
+
+.w-crud-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+/* Standalone toolbar used above the cards grid */
+.w-crud-toolbar--standalone {
+  border: 1px solid var(--p-content-border-color);
+  background: var(--p-content-background);
+  border-radius: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ==========================================================
+   WCrudView — cards view
+   ========================================================== */
+
+.w-crud-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.w-crud-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.75rem;
+  background: var(--p-content-background);
+  cursor: default;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.w-crud-card:hover {
+  border-color: color-mix(in srgb, var(--p-primary-color) 40%, var(--p-content-border-color));
+}
+
+.w-crud-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.w-crud-card-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  min-width: 0;
+}
+
+.w-crud-card-row--title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.125rem;
+}
+
+.w-crud-card-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-text-muted-color);
+  flex-shrink: 0;
+}
+
+.w-crud-card-value {
+  min-width: 0;
+  text-align: right;
+  color: var(--p-text-color);
+}
+
+.w-crud-card-row--title .w-crud-card-value {
+  text-align: left;
+}
+
+.w-crud-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--p-content-border-color);
+}
+
+.w-crud-cards-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: var(--p-text-muted-color);
+  font-size: 1.5rem;
+}
+
+.w-crud-cards-wrap .w-crud-paginator {
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================
+   WMoneyInput — .w-money-input
+   ========================================================== */
+
+.w-money-input__field {
+  text-align: right;
+}
+
+/* ==========================================================
+   WTransferList — .w-transfer
+   ========================================================== */
+
+.w-transfer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.w-transfer--disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.w-transfer__pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 0.75rem;
+  background: var(--p-content-background);
+  padding: 0.625rem;
+  min-width: 0;
+}
+
+.w-transfer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.w-transfer__title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--p-text-muted-color);
+}
+
+.w-transfer__count {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--p-text-muted-color);
+  background: var(--p-content-hover-background);
+  border-radius: 999px;
+  padding: 0.0625rem 0.5rem;
+}
+
+.w-transfer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.w-transfer__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--p-text-color);
+  cursor: pointer;
+  transition: background-color 0.12s;
+}
+
+.w-transfer__item:hover {
+  background: var(--p-content-hover-background);
+}
+
+.w-transfer__item i {
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+}
+
+.w-transfer__empty {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color);
+}
+
+.w-transfer__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+}
+
 @media (max-width: 768px) {
   .w-section-header,
   .w-form-section__header,
@@ -1043,5 +1260,13 @@
   .w-kpi-grid--cols-3,
   .w-kpi-grid--cols-4 {
     grid-template-columns: 1fr;
+  }
+
+  .w-transfer {
+    grid-template-columns: 1fr;
+  }
+
+  .w-transfer__controls {
+    flex-direction: row;
   }
 }

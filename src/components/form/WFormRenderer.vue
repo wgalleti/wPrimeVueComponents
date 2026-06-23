@@ -12,6 +12,8 @@ import ColorPicker from 'primevue/colorpicker'
 import Password from 'primevue/password'
 import type { FieldDef } from '@/types/crud'
 import WAutoCompleteFK from '@/components/form/WAutoCompleteFK.vue'
+import WMoneyInput from '@/components/form/WMoneyInput.vue'
+import WTransferList from '@/components/form/WTransferList.vue'
 import { lookupCep } from '@/utils/cep'
 
 const props = withDefaults(
@@ -340,6 +342,23 @@ defineExpose({ validateAll, clearErrors })
               </slot>
             </div>
 
+            <!-- Transfer (dual list) -->
+            <div v-else-if="field.type === 'transfer'" class="w-crud-form-col-full">
+              <label class="w-crud-form-label">
+                {{ field.label }}
+                <span v-if="field.required" class="w-crud-form-required">*</span>
+              </label>
+              <WTransferList
+                :source="(unwrapRef(field.options) as any[]) || []"
+                :selected="(formData[field.field] as any[]) || []"
+                :track-by="field.optionValue || 'id'"
+                :option-label="field.optionLabel || 'nome'"
+                :search-fields="field.searchFields"
+                :disabled="isFieldDisabled(field)"
+                @update:selected="(val) => emit('update:field', field.field, val)"
+              />
+            </div>
+
             <!-- All other types -->
             <div
               v-else
@@ -410,6 +429,19 @@ defineExpose({ validateAll, clearErrors })
                 :max-fraction-digits="field.maxFractionDigits"
                 :suffix="field.suffix"
                 :prefix="field.prefix"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
+
+              <!-- Currency (fill-from-right, calculator style) -->
+              <WMoneyInput
+                v-else-if="field.type === 'currency' && field.fillFromRight"
+                :model-value="formData[field.field] as number | null"
+                :decimals="field.decimals ?? 2"
+                currency
+                :prefix="field.prefix"
+                :suffix="field.suffix"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
