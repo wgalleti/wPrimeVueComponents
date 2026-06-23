@@ -129,6 +129,11 @@ export interface CrudManagerConfig<T> {
     /** When editing, send only the changed fields (diff) instead of the whole
      *  record. Defaults to `true`. Set `false` to always send the full payload. */
     partialUpdate?: boolean;
+    /** After a successful create/update, re-fetch the current page so the list
+     *  reflects the backend (derived fields, ordering) without losing pagination,
+     *  search or filter position. Defaults to `true`. Set `false` to keep the
+     *  optimistic in-place update instead. */
+    refetchOnSave?: boolean;
     canCreate?: boolean;
     canEdit?: boolean;
     canDelete?: boolean;
