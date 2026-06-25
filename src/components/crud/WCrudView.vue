@@ -35,6 +35,7 @@ const props = withDefaults(
     cardFields?: number
     actionRail?: boolean
     contextMenu?: boolean
+    showPrint?: boolean
     exportCsv?: boolean
     csvFilename?: string
     csvScope?: 'all' | 'page'
@@ -55,6 +56,7 @@ const props = withDefaults(
     cardFields: 4,
     actionRail: true,
     contextMenu: true,
+    showPrint: false,
     exportCsv: true,
     csvFilename: 'export.csv',
     csvScope: 'all',
@@ -228,11 +230,13 @@ const contextMenuItems = computed<MenuItem[]>(() => {
       command: () => handleRowAction(action, row),
     })
   }
-  items.push({
-    label: 'Imprimir',
-    icon: 'pi pi-print',
-    command: () => emit('print', row),
-  })
+  if (props.showPrint) {
+    items.push({
+      label: 'Imprimir',
+      icon: 'pi pi-print',
+      command: () => emit('print', row),
+    })
+  }
   if (props.exportCsv) {
     items.push({ separator: true })
     items.push({
@@ -289,7 +293,7 @@ onMounted(() => {
       <div class="w-crud-header-actions">
         <slot name="header-actions" />
         <Button
-          v-if="canCreate"
+          v-if="canCreate && !actionRail"
           label="Novo"
           icon="pi pi-plus"
           @click="crud.openCreateDialog()"
@@ -394,7 +398,7 @@ onMounted(() => {
                 />
               </div>
               <Button
-                v-if="!showHeader && canCreate"
+                v-if="!showHeader && canCreate && !actionRail"
                 label="Novo"
                 icon="pi pi-plus"
                 @click="crud.openCreateDialog()"
@@ -517,7 +521,7 @@ onMounted(() => {
             />
           </div>
           <Button
-            v-if="!showHeader && canCreate"
+            v-if="!showHeader && canCreate && !actionRail"
             label="Novo"
             icon="pi pi-plus"
             @click="crud.openCreateDialog()"
@@ -623,8 +627,9 @@ onMounted(() => {
           />
         </template>
         <slot name="rail-actions" :selected="selectedRow" :crud="crud" />
-        <div class="w-crud-rail-sep" />
+        <div v-if="showPrint || exportCsv" class="w-crud-rail-sep" />
         <Button
+          v-if="showPrint"
           v-tooltip.left="'Imprimir'"
           icon="pi pi-print"
           text
