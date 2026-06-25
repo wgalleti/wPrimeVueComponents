@@ -17,6 +17,7 @@ type __VLS_Props = {
     cardFields?: number;
     actionRail?: boolean;
     contextMenu?: boolean;
+    showPrint?: boolean;
     exportCsv?: boolean;
     csvFilename?: string;
     csvScope?: 'all' | 'page';
@@ -108,6 +109,7 @@ declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {}, {}
     defaultView: "table" | "cards";
     cardFields: number;
     actionRail: boolean;
+    showPrint: boolean;
     exportCsv: boolean;
     csvFilename: string;
     csvScope: "all" | "page";

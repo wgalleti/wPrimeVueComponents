@@ -1,4 +1,4 @@
-import { inject as Ie, defineComponent as de, openBlock as s, createElementBlock as m, createBlock as A, unref as v, toDisplayString as T, ref as q, watch as nt, computed as H, reactive as ge, resolveDirective as kt, Fragment as le, createElementVNode as h, createVNode as N, withDirectives as fe, withCtx as ne, createCommentVNode as $, renderList as ie, normalizeStyle as je, createTextVNode as Pe, normalizeClass as re, renderSlot as O, isRef as Ut, withModifiers as qt, createSlots as ot, normalizeProps as lt, guardReactiveProps as st, useSlots as Ht, onMounted as Kt, createStaticVNode as Gt } from "vue";
+import { inject as Ie, defineComponent as de, openBlock as s, createElementBlock as m, createBlock as A, unref as v, toDisplayString as T, ref as q, watch as nt, computed as H, reactive as ge, resolveDirective as kt, Fragment as le, createElementVNode as h, createVNode as O, withDirectives as fe, withCtx as ne, createCommentVNode as w, renderList as ie, normalizeStyle as je, createTextVNode as Pe, normalizeClass as re, renderSlot as Y, isRef as Ut, withModifiers as qt, createSlots as ot, normalizeProps as lt, guardReactiveProps as st, useSlots as Ht, onMounted as Kt, createStaticVNode as Gt } from "vue";
 import $t from "primevue/datatable";
 import ze from "primevue/column";
 import ee from "primevue/button";
@@ -33,7 +33,7 @@ function ra() {
     (function(a, o) {
       e.exports = o();
     })(ia, (function() {
-      var a = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, o = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, l = /\d/, i = /\d\d/, r = /\d\d?/, y = /\d*[^-_:/,()\s\d]+/, c = {}, w = function(g) {
+      var a = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, o = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, l = /\d/, i = /\d\d/, r = /\d\d?/, y = /\d*[^-_:/,()\s\d]+/, c = {}, k = function(g) {
         return (g = +g) + (g > 68 ? 1900 : 2e3);
       }, F = function(g) {
         return function(b) {
@@ -42,21 +42,21 @@ function ra() {
       }, V = [/[+-]\d\d:?(\d\d)?|Z/, function(g) {
         (this.zone || (this.zone = {})).offset = (function(b) {
           if (!b || b === "Z") return 0;
-          var k = b.match(/([+-]|\d\d)/g), x = 60 * k[1] + (+k[2] || 0);
-          return x === 0 ? 0 : k[0] === "+" ? -x : x;
+          var $ = b.match(/([+-]|\d\d)/g), x = 60 * $[1] + (+$[2] || 0);
+          return x === 0 ? 0 : $[0] === "+" ? -x : x;
         })(g);
       }], W = function(g) {
         var b = c[g];
         return b && (b.indexOf ? b : b.s.concat(b.f));
       }, L = function(g, b) {
-        var k, x = c.meridiem;
+        var $, x = c.meridiem;
         if (x) {
           for (var j = 1; j <= 24; j += 1) if (g.indexOf(x(j, 0, b)) > -1) {
-            k = j > 12;
+            $ = j > 12;
             break;
           }
-        } else k = g === (b ? "pm" : "PM");
-        return k;
+        } else $ = g === (b ? "pm" : "PM");
+        return $;
       }, J = { A: [y, function(g) {
         this.afternoon = L(g, !1);
       }], a: [y, function(g) {
@@ -70,32 +70,32 @@ function ra() {
       }], SSS: [/\d{3}/, function(g) {
         this.milliseconds = +g;
       }], s: [r, F("seconds")], ss: [r, F("seconds")], m: [r, F("minutes")], mm: [r, F("minutes")], H: [r, F("hours")], h: [r, F("hours")], HH: [r, F("hours")], hh: [r, F("hours")], D: [r, F("day")], DD: [i, F("day")], Do: [y, function(g) {
-        var b = c.ordinal, k = g.match(/\d+/);
-        if (this.day = k[0], b) for (var x = 1; x <= 31; x += 1) b(x).replace(/\[|\]/g, "") === g && (this.day = x);
+        var b = c.ordinal, $ = g.match(/\d+/);
+        if (this.day = $[0], b) for (var x = 1; x <= 31; x += 1) b(x).replace(/\[|\]/g, "") === g && (this.day = x);
       }], w: [r, F("week")], ww: [i, F("week")], M: [r, F("month")], MM: [i, F("month")], MMM: [y, function(g) {
-        var b = W("months"), k = (W("monthsShort") || b.map((function(x) {
+        var b = W("months"), $ = (W("monthsShort") || b.map((function(x) {
           return x.slice(0, 3);
         }))).indexOf(g) + 1;
-        if (k < 1) throw new Error();
-        this.month = k % 12 || k;
+        if ($ < 1) throw new Error();
+        this.month = $ % 12 || $;
       }], MMMM: [y, function(g) {
         var b = W("months").indexOf(g) + 1;
         if (b < 1) throw new Error();
         this.month = b % 12 || b;
       }], Y: [/[+-]?\d+/, F("year")], YY: [i, function(g) {
-        this.year = w(g);
+        this.year = k(g);
       }], YYYY: [/\d{4}/, F("year")], Z: V, ZZ: V };
       function Z(g) {
-        var b, k;
-        b = g, k = c && c.formats;
+        var b, $;
+        b = g, $ = c && c.formats;
         for (var x = (g = b.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (function(oe, ae, _) {
           var f = _ && _.toUpperCase();
-          return ae || k[_] || a[_] || k[f].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(P, u, n) {
+          return ae || $[_] || a[_] || $[f].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(P, u, n) {
             return u || n.slice(1);
           }));
         }))).match(o), j = x.length, U = 0; U < j; U += 1) {
-          var Y = x[U], K = J[Y], B = K && K[0], X = K && K[1];
-          x[U] = X ? { regex: B, parser: X } : Y.replace(/^\[|\]$/g, "");
+          var N = x[U], K = J[N], B = K && K[0], X = K && K[1];
+          x[U] = X ? { regex: B, parser: X } : N.replace(/^\[|\]$/g, "");
         }
         return function(oe) {
           for (var ae = {}, _ = 0, f = 0; _ < j; _ += 1) {
@@ -115,16 +115,16 @@ function ra() {
           })(ae), ae;
         };
       }
-      return function(g, b, k) {
-        k.p.customParseFormat = !0, g && g.parseTwoDigitYear && (w = g.parseTwoDigitYear);
+      return function(g, b, $) {
+        $.p.customParseFormat = !0, g && g.parseTwoDigitYear && (k = g.parseTwoDigitYear);
         var x = b.prototype, j = x.parse;
         x.parse = function(U) {
-          var Y = U.date, K = U.utc, B = U.args;
+          var N = U.date, K = U.utc, B = U.args;
           this.$u = K;
           var X = B[1];
           if (typeof X == "string") {
             var oe = B[2] === !0, ae = B[3] === !0, _ = oe || ae, f = B[2];
-            ae && (f = B[2]), c = this.$locale(), !oe && f && (c = k.Ls[f]), this.$d = (function(p, d, E, R) {
+            ae && (f = B[2]), c = this.$locale(), !oe && f && (c = $.Ls[f]), this.$d = (function(p, d, E, R) {
               try {
                 if (["x", "X"].indexOf(d) > -1) return new Date((d === "X" ? 1e3 : 1) * p);
                 var G = Z(d)(p), se = G.year, pe = G.month, Ne = G.day, Ye = G.hours, we = G.minutes, ke = G.seconds, ue = G.milliseconds, ve = G.zone, Ce = G.week, Ee = /* @__PURE__ */ new Date(), De = Ne || (se || pe ? 1 : Ee.getDate()), Me = se || Ee.getFullYear(), ye = 0;
@@ -134,10 +134,10 @@ function ra() {
               } catch {
                 return /* @__PURE__ */ new Date("");
               }
-            })(Y, X, K, k), this.init(), f && f !== !0 && (this.$L = this.locale(f).$L), _ && Y != this.format(X) && (this.$d = /* @__PURE__ */ new Date("")), c = {};
+            })(N, X, K, $), this.init(), f && f !== !0 && (this.$L = this.locale(f).$L), _ && N != this.format(X) && (this.$d = /* @__PURE__ */ new Date("")), c = {};
           } else if (X instanceof Array) for (var P = X.length, u = 1; u <= P; u += 1) {
             B[1] = X[u - 1];
-            var n = k.apply(this, B);
+            var n = $.apply(this, B);
             if (n.isValid()) {
               this.$d = n.$d, this.$L = n.$L, this.init();
               break;
@@ -264,11 +264,11 @@ function rt() {
   function o(c) {
     return c == null ? "—" : ga(t, a).format(c);
   }
-  function l(c, w = 2) {
-    return c == null ? "—" : vt(t, w).format(c);
+  function l(c, k = 2) {
+    return c == null ? "—" : vt(t, k).format(c);
   }
-  function i(c, w) {
-    return ca(c, w ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
+  function i(c, k) {
+    return ca(c, k ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
   }
   function r(c) {
     return fa(c);
@@ -349,15 +349,15 @@ const gt = {
 }, Sa = (e, t = !0, a) => {
   var o, l, i, r;
   const y = ((o = a.number) == null ? void 0 : o.unsigned) !== !0 && e.startsWith("-") ? "-" : "", c = ((l = a.number) == null ? void 0 : l.fraction) ?? 0;
-  let w = yt(0, c, a);
-  const F = w.formatToParts(1000.12), V = ((i = F.find((g) => g.type === "group")) == null ? void 0 : i.value) ?? " ", W = ((r = F.find((g) => g.type === "decimal")) == null ? void 0 : r.value) ?? ".", L = ht(e, V, W);
+  let k = yt(0, c, a);
+  const F = k.formatToParts(1000.12), V = ((i = F.find((g) => g.type === "group")) == null ? void 0 : i.value) ?? " ", W = ((r = F.find((g) => g.type === "decimal")) == null ? void 0 : r.value) ?? ".", L = ht(e, V, W);
   if (Number.isNaN(parseFloat(L))) return y;
   const J = L.split(".");
   if (J[1] != null && J[1].length >= 1) {
     const g = J[1].length <= c ? J[1].length : c;
-    w = yt(g, c, a);
+    k = yt(g, c, a);
   }
-  let Z = w.format(parseFloat(L));
+  let Z = k.format(parseFloat(L));
   return t ? c > 0 && L.endsWith(".") && !L.slice(0, -1).includes(".") && (Z += W) : Z = ht(Z, V, W), y + Z;
 }, At = (e) => JSON.parse(e.replaceAll("'", '"')), Pa = (e, t = {}) => {
   const a = { ...t };
@@ -436,19 +436,19 @@ class Ma {
     if (a == null) return t;
     const l = `v=${t},mr=${a},m=${o ? 1 : 0}`;
     if (this.memo.has(l)) return this.memo.get(l);
-    const { mask: i, escaped: r } = this.escapeMask(a), y = [], c = this.opts.tokens != null ? this.opts.tokens : {}, w = this.isReversed() ? -1 : 1, F = this.isReversed() ? "unshift" : "push", V = this.isReversed() ? 0 : i.length - 1, W = this.isReversed() ? () => g > -1 && b > -1 : () => g < i.length && b < t.length, L = (x) => !this.isReversed() && x <= V || this.isReversed() && x >= V;
-    let J, Z = -1, g = this.isReversed() ? i.length - 1 : 0, b = this.isReversed() ? t.length - 1 : 0, k = !1;
+    const { mask: i, escaped: r } = this.escapeMask(a), y = [], c = this.opts.tokens != null ? this.opts.tokens : {}, k = this.isReversed() ? -1 : 1, F = this.isReversed() ? "unshift" : "push", V = this.isReversed() ? 0 : i.length - 1, W = this.isReversed() ? () => g > -1 && b > -1 : () => g < i.length && b < t.length, L = (x) => !this.isReversed() && x <= V || this.isReversed() && x >= V;
+    let J, Z = -1, g = this.isReversed() ? i.length - 1 : 0, b = this.isReversed() ? t.length - 1 : 0, $ = !1;
     for (; W(); ) {
       const x = i.charAt(g), j = c[x], U = (j == null ? void 0 : j.transform) != null ? j.transform(t.charAt(b)) : t.charAt(b);
-      if (!r.includes(g) && j != null ? (U.match(j.pattern) != null ? (y[F](U), j.repeated ? (Z === -1 ? Z = g : g === V && g !== Z && (g = Z - w), V === Z && (g -= w)) : j.multiple && (k = !0, g -= w), g += w) : j.multiple ? k && (g += w, b -= w, k = !1) : U === J ? J = void 0 : j.optional && (g += w, b -= w), b += w) : (o && !this.isEager() && y[F](x), U === x && !this.isEager() ? b += w : J = x, this.isEager() || (g += w)), this.isEager())
+      if (!r.includes(g) && j != null ? (U.match(j.pattern) != null ? (y[F](U), j.repeated ? (Z === -1 ? Z = g : g === V && g !== Z && (g = Z - k), V === Z && (g -= k)) : j.multiple && ($ = !0, g -= k), g += k) : j.multiple ? $ && (g += k, b -= k, $ = !1) : U === J ? J = void 0 : j.optional && (g += k, b -= k), b += k) : (o && !this.isEager() && y[F](x), U === x && !this.isEager() ? b += k : J = x, this.isEager() || (g += k)), this.isEager())
         for (; L(g) && (c[i.charAt(g)] == null || r.includes(g)); ) {
           if (o) {
             if (y[F](i.charAt(g)), t.charAt(b) === i.charAt(g)) {
-              g += w, b += w;
+              g += k, b += k;
               continue;
             }
-          } else i.charAt(g) === t.charAt(b) && (b += w);
-          g += w;
+          } else i.charAt(g) === t.charAt(b) && (b += k);
+          g += k;
         }
     }
     return this.memo.set(l, y.join("")), this.memo.get(l);
@@ -497,10 +497,10 @@ class Fa {
     var l, i;
     const r = t.selectionStart, y = t.value;
     if (o(), r === null || r === y.length && !a) return;
-    const c = t.value, w = y.slice(0, r), F = c.slice(0, r), V = (l = this.processInput(t, w)) == null ? void 0 : l.unmasked, W = (i = this.processInput(t, F)) == null ? void 0 : i.unmasked;
+    const c = t.value, k = y.slice(0, r), F = c.slice(0, r), V = (l = this.processInput(t, k)) == null ? void 0 : l.unmasked, W = (i = this.processInput(t, F)) == null ? void 0 : i.unmasked;
     if (V === void 0 || W === void 0) return;
     let L = r;
-    w !== F && (L += a ? c.length - y.length : V.length - W.length), t.setSelectionRange(L, L);
+    k !== F && (L += a ? c.length - y.length : V.length - W.length), t.setSelectionRange(L, L);
   }
   setValue(t, a) {
     const o = this.processInput(t, a);
@@ -674,7 +674,7 @@ function Ke(e, t = "Erro inesperado") {
   const l = o.detail ?? o;
   return Oa(l) || t;
 }
-function Jl() {
+function Zl() {
   return { extractApiError: Ke };
 }
 const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-autocompletefk-toolbar" }, Ua = { class: "w-autocompletefk-toolbar-actions" }, qa = { class: "flex items-center justify-end gap-1" }, Ha = { class: "w-autocompletefk-footer" }, Lt = /* @__PURE__ */ de({
@@ -706,7 +706,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       throw new Error(
         "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin."
       );
-    const i = l, r = It(), { confirmDelete: y } = Tt(), c = q(null), w = q([]), F = q(!1);
+    const i = l, r = It(), { confirmDelete: y } = Tt(), c = q(null), k = q([]), F = q(!1);
     let V = null;
     async function W(C) {
       try {
@@ -725,9 +725,9 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
         };
         C && (S.search = C);
         const te = await i.list(a.endpoint, S);
-        w.value = te.data;
+        k.value = te.data;
       } catch {
-        w.value = [];
+        k.value = [];
       } finally {
         F.value = !1;
       }
@@ -735,7 +735,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
     function J(C) {
       const S = C.query || "";
       if (S.length < a.minLength) {
-        w.value = [];
+        k.value = [];
         return;
       }
       V && clearTimeout(V), V = setTimeout(() => L(S), 300);
@@ -760,7 +760,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       },
       { immediate: !0 }
     );
-    const b = q(!1), k = q([]), x = q(!1), j = q(""), U = q(1), Y = q(15), K = q(0), B = q(null), X = q(null), oe = q(0);
+    const b = q(!1), $ = q([]), x = q(!1), j = q(""), U = q(1), N = q(15), K = q(0), B = q(null), X = q(null), oe = q(0);
     let ae = null;
     const _ = q([]), f = H(() => {
       var C;
@@ -784,14 +784,14 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       try {
         const z = {
           page: U.value,
-          page_size: Y.value,
+          page_size: N.value,
           ...a.endpointParams
         };
         j.value && (z.search = j.value), X.value && oe.value !== 0 && (z.ordering = oe.value === -1 ? `-${X.value}` : X.value);
         const ce = await i.list(a.endpoint, z);
-        k.value = ce.data, K.value = ce.rows, (C = ce.extras) != null && C.fields && !((S = a.columns) != null && S.length) && !((te = a.crudFields) != null && te.length) && (_.value = ce.extras.fields);
+        $.value = ce.data, K.value = ce.rows, (C = ce.extras) != null && C.fields && !((S = a.columns) != null && S.length) && !((te = a.crudFields) != null && te.length) && (_.value = ce.extras.fields);
       } catch {
-        k.value = [], K.value = 0;
+        $.value = [], K.value = 0;
       } finally {
         x.value = !1;
       }
@@ -800,7 +800,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       a.disabled || (j.value = "", U.value = 1, X.value = null, oe.value = 0, B.value = null, b.value = !0, R());
     }
     function se(C) {
-      U.value = C.page + 1, Y.value = C.rows, R();
+      U.value = C.page + 1, N.value = C.rows, R();
     }
     function pe(C) {
       X.value = C.sortField ?? null, oe.value = C.sortOrder ?? 0, U.value = 1, R();
@@ -863,10 +863,10 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             te,
             C
           );
-          const z = k.value.findIndex((ce) => ce[a.optionValue] === te);
-          z !== -1 && (k.value[z] = S.data), r.success("Registro atualizado com sucesso");
+          const z = $.value.findIndex((ce) => ce[a.optionValue] === te);
+          z !== -1 && ($.value[z] = S.data), r.success("Registro atualizado com sucesso");
         } else
-          S = await i.create(a.endpoint, C), k.value.unshift(S.data), K.value++, r.success("Registro criado com sucesso");
+          S = await i.create(a.endpoint, C), $.value.unshift(S.data), K.value++, r.success("Registro criado com sucesso");
         we.value = !1, ue.value = null, B.value = S.data;
       } catch (C) {
         r.error(Ke(C, "Erro ao salvar registro"));
@@ -879,8 +879,8 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
         try {
           const S = C[a.optionValue];
           await i.delete(a.endpoint, S);
-          const te = k.value.findIndex((z) => z[a.optionValue] === S);
-          te !== -1 && (k.value.splice(te, 1), K.value--), c.value && c.value[a.optionValue] === S && (c.value = null, o("update:modelValue", null)), B.value && B.value[a.optionValue] === S && (B.value = null), r.success("Registro excluído com sucesso");
+          const te = $.value.findIndex((z) => z[a.optionValue] === S);
+          te !== -1 && ($.value.splice(te, 1), K.value--), c.value && c.value[a.optionValue] === S && (c.value = null, o("update:modelValue", null)), B.value && B.value[a.optionValue] === S && (B.value = null), r.success("Registro excluído com sucesso");
         } catch (S) {
           r.error(Ke(S, "Erro ao excluir registro"));
         }
@@ -890,9 +890,9 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       const te = kt("tooltip");
       return s(), m(le, null, [
         h("div", Ba, [
-          N(v(xt), {
+          O(v(xt), {
             "model-value": c.value,
-            suggestions: w.value,
+            suggestions: k.value,
             "option-label": e.optionLabel,
             placeholder: e.placeholder,
             disabled: e.disabled,
@@ -919,7 +919,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             ]
           ])
         ]),
-        N(v(Dt), {
+        O(v(Dt), {
           visible: b.value,
           "onUpdate:visible": S[4] || (S[4] = (z) => b.value = z),
           header: e.dialogHeader || "Pesquisar",
@@ -930,13 +930,13 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
         }, {
           footer: ne(() => [
             h("div", Ha, [
-              N(v(ee), {
+              O(v(ee), {
                 label: "Cancelar",
                 severity: "secondary",
                 text: "",
                 onClick: S[3] || (S[3] = (z) => b.value = !1)
               }),
-              N(v(ee), {
+              O(v(ee), {
                 label: "Selecionar",
                 icon: "pi pi-check",
                 disabled: !B.value,
@@ -946,10 +946,10 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
           ]),
           default: ne(() => [
             h("div", ja, [
-              N(v(qe), { class: "w-autocompletefk-toolbar-search" }, {
+              O(v(qe), { class: "w-autocompletefk-toolbar-search" }, {
                 default: ne(() => [
-                  N(v(He), { class: "pi pi-search" }),
-                  N(v(me), {
+                  O(v(He), { class: "pi pi-search" }),
+                  O(v(me), {
                     modelValue: j.value,
                     "onUpdate:modelValue": S[0] || (S[0] = (z) => j.value = z),
                     placeholder: "Pesquisar...",
@@ -965,20 +965,20 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                   icon: "pi pi-plus",
                   size: "small",
                   onClick: ye
-                })) : $("", !0)
+                })) : w("", !0)
               ])
             ]),
-            N(v($t), {
+            O(v($t), {
               selection: B.value,
               "onUpdate:selection": S[1] || (S[1] = (z) => B.value = z),
-              value: k.value,
+              value: $.value,
               loading: x.value,
               paginator: "",
               lazy: "",
               "striped-rows": "",
               "removable-sort": "",
               size: "small",
-              rows: Y.value,
+              rows: N.value,
               "total-records": K.value,
               "sort-field": X.value ?? void 0,
               "sort-order": oe.value,
@@ -992,7 +992,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                 h("div", { class: "w-autocompletefk-empty" }, "Nenhum registro encontrado", -1)
               ])]),
               default: ne(() => [
-                N(v(ze), {
+                O(v(ze), {
                   "selection-mode": "single",
                   "header-style": "width: 3rem"
                 }),
@@ -1036,7 +1036,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : $("", !0),
+                      ]) : w("", !0),
                       n.value ? fe((s(), A(v(ee), {
                         key: 1,
                         icon: "pi pi-trash",
@@ -1052,11 +1052,11 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : $("", !0)
+                      ]) : w("", !0)
                     ])
                   ]),
                   _: 1
-                })) : $("", !0)
+                })) : w("", !0)
               ]),
               _: 1
             }, 8, ["selection", "value", "loading", "rows", "total-records", "sort-field", "sort-order", "data-key"])
@@ -1077,7 +1077,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
           }),
           "onUpdate:field": Fe,
           onSave: Ae
-        }, null, 8, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])) : $("", !0)
+        }, null, 8, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])) : w("", !0)
       ], 64);
     };
   }
@@ -1106,15 +1106,15 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       }).format(c);
     });
     function y(c) {
-      const w = c.target.value.replace(/\D/g, "");
-      if (!w) {
+      const k = c.target.value.replace(/\D/g, "");
+      if (!k) {
         o("update:modelValue", null);
         return;
       }
-      const F = Number(w) / Math.pow(10, a.decimals);
+      const F = Number(k) / Math.pow(10, a.decimals);
       o("update:modelValue", F);
     }
-    return (c, w) => i.value ? (s(), A(v(oa), {
+    return (c, k) => i.value ? (s(), A(v(oa), {
       key: 0,
       class: "w-money-input"
     }, {
@@ -1124,8 +1124,8 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             Pe(T(l.value), 1)
           ]),
           _: 1
-        })) : $("", !0),
-        N(v(me), {
+        })) : w("", !0),
+        O(v(me), {
           "model-value": r.value,
           inputmode: "numeric",
           class: "w-money-input__field",
@@ -1139,7 +1139,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             Pe(T(e.suffix), 1)
           ]),
           _: 1
-        })) : $("", !0)
+        })) : w("", !0)
       ]),
       _: 1
     })) : (s(), A(v(me), {
@@ -1176,12 +1176,12 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
     function c(b) {
       return b[a.trackBy];
     }
-    function w(b) {
+    function k(b) {
       return String(b[a.optionLabel] ?? "");
     }
-    function F(b, k) {
-      if (!k) return !0;
-      const x = k.toLowerCase();
+    function F(b, $) {
+      if (!$) return !0;
+      const x = $.toLowerCase();
       return y.value.some(
         (j) => String(b[j] ?? "").toLowerCase().includes(x)
       );
@@ -1200,8 +1200,8 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
     }
     function J(b) {
       if (a.disabled) return;
-      const k = c(b);
-      o("update:selected", a.selected.filter((x) => x !== k));
+      const $ = c(b);
+      o("update:selected", a.selected.filter((x) => x !== $));
     }
     function Z() {
       a.disabled || o("update:selected", a.source.map(c));
@@ -1209,20 +1209,20 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
     function g() {
       a.disabled || o("update:selected", []);
     }
-    return (b, k) => (s(), m("div", {
+    return (b, $) => (s(), m("div", {
       class: re(["w-transfer", { "w-transfer--disabled": e.disabled }])
     }, [
       h("div", Ka, [
         h("div", Ga, [
-          k[2] || (k[2] = h("span", { class: "w-transfer__title" }, "Disponíveis", -1)),
+          $[2] || ($[2] = h("span", { class: "w-transfer__title" }, "Disponíveis", -1)),
           h("span", Ja, T(V.value.length), 1)
         ]),
-        N(v(qe), { class: "w-transfer__search" }, {
+        O(v(qe), { class: "w-transfer__search" }, {
           default: ne(() => [
-            N(v(He), { class: "pi pi-search" }),
-            N(v(me), {
+            O(v(He), { class: "pi pi-search" }),
+            O(v(me), {
               modelValue: l.value,
-              "onUpdate:modelValue": k[0] || (k[0] = (x) => l.value = x),
+              "onUpdate:modelValue": $[0] || ($[0] = (x) => l.value = x),
               placeholder: "Buscar...",
               fluid: ""
             }, null, 8, ["modelValue"])
@@ -1235,14 +1235,14 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             class: "w-transfer__item",
             onClick: (j) => L(x)
           }, [
-            h("span", null, T(w(x)), 1),
-            k[3] || (k[3] = h("i", { class: "pi pi-angle-right" }, null, -1))
+            h("span", null, T(k(x)), 1),
+            $[3] || ($[3] = h("i", { class: "pi pi-angle-right" }, null, -1))
           ], 8, Xa))), 128)),
-          V.value.length ? $("", !0) : (s(), m("li", Qa, "Nenhum item"))
+          V.value.length ? w("", !0) : (s(), m("li", Qa, "Nenhum item"))
         ])
       ]),
       h("div", _a, [
-        N(v(ee), {
+        O(v(ee), {
           type: "button",
           icon: "pi pi-angle-double-right",
           text: "",
@@ -1250,7 +1250,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
           disabled: e.disabled || !V.value.length,
           onClick: Z
         }, null, 8, ["disabled"]),
-        N(v(ee), {
+        O(v(ee), {
           type: "button",
           icon: "pi pi-angle-double-left",
           text: "",
@@ -1261,15 +1261,15 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
       ]),
       h("div", en, [
         h("div", tn, [
-          k[4] || (k[4] = h("span", { class: "w-transfer__title" }, "Selecionados", -1)),
+          $[4] || ($[4] = h("span", { class: "w-transfer__title" }, "Selecionados", -1)),
           h("span", an, T(W.value.length), 1)
         ]),
-        N(v(qe), { class: "w-transfer__search" }, {
+        O(v(qe), { class: "w-transfer__search" }, {
           default: ne(() => [
-            N(v(He), { class: "pi pi-search" }),
-            N(v(me), {
+            O(v(He), { class: "pi pi-search" }),
+            O(v(me), {
               modelValue: i.value,
-              "onUpdate:modelValue": k[1] || (k[1] = (x) => i.value = x),
+              "onUpdate:modelValue": $[1] || ($[1] = (x) => i.value = x),
               placeholder: "Buscar...",
               fluid: ""
             }, null, 8, ["modelValue"])
@@ -1282,10 +1282,10 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             class: "w-transfer__item",
             onClick: (j) => J(x)
           }, [
-            k[5] || (k[5] = h("i", { class: "pi pi-angle-left" }, null, -1)),
-            h("span", null, T(w(x)), 1)
+            $[5] || ($[5] = h("i", { class: "pi pi-angle-left" }, null, -1)),
+            h("span", null, T(k(x)), 1)
           ], 8, on))), 128)),
-          W.value.length ? $("", !0) : (s(), m("li", ln, "Nenhum item"))
+          W.value.length ? w("", !0) : (s(), m("li", ln, "Nenhum item"))
         ])
       ])
     ], 2));
@@ -1350,7 +1350,7 @@ const rn = { class: "w-crud-form" }, un = {
   emits: ["update:field"],
   setup(e, { expose: t, emit: a }) {
     const o = e, l = a, i = ge({}), r = ge({}), y = ge({}), c = ge({});
-    function w(f, P) {
+    function k(f, P) {
       const u = P.target.value, n = u.replace(/\D/g, "");
       l("update:field", f.field, u), y[f.field] = null, c[f.field] && (clearTimeout(c[f.field]), c[f.field] = null), n.length === 8 && (c[f.field] = setTimeout(async () => {
         r[f.field] = !0, y[f.field] = null;
@@ -1405,7 +1405,7 @@ const rn = { class: "w-crud-form" }, un = {
       const u = P.target.value.replace(/\D/g, "").slice(0, 14);
       l("update:field", f, u);
     }
-    const k = ge({});
+    const $ = ge({});
     function x(f) {
       const P = o.formData[f.field];
       if (P == null) return null;
@@ -1415,15 +1415,15 @@ const rn = { class: "w-crud-form" }, un = {
       ) ?? null;
     }
     function j(f) {
-      return k[f.field] || [];
+      return $[f.field] || [];
     }
     function U(f, P) {
       const u = (P.query || "").toLowerCase(), n = W(f.options) || [], p = f.optionLabel || "label";
-      k[f.field] = n.filter(
+      $[f.field] = n.filter(
         (d) => String(d[p] || "").toLowerCase().includes(u)
       );
     }
-    function Y(f, P) {
+    function N(f, P) {
       const u = f.optionValue || "value";
       l("update:field", f.field, P.value[u]);
     }
@@ -1476,10 +1476,10 @@ const rn = { class: "w-crud-form" }, un = {
       }, [
         u.title ? (s(), m("div", un, [
           h("h3", dn, T(u.title), 1),
-          u.description ? (s(), m("p", cn, T(u.description), 1)) : $("", !0)
-        ])) : $("", !0),
+          u.description ? (s(), m("p", cn, T(u.description), 1)) : w("", !0)
+        ])) : w("", !0),
         h("div", fn, [
-          (s(!0), m(le, null, ie(u.fields, (n) => O(f.$slots, `field-${n.field}`, {
+          (s(!0), m(le, null, ie(u.fields, (n) => Y(f.$slots, `field-${n.field}`, {
             key: n.field,
             field: n,
             formData: e.formData,
@@ -1487,7 +1487,7 @@ const rn = { class: "w-crud-form" }, un = {
             setFormField: (p, d) => l("update:field", p, d)
           }, () => [
             n.type === "switch" ? (s(), m("div", mn, [
-              N(v(_t), {
+              O(v(_t), {
                 "model-value": e.formData[n.field],
                 disabled: V(n),
                 "onUpdate:modelValue": (p) => l("update:field", n.field, p)
@@ -1496,15 +1496,15 @@ const rn = { class: "w-crud-form" }, un = {
             ])) : n.type === "color" ? (s(), m("div", vn, [
               h("label", gn, [
                 Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", hn, "*")) : $("", !0)
+                n.required ? (s(), m("span", hn, "*")) : w("", !0)
               ]),
               h("div", yn, [
-                N(v(ea), {
+                O(v(ea), {
                   "model-value": K(n),
                   disabled: V(n),
                   "onUpdate:modelValue": (p) => B(n, p)
                 }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
-                N(v(me), {
+                O(v(me), {
                   "model-value": e.formData[n.field],
                   class: "w-28",
                   maxlength: "7",
@@ -1515,7 +1515,7 @@ const rn = { class: "w-crud-form" }, un = {
               ])
             ])) : n.type === "image" ? (s(), m("div", bn, [
               h("label", wn, T(n.label), 1),
-              O(f.$slots, `image-${n.field}`, {
+              Y(f.$slots, `image-${n.field}`, {
                 field: n,
                 formData: e.formData
               }, () => [
@@ -1533,9 +1533,9 @@ const rn = { class: "w-crud-form" }, un = {
             ])) : n.type === "transfer" ? (s(), m("div", $n, [
               h("label", Cn, [
                 Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", Dn, "*")) : $("", !0)
+                n.required ? (s(), m("span", Dn, "*")) : w("", !0)
               ]),
-              N(Nt, {
+              O(Nt, {
                 source: W(n.options) || [],
                 selected: e.formData[n.field] || [],
                 "track-by": n.optionValue || "id",
@@ -1550,8 +1550,8 @@ const rn = { class: "w-crud-form" }, un = {
             }, [
               h("label", xn, [
                 Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", Sn, "*")) : $("", !0),
-                r[n.field] ? (s(), m("i", Pn)) : $("", !0)
+                n.required ? (s(), m("span", Sn, "*")) : w("", !0),
+                r[n.field] ? (s(), m("i", Pn)) : w("", !0)
               ]),
               (!n.type || n.type === "text") && n.mask ? fe((s(), A(v(me), {
                 key: 0,
@@ -1645,7 +1645,7 @@ const rn = { class: "w-crud-form" }, un = {
                 placeholder: n.placeholder,
                 disabled: V(n),
                 onComplete: (p) => U(n, p),
-                onItemSelect: (p) => Y(n, p),
+                onItemSelect: (p) => N(n, p),
                 onClear: (p) => l("update:field", n.field, null)
               }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "onComplete", "onItemSelect", "onClear"])) : n.type === "fk" ? (s(), A(Lt, {
                 key: 9,
@@ -1706,7 +1706,7 @@ const rn = { class: "w-crud-form" }, un = {
                 placeholder: n.placeholder || "00000-000",
                 disabled: V(n),
                 invalid: !!y[n.field],
-                onInput: (p) => w(n, p)
+                onInput: (p) => k(n, p)
               }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput"])), [
                 [v(at), { mask: "#####-###" }]
               ]) : n.type === "textarea" ? (s(), A(v(Xt), {
@@ -1718,8 +1718,8 @@ const rn = { class: "w-crud-form" }, un = {
                 placeholder: n.placeholder,
                 disabled: V(n),
                 "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : $("", !0),
-              y[n.field] ? (s(), m("small", Vn, T(y[n.field]), 1)) : i[n.field] ? (s(), m("small", En, T(i[n.field]), 1)) : $("", !0)
+              }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : w("", !0),
+              y[n.field] ? (s(), m("small", Vn, T(y[n.field]), 1)) : i[n.field] ? (s(), m("small", En, T(i[n.field]), 1)) : w("", !0)
             ], 2))
           ])), 128))
         ])
@@ -1763,34 +1763,34 @@ const rn = { class: "w-crud-form" }, un = {
           class: "w-crud-form",
           onSubmit: qt(i, ["prevent"])
         }, [
-          N(Mn, {
+          O(Mn, {
             ref_key: "rendererRef",
             ref: l,
             fields: e.fields,
             "form-data": e.formData,
             "is-editing": e.isEditing,
             disabled: e.disabled,
-            "onUpdate:field": y[0] || (y[0] = (c, w) => o("update:field", c, w))
+            "onUpdate:field": y[0] || (y[0] = (c, k) => o("update:field", c, k))
           }, ot({ _: 2 }, [
             ie(e.fields, (c) => ({
               name: `field-${c.field}`,
-              fn: ne((w) => [
-                O(r.$slots, `field-${c.field}`, lt(st(w)))
+              fn: ne((k) => [
+                Y(r.$slots, `field-${c.field}`, lt(st(k)))
               ])
             })),
             ie(e.fields.filter((c) => c.type === "image"), (c) => ({
               name: `image-${c.field}`,
-              fn: ne((w) => [
-                O(r.$slots, `image-${c.field}`, lt(st(w)))
+              fn: ne((k) => [
+                Y(r.$slots, `image-${c.field}`, lt(st(k)))
               ])
             }))
           ]), 1032, ["fields", "form-data", "is-editing", "disabled"]),
           h("div", Fn, [
-            O(r.$slots, "footer", {
+            Y(r.$slots, "footer", {
               saving: e.saving,
               disabled: e.disabled
             }, () => [
-              N(v(ee), {
+              O(v(ee), {
                 type: "button",
                 label: e.disabled ? "Fechar" : "Cancelar",
                 severity: "secondary",
@@ -1798,7 +1798,7 @@ const rn = { class: "w-crud-form" }, un = {
                 disabled: e.saving,
                 onClick: y[1] || (y[1] = (c) => o("update:visible", !1))
               }, null, 8, ["label", "disabled"]),
-              e.disabled ? $("", !0) : (s(), A(v(ee), {
+              e.disabled ? w("", !0) : (s(), A(v(ee), {
                 key: 0,
                 type: "submit",
                 label: e.isEditing ? "Atualizar" : "Salvar",
@@ -1871,7 +1871,10 @@ const Tn = { class: "w-crud" }, Ln = {
 }, fo = {
   key: 1,
   class: "w-crud-rail-sep"
-}, mo = /* @__PURE__ */ de({
+}, mo = {
+  key: 2,
+  class: "w-crud-rail-sep"
+}, po = /* @__PURE__ */ de({
   __name: "WCrudView",
   props: {
     crud: {},
@@ -1891,6 +1894,7 @@ const Tn = { class: "w-crud" }, Ln = {
     cardFields: { default: 4 },
     actionRail: { type: Boolean, default: !0 },
     contextMenu: { type: Boolean, default: !0 },
+    showPrint: { type: Boolean, default: !1 },
     exportCsv: { type: Boolean, default: !0 },
     csvFilename: { default: "export.csv" },
     csvScope: { default: "all" },
@@ -1902,7 +1906,7 @@ const Tn = { class: "w-crud" }, Ln = {
     function c(u) {
       return y.value === u;
     }
-    function w(u) {
+    function k(u) {
       y.value = u;
     }
     const F = H(
@@ -1937,7 +1941,7 @@ const Tn = { class: "w-crud" }, Ln = {
       }
       u.action === "edit" ? a.crud.openEditDialog(n) : u.action === "view" ? a.crud.openViewDialog(n) : u.action === "duplicate" ? a.crud.openDuplicateDialog(n) : u.action === "delete" && a.crud.confirmDelete(n);
     }
-    function k(u, n) {
+    function $(u, n) {
       return u.visible ? u.visible(n) : !0;
     }
     function x(u, n) {
@@ -1952,20 +1956,20 @@ const Tn = { class: "w-crud" }, Ln = {
       }), u.push(...a.extraKpis), u;
     });
     H(() => a.crud.config.labels ?? {});
-    const U = H(() => a.crud.config.canCreate !== !1), Y = q(null), K = q(null);
+    const U = H(() => a.crud.config.canCreate !== !1), N = q(null), K = q(null);
     function B(u) {
-      Y.value = u;
+      N.value = u;
     }
     function X(u) {
       var n;
-      a.contextMenu && (Y.value = u.data, (n = K.value) == null || n.show(u.originalEvent));
+      a.contextMenu && (N.value = u.data, (n = K.value) == null || n.show(u.originalEvent));
     }
     function oe(u, n) {
       var p;
-      a.contextMenu && (u.preventDefault(), Y.value = n, (p = K.value) == null || p.show(u));
+      a.contextMenu && (u.preventDefault(), N.value = n, (p = K.value) == null || p.show(u));
     }
     const ae = H(() => {
-      const u = Y.value;
+      const u = N.value;
       if (!u) return [];
       const n = [
         {
@@ -1975,14 +1979,14 @@ const Tn = { class: "w-crud" }, Ln = {
         }
       ];
       for (const p of Z.value)
-        k(p, u) && n.push({
+        $(p, u) && n.push({
           label: p.tooltip ?? p.action,
           icon: p.icon,
           class: p.severity === "danger" ? "w-crud-ctx-danger" : void 0,
           disabled: x(p, u),
           command: () => b(p, u)
         });
-      return n.push({
+      return a.showPrint && n.push({
         label: "Imprimir",
         icon: "pi pi-print",
         command: () => o("print", u)
@@ -1993,7 +1997,7 @@ const Tn = { class: "w-crud" }, Ln = {
       })), n;
     });
     function _() {
-      Y.value && o("print", Y.value);
+      N.value && o("print", N.value);
     }
     const f = q(!1);
     async function P() {
@@ -2015,19 +2019,19 @@ const Tn = { class: "w-crud" }, Ln = {
         e.showHeader ? (s(), m("div", Ln, [
           h("div", zn, [
             h("h1", Nn, T(e.title), 1),
-            e.subtitle ? (s(), m("p", Yn, T(e.subtitle), 1)) : $("", !0)
+            e.subtitle ? (s(), m("p", Yn, T(e.subtitle), 1)) : w("", !0)
           ]),
           h("div", On, [
-            O(u.$slots, "header-actions"),
-            U.value ? (s(), A(v(ee), {
+            Y(u.$slots, "header-actions"),
+            U.value && !e.actionRail ? (s(), A(v(ee), {
               key: 0,
               label: "Novo",
               icon: "pi pi-plus",
               onClick: n[0] || (n[0] = (d) => e.crud.openCreateDialog())
-            })) : $("", !0)
+            })) : w("", !0)
           ])
-        ])) : $("", !0),
-        O(u.$slots, "before-table", {}, () => [
+        ])) : w("", !0),
+        Y(u.$slots, "before-table", {}, () => [
           j.value.length ? (s(), m("div", Bn, [
             (s(!0), m(le, null, ie(j.value, (d, E) => (s(), m("div", {
               key: E,
@@ -2046,14 +2050,14 @@ const Tn = { class: "w-crud" }, Ln = {
                 h("div", Un, T(d.value), 1)
               ])
             ]))), 128))
-          ])) : $("", !0)
+          ])) : w("", !0)
         ]),
         h("div", {
           class: re(["w-crud-content", { "w-crud-content--rail": e.actionRail }])
         }, [
           h("div", qn, [
             y.value === "table" ? (s(), m("div", Hn, [
-              N(v($t), {
+              O(v($t), {
                 value: e.crud.items.value,
                 loading: e.crud.loading.value,
                 "expanded-rows": r.value,
@@ -2072,12 +2076,12 @@ const Tn = { class: "w-crud" }, Ln = {
                 "sort-field": e.crud.sort.field ?? void 0,
                 "sort-order": e.crud.sort.order,
                 "data-key": e.crud.config.pk || "id",
-                selection: e.actionRail || e.contextMenu ? Y.value : void 0,
+                selection: e.actionRail || e.contextMenu ? N.value : void 0,
                 "selection-mode": e.actionRail || e.contextMenu ? "single" : void 0,
                 "context-menu": e.contextMenu,
-                "context-menu-selection": e.contextMenu ? Y.value : void 0,
-                "onUpdate:selection": n[5] || (n[5] = (d) => Y.value = d),
-                "onUpdate:contextMenuSelection": n[6] || (n[6] = (d) => Y.value = d),
+                "context-menu-selection": e.contextMenu ? N.value : void 0,
+                "onUpdate:selection": n[5] || (n[5] = (d) => N.value = d),
+                "onUpdate:contextMenuSelection": n[6] || (n[6] = (d) => N.value = d),
                 onRowContextmenu: X,
                 onPage: e.crud.onPage,
                 onSort: n[7] || (n[7] = (d) => e.crud.onSort({ sortField: d.sortField, sortOrder: d.sortOrder })),
@@ -2089,8 +2093,8 @@ const Tn = { class: "w-crud" }, Ln = {
                     h("div", Gn, [
                       e.showSearch ? (s(), A(v(qe), { key: 0 }, {
                         default: ne(() => [
-                          N(v(He), { class: "pi pi-search" }),
-                          N(v(me), {
+                          O(v(He), { class: "pi pi-search" }),
+                          O(v(me), {
                             "model-value": e.crud.search.value,
                             placeholder: "Buscar...",
                             class: "w-72",
@@ -2098,12 +2102,12 @@ const Tn = { class: "w-crud" }, Ln = {
                           }, null, 8, ["model-value", "onInput"])
                         ]),
                         _: 1
-                      })) : $("", !0),
-                      O(u.$slots, "toolbar-start"),
-                      O(u.$slots, "toolbar-filters")
+                      })) : w("", !0),
+                      Y(u.$slots, "toolbar-start"),
+                      Y(u.$slots, "toolbar-filters")
                     ]),
                     h("div", Jn, [
-                      O(u.$slots, "toolbar-actions"),
+                      Y(u.$slots, "toolbar-actions"),
                       e.exportCsv ? fe((s(), A(v(ee), {
                         key: 0,
                         icon: "pi pi-download",
@@ -2118,34 +2122,34 @@ const Tn = { class: "w-crud" }, Ln = {
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : $("", !0),
+                      ]) : w("", !0),
                       e.viewToggle ? (s(), m("div", Zn, [
-                        N(v(ee), {
+                        O(v(ee), {
                           icon: "pi pi-table",
                           size: "small",
                           text: !c("table"),
                           outlined: c("table"),
-                          onClick: n[1] || (n[1] = (d) => w("table"))
+                          onClick: n[1] || (n[1] = (d) => k("table"))
                         }, null, 8, ["text", "outlined"]),
-                        N(v(ee), {
+                        O(v(ee), {
                           icon: "pi pi-th-large",
                           size: "small",
                           text: !c("cards"),
                           outlined: c("cards"),
-                          onClick: n[2] || (n[2] = (d) => w("cards"))
+                          onClick: n[2] || (n[2] = (d) => k("cards"))
                         }, null, 8, ["text", "outlined"])
-                      ])) : $("", !0),
-                      !e.showHeader && U.value ? (s(), A(v(ee), {
+                      ])) : w("", !0),
+                      !e.showHeader && U.value && !e.actionRail ? (s(), A(v(ee), {
                         key: 2,
                         label: "Novo",
                         icon: "pi pi-plus",
                         onClick: n[3] || (n[3] = (d) => e.crud.openCreateDialog())
-                      })) : $("", !0)
+                      })) : w("", !0)
                     ])
                   ])
                 ]),
                 empty: ne(() => [
-                  O(u.$slots, "empty", {}, () => [
+                  Y(u.$slots, "empty", {}, () => [
                     n[17] || (n[17] = h("div", { class: "w-crud-empty" }, [
                       h("div", { class: "w-crud-empty-icon" }, [
                         h("i", { class: "pi pi-inbox" })
@@ -2160,7 +2164,7 @@ const Tn = { class: "w-crud" }, Ln = {
                     key: 0,
                     expander: "",
                     style: { width: "3rem" }
-                  })) : $("", !0),
+                  })) : w("", !0),
                   (s(!0), m(le, null, ie(V.value, (d) => (s(), A(v(ze), {
                     key: d.field,
                     field: d.field,
@@ -2171,11 +2175,11 @@ const Tn = { class: "w-crud" }, Ln = {
                     "body-class": W(d)
                   }, {
                     body: ne(({ data: E }) => [
-                      O(u.$slots, `column-${d.field}`, {
+                      Y(u.$slots, `column-${d.field}`, {
                         data: E,
                         value: E[d.field]
                       }, () => [
-                        N(Qe, {
+                        O(Qe, {
                           column: d,
                           value: E[d.field],
                           "row-data": E
@@ -2194,7 +2198,7 @@ const Tn = { class: "w-crud" }, Ln = {
                         (s(!0), m(le, null, ie(Z.value, (E) => (s(), m(le, {
                           key: E.action
                         }, [
-                          k(E, d) ? fe((s(), A(v(ee), {
+                          $(E, d) ? fe((s(), A(v(ee), {
                             key: 0,
                             icon: E.icon,
                             text: "",
@@ -2210,23 +2214,23 @@ const Tn = { class: "w-crud" }, Ln = {
                               void 0,
                               { top: !0 }
                             ]
-                          ]) : $("", !0)
+                          ]) : w("", !0)
                         ], 64))), 128)),
-                        O(u.$slots, "row-actions", {
+                        Y(u.$slots, "row-actions", {
                           data: d,
                           crud: e.crud
                         })
                       ])
                     ]),
                     _: 3
-                  }, 8, ["style"])) : $("", !0)
+                  }, 8, ["style"])) : w("", !0)
                 ]),
                 _: 2
               }, [
                 e.expandable ? {
                   name: "expansion",
                   fn: ne((d) => [
-                    O(u.$slots, "expansion", {
+                    Y(u.$slots, "expansion", {
                       data: d.data
                     })
                   ]),
@@ -2238,8 +2242,8 @@ const Tn = { class: "w-crud" }, Ln = {
                 h("div", eo, [
                   e.showSearch ? (s(), A(v(qe), { key: 0 }, {
                     default: ne(() => [
-                      N(v(He), { class: "pi pi-search" }),
-                      N(v(me), {
+                      O(v(He), { class: "pi pi-search" }),
+                      O(v(me), {
                         "model-value": e.crud.search.value,
                         placeholder: "Buscar...",
                         class: "w-72",
@@ -2247,12 +2251,12 @@ const Tn = { class: "w-crud" }, Ln = {
                       }, null, 8, ["model-value", "onInput"])
                     ]),
                     _: 1
-                  })) : $("", !0),
-                  O(u.$slots, "toolbar-start"),
-                  O(u.$slots, "toolbar-filters")
+                  })) : w("", !0),
+                  Y(u.$slots, "toolbar-start"),
+                  Y(u.$slots, "toolbar-filters")
                 ]),
                 h("div", to, [
-                  O(u.$slots, "toolbar-actions"),
+                  Y(u.$slots, "toolbar-actions"),
                   e.exportCsv ? fe((s(), A(v(ee), {
                     key: 0,
                     icon: "pi pi-download",
@@ -2267,29 +2271,29 @@ const Tn = { class: "w-crud" }, Ln = {
                       void 0,
                       { top: !0 }
                     ]
-                  ]) : $("", !0),
+                  ]) : w("", !0),
                   e.viewToggle ? (s(), m("div", ao, [
-                    N(v(ee), {
+                    O(v(ee), {
                       icon: "pi pi-table",
                       size: "small",
                       text: !c("table"),
                       outlined: c("table"),
-                      onClick: n[10] || (n[10] = (d) => w("table"))
+                      onClick: n[10] || (n[10] = (d) => k("table"))
                     }, null, 8, ["text", "outlined"]),
-                    N(v(ee), {
+                    O(v(ee), {
                       icon: "pi pi-th-large",
                       size: "small",
                       text: !c("cards"),
                       outlined: c("cards"),
-                      onClick: n[11] || (n[11] = (d) => w("cards"))
+                      onClick: n[11] || (n[11] = (d) => k("cards"))
                     }, null, 8, ["text", "outlined"])
-                  ])) : $("", !0),
-                  !e.showHeader && U.value ? (s(), A(v(ee), {
+                  ])) : w("", !0),
+                  !e.showHeader && U.value && !e.actionRail ? (s(), A(v(ee), {
                     key: 2,
                     label: "Novo",
                     icon: "pi pi-plus",
                     onClick: n[12] || (n[12] = (d) => e.crud.openCreateDialog())
-                  })) : $("", !0)
+                  })) : w("", !0)
                 ])
               ]),
               e.crud.loading.value ? (s(), m("div", no, [...n[18] || (n[18] = [
@@ -2297,7 +2301,7 @@ const Tn = { class: "w-crud" }, Ln = {
               ])])) : e.crud.items.value.length ? (s(), m("div", oo, [
                 (s(!0), m(le, null, ie(e.crud.items.value, (d, E) => (s(), m("div", {
                   key: d[e.crud.config.pk || "id"] ?? E,
-                  class: re(["w-crud-card", { "w-crud-card--selected": Y.value === d }]),
+                  class: re(["w-crud-card", { "w-crud-card--selected": N.value === d }]),
                   onClick: (R) => B(d),
                   onDblclick: (R) => e.crud.config.canEdit !== !1 && e.crud.openEditDialog(d),
                   onContextmenu: (R) => oe(R, d)
@@ -2307,13 +2311,13 @@ const Tn = { class: "w-crud" }, Ln = {
                       key: R.field,
                       class: re(["w-crud-card-row", { "w-crud-card-row--title": G === 0 }])
                     }, [
-                      G !== 0 ? (s(), m("span", io, T(R.header), 1)) : $("", !0),
+                      G !== 0 ? (s(), m("span", io, T(R.header), 1)) : w("", !0),
                       h("span", ro, [
-                        O(u.$slots, `column-${R.field}`, {
+                        Y(u.$slots, `column-${R.field}`, {
                           data: d,
                           value: d[R.field]
                         }, () => [
-                          N(Qe, {
+                          O(Qe, {
                             column: R,
                             value: d[R.field],
                             "row-data": d
@@ -2326,7 +2330,7 @@ const Tn = { class: "w-crud" }, Ln = {
                     (s(!0), m(le, null, ie(Z.value, (R) => (s(), m(le, {
                       key: R.action
                     }, [
-                      k(R, d) ? fe((s(), A(v(ee), {
+                      $(R, d) ? fe((s(), A(v(ee), {
                         key: 0,
                         icon: R.icon,
                         text: "",
@@ -2342,15 +2346,15 @@ const Tn = { class: "w-crud" }, Ln = {
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : $("", !0)
+                      ]) : w("", !0)
                     ], 64))), 128)),
-                    O(u.$slots, "row-actions", {
+                    Y(u.$slots, "row-actions", {
                       data: d,
                       crud: e.crud
                     })
-                  ])) : $("", !0)
+                  ])) : w("", !0)
                 ], 42, lo))), 128))
-              ])) : O(u.$slots, "empty", { key: 1 }, () => [
+              ])) : Y(u.$slots, "empty", { key: 1 }, () => [
                 n[19] || (n[19] = Gt('<div class="w-crud-empty"><div class="w-crud-empty-icon"><i class="pi pi-inbox"></i></div><p class="w-crud-empty-title">Nenhum registro encontrado</p><p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p></div>', 1))
               ]),
               e.crud.items.value.length ? (s(), A(v(Jt), {
@@ -2363,7 +2367,7 @@ const Tn = { class: "w-crud" }, Ln = {
                 "current-page-report-template": "Página {currentPage} de {totalPages}",
                 class: "w-crud-paginator",
                 onPage: e.crud.onPage
-              }, null, 8, ["rows", "total-records", "first", "onPage"])) : $("", !0)
+              }, null, 8, ["rows", "total-records", "first", "onPage"])) : w("", !0)
             ]))
           ]),
           e.actionRail ? (s(), m("aside", co, [
@@ -2379,19 +2383,19 @@ const Tn = { class: "w-crud" }, Ln = {
                 void 0,
                 { left: !0 }
               ]
-            ]) : $("", !0),
-            U.value && Z.value.length ? (s(), m("div", fo)) : $("", !0),
+            ]) : w("", !0),
+            U.value && Z.value.length ? (s(), m("div", fo)) : w("", !0),
             (s(!0), m(le, null, ie(Z.value, (d) => (s(), m(le, {
               key: d.action
             }, [
-              !Y.value || k(d, Y.value) ? fe((s(), A(v(ee), {
+              !N.value || $(d, N.value) ? fe((s(), A(v(ee), {
                 key: 0,
                 icon: d.icon,
                 text: "",
                 rounded: "",
                 severity: d.severity,
-                disabled: !Y.value || x(d, Y.value),
-                onClick: (E) => Y.value && b(d, Y.value)
+                disabled: !N.value || x(d, N.value),
+                onClick: (E) => N.value && b(d, N.value)
               }, null, 8, ["icon", "severity", "disabled", "onClick"])), [
                 [
                   p,
@@ -2399,29 +2403,30 @@ const Tn = { class: "w-crud" }, Ln = {
                   void 0,
                   { left: !0 }
                 ]
-              ]) : $("", !0)
+              ]) : w("", !0)
             ], 64))), 128)),
-            O(u.$slots, "rail-actions", {
-              selected: Y.value,
+            Y(u.$slots, "rail-actions", {
+              selected: N.value,
               crud: e.crud
             }),
-            n[20] || (n[20] = h("div", { class: "w-crud-rail-sep" }, null, -1)),
-            fe(N(v(ee), {
+            e.showPrint || e.exportCsv ? (s(), m("div", mo)) : w("", !0),
+            e.showPrint ? fe((s(), A(v(ee), {
+              key: 3,
               icon: "pi pi-print",
               text: "",
               rounded: "",
-              disabled: !Y.value,
+              disabled: !N.value,
               onClick: _
-            }, null, 8, ["disabled"]), [
+            }, null, 8, ["disabled"])), [
               [
                 p,
                 "Imprimir",
                 void 0,
                 { left: !0 }
               ]
-            ]),
+            ]) : w("", !0),
             e.exportCsv ? fe((s(), A(v(ee), {
-              key: 2,
+              key: 4,
               icon: "pi pi-download",
               text: "",
               rounded: "",
@@ -2434,22 +2439,22 @@ const Tn = { class: "w-crud" }, Ln = {
                 void 0,
                 { left: !0 }
               ]
-            ]) : $("", !0)
-          ])) : $("", !0)
+            ]) : w("", !0)
+          ])) : w("", !0)
         ], 2),
         e.contextMenu ? (s(), A(v(Zt), {
           key: 1,
           ref_key: "cm",
           ref: K,
           model: ae.value
-        }, null, 8, ["model"])) : $("", !0),
-        O(u.$slots, "form-dialog", {
+        }, null, 8, ["model"])) : w("", !0),
+        Y(u.$slots, "form-dialog", {
           crud: e.crud,
           dialogWidth: e.dialogWidth
         }, () => {
           var d;
           return [
-            N(ut, {
+            O(ut, {
               visible: e.crud.dialogVisible.value,
               title: e.crud.dialogTitle.value,
               fields: e.crud.config.form,
@@ -2467,7 +2472,7 @@ const Tn = { class: "w-crud" }, Ln = {
               ie(e.crud.config.form, (E) => ({
                 name: `field-${E.field}`,
                 fn: ne((R) => [
-                  O(u.$slots, `field-${E.field}`, lt(st(R)))
+                  Y(u.$slots, `field-${E.field}`, lt(st(R)))
                 ])
               }))
             ]), 1032, ["visible", "title", "fields", "form-data", "is-editing", "saving", "disabled", "width"])
@@ -2476,7 +2481,7 @@ const Tn = { class: "w-crud" }, Ln = {
       ]);
     };
   }
-}), po = /* @__PURE__ */ de({
+}), vo = /* @__PURE__ */ de({
   __name: "WStatusTag",
   props: {
     value: {},
@@ -2516,10 +2521,10 @@ const Tn = { class: "w-crud" }, Ln = {
       severity: o.value.severity
     }, null, 8, ["value", "severity"]));
   }
-}), vo = { class: "w-page-header" }, go = { class: "w-page-header-content" }, ho = { class: "w-page-header-title" }, yo = {
+}), go = { class: "w-page-header" }, ho = { class: "w-page-header-content" }, yo = { class: "w-page-header-title" }, bo = {
   key: 0,
   class: "w-page-header-subtitle"
-}, bo = { class: "w-page-header-actions" }, Zl = /* @__PURE__ */ de({
+}, wo = { class: "w-page-header-actions" }, Xl = /* @__PURE__ */ de({
   __name: "WPageHeader",
   props: {
     title: {},
@@ -2530,26 +2535,26 @@ const Tn = { class: "w-crud" }, Ln = {
   emits: ["action"],
   setup(e, { emit: t }) {
     const a = t;
-    return (o, l) => (s(), m("div", vo, [
-      h("div", go, [
-        h("h2", ho, T(e.title), 1),
-        e.subtitle ? (s(), m("p", yo, T(e.subtitle), 1)) : $("", !0)
+    return (o, l) => (s(), m("div", go, [
+      h("div", ho, [
+        h("h2", yo, T(e.title), 1),
+        e.subtitle ? (s(), m("p", bo, T(e.subtitle), 1)) : w("", !0)
       ]),
-      h("div", bo, [
-        O(o.$slots, "actions"),
+      h("div", wo, [
+        Y(o.$slots, "actions"),
         e.actionLabel ? (s(), A(v(ee), {
           key: 0,
           label: e.actionLabel,
           icon: e.actionIcon,
           onClick: l[0] || (l[0] = (i) => a("action"))
-        }, null, 8, ["label", "icon"])) : $("", !0)
+        }, null, 8, ["label", "icon"])) : w("", !0)
       ])
     ]));
   }
-}), wo = { class: "w-empty-state" }, ko = { class: "w-empty-state-icon" }, $o = { class: "w-empty-state-title" }, Co = {
+}), ko = { class: "w-empty-state" }, $o = { class: "w-empty-state-icon" }, Co = { class: "w-empty-state-title" }, Do = {
   key: 0,
   class: "w-empty-state-description"
-}, Xl = /* @__PURE__ */ de({
+}, Ql = /* @__PURE__ */ de({
   __name: "WEmptyState",
   props: {
     icon: {},
@@ -2561,14 +2566,14 @@ const Tn = { class: "w-crud" }, Ln = {
   emits: ["action"],
   setup(e, { emit: t }) {
     const a = t;
-    return (o, l) => (s(), m("div", wo, [
-      h("div", ko, [
+    return (o, l) => (s(), m("div", ko, [
+      h("div", $o, [
         h("i", {
           class: re(e.icon)
         }, null, 2)
       ]),
-      h("p", $o, T(e.title), 1),
-      e.description ? (s(), m("p", Co, T(e.description), 1)) : $("", !0),
+      h("p", Co, T(e.title), 1),
+      e.description ? (s(), m("p", Do, T(e.description), 1)) : w("", !0),
       e.actionLabel ? (s(), A(v(ee), {
         key: 1,
         label: e.actionLabel,
@@ -2576,7 +2581,7 @@ const Tn = { class: "w-crud" }, Ln = {
         size: "small",
         class: "mt-3",
         onClick: l[0] || (l[0] = (i) => a("action"))
-      }, null, 8, ["label", "icon"])) : $("", !0)
+      }, null, 8, ["label", "icon"])) : w("", !0)
     ]));
   }
 });
@@ -2588,7 +2593,7 @@ const Tn = { class: "w-crud" }, Ln = {
 Symbol(process.env.NODE_ENV !== "production" ? "navigation failure" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view location matched" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view depth" : "");
-const Do = Symbol(process.env.NODE_ENV !== "production" ? "router" : "");
+const xo = Symbol(process.env.NODE_ENV !== "production" ? "router" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "route location" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view location" : "");
 /*!
@@ -2596,13 +2601,13 @@ Symbol(process.env.NODE_ENV !== "production" ? "router view location" : "");
  * (c) 2025 Eduardo San Martin Morote
  * @license MIT
  */
-function xo() {
-  return Ie(Do);
+function So() {
+  return Ie(xo);
 }
-const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" }, Vo = { class: "w-detail-header-content" }, Eo = { class: "w-detail-header-title" }, Mo = {
+const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" }, Eo = { class: "w-detail-header-content" }, Mo = { class: "w-detail-header-title" }, Fo = {
   key: 0,
   class: "w-detail-header-subtitle"
-}, Fo = { class: "w-detail-header-actions" }, Ql = /* @__PURE__ */ de({
+}, Ao = { class: "w-detail-header-actions" }, _l = /* @__PURE__ */ de({
   __name: "WDetailHeader",
   props: {
     title: {},
@@ -2614,13 +2619,13 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
     statusMap: {}
   },
   setup(e) {
-    const t = e, a = xo();
+    const t = e, a = So();
     function o() {
       t.backTo ? a.push(typeof t.backTo == "string" ? { name: t.backTo } : t.backTo) : t.backRoute ? a.push({ name: t.backRoute }) : a.back();
     }
-    return (l, i) => (s(), m("div", So, [
-      h("div", Po, [
-        N(v(ee), {
+    return (l, i) => (s(), m("div", Po, [
+      h("div", Vo, [
+        O(v(ee), {
           icon: "pi pi-arrow-left",
           text: "",
           rounded: "",
@@ -2629,26 +2634,26 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
         e.icon ? (s(), m("i", {
           key: 0,
           class: re([e.icon, "w-detail-header-icon"])
-        }, null, 2)) : $("", !0),
-        h("div", Vo, [
-          h("h2", Eo, T(e.title), 1),
-          e.subtitle ? (s(), m("p", Mo, T(e.subtitle), 1)) : $("", !0)
+        }, null, 2)) : w("", !0),
+        h("div", Eo, [
+          h("h2", Mo, T(e.title), 1),
+          e.subtitle ? (s(), m("p", Fo, T(e.subtitle), 1)) : w("", !0)
         ]),
-        e.status ? (s(), A(po, {
+        e.status ? (s(), A(vo, {
           key: 1,
           value: e.status,
           map: e.statusMap
-        }, null, 8, ["value", "map"])) : $("", !0)
+        }, null, 8, ["value", "map"])) : w("", !0)
       ]),
-      h("div", Fo, [
-        O(l.$slots, "actions")
+      h("div", Ao, [
+        Y(l.$slots, "actions")
       ])
     ]));
   }
-}), Ao = { class: "w-info-card" }, Ro = {
+}), Ro = { class: "w-info-card" }, Io = {
   key: 0,
   class: "w-info-card-title"
-}, Io = { class: "w-info-card-grid" }, To = { class: "w-info-card-label" }, Lo = { class: "w-info-card-value" }, _l = /* @__PURE__ */ de({
+}, To = { class: "w-info-card-grid" }, Lo = { class: "w-info-card-label" }, zo = { class: "w-info-card-value" }, es = /* @__PURE__ */ de({
   __name: "WInfoCard",
   props: {
     title: {},
@@ -2660,35 +2665,35 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
       const r = i.value;
       return r == null || r === "" ? "-" : i.format === "currency" ? t(Number(r)) : i.format === "date" ? a(String(r)) : i.format === "datetime" ? a(String(r), "DD/MM/YYYY HH:mm") : i.format === "number" ? o(Number(r)) : String(r);
     }
-    return (i, r) => (s(), m("div", Ao, [
-      e.title ? (s(), m("h3", Ro, T(e.title), 1)) : $("", !0),
-      h("div", Io, [
+    return (i, r) => (s(), m("div", Ro, [
+      e.title ? (s(), m("h3", Io, T(e.title), 1)) : w("", !0),
+      h("div", To, [
         (s(!0), m(le, null, ie(e.fields, (y) => (s(), m("div", {
           key: y.label,
           class: "w-info-card-field"
         }, [
-          h("span", To, T(y.label), 1),
-          h("span", Lo, T(l(y)), 1)
+          h("span", Lo, T(y.label), 1),
+          h("span", zo, T(l(y)), 1)
         ]))), 128))
       ])
     ]));
   }
-}), zo = {
+}), No = {
   key: 0,
   class: "w-kpi-card__loading"
-}, No = { class: "w-kpi-card__loading-content" }, Yo = { class: "w-kpi-card__header" }, Oo = {
+}, Yo = { class: "w-kpi-card__loading-content" }, Oo = { class: "w-kpi-card__header" }, Bo = {
   key: 0,
   class: "w-kpi-card__icon"
-}, Bo = {
+}, Wo = {
   key: 1,
   class: "w-kpi-card__trend"
-}, Wo = { class: "w-kpi-card__content" }, jo = { class: "w-kpi-card__label" }, Uo = { class: "w-kpi-card__value" }, qo = {
+}, jo = { class: "w-kpi-card__content" }, Uo = { class: "w-kpi-card__label" }, qo = { class: "w-kpi-card__value" }, Ho = {
   key: 0,
   class: "w-kpi-card__hint"
-}, Ho = {
+}, Ko = {
   key: 0,
   class: "w-kpi-card__footer"
-}, Ko = /* @__PURE__ */ de({
+}, Go = /* @__PURE__ */ de({
   __name: "WKpiCard",
   props: {
     label: {},
@@ -2703,64 +2708,64 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
     return (t, a) => (s(), m("article", {
       class: re(["w-kpi-card", e.severity ? `w-kpi-card--${e.severity}` : ""])
     }, [
-      e.loading ? (s(), m("div", zo, [
-        N(v(Ge), {
+      e.loading ? (s(), m("div", No, [
+        O(v(Ge), {
           shape: "circle",
           size: "2.75rem"
         }),
-        h("div", No, [
-          N(v(Ge), {
+        h("div", Yo, [
+          O(v(Ge), {
             width: "6rem",
             height: "0.75rem"
           }),
-          N(v(Ge), {
+          O(v(Ge), {
             width: "7.5rem",
             height: "1.5rem"
           }),
-          N(v(Ge), {
+          O(v(Ge), {
             width: "5rem",
             height: "0.75rem"
           })
         ])
       ])) : (s(), m(le, { key: 1 }, [
-        h("div", Yo, [
-          e.icon || t.$slots.icon ? (s(), m("div", Oo, [
-            O(t.$slots, "icon", {}, () => [
+        h("div", Oo, [
+          e.icon || t.$slots.icon ? (s(), m("div", Bo, [
+            Y(t.$slots, "icon", {}, () => [
               e.icon ? (s(), m("i", {
                 key: 0,
                 class: re(e.icon)
-              }, null, 2)) : $("", !0)
+              }, null, 2)) : w("", !0)
             ])
-          ])) : $("", !0),
-          e.trend || t.$slots.trend ? (s(), m("div", Bo, [
-            O(t.$slots, "trend", {}, () => [
+          ])) : w("", !0),
+          e.trend || t.$slots.trend ? (s(), m("div", Wo, [
+            Y(t.$slots, "trend", {}, () => [
               e.trend ? (s(), m("span", {
                 key: 0,
                 class: re(["w-kpi-card__trend-badge", e.trend.direction ? `w-kpi-card__trend-badge--${e.trend.direction}` : ""])
-              }, T(e.trend.value), 3)) : $("", !0)
+              }, T(e.trend.value), 3)) : w("", !0)
             ])
-          ])) : $("", !0)
+          ])) : w("", !0)
         ]),
-        h("div", Wo, [
-          h("p", jo, T(e.label), 1),
-          h("div", Uo, [
-            O(t.$slots, "value", {}, () => [
+        h("div", jo, [
+          h("p", Uo, T(e.label), 1),
+          h("div", qo, [
+            Y(t.$slots, "value", {}, () => [
               Pe(T(e.value), 1)
             ])
           ]),
-          e.hint || t.$slots.hint ? (s(), m("p", qo, [
-            O(t.$slots, "hint", {}, () => [
+          e.hint || t.$slots.hint ? (s(), m("p", Ho, [
+            Y(t.$slots, "hint", {}, () => [
               Pe(T(e.hint), 1)
             ])
-          ])) : $("", !0)
+          ])) : w("", !0)
         ]),
-        t.$slots.footer ? (s(), m("footer", Ho, [
-          O(t.$slots, "footer")
-        ])) : $("", !0)
+        t.$slots.footer ? (s(), m("footer", Ko, [
+          Y(t.$slots, "footer")
+        ])) : w("", !0)
       ], 64))
     ], 2));
   }
-}), es = /* @__PURE__ */ de({
+}), ts = /* @__PURE__ */ de({
   __name: "WKpiGrid",
   props: {
     items: { default: () => [] },
@@ -2775,11 +2780,11 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
     return (o, l) => (s(), m("div", {
       class: re(["w-kpi-grid", a.value])
     }, [
-      o.$slots.item ? (s(!0), m(le, { key: 0 }, ie(e.items, (i, r) => O(o.$slots, "item", {
+      o.$slots.item ? (s(!0), m(le, { key: 0 }, ie(e.items, (i, r) => Y(o.$slots, "item", {
         key: r,
         item: i,
         index: r
-      })), 128)) : (s(!0), m(le, { key: 1 }, ie(e.items, (i, r) => (s(), A(Ko, {
+      })), 128)) : (s(!0), m(le, { key: 1 }, ie(e.items, (i, r) => (s(), A(Go, {
         key: r,
         label: i.label,
         value: i.value,
@@ -2791,16 +2796,16 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
       }, null, 8, ["label", "value", "icon", "severity", "hint", "trend", "loading"]))), 128))
     ], 2));
   }
-}), Go = { class: "w-section-header__main" }, Jo = {
+}), Jo = { class: "w-section-header__main" }, Zo = {
   key: 0,
   class: "w-section-header__icon"
-}, Zo = { class: "w-section-header__content" }, Xo = { class: "w-section-header__title-row" }, Qo = { class: "w-section-header__title" }, _o = {
+}, Xo = { class: "w-section-header__content" }, Qo = { class: "w-section-header__title-row" }, _o = { class: "w-section-header__title" }, el = {
   key: 0,
   class: "w-section-header__subtitle"
-}, el = {
+}, tl = {
   key: 0,
   class: "w-section-header__actions"
-}, ts = /* @__PURE__ */ de({
+}, as = /* @__PURE__ */ de({
   __name: "WSectionHeader",
   props: {
     title: {},
@@ -2812,38 +2817,38 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
     return (t, a) => (s(), m("div", {
       class: re(["w-section-header", { "w-section-header--compact": e.compact }])
     }, [
-      h("div", Go, [
-        e.icon || t.$slots.icon ? (s(), m("div", Jo, [
-          O(t.$slots, "icon", {}, () => [
+      h("div", Jo, [
+        e.icon || t.$slots.icon ? (s(), m("div", Zo, [
+          Y(t.$slots, "icon", {}, () => [
             e.icon ? (s(), m("i", {
               key: 0,
               class: re(e.icon)
-            }, null, 2)) : $("", !0)
+            }, null, 2)) : w("", !0)
           ])
-        ])) : $("", !0),
-        h("div", Zo, [
-          h("div", Xo, [
-            h("h3", Qo, T(e.title), 1),
-            O(t.$slots, "meta")
+        ])) : w("", !0),
+        h("div", Xo, [
+          h("div", Qo, [
+            h("h3", _o, T(e.title), 1),
+            Y(t.$slots, "meta")
           ]),
-          e.subtitle ? (s(), m("p", _o, T(e.subtitle), 1)) : $("", !0)
+          e.subtitle ? (s(), m("p", el, T(e.subtitle), 1)) : w("", !0)
         ])
       ]),
-      t.$slots.actions ? (s(), m("div", el, [
-        O(t.$slots, "actions")
-      ])) : $("", !0)
+      t.$slots.actions ? (s(), m("div", tl, [
+        Y(t.$slots, "actions")
+      ])) : w("", !0)
     ], 2));
   }
-}), tl = {
+}), al = {
   key: 0,
   class: "w-form-section__header"
-}, al = { class: "w-form-section__content" }, nl = { class: "w-form-section__title" }, ol = {
+}, nl = { class: "w-form-section__content" }, ol = { class: "w-form-section__title" }, ll = {
   key: 0,
   class: "w-form-section__description"
-}, ll = {
+}, sl = {
   key: 0,
   class: "w-form-section__actions"
-}, sl = { class: "w-form-section__body" }, as = /* @__PURE__ */ de({
+}, il = { class: "w-form-section__body" }, ns = /* @__PURE__ */ de({
   __name: "WFormSection",
   props: {
     title: {},
@@ -2854,30 +2859,30 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
     return (t, a) => (s(), m("section", {
       class: re(["w-form-section", e.variant ? `w-form-section--${e.variant}` : ""])
     }, [
-      e.title || e.description || t.$slots.actions ? (s(), m("div", tl, [
-        h("div", al, [
-          h("h3", nl, T(e.title), 1),
-          e.description ? (s(), m("p", ol, T(e.description), 1)) : $("", !0)
+      e.title || e.description || t.$slots.actions ? (s(), m("div", al, [
+        h("div", nl, [
+          h("h3", ol, T(e.title), 1),
+          e.description ? (s(), m("p", ll, T(e.description), 1)) : w("", !0)
         ]),
-        t.$slots.actions ? (s(), m("div", ll, [
-          O(t.$slots, "actions")
-        ])) : $("", !0)
-      ])) : $("", !0),
-      h("div", sl, [
-        O(t.$slots, "default")
+        t.$slots.actions ? (s(), m("div", sl, [
+          Y(t.$slots, "actions")
+        ])) : w("", !0)
+      ])) : w("", !0),
+      h("div", il, [
+        Y(t.$slots, "default")
       ])
     ], 2));
   }
-}), il = {
+}), rl = {
   key: 0,
   class: "w-action-bar__primary"
-}, rl = {
+}, ul = {
   key: 1,
   class: "w-action-bar__filters"
-}, ul = {
+}, dl = {
   key: 2,
   class: "w-action-bar__secondary"
-}, ns = /* @__PURE__ */ de({
+}, os = /* @__PURE__ */ de({
   __name: "WActionBar",
   props: {
     align: { default: "between" },
@@ -2890,23 +2895,23 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
         { "w-action-bar--stack": e.stackOnMobile }
       ]])
     }, [
-      t.$slots.primary || t.$slots.default ? (s(), m("div", il, [
-        O(t.$slots, "primary", {}, () => [
-          O(t.$slots, "default")
+      t.$slots.primary || t.$slots.default ? (s(), m("div", rl, [
+        Y(t.$slots, "primary", {}, () => [
+          Y(t.$slots, "default")
         ])
-      ])) : $("", !0),
-      t.$slots.filters ? (s(), m("div", rl, [
-        O(t.$slots, "filters")
-      ])) : $("", !0),
-      t.$slots.secondary ? (s(), m("div", ul, [
-        O(t.$slots, "secondary")
-      ])) : $("", !0)
+      ])) : w("", !0),
+      t.$slots.filters ? (s(), m("div", ul, [
+        Y(t.$slots, "filters")
+      ])) : w("", !0),
+      t.$slots.secondary ? (s(), m("div", dl, [
+        Y(t.$slots, "secondary")
+      ])) : w("", !0)
     ], 2));
   }
-}), dl = { class: "w-progress-flow__marker" }, cl = { class: "w-progress-flow__content" }, fl = { class: "w-progress-flow__label" }, ml = {
+}), cl = { class: "w-progress-flow__marker" }, fl = { class: "w-progress-flow__content" }, ml = { class: "w-progress-flow__label" }, pl = {
   key: 0,
   class: "w-progress-flow__description"
-}, os = /* @__PURE__ */ de({
+}, ls = /* @__PURE__ */ de({
   __name: "WProgressFlow",
   props: {
     steps: {},
@@ -2927,24 +2932,24 @@ const So = { class: "w-detail-header" }, Po = { class: "w-detail-header-left" },
         key: r.key,
         class: re(["w-progress-flow__step", `w-progress-flow__step--${o(y)}`])
       }, [
-        O(l.$slots, "step", {
+        Y(l.$slots, "step", {
           step: r,
           index: y,
           state: o(y)
         }, () => [
-          h("div", dl, [
+          h("div", cl, [
             h("span", null, T(y + 1), 1)
           ]),
-          h("div", cl, [
-            h("p", fl, T(r.label), 1),
-            r.description ? (s(), m("p", ml, T(r.description), 1)) : $("", !0)
+          h("div", fl, [
+            h("p", ml, T(r.label), 1),
+            r.description ? (s(), m("p", pl, T(r.description), 1)) : w("", !0)
           ])
         ])
       ], 2))), 128))
     ], 2));
   }
 });
-function pl(e, t, a) {
+function vl(e, t, a) {
   const o = e;
   return Array.isArray(o.results) ? {
     data: o.results,
@@ -2966,11 +2971,11 @@ function pl(e, t, a) {
     extras: {}
   };
 }
-function vl(e) {
+function gl(e) {
   return {
     async list(t, a = {}) {
       const o = await e.get(t, { params: a });
-      return pl(
+      return vl(
         o.data,
         Number(a.page ?? 1),
         Number(a.page_size ?? 20)
@@ -2994,13 +2999,13 @@ function vl(e) {
     }
   };
 }
-const ls = {
+const ss = {
   install(e, t) {
     if (!(t != null && t.axios) && !(t != null && t.dataProvider))
       throw new Error(
         '[wPrimeVueComponents] Informe "axios" ou "dataProvider" ao registrar o WPrimeVuePlugin.'
       );
-    const a = t.dataProvider ?? vl(t.axios), o = {
+    const a = t.dataProvider ?? gl(t.axios), o = {
       axios: t.axios,
       dataProvider: a,
       defaultPageSize: t.defaultPageSize ?? 20,
@@ -3009,9 +3014,9 @@ const ls = {
       locale: t.locale ?? "pt-BR",
       currency: t.currency ?? "BRL"
     };
-    t.axios && e.provide(la, t.axios), e.provide(_e, a), e.provide(et, o), t.registerComponents !== !1 && (e.component("WCrudView", mo), e.component("WCrudFormDialog", ut), e.component("WCrudColumnRenderer", Qe), e.component("WAutoCompleteFK", Lt), e.component("WMoneyInput", zt), e.component("WTransferList", Nt));
+    t.axios && e.provide(la, t.axios), e.provide(_e, a), e.provide(et, o), t.registerComponents !== !1 && (e.component("WCrudView", po), e.component("WCrudFormDialog", ut), e.component("WCrudColumnRenderer", Qe), e.component("WAutoCompleteFK", Lt), e.component("WMoneyInput", zt), e.component("WTransferList", Nt));
   }
-}, gl = {
+}, hl = {
   createTitle: "Novo Registro",
   editTitle: "Editar Registro",
   createButton: "Novo",
@@ -3026,13 +3031,13 @@ const ls = {
   successUpdate: "Registro atualizado com sucesso",
   successDelete: "Registro excluído com sucesso"
 };
-function hl(e, t) {
+function yl(e, t) {
   const a = {};
   for (const o of Object.keys(t))
     JSON.stringify(e[o]) !== JSON.stringify(t[o]) && (a[o] = t[o]);
   return a;
 }
-function ss(e) {
+function is(e) {
   const {
     endpoint: t,
     columns: a,
@@ -3042,7 +3047,7 @@ function ss(e) {
     partialUpdate: r = !0,
     refetchOnSave: y = !0,
     canCreate: c = !0,
-    canEdit: w = !0,
+    canEdit: k = !0,
     canDelete: F = !0,
     rowActions: V = void 0,
     filterParams: W = void 0,
@@ -3055,7 +3060,7 @@ function ss(e) {
     throw new Error(
       "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager."
     );
-  const k = b, x = Ie(et), j = e.pageSize ?? (x == null ? void 0 : x.defaultPageSize) ?? 20, U = { ...gl, ...e.labels }, Y = It(), { confirmDelete: K } = Tt(), B = q([]), X = q({}), oe = q(!1), ae = q(!1), _ = q(""), f = q(!1), P = q(!1), u = q(null), n = ge({});
+  const $ = b, x = Ie(et), j = e.pageSize ?? (x == null ? void 0 : x.defaultPageSize) ?? 20, U = { ...hl, ...e.labels }, N = It(), { confirmDelete: K } = Tt(), B = q([]), X = q({}), oe = q(!1), ae = q(!1), _ = q(""), f = q(!1), P = q(!1), u = q(null), n = ge({});
   let p = null;
   const d = ge({
     page: 1,
@@ -3090,7 +3095,7 @@ function ss(e) {
         ...D
       };
       _.value && (M.search = _.value), E.field && E.order !== 0 && (M.ordering = E.order === -1 ? `-${E.field}` : E.field), W && Object.assign(M, W());
-      const I = await k.list(t, M);
+      const I = await $.list(t, M);
       B.value = I.data, d.rows = I.rows, X.value = I.extras ?? {}, I.page && (d.page = I.page), I.page_size && (d.pageSize = I.page_size), d.totalPages = Math.ceil(d.rows / d.pageSize) || 0;
     } finally {
       oe.value = !1;
@@ -3109,7 +3114,7 @@ function ss(e) {
     let Q = 1;
     const Le = 1e4;
     for (; Q <= Le; ) {
-      const be = await k.list(t, {
+      const be = await $.list(t, {
         ...M,
         page: Q,
         page_size: D
@@ -3206,12 +3211,12 @@ function ss(e) {
       if (D.validate) {
         const M = D.validate(n[D.field]);
         if (M)
-          return Y.error(M), null;
+          return N.error(M), null;
       }
       if (D.required) {
         const M = n[D.field];
         if (M == null || M === "")
-          return Y.error(`${D.label} é obrigatório`), null;
+          return N.error(`${D.label} é obrigatório`), null;
       }
     }
     ae.value = !0;
@@ -3219,7 +3224,7 @@ function ss(e) {
       let D = dt(n);
       if (!se.value && L && Object.assign(D, L()), se.value && r && p) {
         const he = dt(p);
-        if (D = hl(he, D), Object.keys(D).length === 0 && !J) {
+        if (D = yl(he, D), Object.keys(D).length === 0 && !J) {
           f.value = !1;
           const Se = u.value;
           return u.value = null, p = null, Se;
@@ -3249,7 +3254,7 @@ function ss(e) {
       let be;
       if (se.value && u.value) {
         const he = u.value[l];
-        if (be = await k.update(
+        if (be = await $.update(
           t,
           he,
           I,
@@ -3260,12 +3265,12 @@ function ss(e) {
           );
           Se !== -1 && (B.value[Se] = be.data);
         }
-        Y.success(U.successUpdate);
+        N.success(U.successUpdate);
       } else
-        be = await k.create(t, I, Le), y || (B.value.unshift(be.data), d.rows++), Y.success(U.successCreate);
+        be = await $.create(t, I, Le), y || (B.value.unshift(be.data), d.rows++), N.success(U.successCreate);
       return f.value = !1, u.value = null, p = null, y && await ue(), Z && Z(be.data, se.value), be.data;
     } catch (D) {
-      return Y.error(Ke(D, "Erro ao salvar registro")), null;
+      return N.error(Ke(D, "Erro ao salvar registro")), null;
     } finally {
       ae.value = !1;
     }
@@ -3274,11 +3279,11 @@ function ss(e) {
     K(async () => {
       try {
         const M = D[l];
-        await k.delete(t, M);
+        await $.delete(t, M);
         const I = B.value.findIndex((Q) => Q[l] === M);
-        I !== -1 && (B.value.splice(I, 1), d.rows--), Y.success(U.successDelete), g && g(D);
+        I !== -1 && (B.value.splice(I, 1), d.rows--), N.success(U.successDelete), g && g(D);
       } catch (M) {
-        Y.error(Ke(M, "Erro ao excluir registro"));
+        N.error(Ke(M, "Erro ao excluir registro"));
       }
     }, U.deleteConfirmMessage);
   }
@@ -3321,13 +3326,13 @@ function ss(e) {
     config: e
   };
 }
-function is(e) {
+function rs(e) {
   const { endpoint: t, searchDebounce: a = 300, immediate: o = !1 } = e, l = Ie(_e);
   if (!l)
     throw new Error(
       "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useApi."
     );
-  const i = l, r = Ie(et), y = e.pageSize ?? (r == null ? void 0 : r.defaultPageSize) ?? 20, c = q([]), w = q(!1), F = q(""), V = q({}), W = ge({}), L = ge({
+  const i = l, r = Ie(et), y = e.pageSize ?? (r == null ? void 0 : r.defaultPageSize) ?? 20, c = q([]), k = q(!1), F = q(""), V = q({}), W = ge({}), L = ge({
     page: 1,
     pageSize: y,
     rows: 0,
@@ -3338,7 +3343,7 @@ function is(e) {
   });
   let Z = null;
   async function g(K = {}) {
-    w.value = !0;
+    k.value = !0;
     try {
       const B = {
         page: L.page,
@@ -3351,13 +3356,13 @@ function is(e) {
       const X = await i.list(t, B);
       c.value = X.data, L.rows = X.rows, X.page && (L.page = X.page), X.page_size && (L.pageSize = X.page_size), L.totalPages = Math.ceil(L.rows / L.pageSize) || 0, V.value = X.extras ?? {};
     } finally {
-      w.value = !1;
+      k.value = !1;
     }
   }
   async function b() {
     await g();
   }
-  function k(K) {
+  function $(K) {
     F.value = K, Z && clearTimeout(Z), Z = setTimeout(() => {
       L.page = 1, g();
     }, a);
@@ -3373,29 +3378,29 @@ function is(e) {
   function U(K) {
     L.page = K.page + 1, L.pageSize = K.rows, g();
   }
-  function Y(K) {
+  function N(K) {
     J.field = K.sortField ?? null, J.order = K.sortOrder ?? 0, L.page = 1, g();
   }
   return o && g(), {
     items: c,
-    loading: w,
+    loading: k,
     search: F,
     pagination: L,
     sort: J,
     extras: V,
     fetchItems: g,
     refresh: b,
-    setSearch: k,
+    setSearch: $,
     setFilter: x,
     clearFilters: j,
     onPage: U,
-    onSort: Y
+    onSort: N
   };
 }
-function yl(e) {
+function bl(e) {
   return e.split("?")[0].replace(/^\/+|\/+$/g, "").replace(/^api\/v\d+\//, "");
 }
-function bl(e) {
+function wl(e) {
   return typeof e == "string" ? { table: e } : e;
 }
 function Yt(e, t = 400) {
@@ -3429,9 +3434,9 @@ function Be(e) {
 }
 function We(e, t) {
   var l, i;
-  const a = yl(e), o = (l = t.resources) == null ? void 0 : l[a];
+  const a = bl(e), o = (l = t.resources) == null ? void 0 : l[a];
   if (o)
-    return bl(o);
+    return wl(o);
   if ((i = t.allowedTables) != null && i.includes(a))
     return { table: a };
   throw Yt(
@@ -3439,26 +3444,26 @@ function We(e, t) {
     404
   );
 }
-function wl(e, t, a) {
+function kl(e, t, a) {
   const o = /* @__PURE__ */ new Set(["page", "page_size", "search", "ordering"]), l = { ...a.defaultFilters, ...t };
   for (const [i, r] of Object.entries(l))
     o.has(i) || r === null || r === void 0 || r === "" || (e = e.eq(i, r));
   return e;
 }
-function kl(e, t, a) {
+function $l(e, t, a) {
   if (typeof t != "string" || !t.trim() || !(a != null && a.length))
     return e;
   const o = t.trim().replace(/,/g, "\\,"), l = a.map((i) => `${i}.ilike.%${o}%`).join(",");
   return e.or(l);
 }
-function $l(e, t) {
+function Cl(e, t) {
   const a = typeof e == "string" && e ? e : t;
   return a ? {
     field: a.startsWith("-") ? a.slice(1) : a,
     ascending: !a.startsWith("-")
   } : null;
 }
-function Cl(e, t) {
+function Dl(e, t) {
   return e ? t.mapListItem ? e.map(
     (a) => {
       var o;
@@ -3466,19 +3471,19 @@ function Cl(e, t) {
     }
   ) : e : [];
 }
-function rs(e) {
+function us(e) {
   const t = e.defaultSelect ?? "*";
   return {
     async list(a, o = {}) {
       var W;
       const l = We(a, e), i = Math.max(Number(o.page ?? 1), 1), r = Math.max(Number(o.page_size ?? 20), 1), y = (i - 1) * r, c = y + r - 1;
-      let w = e.client.from(l.table).select(l.select ?? t, { count: "exact" });
-      w = wl(w, o, l), w = kl(w, o.search, l.searchFields);
-      const F = $l(o.ordering, l.defaultOrdering);
-      F && (w = w.order(F.field, { ascending: F.ascending }));
-      const V = await w.range(y, c);
+      let k = e.client.from(l.table).select(l.select ?? t, { count: "exact" });
+      k = kl(k, o, l), k = $l(k, o.search, l.searchFields);
+      const F = Cl(o.ordering, l.defaultOrdering);
+      F && (k = k.order(F.field, { ascending: F.ascending }));
+      const V = await k.range(y, c);
       return V.error && Be(V.error), {
-        data: Cl(V.data, l),
+        data: Dl(V.data, l),
         page: i,
         page_size: r,
         rows: V.count ?? ((W = V.data) == null ? void 0 : W.length) ?? 0,
@@ -3494,7 +3499,7 @@ function rs(e) {
       return c.error && Be(c.error), { data: c.data };
     },
     async update(a, o, l, i) {
-      const r = We(a, e), y = r.pk ?? "id", c = wt(l), w = r.mapPayload ? r.mapPayload(c, "update") : c, F = await e.client.from(r.table).update(w).eq(y, o).select(r.select ?? t).single();
+      const r = We(a, e), y = r.pk ?? "id", c = wt(l), k = r.mapPayload ? r.mapPayload(c, "update") : c, F = await e.client.from(r.table).update(k).eq(y, o).select(r.select ?? t).single();
       return F.error && Be(F.error), { data: F.data };
     },
     async delete(a, o) {
@@ -3504,31 +3509,31 @@ function rs(e) {
   };
 }
 export {
-  gl as DEFAULT_CRUD_LABELS,
-  ns as WActionBar,
+  hl as DEFAULT_CRUD_LABELS,
+  os as WActionBar,
   Lt as WAutoCompleteFK,
   Qe as WCrudColumnRenderer,
   ut as WCrudFormDialog,
-  mo as WCrudView,
-  Ql as WDetailHeader,
-  Xl as WEmptyState,
+  po as WCrudView,
+  _l as WDetailHeader,
+  Ql as WEmptyState,
   Mn as WFormRenderer,
-  as as WFormSection,
-  _l as WInfoCard,
-  Ko as WKpiCard,
-  es as WKpiGrid,
+  ns as WFormSection,
+  es as WInfoCard,
+  Go as WKpiCard,
+  ts as WKpiGrid,
   zt as WMoneyInput,
-  Zl as WPageHeader,
-  ls as WPrimeVuePlugin,
-  os as WProgressFlow,
-  ts as WSectionHeader,
-  po as WStatusTag,
+  Xl as WPageHeader,
+  ss as WPrimeVuePlugin,
+  ls as WProgressFlow,
+  as as WSectionHeader,
+  vo as WStatusTag,
   Nt as WTransferList,
   la as W_AXIOS_KEY,
   et as W_CONFIG_KEY,
   _e as W_DATA_PROVIDER_KEY,
-  vl as createAxiosDataProvider,
-  rs as createSupabaseDataProvider,
+  gl as createAxiosDataProvider,
+  us as createSupabaseDataProvider,
   In as downloadCsv,
   Ke as extractApiError,
   za as mapApiFieldToColumnDef,
@@ -3536,11 +3541,11 @@ export {
   Na as mapApiFieldsToColumnDefs,
   Ta as mapApiFieldsToFieldDefs,
   Rn as toCsv,
-  is as useApi,
-  Jl as useApiError,
+  rs as useApi,
+  Zl as useApiError,
   Tt as useAppConfirm,
   It as useAppToast,
-  ss as useCrudManager,
+  is as useCrudManager,
   rt as useFormatters
 };
 //# sourceMappingURL=index.js.map
