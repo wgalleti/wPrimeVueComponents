@@ -314,20 +314,35 @@
   color: var(--p-text-muted-color);
 }
 
-/* Form fields grid */
+/* Form fields grid — nº de colunas controlado por --w-form-cols
+   (prop `columns` do WFormRenderer / `fieldGroup.columns`; default 2) */
 .w-crud-form-fields {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(var(--w-form-cols, 2), 1fr);
   gap: 1rem 1rem;
 }
 
-/* Grid span helpers */
+/* Grid span helpers — span resolvido pelo WFormRenderer via --w-col-span
+   (colSpan do FieldDef). Fallbacks preservam o comportamento legado. */
 .w-crud-form-col-full {
-  grid-column: span 2;
+  grid-column: span var(--w-col-span, 2);
 }
 
 .w-crud-form-col-half {
-  grid-column: span 1;
+  grid-column: span var(--w-col-span, 1);
+}
+
+/* Mobile: uma coluna, campos empilhados */
+@media (max-width: 640px) {
+  .w-crud-form-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .w-crud-form-col-full,
+  .w-crud-form-col-half,
+  .w-crud-form-switch {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Field wrapper (label + input) */
@@ -360,7 +375,7 @@
 
 /* Switch row */
 .w-crud-form-switch {
-  grid-column: span 2;
+  grid-column: span var(--w-col-span, 2);
   display: flex;
   align-items: center;
   gap: 0.75rem;

@@ -62,7 +62,11 @@ export interface FieldDef {
   label: string
   type?: FieldType
   required?: boolean
-  colSpan?: number
+  /** Largura do campo no grid do form (ver `columns` do WFormRenderer):
+   *  - omitido ou 'full' → linha inteira
+   *  - 0.5 → metade da linha (independe do nº de colunas)
+   *  - inteiro ≥ 1 → ocupa N colunas do grid (limitado ao total de colunas) */
+  colSpan?: number | 'full'
   defaultValue?: unknown | (() => unknown)
   disabled?:
     | boolean
@@ -143,6 +147,8 @@ export interface FieldDef {
     title: string
     description?: string
     order?: number
+    /** Nº de colunas do grid deste grupo — sobrepõe o `columns` do form. */
+    columns?: number
   }
 }
 
@@ -229,6 +235,9 @@ export interface CrudManagerConfig<T> {
   endpoint: string
   columns: ColumnDef[]
   form: FieldDef[]
+  /** Nº de colunas do grid do form dialog (default 2). Campos usam `colSpan`
+   *  para ocupar frações do grid; grupos podem sobrepor via `fieldGroup.columns`. */
+  formColumns?: number
   pk?: string
   pageSize?: number
   searchDebounce?: number

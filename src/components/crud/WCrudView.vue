@@ -24,6 +24,9 @@ const props = withDefaults(
     showSearch?: boolean
     showHeader?: boolean
     dialogWidth?: string
+    /** Nº de colunas do grid do form dialog (default: `formColumns` da config
+     *  do useCrudManager, senão 2). */
+    formColumns?: number
     autoInit?: boolean
     showKpi?: boolean
     kpiIcon?: string
@@ -663,6 +666,7 @@ onMounted(() => {
         :saving="crud.saving.value"
         :disabled="crud.viewMode?.value ?? false"
         :width="dialogWidth"
+        :form-columns="formColumns ?? crud.config.formColumns"
         @update:visible="(v) => { crud.dialogVisible.value = v; if (!v) crud.editingItem.value = null }"
         @update:field="(field, val) => crud.setFormField(field, val)"
         @save="crud.save()"

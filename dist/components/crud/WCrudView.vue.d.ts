@@ -6,6 +6,9 @@ type __VLS_Props = {
     showSearch?: boolean;
     showHeader?: boolean;
     dialogWidth?: string;
+    /** Nº de colunas do grid do form dialog (default: `formColumns` da config
+     *  do useCrudManager, senão 2). */
+    formColumns?: number;
     autoInit?: boolean;
     showKpi?: boolean;
     kpiIcon?: string;

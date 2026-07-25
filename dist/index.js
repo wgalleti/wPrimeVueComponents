@@ -1,14 +1,14 @@
-import { inject as Ie, defineComponent as de, openBlock as s, createElementBlock as m, createBlock as A, unref as v, toDisplayString as T, ref as q, watch as nt, computed as H, reactive as ge, resolveDirective as kt, Fragment as le, createElementVNode as h, createVNode as O, withDirectives as fe, withCtx as ne, createCommentVNode as w, renderList as ie, normalizeStyle as je, createTextVNode as Pe, normalizeClass as re, renderSlot as Y, isRef as Ut, withModifiers as qt, createSlots as ot, normalizeProps as lt, guardReactiveProps as st, useSlots as Ht, onMounted as Kt, createStaticVNode as Gt } from "vue";
+import { inject as ze, defineComponent as fe, openBlock as s, createElementBlock as m, createBlock as A, unref as v, toDisplayString as I, ref as U, watch as nt, computed as q, reactive as be, resolveDirective as kt, Fragment as ue, createElementVNode as y, createVNode as Y, withDirectives as ve, withCtx as oe, createCommentVNode as $, renderList as ce, normalizeStyle as $e, createTextVNode as Ee, normalizeClass as de, renderSlot as N, isRef as Ut, withModifiers as qt, createSlots as ot, normalizeProps as lt, guardReactiveProps as st, useSlots as Ht, onMounted as Kt, createStaticVNode as Gt } from "vue";
 import $t from "primevue/datatable";
-import ze from "primevue/column";
+import Oe from "primevue/column";
 import ee from "primevue/button";
-import me from "primevue/inputtext";
+import ge from "primevue/inputtext";
 import qe from "primevue/iconfield";
 import He from "primevue/inputicon";
 import Jt from "primevue/paginator";
 import Zt from "primevue/contextmenu";
 import Ct from "primevue/tag";
-import Te from "dayjs";
+import Ne from "dayjs";
 import Dt from "primevue/dialog";
 import ct from "primevue/inputnumber";
 import Xt from "primevue/textarea";
@@ -30,121 +30,121 @@ function sa(e) {
 var Ze = { exports: {} }, ia = Ze.exports, pt;
 function ra() {
   return pt || (pt = 1, (function(e, t) {
-    (function(a, o) {
-      e.exports = o();
+    (function(a, n) {
+      e.exports = n();
     })(ia, (function() {
-      var a = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, o = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, l = /\d/, i = /\d\d/, r = /\d\d?/, y = /\d*[^-_:/,()\s\d]+/, c = {}, k = function(g) {
+      var a = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, n = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, l = /\d/, r = /\d\d/, u = /\d\d?/, b = /\d*[^-_:/,()\s\d]+/, d = {}, C = function(g) {
         return (g = +g) + (g > 68 ? 1900 : 2e3);
       }, F = function(g) {
-        return function(b) {
-          this[g] = +b;
+        return function(k) {
+          this[g] = +k;
         };
-      }, V = [/[+-]\d\d:?(\d\d)?|Z/, function(g) {
-        (this.zone || (this.zone = {})).offset = (function(b) {
-          if (!b || b === "Z") return 0;
-          var $ = b.match(/([+-]|\d\d)/g), x = 60 * $[1] + (+$[2] || 0);
-          return x === 0 ? 0 : $[0] === "+" ? -x : x;
+      }, M = [/[+-]\d\d:?(\d\d)?|Z/, function(g) {
+        (this.zone || (this.zone = {})).offset = (function(k) {
+          if (!k || k === "Z") return 0;
+          var D = k.match(/([+-]|\d\d)/g), P = 60 * D[1] + (+D[2] || 0);
+          return P === 0 ? 0 : D[0] === "+" ? -P : P;
         })(g);
-      }], W = function(g) {
-        var b = c[g];
-        return b && (b.indexOf ? b : b.s.concat(b.f));
-      }, L = function(g, b) {
-        var $, x = c.meridiem;
-        if (x) {
-          for (var j = 1; j <= 24; j += 1) if (g.indexOf(x(j, 0, b)) > -1) {
-            $ = j > 12;
+      }], B = function(g) {
+        var k = d[g];
+        return k && (k.indexOf ? k : k.s.concat(k.f));
+      }, T = function(g, k) {
+        var D, P = d.meridiem;
+        if (P) {
+          for (var W = 1; W <= 24; W += 1) if (g.indexOf(P(W, 0, k)) > -1) {
+            D = W > 12;
             break;
           }
-        } else $ = g === (b ? "pm" : "PM");
-        return $;
-      }, J = { A: [y, function(g) {
-        this.afternoon = L(g, !1);
-      }], a: [y, function(g) {
-        this.afternoon = L(g, !0);
+        } else D = g === (k ? "pm" : "PM");
+        return D;
+      }, K = { A: [b, function(g) {
+        this.afternoon = T(g, !1);
+      }], a: [b, function(g) {
+        this.afternoon = T(g, !0);
       }], Q: [l, function(g) {
         this.month = 3 * (g - 1) + 1;
       }], S: [l, function(g) {
         this.milliseconds = 100 * +g;
-      }], SS: [i, function(g) {
+      }], SS: [r, function(g) {
         this.milliseconds = 10 * +g;
       }], SSS: [/\d{3}/, function(g) {
         this.milliseconds = +g;
-      }], s: [r, F("seconds")], ss: [r, F("seconds")], m: [r, F("minutes")], mm: [r, F("minutes")], H: [r, F("hours")], h: [r, F("hours")], HH: [r, F("hours")], hh: [r, F("hours")], D: [r, F("day")], DD: [i, F("day")], Do: [y, function(g) {
-        var b = c.ordinal, $ = g.match(/\d+/);
-        if (this.day = $[0], b) for (var x = 1; x <= 31; x += 1) b(x).replace(/\[|\]/g, "") === g && (this.day = x);
-      }], w: [r, F("week")], ww: [i, F("week")], M: [r, F("month")], MM: [i, F("month")], MMM: [y, function(g) {
-        var b = W("months"), $ = (W("monthsShort") || b.map((function(x) {
-          return x.slice(0, 3);
+      }], s: [u, F("seconds")], ss: [u, F("seconds")], m: [u, F("minutes")], mm: [u, F("minutes")], H: [u, F("hours")], h: [u, F("hours")], HH: [u, F("hours")], hh: [u, F("hours")], D: [u, F("day")], DD: [r, F("day")], Do: [b, function(g) {
+        var k = d.ordinal, D = g.match(/\d+/);
+        if (this.day = D[0], k) for (var P = 1; P <= 31; P += 1) k(P).replace(/\[|\]/g, "") === g && (this.day = P);
+      }], w: [u, F("week")], ww: [r, F("week")], M: [u, F("month")], MM: [r, F("month")], MMM: [b, function(g) {
+        var k = B("months"), D = (B("monthsShort") || k.map((function(P) {
+          return P.slice(0, 3);
         }))).indexOf(g) + 1;
-        if ($ < 1) throw new Error();
-        this.month = $ % 12 || $;
-      }], MMMM: [y, function(g) {
-        var b = W("months").indexOf(g) + 1;
-        if (b < 1) throw new Error();
-        this.month = b % 12 || b;
-      }], Y: [/[+-]?\d+/, F("year")], YY: [i, function(g) {
-        this.year = k(g);
-      }], YYYY: [/\d{4}/, F("year")], Z: V, ZZ: V };
-      function Z(g) {
-        var b, $;
-        b = g, $ = c && c.formats;
-        for (var x = (g = b.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (function(oe, ae, _) {
-          var f = _ && _.toUpperCase();
-          return ae || $[_] || a[_] || $[f].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(P, u, n) {
-            return u || n.slice(1);
+        if (D < 1) throw new Error();
+        this.month = D % 12 || D;
+      }], MMMM: [b, function(g) {
+        var k = B("months").indexOf(g) + 1;
+        if (k < 1) throw new Error();
+        this.month = k % 12 || k;
+      }], Y: [/[+-]?\d+/, F("year")], YY: [r, function(g) {
+        this.year = C(g);
+      }], YYYY: [/\d{4}/, F("year")], Z: M, ZZ: M };
+      function G(g) {
+        var k, D;
+        k = g, D = d && d.formats;
+        for (var P = (g = k.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (function(le, ae, X) {
+          var J = X && X.toUpperCase();
+          return ae || D[X] || a[X] || D[J].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (function(Q, f, h) {
+            return f || h.slice(1);
           }));
-        }))).match(o), j = x.length, U = 0; U < j; U += 1) {
-          var N = x[U], K = J[N], B = K && K[0], X = K && K[1];
-          x[U] = X ? { regex: B, parser: X } : N.replace(/^\[|\]$/g, "");
+        }))).match(n), W = P.length, j = 0; j < W; j += 1) {
+          var z = P[j], H = K[z], O = H && H[0], Z = H && H[1];
+          P[j] = Z ? { regex: O, parser: Z } : z.replace(/^\[|\]$/g, "");
         }
-        return function(oe) {
-          for (var ae = {}, _ = 0, f = 0; _ < j; _ += 1) {
-            var P = x[_];
-            if (typeof P == "string") f += P.length;
+        return function(le) {
+          for (var ae = {}, X = 0, J = 0; X < W; X += 1) {
+            var Q = P[X];
+            if (typeof Q == "string") J += Q.length;
             else {
-              var u = P.regex, n = P.parser, p = oe.slice(f), d = u.exec(p)[0];
-              n.call(ae, d), oe = oe.replace(d, "");
+              var f = Q.regex, h = Q.parser, c = le.slice(J), i = f.exec(c)[0];
+              h.call(ae, i), le = le.replace(i, "");
             }
           }
-          return (function(E) {
-            var R = E.afternoon;
-            if (R !== void 0) {
-              var G = E.hours;
-              R ? G < 12 && (E.hours += 12) : G === 12 && (E.hours = 0), delete E.afternoon;
+          return (function(p) {
+            var o = p.afternoon;
+            if (o !== void 0) {
+              var w = p.hours;
+              o ? w < 12 && (p.hours += 12) : w === 12 && (p.hours = 0), delete p.afternoon;
             }
           })(ae), ae;
         };
       }
-      return function(g, b, $) {
-        $.p.customParseFormat = !0, g && g.parseTwoDigitYear && (k = g.parseTwoDigitYear);
-        var x = b.prototype, j = x.parse;
-        x.parse = function(U) {
-          var N = U.date, K = U.utc, B = U.args;
-          this.$u = K;
-          var X = B[1];
-          if (typeof X == "string") {
-            var oe = B[2] === !0, ae = B[3] === !0, _ = oe || ae, f = B[2];
-            ae && (f = B[2]), c = this.$locale(), !oe && f && (c = $.Ls[f]), this.$d = (function(p, d, E, R) {
+      return function(g, k, D) {
+        D.p.customParseFormat = !0, g && g.parseTwoDigitYear && (C = g.parseTwoDigitYear);
+        var P = k.prototype, W = P.parse;
+        P.parse = function(j) {
+          var z = j.date, H = j.utc, O = j.args;
+          this.$u = H;
+          var Z = O[1];
+          if (typeof Z == "string") {
+            var le = O[2] === !0, ae = O[3] === !0, X = le || ae, J = O[2];
+            ae && (J = O[2]), d = this.$locale(), !le && J && (d = D.Ls[J]), this.$d = (function(c, i, p, o) {
               try {
-                if (["x", "X"].indexOf(d) > -1) return new Date((d === "X" ? 1e3 : 1) * p);
-                var G = Z(d)(p), se = G.year, pe = G.month, Ne = G.day, Ye = G.hours, we = G.minutes, ke = G.seconds, ue = G.milliseconds, ve = G.zone, Ce = G.week, Ee = /* @__PURE__ */ new Date(), De = Ne || (se || pe ? 1 : Ee.getDate()), Me = se || Ee.getFullYear(), ye = 0;
-                se && !pe || (ye = pe > 0 ? pe - 1 : Ee.getMonth());
-                var xe, Fe = Ye || 0, Ae = we || 0, Re = ke || 0, C = ue || 0;
-                return ve ? new Date(Date.UTC(Me, ye, De, Fe, Ae, Re, C + 60 * ve.offset * 1e3)) : E ? new Date(Date.UTC(Me, ye, De, Fe, Ae, Re, C)) : (xe = new Date(Me, ye, De, Fe, Ae, Re, C), Ce && (xe = R(xe).week(Ce).toDate()), xe);
+                if (["x", "X"].indexOf(i) > -1) return new Date((i === "X" ? 1e3 : 1) * c);
+                var w = G(i)(c), ne = w.year, me = w.month, we = w.day, se = w.hours, ie = w.minutes, he = w.seconds, re = w.milliseconds, ye = w.zone, Se = w.week, Ae = /* @__PURE__ */ new Date(), Pe = we || (ne || me ? 1 : Ae.getDate()), Re = ne || Ae.getFullYear(), Ce = 0;
+                ne && !me || (Ce = me > 0 ? me - 1 : Ae.getMonth());
+                var Ve, Ie = se || 0, Te = ie || 0, Le = he || 0, x = re || 0;
+                return ye ? new Date(Date.UTC(Re, Ce, Pe, Ie, Te, Le, x + 60 * ye.offset * 1e3)) : p ? new Date(Date.UTC(Re, Ce, Pe, Ie, Te, Le, x)) : (Ve = new Date(Re, Ce, Pe, Ie, Te, Le, x), Se && (Ve = o(Ve).week(Se).toDate()), Ve);
               } catch {
                 return /* @__PURE__ */ new Date("");
               }
-            })(N, X, K, $), this.init(), f && f !== !0 && (this.$L = this.locale(f).$L), _ && N != this.format(X) && (this.$d = /* @__PURE__ */ new Date("")), c = {};
-          } else if (X instanceof Array) for (var P = X.length, u = 1; u <= P; u += 1) {
-            B[1] = X[u - 1];
-            var n = $.apply(this, B);
-            if (n.isValid()) {
-              this.$d = n.$d, this.$L = n.$L, this.init();
+            })(z, Z, H, D), this.init(), J && J !== !0 && (this.$L = this.locale(J).$L), X && z != this.format(Z) && (this.$d = /* @__PURE__ */ new Date("")), d = {};
+          } else if (Z instanceof Array) for (var Q = Z.length, f = 1; f <= Q; f += 1) {
+            O[1] = Z[f - 1];
+            var h = D.apply(this, O);
+            if (h.isValid()) {
+              this.$d = h.$d, this.$L = h.$L, this.init();
               break;
             }
-            u === P && (this.$d = /* @__PURE__ */ new Date(""));
+            f === Q && (this.$d = /* @__PURE__ */ new Date(""));
           }
-          else j.call(this, U);
+          else W.call(this, j);
         };
       };
     }));
@@ -152,36 +152,36 @@ function ra() {
 }
 var ua = ra();
 const da = /* @__PURE__ */ sa(ua);
-Te.extend(da);
+Ne.extend(da);
 function it(e) {
   if (!e) return null;
   if (e instanceof Date) return e;
-  const t = Te(e, "YYYY-MM-DD", !0);
-  return t.isValid() ? t.toDate() : Te(e).toDate();
+  const t = Ne(e, "YYYY-MM-DD", !0);
+  return t.isValid() ? t.toDate() : Ne(e).toDate();
 }
 function St(e) {
-  return e ? typeof e == "string" ? e : Te(e).format("YYYY-MM-DD") : null;
+  return e ? typeof e == "string" ? e : Ne(e).format("YYYY-MM-DD") : null;
 }
 function Pt(e) {
-  return e ? typeof e == "string" ? e : Te(e).toISOString() : null;
+  return e ? typeof e == "string" ? e : Ne(e).toISOString() : null;
 }
 function ca(e, t = "DD/MM/YYYY") {
-  return e ? Te(e).format(t) : "—";
+  return e ? Ne(e).format(t) : "—";
 }
 function fa(e) {
-  return e ? Te(e).format("DD/MM/YYYY HH:mm") : "—";
+  return e ? Ne(e).format("DD/MM/YYYY HH:mm") : "—";
 }
-function Ve(e) {
+function Fe(e) {
   return e.replace(/\D/g, "");
 }
 function Vt(e) {
   if (!e) return "—";
-  const t = Ve(e);
+  const t = Fe(e);
   return t.length !== 11 ? e : t.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
 }
-function Et(e) {
+function Mt(e) {
   if (!e) return "—";
-  const t = Ve(e);
+  const t = Fe(e);
   return t.length !== 14 ? e : t.replace(
     /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
     "$1.$2.$3/$4-$5"
@@ -189,104 +189,104 @@ function Et(e) {
 }
 function ma(e) {
   if (!e) return "—";
-  const t = Ve(e);
-  return t.length === 11 ? Vt(e) : t.length === 14 ? Et(e) : e;
+  const t = Fe(e);
+  return t.length === 11 ? Vt(e) : t.length === 14 ? Mt(e) : e;
 }
 function pa(e) {
   if (!e) return "—";
-  const t = Ve(e);
+  const t = Fe(e);
   return t.length === 11 ? t.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3") : t.length === 10 ? t.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3") : e;
 }
-function Mt(e) {
+function Et(e) {
   if (!e) return null;
-  const t = Ve(e);
+  const t = Fe(e);
   if (t.length !== 11) return "CPF deve ter 11 dígitos.";
   if (/^(\d)\1{10}$/.test(t)) return "CPF inválido.";
   let a = 0;
-  for (let r = 0; r < 9; r++) a += parseInt(t[r]) * (10 - r);
-  let o = a % 11;
-  const l = o < 2 ? 0 : 11 - o;
+  for (let u = 0; u < 9; u++) a += parseInt(t[u]) * (10 - u);
+  let n = a % 11;
+  const l = n < 2 ? 0 : 11 - n;
   if (parseInt(t[9]) !== l) return "CPF inválido.";
   a = 0;
-  for (let r = 0; r < 10; r++) a += parseInt(t[r]) * (11 - r);
-  o = a % 11;
-  const i = o < 2 ? 0 : 11 - o;
-  return parseInt(t[10]) !== i ? "CPF inválido." : null;
+  for (let u = 0; u < 10; u++) a += parseInt(t[u]) * (11 - u);
+  n = a % 11;
+  const r = n < 2 ? 0 : 11 - n;
+  return parseInt(t[10]) !== r ? "CPF inválido." : null;
 }
 function Ft(e) {
   if (!e) return null;
-  const t = Ve(e);
+  const t = Fe(e);
   if (t.length !== 14) return "CNPJ deve ter 14 dígitos.";
   if (/^(\d)\1{13}$/.test(t)) return "CNPJ inválido.";
   const a = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  let o = 0;
-  for (let c = 0; c < 12; c++) o += parseInt(t[c]) * a[c];
-  let l = o % 11;
-  const i = l < 2 ? 0 : 11 - l;
-  if (parseInt(t[12]) !== i) return "CNPJ inválido.";
-  const r = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  o = 0;
-  for (let c = 0; c < 13; c++) o += parseInt(t[c]) * r[c];
-  l = o % 11;
-  const y = l < 2 ? 0 : 11 - l;
-  return parseInt(t[13]) !== y ? "CNPJ inválido." : null;
+  let n = 0;
+  for (let d = 0; d < 12; d++) n += parseInt(t[d]) * a[d];
+  let l = n % 11;
+  const r = l < 2 ? 0 : 11 - l;
+  if (parseInt(t[12]) !== r) return "CNPJ inválido.";
+  const u = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  n = 0;
+  for (let d = 0; d < 13; d++) n += parseInt(t[d]) * u[d];
+  l = n % 11;
+  const b = l < 2 ? 0 : 11 - l;
+  return parseInt(t[13]) !== b ? "CNPJ inválido." : null;
 }
 function va(e) {
   if (!e) return null;
-  const t = Ve(e);
-  return t.length === 11 ? Mt(e) : t.length === 14 ? Ft(e) : "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.";
+  const t = Fe(e);
+  return t.length === 11 ? Et(e) : t.length === 14 ? Ft(e) : "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.";
 }
 const Xe = /* @__PURE__ */ new Map();
 function vt(e, t) {
   const a = `${e}-${t}`;
-  let o = Xe.get(a);
-  return o || (o = new Intl.NumberFormat(e, {
+  let n = Xe.get(a);
+  return n || (n = new Intl.NumberFormat(e, {
     minimumFractionDigits: t,
     maximumFractionDigits: t
-  }), Xe.set(a, o)), o;
+  }), Xe.set(a, n)), n;
 }
 function ga(e, t) {
   const a = `${e}-${t}`;
-  let o = Xe.get(a);
-  return o || (o = new Intl.NumberFormat(e, {
+  let n = Xe.get(a);
+  return n || (n = new Intl.NumberFormat(e, {
     style: "currency",
     currency: t
-  }), Xe.set(a, o)), o;
+  }), Xe.set(a, n)), n;
 }
 function rt() {
-  const e = Ie(et, {
+  const e = ze(et, {
     defaultPageSize: 20,
     dateFormat: "DD/MM/YYYY",
     dateTimeFormat: "DD/MM/YYYY HH:mm",
     locale: "pt-BR",
     currency: "BRL"
   }), t = (e == null ? void 0 : e.locale) ?? "pt-BR", a = (e == null ? void 0 : e.currency) ?? "BRL";
-  function o(c) {
-    return c == null ? "—" : ga(t, a).format(c);
+  function n(d) {
+    return d == null ? "—" : ga(t, a).format(d);
   }
-  function l(c, k = 2) {
-    return c == null ? "—" : vt(t, k).format(c);
+  function l(d, C = 2) {
+    return d == null ? "—" : vt(t, C).format(d);
   }
-  function i(c, k) {
-    return ca(c, k ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
+  function r(d, C) {
+    return ca(d, C ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
   }
-  function r(c) {
-    return fa(c);
+  function u(d) {
+    return fa(d);
   }
-  function y(c) {
-    return c == null ? "—" : `${vt(t, 2).format(c)}%`;
+  function b(d) {
+    return d == null ? "—" : `${vt(t, 2).format(d)}%`;
   }
   return {
-    formatCurrency: o,
+    formatCurrency: n,
     formatNumber: l,
-    formatDate: i,
-    formatDateTime: r,
-    formatPercent: y,
+    formatDate: r,
+    formatDateTime: u,
+    formatPercent: b,
     formatCpf: Vt,
-    formatCnpj: Et,
+    formatCnpj: Mt,
     formatCpfCnpj: ma,
     formatTelefone: pa,
-    validateCpf: Mt,
+    validateCpf: Et,
     validateCnpj: Ft,
     validateCpfCnpj: va,
     parseDate: it,
@@ -312,7 +312,7 @@ const ha = {
 }, Ca = {
   key: 7,
   class: "text-[0.8125rem]"
-}, Qe = /* @__PURE__ */ de({
+}, Qe = /* @__PURE__ */ fe({
   __name: "WCrudColumnRenderer",
   props: {
     column: {},
@@ -320,8 +320,8 @@ const ha = {
     rowData: {}
   },
   setup(e) {
-    const { formatDate: t, formatDateTime: a, formatCurrency: o, formatNumber: l } = rt();
-    return (i, r) => e.value == null ? (s(), m("span", ha, "—")) : e.column.type === "image" ? (s(), m("img", {
+    const { formatDate: t, formatDateTime: a, formatCurrency: n, formatNumber: l } = rt();
+    return (r, u) => e.value == null ? (s(), m("span", ha, "—")) : e.column.type === "image" ? (s(), m("img", {
       key: 1,
       src: String(e.value),
       alt: e.column.header,
@@ -331,7 +331,7 @@ const ha = {
       value: e.column.tagValue ? e.column.tagValue(e.value, e.rowData) : e.value ? "Ativo" : "Inativo",
       severity: e.column.tagSeverity ? e.column.tagSeverity(e.value, e.rowData) : e.value ? "success" : "danger",
       class: "text-xs"
-    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (s(), m("span", ba, T(v(t)(e.value)), 1)) : e.column.type === "datetime" ? (s(), m("span", wa, T(v(a)(e.value)), 1)) : e.column.type === "currency" ? (s(), m("span", ka, T(v(o)(e.value)), 1)) : e.column.type === "number" ? (s(), m("span", $a, T(e.column.format ? e.column.format(e.value, e.rowData) : v(l)(e.value, e.column.decimals ?? 0)), 1)) : (s(), m("span", Ca, T(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
+    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (s(), m("span", ba, I(v(t)(e.value)), 1)) : e.column.type === "datetime" ? (s(), m("span", wa, I(v(a)(e.value)), 1)) : e.column.type === "currency" ? (s(), m("span", ka, I(v(n)(e.value)), 1)) : e.column.type === "number" ? (s(), m("span", $a, I(e.column.format ? e.column.format(e.value, e.rowData) : v(l)(e.value, e.column.decimals ?? 0)), 1)) : (s(), m("span", Ca, I(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
   }
 });
 var Da = Object.defineProperty, xa = (e, t, a) => t in e ? Da(e, t, { enumerable: !0, configurable: !0, writable: !0, value: a }) : e[t] = a, Ue = (e, t, a) => xa(e, typeof t != "symbol" ? t + "" : t, a);
@@ -340,41 +340,41 @@ const gt = {
   "@": { pattern: /[a-zA-Z]/ },
   "*": { pattern: /[a-zA-Z0-9]/ }
 }, ht = (e, t, a) => e.replaceAll(t, "").replace(a, ".").replace("..", ".").replace(/[^.\d]/g, ""), yt = (e, t, a) => {
-  var o;
-  return new Intl.NumberFormat(((o = a.number) == null ? void 0 : o.locale) ?? "en", {
+  var n;
+  return new Intl.NumberFormat(((n = a.number) == null ? void 0 : n.locale) ?? "en", {
     minimumFractionDigits: e,
     maximumFractionDigits: t,
     roundingMode: "trunc"
   });
 }, Sa = (e, t = !0, a) => {
-  var o, l, i, r;
-  const y = ((o = a.number) == null ? void 0 : o.unsigned) !== !0 && e.startsWith("-") ? "-" : "", c = ((l = a.number) == null ? void 0 : l.fraction) ?? 0;
-  let k = yt(0, c, a);
-  const F = k.formatToParts(1000.12), V = ((i = F.find((g) => g.type === "group")) == null ? void 0 : i.value) ?? " ", W = ((r = F.find((g) => g.type === "decimal")) == null ? void 0 : r.value) ?? ".", L = ht(e, V, W);
-  if (Number.isNaN(parseFloat(L))) return y;
-  const J = L.split(".");
-  if (J[1] != null && J[1].length >= 1) {
-    const g = J[1].length <= c ? J[1].length : c;
-    k = yt(g, c, a);
+  var n, l, r, u;
+  const b = ((n = a.number) == null ? void 0 : n.unsigned) !== !0 && e.startsWith("-") ? "-" : "", d = ((l = a.number) == null ? void 0 : l.fraction) ?? 0;
+  let C = yt(0, d, a);
+  const F = C.formatToParts(1000.12), M = ((r = F.find((g) => g.type === "group")) == null ? void 0 : r.value) ?? " ", B = ((u = F.find((g) => g.type === "decimal")) == null ? void 0 : u.value) ?? ".", T = ht(e, M, B);
+  if (Number.isNaN(parseFloat(T))) return b;
+  const K = T.split(".");
+  if (K[1] != null && K[1].length >= 1) {
+    const g = K[1].length <= d ? K[1].length : d;
+    C = yt(g, d, a);
   }
-  let Z = k.format(parseFloat(L));
-  return t ? c > 0 && L.endsWith(".") && !L.slice(0, -1).includes(".") && (Z += W) : Z = ht(Z, V, W), y + Z;
+  let G = C.format(parseFloat(T));
+  return t ? d > 0 && T.endsWith(".") && !T.slice(0, -1).includes(".") && (G += B) : G = ht(G, M, B), b + G;
 }, At = (e) => JSON.parse(e.replaceAll("'", '"')), Pa = (e, t = {}) => {
   const a = { ...t };
-  e.dataset.maska != null && e.dataset.maska !== "" && (a.mask = Va(e.dataset.maska)), e.dataset.maskaEager != null && (a.eager = Je(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (a.reversed = Je(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (a.tokensReplace = Je(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (a.tokens = Ea(e.dataset.maskaTokens));
-  const o = {};
-  return e.dataset.maskaNumberLocale != null && (o.locale = e.dataset.maskaNumberLocale), e.dataset.maskaNumberFraction != null && (o.fraction = parseInt(e.dataset.maskaNumberFraction)), e.dataset.maskaNumberUnsigned != null && (o.unsigned = Je(e.dataset.maskaNumberUnsigned)), (e.dataset.maskaNumber != null || Object.values(o).length > 0) && (a.number = o), a;
-}, Je = (e) => e !== "" ? !!JSON.parse(e) : !0, Va = (e) => e.startsWith("[") && e.endsWith("]") ? At(e) : e, Ea = (e) => {
+  e.dataset.maska != null && e.dataset.maska !== "" && (a.mask = Va(e.dataset.maska)), e.dataset.maskaEager != null && (a.eager = Je(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (a.reversed = Je(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (a.tokensReplace = Je(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (a.tokens = Ma(e.dataset.maskaTokens));
+  const n = {};
+  return e.dataset.maskaNumberLocale != null && (n.locale = e.dataset.maskaNumberLocale), e.dataset.maskaNumberFraction != null && (n.fraction = parseInt(e.dataset.maskaNumberFraction)), e.dataset.maskaNumberUnsigned != null && (n.unsigned = Je(e.dataset.maskaNumberUnsigned)), (e.dataset.maskaNumber != null || Object.values(n).length > 0) && (a.number = n), a;
+}, Je = (e) => e !== "" ? !!JSON.parse(e) : !0, Va = (e) => e.startsWith("[") && e.endsWith("]") ? At(e) : e, Ma = (e) => {
   if (e.startsWith("{") && e.endsWith("}"))
     return At(e);
   const t = {};
   return e.split("|").forEach((a) => {
-    const o = a.split(":");
-    t[o[0]] = {
-      pattern: Rt() ? new RegExp(o[1], "u") : new RegExp(o[1]),
-      optional: o[2] === "optional",
-      multiple: o[2] === "multiple",
-      repeated: o[2] === "repeated"
+    const n = a.split(":");
+    t[n[0]] = {
+      pattern: Rt() ? new RegExp(n[1], "u") : new RegExp(n[1]),
+      optional: n[2] === "optional",
+      multiple: n[2] === "multiple",
+      repeated: n[2] === "repeated"
     };
   }), t;
 }, Rt = () => {
@@ -384,17 +384,17 @@ const gt = {
     return !1;
   }
 };
-class Ma {
+class Ea {
   constructor(t = {}) {
     Ue(this, "opts", {}), Ue(this, "memo", /* @__PURE__ */ new Map());
     const a = { ...t };
     if (a.tokens != null) {
       a.tokens = a.tokensReplace ? { ...a.tokens } : { ...gt, ...a.tokens };
-      for (const o of Object.values(a.tokens))
-        typeof o.pattern == "string" && (o.pattern = Rt() ? new RegExp(o.pattern, "u") : new RegExp(o.pattern));
+      for (const n of Object.values(a.tokens))
+        typeof n.pattern == "string" && (n.pattern = Rt() ? new RegExp(n.pattern, "u") : new RegExp(n.pattern));
     } else
       a.tokens = gt;
-    Array.isArray(a.mask) && (a.mask.length > 1 ? a.mask = [...a.mask].sort((o, l) => o.length - l.length) : a.mask = a.mask[0] ?? ""), a.mask === "" && (a.mask = null), this.opts = a;
+    Array.isArray(a.mask) && (a.mask.length > 1 ? a.mask = [...a.mask].sort((n, l) => n.length - l.length) : a.mask = a.mask[0] ?? ""), a.mask === "" && (a.mask = null), this.opts = a;
   }
   masked(t) {
     return this.process(String(t), this.findMask(String(t)));
@@ -411,8 +411,8 @@ class Ma {
   completed(t) {
     const a = this.findMask(String(t));
     if (this.opts.mask == null || a == null) return !1;
-    const o = this.process(String(t), a).length;
-    return typeof this.opts.mask == "string" ? o >= this.opts.mask.length : o >= a.length;
+    const n = this.process(String(t), a).length;
+    return typeof this.opts.mask == "string" ? n >= this.opts.mask.length : n >= a.length;
   }
   findMask(t) {
     const a = this.opts.mask;
@@ -422,47 +422,47 @@ class Ma {
       return a;
     if (typeof a == "function")
       return a(t);
-    const o = this.process(t, a.slice(-1).pop() ?? "", !1);
-    return a.find((l) => this.process(t, l, !1).length >= o.length) ?? "";
+    const n = this.process(t, a.slice(-1).pop() ?? "", !1);
+    return a.find((l) => this.process(t, l, !1).length >= n.length) ?? "";
   }
   escapeMask(t) {
-    const a = [], o = [];
-    return t.split("").forEach((l, i) => {
-      l === "!" && t[i - 1] !== "!" ? o.push(i - o.length) : a.push(l);
-    }), { mask: a.join(""), escaped: o };
+    const a = [], n = [];
+    return t.split("").forEach((l, r) => {
+      l === "!" && t[r - 1] !== "!" ? n.push(r - n.length) : a.push(l);
+    }), { mask: a.join(""), escaped: n };
   }
-  process(t, a, o = !0) {
-    if (this.opts.number != null) return Sa(t, o, this.opts);
+  process(t, a, n = !0) {
+    if (this.opts.number != null) return Sa(t, n, this.opts);
     if (a == null) return t;
-    const l = `v=${t},mr=${a},m=${o ? 1 : 0}`;
+    const l = `v=${t},mr=${a},m=${n ? 1 : 0}`;
     if (this.memo.has(l)) return this.memo.get(l);
-    const { mask: i, escaped: r } = this.escapeMask(a), y = [], c = this.opts.tokens != null ? this.opts.tokens : {}, k = this.isReversed() ? -1 : 1, F = this.isReversed() ? "unshift" : "push", V = this.isReversed() ? 0 : i.length - 1, W = this.isReversed() ? () => g > -1 && b > -1 : () => g < i.length && b < t.length, L = (x) => !this.isReversed() && x <= V || this.isReversed() && x >= V;
-    let J, Z = -1, g = this.isReversed() ? i.length - 1 : 0, b = this.isReversed() ? t.length - 1 : 0, $ = !1;
-    for (; W(); ) {
-      const x = i.charAt(g), j = c[x], U = (j == null ? void 0 : j.transform) != null ? j.transform(t.charAt(b)) : t.charAt(b);
-      if (!r.includes(g) && j != null ? (U.match(j.pattern) != null ? (y[F](U), j.repeated ? (Z === -1 ? Z = g : g === V && g !== Z && (g = Z - k), V === Z && (g -= k)) : j.multiple && ($ = !0, g -= k), g += k) : j.multiple ? $ && (g += k, b -= k, $ = !1) : U === J ? J = void 0 : j.optional && (g += k, b -= k), b += k) : (o && !this.isEager() && y[F](x), U === x && !this.isEager() ? b += k : J = x, this.isEager() || (g += k)), this.isEager())
-        for (; L(g) && (c[i.charAt(g)] == null || r.includes(g)); ) {
-          if (o) {
-            if (y[F](i.charAt(g)), t.charAt(b) === i.charAt(g)) {
-              g += k, b += k;
+    const { mask: r, escaped: u } = this.escapeMask(a), b = [], d = this.opts.tokens != null ? this.opts.tokens : {}, C = this.isReversed() ? -1 : 1, F = this.isReversed() ? "unshift" : "push", M = this.isReversed() ? 0 : r.length - 1, B = this.isReversed() ? () => g > -1 && k > -1 : () => g < r.length && k < t.length, T = (P) => !this.isReversed() && P <= M || this.isReversed() && P >= M;
+    let K, G = -1, g = this.isReversed() ? r.length - 1 : 0, k = this.isReversed() ? t.length - 1 : 0, D = !1;
+    for (; B(); ) {
+      const P = r.charAt(g), W = d[P], j = (W == null ? void 0 : W.transform) != null ? W.transform(t.charAt(k)) : t.charAt(k);
+      if (!u.includes(g) && W != null ? (j.match(W.pattern) != null ? (b[F](j), W.repeated ? (G === -1 ? G = g : g === M && g !== G && (g = G - C), M === G && (g -= C)) : W.multiple && (D = !0, g -= C), g += C) : W.multiple ? D && (g += C, k -= C, D = !1) : j === K ? K = void 0 : W.optional && (g += C, k -= C), k += C) : (n && !this.isEager() && b[F](P), j === P && !this.isEager() ? k += C : K = P, this.isEager() || (g += C)), this.isEager())
+        for (; T(g) && (d[r.charAt(g)] == null || u.includes(g)); ) {
+          if (n) {
+            if (b[F](r.charAt(g)), t.charAt(k) === r.charAt(g)) {
+              g += C, k += C;
               continue;
             }
-          } else i.charAt(g) === t.charAt(b) && (b += k);
-          g += k;
+          } else r.charAt(g) === t.charAt(k) && (k += C);
+          g += C;
         }
     }
-    return this.memo.set(l, y.join("")), this.memo.get(l);
+    return this.memo.set(l, b.join("")), this.memo.get(l);
   }
 }
 class Fa {
   constructor(t, a = {}) {
-    Ue(this, "items", /* @__PURE__ */ new Map()), Ue(this, "eventAbortController"), Ue(this, "onInput", (o) => {
-      if (o instanceof CustomEvent && o.type === "input" && !o.isTrusted && !o.bubbles)
+    Ue(this, "items", /* @__PURE__ */ new Map()), Ue(this, "eventAbortController"), Ue(this, "onInput", (n) => {
+      if (n instanceof CustomEvent && n.type === "input" && !n.isTrusted && !n.bubbles)
         return;
-      const l = o.target, i = this.items.get(l);
-      if (i === void 0) return;
-      const r = "inputType" in o && o.inputType.startsWith("delete"), y = i.isEager(), c = r && y && i.unmasked(l.value) === "" ? "" : l.value;
-      this.fixCursor(l, r, () => this.setValue(l, c));
+      const l = n.target, r = this.items.get(l);
+      if (r === void 0) return;
+      const u = "inputType" in n && n.inputType.startsWith("delete"), b = r.isEager(), d = u && b && r.unmasked(l.value) === "" ? "" : l.value;
+      this.fixCursor(l, u, () => this.setValue(l, d));
     }), this.options = a, this.eventAbortController = new AbortController(), this.init(this.getInputs(t));
   }
   update(t = {}) {
@@ -477,45 +477,45 @@ class Fa {
   }
   init(t) {
     const a = this.getOptions(this.options);
-    for (const o of t) {
-      if (!this.items.has(o)) {
-        const { signal: i } = this.eventAbortController;
-        o.addEventListener("input", this.onInput, { capture: !0, signal: i });
+    for (const n of t) {
+      if (!this.items.has(n)) {
+        const { signal: r } = this.eventAbortController;
+        n.addEventListener("input", this.onInput, { capture: !0, signal: r });
       }
-      const l = new Ma(Pa(o, a));
-      this.items.set(o, l), queueMicrotask(() => this.updateValue(o)), o.selectionStart === null && l.isEager() && console.warn("Maska: input of `%s` type is not supported", o.type);
+      const l = new Ea(Pa(n, a));
+      this.items.set(n, l), queueMicrotask(() => this.updateValue(n)), n.selectionStart === null && l.isEager() && console.warn("Maska: input of `%s` type is not supported", n.type);
     }
   }
   getInputs(t) {
     return typeof t == "string" ? Array.from(document.querySelectorAll(t)) : "length" in t ? Array.from(t) : [t];
   }
   getOptions(t) {
-    const { onMaska: a, preProcess: o, postProcess: l, ...i } = t;
-    return i;
+    const { onMaska: a, preProcess: n, postProcess: l, ...r } = t;
+    return r;
   }
-  fixCursor(t, a, o) {
-    var l, i;
-    const r = t.selectionStart, y = t.value;
-    if (o(), r === null || r === y.length && !a) return;
-    const c = t.value, k = y.slice(0, r), F = c.slice(0, r), V = (l = this.processInput(t, k)) == null ? void 0 : l.unmasked, W = (i = this.processInput(t, F)) == null ? void 0 : i.unmasked;
-    if (V === void 0 || W === void 0) return;
-    let L = r;
-    k !== F && (L += a ? c.length - y.length : V.length - W.length), t.setSelectionRange(L, L);
+  fixCursor(t, a, n) {
+    var l, r;
+    const u = t.selectionStart, b = t.value;
+    if (n(), u === null || u === b.length && !a) return;
+    const d = t.value, C = b.slice(0, u), F = d.slice(0, u), M = (l = this.processInput(t, C)) == null ? void 0 : l.unmasked, B = (r = this.processInput(t, F)) == null ? void 0 : r.unmasked;
+    if (M === void 0 || B === void 0) return;
+    let T = u;
+    C !== F && (T += a ? d.length - b.length : M.length - B.length), t.setSelectionRange(T, T);
   }
   setValue(t, a) {
-    const o = this.processInput(t, a);
-    o !== void 0 && (t.value = o.masked, this.options.onMaska != null && (Array.isArray(this.options.onMaska) ? this.options.onMaska.forEach((l) => l(o)) : this.options.onMaska(o)), t.dispatchEvent(new CustomEvent("maska", { detail: o })), t.dispatchEvent(new CustomEvent("input", { detail: o.masked })));
+    const n = this.processInput(t, a);
+    n !== void 0 && (t.value = n.masked, this.options.onMaska != null && (Array.isArray(this.options.onMaska) ? this.options.onMaska.forEach((l) => l(n)) : this.options.onMaska(n)), t.dispatchEvent(new CustomEvent("maska", { detail: n })), t.dispatchEvent(new CustomEvent("input", { detail: n.masked })));
   }
   processInput(t, a) {
-    const o = this.items.get(t);
-    if (o === void 0) return;
+    const n = this.items.get(t);
+    if (n === void 0) return;
     let l = a ?? t.value;
     this.options.preProcess != null && (l = this.options.preProcess(l));
-    let i = o.masked(l);
-    return this.options.postProcess != null && (i = this.options.postProcess(i)), {
-      masked: i,
-      unmasked: o.unmasked(l),
-      completed: o.completed(l)
+    let r = n.masked(l);
+    return this.options.postProcess != null && (r = this.options.postProcess(r)), {
+      masked: r,
+      unmasked: n.unmasked(l),
+      completed: n.completed(l)
     };
   }
 }
@@ -525,17 +525,17 @@ const tt = /* @__PURE__ */ new WeakMap(), Aa = (e, t) => {
   e.arg in e.instance ? e.instance[e.arg] = t : a && console.warn("Maska: please expose `%s` using defineExpose", e.arg);
 }, at = (e, t) => {
   var a;
-  const o = e instanceof HTMLInputElement ? e : e.querySelector("input");
-  if (o == null || (o == null ? void 0 : o.type) === "file") return;
+  const n = e instanceof HTMLInputElement ? e : e.querySelector("input");
+  if (n == null || (n == null ? void 0 : n.type) === "file") return;
   let l = {};
   if (t.value != null && (l = typeof t.value == "string" ? { mask: t.value } : { ...t.value }), t.arg != null) {
-    const i = (r) => {
-      const y = t.modifiers.unmasked ? r.unmasked : t.modifiers.completed ? r.completed : r.masked;
-      Aa(t, y);
+    const r = (u) => {
+      const b = t.modifiers.unmasked ? u.unmasked : t.modifiers.completed ? u.completed : u.masked;
+      Aa(t, b);
     };
-    l.onMaska = l.onMaska == null ? i : Array.isArray(l.onMaska) ? [...l.onMaska, i] : [l.onMaska, i];
+    l.onMaska = l.onMaska == null ? r : Array.isArray(l.onMaska) ? [...l.onMaska, r] : [l.onMaska, r];
   }
-  tt.has(o) ? (a = tt.get(o)) == null || a.update(l) : tt.set(o, new Fa(o, l));
+  tt.has(n) ? (a = tt.get(n)) == null || a.update(l) : tt.set(n, new Fa(n, l));
 }, Ra = {
   string: "text",
   integer: "number",
@@ -552,14 +552,14 @@ const tt = /* @__PURE__ */ new WeakMap(), Aa = (e, t) => {
   text: "textarea"
 };
 function Ia(e) {
-  var o;
+  var n;
   const t = Ra[e.type] ?? "text", a = {
     field: e.name,
     label: e.label,
     type: t,
     required: e.required ?? !1
   };
-  return (e.type === "decimal" || e.type === "float") && (a.minFractionDigits = 2, a.maxFractionDigits = 2), e.type === "boolean" && (a.defaultValue = !1), e.type === "choice" && ((o = e.choices) != null && o.length) && (a.options = e.choices.map((l) => ({
+  return (e.type === "decimal" || e.type === "float") && (a.minFractionDigits = 2, a.maxFractionDigits = 2), e.type === "boolean" && (a.defaultValue = !1), e.type === "choice" && ((n = e.choices) != null && n.length) && (a.options = e.choices.map((l) => ({
     label: l.label,
     value: l.value
   }))), e.type === "fk" && (a.endpoint = e.endpoint, e.option_label && (a.optionLabel = e.option_label), e.option_value && (a.optionValue = e.option_value)), a;
@@ -588,23 +588,23 @@ function Na(e, t = 6) {
 }
 function It() {
   const e = aa();
-  function t(i, r = "Sucesso") {
-    e.add({ severity: "success", summary: r, detail: i, life: 3e3 });
+  function t(r, u = "Sucesso") {
+    e.add({ severity: "success", summary: u, detail: r, life: 3e3 });
   }
-  function a(i, r = "Erro") {
-    e.add({ severity: "error", summary: r, detail: i, life: 5e3 });
+  function a(r, u = "Erro") {
+    e.add({ severity: "error", summary: u, detail: r, life: 5e3 });
   }
-  function o(i, r = "Atenção") {
-    e.add({ severity: "warn", summary: r, detail: i, life: 4e3 });
+  function n(r, u = "Atenção") {
+    e.add({ severity: "warn", summary: u, detail: r, life: 4e3 });
   }
-  function l(i, r = "Info") {
-    e.add({ severity: "info", summary: r, detail: i, life: 3e3 });
+  function l(r, u = "Info") {
+    e.add({ severity: "info", summary: u, detail: r, life: 3e3 });
   }
-  return { success: t, error: a, warn: o, info: l };
+  return { success: t, error: a, warn: n, info: l };
 }
 function Tt() {
   const e = na();
-  function t(o, l = "Deseja realmente excluir este registro?") {
+  function t(n, l = "Deseja realmente excluir este registro?") {
     e.require({
       message: l,
       header: "Confirmar Exclusão",
@@ -618,13 +618,13 @@ function Tt() {
       acceptProps: {
         severity: "danger"
       },
-      accept: o
+      accept: n
     });
   }
-  function a(o, l, i = "Confirmação") {
+  function a(n, l, r = "Confirmação") {
     e.require({
-      message: o,
-      header: i,
+      message: n,
+      header: r,
       icon: "pi pi-question-circle",
       rejectLabel: "Cancelar",
       rejectProps: {
@@ -650,15 +650,15 @@ function Oa(e) {
   if (typeof e == "object" && e !== null) {
     const t = e;
     if (Array.isArray(t.non_field_errors) && t.non_field_errors.length > 0)
-      return t.non_field_errors.filter((o) => typeof o == "string").join(" ");
+      return t.non_field_errors.filter((n) => typeof n == "string").join(" ");
     const a = [];
-    for (const [o, l] of Object.entries(t)) {
-      if (o === "non_field_errors") continue;
-      const i = Ya(o);
+    for (const [n, l] of Object.entries(t)) {
+      if (n === "non_field_errors") continue;
+      const r = Ya(n);
       if (Array.isArray(l)) {
-        const r = l.filter((y) => typeof y == "string");
-        r.length > 0 && a.push(`${i}: ${r.join(" ")}`);
-      } else typeof l == "string" && a.push(`${i}: ${l}`);
+        const u = l.filter((b) => typeof b == "string");
+        u.length > 0 && a.push(`${r}: ${u.join(" ")}`);
+      } else typeof l == "string" && a.push(`${r}: ${l}`);
     }
     return a.length > 0 ? a.join(`
 `) : null;
@@ -666,18 +666,18 @@ function Oa(e) {
   return null;
 }
 function Ke(e, t = "Erro inesperado") {
-  var i;
+  var r;
   if (!e || typeof e != "object") return t;
-  const a = e, o = (i = a.response) == null ? void 0 : i.data;
-  if (!o || typeof o != "object")
+  const a = e, n = (r = a.response) == null ? void 0 : r.data;
+  if (!n || typeof n != "object")
     return a.message || t;
-  const l = o.detail ?? o;
+  const l = n.detail ?? n;
   return Oa(l) || t;
 }
-function Zl() {
+function ql() {
   return { extractApiError: Ke };
 }
-const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-autocompletefk-toolbar" }, Ua = { class: "w-autocompletefk-toolbar-actions" }, qa = { class: "flex items-center justify-end gap-1" }, Ha = { class: "w-autocompletefk-footer" }, Lt = /* @__PURE__ */ de({
+const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-autocompletefk-toolbar" }, Ua = { class: "w-autocompletefk-toolbar-actions" }, qa = { class: "flex items-center justify-end gap-1" }, Ha = { class: "w-autocompletefk-footer" }, Lt = /* @__PURE__ */ fe({
   __name: "WAutoCompleteFK",
   props: {
     modelValue: {},
@@ -701,215 +701,215 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
   },
   emits: ["update:modelValue"],
   setup(e, { emit: t }) {
-    const a = e, o = t, l = Ie(_e);
+    const a = e, n = t, l = ze(_e);
     if (!l)
       throw new Error(
         "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin."
       );
-    const i = l, r = It(), { confirmDelete: y } = Tt(), c = q(null), k = q([]), F = q(!1);
-    let V = null;
-    async function W(C) {
+    const r = l, u = It(), { confirmDelete: b } = Tt(), d = U(null), C = U([]), F = U(!1);
+    let M = null;
+    async function B(x) {
       try {
-        const S = await i.get(a.endpoint, C);
-        c.value = S.data;
+        const V = await r.get(a.endpoint, x);
+        d.value = V.data;
       } catch {
-        c.value = null;
+        d.value = null;
       }
     }
-    async function L(C) {
+    async function T(x) {
       F.value = !0;
       try {
-        const S = {
+        const V = {
           page_size: 20,
           ...a.endpointParams
         };
-        C && (S.search = C);
-        const te = await i.list(a.endpoint, S);
-        k.value = te.data;
+        x && (V.search = x);
+        const te = await r.list(a.endpoint, V);
+        C.value = te.data;
       } catch {
-        k.value = [];
+        C.value = [];
       } finally {
         F.value = !1;
       }
     }
-    function J(C) {
-      const S = C.query || "";
-      if (S.length < a.minLength) {
-        k.value = [];
+    function K(x) {
+      const V = x.query || "";
+      if (V.length < a.minLength) {
+        C.value = [];
         return;
       }
-      V && clearTimeout(V), V = setTimeout(() => L(S), 300);
+      M && clearTimeout(M), M = setTimeout(() => T(V), 300);
     }
-    function Z(C) {
-      c.value = C.value, o("update:modelValue", C.value);
+    function G(x) {
+      d.value = x.value, n("update:modelValue", x.value);
     }
     function g() {
-      c.value = null, o("update:modelValue", null);
+      d.value = null, n("update:modelValue", null);
     }
     nt(
       () => a.modelValue,
-      async (C) => {
-        if (C != null) {
-          if (typeof C == "object" && C !== null && a.optionLabel in C) {
-            c.value = C;
+      async (x) => {
+        if (x != null) {
+          if (typeof x == "object" && x !== null && a.optionLabel in x) {
+            d.value = x;
             return;
           }
-          (!c.value || c.value[a.optionValue] !== C) && await W(C);
+          (!d.value || d.value[a.optionValue] !== x) && await B(x);
         } else
-          c.value = null;
+          d.value = null;
       },
       { immediate: !0 }
     );
-    const b = q(!1), $ = q([]), x = q(!1), j = q(""), U = q(1), N = q(15), K = q(0), B = q(null), X = q(null), oe = q(0);
+    const k = U(!1), D = U([]), P = U(!1), W = U(""), j = U(1), z = U(15), H = U(0), O = U(null), Z = U(null), le = U(0);
     let ae = null;
-    const _ = q([]), f = H(() => {
-      var C;
-      return (C = a.crudFields) != null && C.length ? !0 : _.value.length > 0;
-    }), P = H(() => a.canCreate ?? f.value), u = H(() => a.canEdit ?? f.value), n = H(() => a.canDelete ?? f.value), p = H(() => u.value || n.value), d = H(() => {
-      var C;
-      return (C = a.crudFields) != null && C.length ? a.crudFields : Ta(_.value);
-    }), E = H(() => {
-      var C, S;
-      return (C = a.crudColumns) != null && C.length ? a.crudColumns : (S = a.columns) != null && S.length ? a.columns.map((te) => ({
+    const X = U([]), J = q(() => {
+      var x;
+      return (x = a.crudFields) != null && x.length ? !0 : X.value.length > 0;
+    }), Q = q(() => a.canCreate ?? J.value), f = q(() => a.canEdit ?? J.value), h = q(() => a.canDelete ?? J.value), c = q(() => f.value || h.value), i = q(() => {
+      var x;
+      return (x = a.crudFields) != null && x.length ? a.crudFields : Ta(X.value);
+    }), p = q(() => {
+      var x, V;
+      return (x = a.crudColumns) != null && x.length ? a.crudColumns : (V = a.columns) != null && V.length ? a.columns.map((te) => ({
         field: te.field,
         header: te.header,
         sortable: !0
-      })) : _.value.length ? Na(_.value) : [
+      })) : X.value.length ? Na(X.value) : [
         { field: a.optionLabel, header: a.optionLabel, sortable: !0 }
       ];
     });
-    async function R() {
-      var C, S, te;
-      x.value = !0;
+    async function o() {
+      var x, V, te;
+      P.value = !0;
       try {
-        const z = {
-          page: U.value,
-          page_size: N.value,
+        const L = {
+          page: j.value,
+          page_size: z.value,
           ...a.endpointParams
         };
-        j.value && (z.search = j.value), X.value && oe.value !== 0 && (z.ordering = oe.value === -1 ? `-${X.value}` : X.value);
-        const ce = await i.list(a.endpoint, z);
-        $.value = ce.data, K.value = ce.rows, (C = ce.extras) != null && C.fields && !((S = a.columns) != null && S.length) && !((te = a.crudFields) != null && te.length) && (_.value = ce.extras.fields);
+        W.value && (L.search = W.value), Z.value && le.value !== 0 && (L.ordering = le.value === -1 ? `-${Z.value}` : Z.value);
+        const pe = await r.list(a.endpoint, L);
+        D.value = pe.data, H.value = pe.rows, (x = pe.extras) != null && x.fields && !((V = a.columns) != null && V.length) && !((te = a.crudFields) != null && te.length) && (X.value = pe.extras.fields);
       } catch {
-        $.value = [], K.value = 0;
+        D.value = [], H.value = 0;
       } finally {
-        x.value = !1;
+        P.value = !1;
       }
     }
-    function G() {
-      a.disabled || (j.value = "", U.value = 1, X.value = null, oe.value = 0, B.value = null, b.value = !0, R());
+    function w() {
+      a.disabled || (W.value = "", j.value = 1, Z.value = null, le.value = 0, O.value = null, k.value = !0, o());
     }
-    function se(C) {
-      U.value = C.page + 1, N.value = C.rows, R();
+    function ne(x) {
+      j.value = x.page + 1, z.value = x.rows, o();
     }
-    function pe(C) {
-      X.value = C.sortField ?? null, oe.value = C.sortOrder ?? 0, U.value = 1, R();
+    function me(x) {
+      Z.value = x.sortField ?? null, le.value = x.sortOrder ?? 0, j.value = 1, o();
     }
-    function Ne() {
-      B.value && (c.value = B.value, o("update:modelValue", B.value), b.value = !1);
+    function we() {
+      O.value && (d.value = O.value, n("update:modelValue", O.value), k.value = !1);
     }
-    function Ye(C) {
-      c.value = C.data, o("update:modelValue", C.data), b.value = !1;
+    function se(x) {
+      d.value = x.data, n("update:modelValue", x.data), k.value = !1;
     }
-    nt(j, () => {
+    nt(W, () => {
       ae && clearTimeout(ae), ae = setTimeout(() => {
-        U.value = 1, R();
+        j.value = 1, o();
       }, 300);
     });
-    const we = q(!1), ke = q(!1), ue = q(null), ve = ge({}), Ce = H(() => ue.value !== null), Ee = H(
-      () => Ce.value ? "Editar Registro" : "Novo Registro"
+    const ie = U(!1), he = U(!1), re = U(null), ye = be({}), Se = q(() => re.value !== null), Ae = q(
+      () => Se.value ? "Editar Registro" : "Novo Registro"
     );
-    function De() {
-      const C = {};
-      for (const S of d.value)
-        C[S.field] = S.defaultValue !== void 0 ? typeof S.defaultValue == "function" ? S.defaultValue() : S.defaultValue : null;
-      return C;
+    function Pe() {
+      const x = {};
+      for (const V of i.value)
+        x[V.field] = V.defaultValue !== void 0 ? typeof V.defaultValue == "function" ? V.defaultValue() : V.defaultValue : null;
+      return x;
     }
-    function Me() {
-      const C = De();
-      for (const S of Object.keys(ve))
-        delete ve[S];
-      for (const [S, te] of Object.entries(C))
-        ve[S] = te;
+    function Re() {
+      const x = Pe();
+      for (const V of Object.keys(ye))
+        delete ye[V];
+      for (const [V, te] of Object.entries(x))
+        ye[V] = te;
     }
-    function ye() {
-      ue.value = null, Me(), we.value = !0;
+    function Ce() {
+      re.value = null, Re(), ie.value = !0;
     }
-    function xe(C) {
-      ue.value = C;
-      for (const S of d.value)
-        ve[S.field] = C[S.field] !== void 0 ? C[S.field] : null;
-      we.value = !0;
+    function Ve(x) {
+      re.value = x;
+      for (const V of i.value)
+        ye[V.field] = x[V.field] !== void 0 ? x[V.field] : null;
+      ie.value = !0;
     }
-    function Fe(C, S) {
-      ve[C] = S;
+    function Ie(x, V) {
+      ye[x] = V;
     }
-    async function Ae() {
-      ke.value = !0;
+    async function Te() {
+      he.value = !0;
       try {
-        const C = { ...ve };
-        for (const te of d.value) {
-          const z = C[te.field];
-          if (te.type === "fk" && z !== null && typeof z == "object") {
-            const ce = te.optionValue || "id";
-            C[te.field] = z[ce] ?? z;
+        const x = { ...ye };
+        for (const te of i.value) {
+          const L = x[te.field];
+          if (te.type === "fk" && L !== null && typeof L == "object") {
+            const pe = te.optionValue || "id";
+            x[te.field] = L[pe] ?? L;
           }
         }
-        let S;
-        if (Ce.value && ue.value) {
-          const te = ue.value[a.optionValue];
-          S = await i.update(
+        let V;
+        if (Se.value && re.value) {
+          const te = re.value[a.optionValue];
+          V = await r.update(
             a.endpoint,
             te,
-            C
+            x
           );
-          const z = $.value.findIndex((ce) => ce[a.optionValue] === te);
-          z !== -1 && ($.value[z] = S.data), r.success("Registro atualizado com sucesso");
+          const L = D.value.findIndex((pe) => pe[a.optionValue] === te);
+          L !== -1 && (D.value[L] = V.data), u.success("Registro atualizado com sucesso");
         } else
-          S = await i.create(a.endpoint, C), $.value.unshift(S.data), K.value++, r.success("Registro criado com sucesso");
-        we.value = !1, ue.value = null, B.value = S.data;
-      } catch (C) {
-        r.error(Ke(C, "Erro ao salvar registro"));
+          V = await r.create(a.endpoint, x), D.value.unshift(V.data), H.value++, u.success("Registro criado com sucesso");
+        ie.value = !1, re.value = null, O.value = V.data;
+      } catch (x) {
+        u.error(Ke(x, "Erro ao salvar registro"));
       } finally {
-        ke.value = !1;
+        he.value = !1;
       }
     }
-    function Re(C) {
-      y(async () => {
+    function Le(x) {
+      b(async () => {
         try {
-          const S = C[a.optionValue];
-          await i.delete(a.endpoint, S);
-          const te = $.value.findIndex((z) => z[a.optionValue] === S);
-          te !== -1 && ($.value.splice(te, 1), K.value--), c.value && c.value[a.optionValue] === S && (c.value = null, o("update:modelValue", null)), B.value && B.value[a.optionValue] === S && (B.value = null), r.success("Registro excluído com sucesso");
-        } catch (S) {
-          r.error(Ke(S, "Erro ao excluir registro"));
+          const V = x[a.optionValue];
+          await r.delete(a.endpoint, V);
+          const te = D.value.findIndex((L) => L[a.optionValue] === V);
+          te !== -1 && (D.value.splice(te, 1), H.value--), d.value && d.value[a.optionValue] === V && (d.value = null, n("update:modelValue", null)), O.value && O.value[a.optionValue] === V && (O.value = null), u.success("Registro excluído com sucesso");
+        } catch (V) {
+          u.error(Ke(V, "Erro ao excluir registro"));
         }
       });
     }
-    return (C, S) => {
+    return (x, V) => {
       const te = kt("tooltip");
-      return s(), m(le, null, [
-        h("div", Ba, [
-          O(v(xt), {
-            "model-value": c.value,
-            suggestions: k.value,
+      return s(), m(ue, null, [
+        y("div", Ba, [
+          Y(v(xt), {
+            "model-value": d.value,
+            suggestions: C.value,
             "option-label": e.optionLabel,
             placeholder: e.placeholder,
             disabled: e.disabled,
             "force-selection": e.forceSelection,
             loading: F.value,
             fluid: "",
-            onComplete: J,
-            onItemSelect: Z,
+            onComplete: K,
+            onItemSelect: G,
             onClear: g
           }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "force-selection", "loading"]),
-          fe((s(), m("button", {
+          ve((s(), m("button", {
             type: "button",
             disabled: e.disabled,
             class: "w-autocompletefk-trigger",
-            onClick: G
-          }, [...S[6] || (S[6] = [
-            h("i", { class: "pi pi-search" }, null, -1)
+            onClick: w
+          }, [...V[6] || (V[6] = [
+            y("i", { class: "pi pi-search" }, null, -1)
           ])], 8, Wa)), [
             [
               te,
@@ -919,116 +919,116 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
             ]
           ])
         ]),
-        O(v(Dt), {
-          visible: b.value,
-          "onUpdate:visible": S[4] || (S[4] = (z) => b.value = z),
+        Y(v(Dt), {
+          visible: k.value,
+          "onUpdate:visible": V[4] || (V[4] = (L) => k.value = L),
           header: e.dialogHeader || "Pesquisar",
           style: { width: "80vw" },
           modal: "",
           draggable: !1,
           class: "w-autocompletefk-dialog"
         }, {
-          footer: ne(() => [
-            h("div", Ha, [
-              O(v(ee), {
+          footer: oe(() => [
+            y("div", Ha, [
+              Y(v(ee), {
                 label: "Cancelar",
                 severity: "secondary",
                 text: "",
-                onClick: S[3] || (S[3] = (z) => b.value = !1)
+                onClick: V[3] || (V[3] = (L) => k.value = !1)
               }),
-              O(v(ee), {
+              Y(v(ee), {
                 label: "Selecionar",
                 icon: "pi pi-check",
-                disabled: !B.value,
-                onClick: Ne
+                disabled: !O.value,
+                onClick: we
               }, null, 8, ["disabled"])
             ])
           ]),
-          default: ne(() => [
-            h("div", ja, [
-              O(v(qe), { class: "w-autocompletefk-toolbar-search" }, {
-                default: ne(() => [
-                  O(v(He), { class: "pi pi-search" }),
-                  O(v(me), {
-                    modelValue: j.value,
-                    "onUpdate:modelValue": S[0] || (S[0] = (z) => j.value = z),
+          default: oe(() => [
+            y("div", ja, [
+              Y(v(qe), { class: "w-autocompletefk-toolbar-search" }, {
+                default: oe(() => [
+                  Y(v(He), { class: "pi pi-search" }),
+                  Y(v(ge), {
+                    modelValue: W.value,
+                    "onUpdate:modelValue": V[0] || (V[0] = (L) => W.value = L),
                     placeholder: "Pesquisar...",
                     class: "w-full"
                   }, null, 8, ["modelValue"])
                 ]),
                 _: 1
               }),
-              h("div", Ua, [
-                P.value ? (s(), A(v(ee), {
+              y("div", Ua, [
+                Q.value ? (s(), A(v(ee), {
                   key: 0,
                   label: "Novo",
                   icon: "pi pi-plus",
                   size: "small",
-                  onClick: ye
-                })) : w("", !0)
+                  onClick: Ce
+                })) : $("", !0)
               ])
             ]),
-            O(v($t), {
-              selection: B.value,
-              "onUpdate:selection": S[1] || (S[1] = (z) => B.value = z),
-              value: $.value,
-              loading: x.value,
+            Y(v($t), {
+              selection: O.value,
+              "onUpdate:selection": V[1] || (V[1] = (L) => O.value = L),
+              value: D.value,
+              loading: P.value,
               paginator: "",
               lazy: "",
               "striped-rows": "",
               "removable-sort": "",
               size: "small",
-              rows: N.value,
-              "total-records": K.value,
-              "sort-field": X.value ?? void 0,
-              "sort-order": oe.value,
+              rows: z.value,
+              "total-records": H.value,
+              "sort-field": Z.value ?? void 0,
+              "sort-order": le.value,
               "selection-mode": "single",
               "data-key": e.optionValue,
-              onPage: se,
-              onSort: S[2] || (S[2] = (z) => pe({ sortField: z.sortField, sortOrder: z.sortOrder })),
-              onRowDblclick: Ye
+              onPage: ne,
+              onSort: V[2] || (V[2] = (L) => me({ sortField: L.sortField, sortOrder: L.sortOrder })),
+              onRowDblclick: se
             }, {
-              empty: ne(() => [...S[7] || (S[7] = [
-                h("div", { class: "w-autocompletefk-empty" }, "Nenhum registro encontrado", -1)
+              empty: oe(() => [...V[7] || (V[7] = [
+                y("div", { class: "w-autocompletefk-empty" }, "Nenhum registro encontrado", -1)
               ])]),
-              default: ne(() => [
-                O(v(ze), {
+              default: oe(() => [
+                Y(v(Oe), {
                   "selection-mode": "single",
                   "header-style": "width: 3rem"
                 }),
-                (s(!0), m(le, null, ie(E.value, (z) => (s(), A(v(ze), {
-                  key: z.field,
-                  field: z.field,
-                  header: z.header,
-                  sortable: z.sortable ?? !0,
-                  style: je(z.style)
+                (s(!0), m(ue, null, ce(p.value, (L) => (s(), A(v(Oe), {
+                  key: L.field,
+                  field: L.field,
+                  header: L.header,
+                  sortable: L.sortable ?? !0,
+                  style: $e(L.style)
                 }, {
-                  body: ne(({ data: ce }) => [
-                    z.type ? (s(), A(Qe, {
+                  body: oe(({ data: pe }) => [
+                    L.type ? (s(), A(Qe, {
                       key: 0,
-                      column: z,
-                      value: ce[z.field],
-                      "row-data": ce
-                    }, null, 8, ["column", "value", "row-data"])) : (s(), m(le, { key: 1 }, [
-                      Pe(T(ce[z.field]), 1)
+                      column: L,
+                      value: pe[L.field],
+                      "row-data": pe
+                    }, null, 8, ["column", "value", "row-data"])) : (s(), m(ue, { key: 1 }, [
+                      Ee(I(pe[L.field]), 1)
                     ], 64))
                   ]),
                   _: 2
                 }, 1032, ["field", "header", "sortable", "style"]))), 128)),
-                p.value ? (s(), A(v(ze), {
+                c.value ? (s(), A(v(Oe), {
                   key: 0,
                   header: "",
                   style: { width: "6rem" }
                 }, {
-                  body: ne(({ data: z }) => [
-                    h("div", qa, [
-                      u.value ? fe((s(), A(v(ee), {
+                  body: oe(({ data: L }) => [
+                    y("div", qa, [
+                      f.value ? ve((s(), A(v(ee), {
                         key: 0,
                         icon: "pi pi-pencil",
                         text: "",
                         rounded: "",
                         size: "small",
-                        onClick: (ce) => xe(z)
+                        onClick: (pe) => Ve(L)
                       }, null, 8, ["onClick"])), [
                         [
                           te,
@@ -1036,15 +1036,15 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : w("", !0),
-                      n.value ? fe((s(), A(v(ee), {
+                      ]) : $("", !0),
+                      h.value ? ve((s(), A(v(ee), {
                         key: 1,
                         icon: "pi pi-trash",
                         text: "",
                         rounded: "",
                         size: "small",
                         severity: "danger",
-                        onClick: (ce) => Re(z)
+                        onClick: (pe) => Le(L)
                       }, null, 8, ["onClick"])), [
                         [
                           te,
@@ -1052,36 +1052,36 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : w("", !0)
+                      ]) : $("", !0)
                     ])
                   ]),
                   _: 1
-                })) : w("", !0)
+                })) : $("", !0)
               ]),
               _: 1
             }, 8, ["selection", "value", "loading", "rows", "total-records", "sort-field", "sort-order", "data-key"])
           ]),
           _: 1
         }, 8, ["visible", "header"]),
-        f.value ? (s(), A(ut, {
+        J.value ? (s(), A(ut, {
           key: 0,
-          visible: we.value,
-          title: Ee.value,
-          fields: d.value,
-          "form-data": ve,
-          "is-editing": Ce.value,
-          saving: ke.value,
+          visible: ie.value,
+          title: Ae.value,
+          fields: i.value,
+          "form-data": ye,
+          "is-editing": Se.value,
+          saving: he.value,
           width: e.dialogWidth,
-          "onUpdate:visible": S[5] || (S[5] = (z) => {
-            we.value = z, z || (ue.value = null);
+          "onUpdate:visible": V[5] || (V[5] = (L) => {
+            ie.value = L, L || (re.value = null);
           }),
-          "onUpdate:field": Fe,
-          onSave: Ae
-        }, null, 8, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])) : w("", !0)
+          "onUpdate:field": Ie,
+          onSave: Te
+        }, null, 8, ["visible", "title", "fields", "form-data", "is-editing", "saving", "width"])) : $("", !0)
       ], 64);
     };
   }
-}), zt = /* @__PURE__ */ de({
+}), zt = /* @__PURE__ */ fe({
   __name: "WMoneyInput",
   props: {
     modelValue: {},
@@ -1096,62 +1096,62 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
   },
   emits: ["update:modelValue"],
   setup(e, { emit: t }) {
-    const a = e, o = t, l = H(
+    const a = e, n = t, l = q(
       () => a.prefix ?? (a.currency ? "R$" : void 0)
-    ), i = H(() => !!l.value || !!a.suffix), r = H(() => {
-      const c = a.modelValue;
-      return c == null || Number.isNaN(c) ? "" : new Intl.NumberFormat(a.locale, {
+    ), r = q(() => !!l.value || !!a.suffix), u = q(() => {
+      const d = a.modelValue;
+      return d == null || Number.isNaN(d) ? "" : new Intl.NumberFormat(a.locale, {
         minimumFractionDigits: a.decimals,
         maximumFractionDigits: a.decimals
-      }).format(c);
+      }).format(d);
     });
-    function y(c) {
-      const k = c.target.value.replace(/\D/g, "");
-      if (!k) {
-        o("update:modelValue", null);
+    function b(d) {
+      const C = d.target.value.replace(/\D/g, "");
+      if (!C) {
+        n("update:modelValue", null);
         return;
       }
-      const F = Number(k) / Math.pow(10, a.decimals);
-      o("update:modelValue", F);
+      const F = Number(C) / Math.pow(10, a.decimals);
+      n("update:modelValue", F);
     }
-    return (c, k) => i.value ? (s(), A(v(oa), {
+    return (d, C) => r.value ? (s(), A(v(oa), {
       key: 0,
       class: "w-money-input"
     }, {
-      default: ne(() => [
+      default: oe(() => [
         l.value ? (s(), A(v(mt), { key: 0 }, {
-          default: ne(() => [
-            Pe(T(l.value), 1)
+          default: oe(() => [
+            Ee(I(l.value), 1)
           ]),
           _: 1
-        })) : w("", !0),
-        O(v(me), {
-          "model-value": r.value,
+        })) : $("", !0),
+        Y(v(ge), {
+          "model-value": u.value,
           inputmode: "numeric",
           class: "w-money-input__field",
           placeholder: e.placeholder,
           disabled: e.disabled,
           invalid: e.invalid,
-          onInput: y
+          onInput: b
         }, null, 8, ["model-value", "placeholder", "disabled", "invalid"]),
         e.suffix ? (s(), A(v(mt), { key: 1 }, {
-          default: ne(() => [
-            Pe(T(e.suffix), 1)
+          default: oe(() => [
+            Ee(I(e.suffix), 1)
           ]),
           _: 1
-        })) : w("", !0)
+        })) : $("", !0)
       ]),
       _: 1
-    })) : (s(), A(v(me), {
+    })) : (s(), A(v(ge), {
       key: 1,
-      "model-value": r.value,
+      "model-value": u.value,
       inputmode: "numeric",
       fluid: "",
       class: "w-money-input__field",
       placeholder: e.placeholder,
       disabled: e.disabled,
       invalid: e.invalid,
-      onInput: y
+      onInput: b
     }, null, 8, ["model-value", "placeholder", "disabled", "invalid"]));
   }
 }), Ka = { class: "w-transfer__pane" }, Ga = { class: "w-transfer__head" }, Ja = { class: "w-transfer__count" }, Za = { class: "w-transfer__list" }, Xa = ["onClick"], Qa = {
@@ -1160,7 +1160,7 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
 }, _a = { class: "w-transfer__controls" }, en = { class: "w-transfer__pane" }, tn = { class: "w-transfer__head" }, an = { class: "w-transfer__count" }, nn = { class: "w-transfer__list" }, on = ["onClick"], ln = {
   key: 0,
   class: "w-transfer__empty"
-}, Nt = /* @__PURE__ */ de({
+}, Nt = /* @__PURE__ */ fe({
   __name: "WTransferList",
   props: {
     source: {},
@@ -1172,85 +1172,85 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
   },
   emits: ["update:selected"],
   setup(e, { emit: t }) {
-    const a = e, o = t, l = q(""), i = q(""), r = H(() => new Set(a.selected)), y = H(() => a.searchFields ?? [a.optionLabel]);
-    function c(b) {
-      return b[a.trackBy];
+    const a = e, n = t, l = U(""), r = U(""), u = q(() => new Set(a.selected)), b = q(() => a.searchFields ?? [a.optionLabel]);
+    function d(k) {
+      return k[a.trackBy];
     }
-    function k(b) {
-      return String(b[a.optionLabel] ?? "");
+    function C(k) {
+      return String(k[a.optionLabel] ?? "");
     }
-    function F(b, $) {
-      if (!$) return !0;
-      const x = $.toLowerCase();
-      return y.value.some(
-        (j) => String(b[j] ?? "").toLowerCase().includes(x)
+    function F(k, D) {
+      if (!D) return !0;
+      const P = D.toLowerCase();
+      return b.value.some(
+        (W) => String(k[W] ?? "").toLowerCase().includes(P)
       );
     }
-    const V = H(
+    const M = q(
       () => a.source.filter(
-        (b) => !r.value.has(c(b)) && F(b, l.value)
+        (k) => !u.value.has(d(k)) && F(k, l.value)
       )
-    ), W = H(
+    ), B = q(
       () => a.source.filter(
-        (b) => r.value.has(c(b)) && F(b, i.value)
+        (k) => u.value.has(d(k)) && F(k, r.value)
       )
     );
-    function L(b) {
-      a.disabled || o("update:selected", [...a.selected, c(b)]);
+    function T(k) {
+      a.disabled || n("update:selected", [...a.selected, d(k)]);
     }
-    function J(b) {
+    function K(k) {
       if (a.disabled) return;
-      const $ = c(b);
-      o("update:selected", a.selected.filter((x) => x !== $));
+      const D = d(k);
+      n("update:selected", a.selected.filter((P) => P !== D));
     }
-    function Z() {
-      a.disabled || o("update:selected", a.source.map(c));
+    function G() {
+      a.disabled || n("update:selected", a.source.map(d));
     }
     function g() {
-      a.disabled || o("update:selected", []);
+      a.disabled || n("update:selected", []);
     }
-    return (b, $) => (s(), m("div", {
-      class: re(["w-transfer", { "w-transfer--disabled": e.disabled }])
+    return (k, D) => (s(), m("div", {
+      class: de(["w-transfer", { "w-transfer--disabled": e.disabled }])
     }, [
-      h("div", Ka, [
-        h("div", Ga, [
-          $[2] || ($[2] = h("span", { class: "w-transfer__title" }, "Disponíveis", -1)),
-          h("span", Ja, T(V.value.length), 1)
+      y("div", Ka, [
+        y("div", Ga, [
+          D[2] || (D[2] = y("span", { class: "w-transfer__title" }, "Disponíveis", -1)),
+          y("span", Ja, I(M.value.length), 1)
         ]),
-        O(v(qe), { class: "w-transfer__search" }, {
-          default: ne(() => [
-            O(v(He), { class: "pi pi-search" }),
-            O(v(me), {
+        Y(v(qe), { class: "w-transfer__search" }, {
+          default: oe(() => [
+            Y(v(He), { class: "pi pi-search" }),
+            Y(v(ge), {
               modelValue: l.value,
-              "onUpdate:modelValue": $[0] || ($[0] = (x) => l.value = x),
+              "onUpdate:modelValue": D[0] || (D[0] = (P) => l.value = P),
               placeholder: "Buscar...",
               fluid: ""
             }, null, 8, ["modelValue"])
           ]),
           _: 1
         }),
-        h("ul", Za, [
-          (s(!0), m(le, null, ie(V.value, (x) => (s(), m("li", {
-            key: `a-${c(x)}`,
+        y("ul", Za, [
+          (s(!0), m(ue, null, ce(M.value, (P) => (s(), m("li", {
+            key: `a-${d(P)}`,
             class: "w-transfer__item",
-            onClick: (j) => L(x)
+            onClick: (W) => T(P)
           }, [
-            h("span", null, T(k(x)), 1),
-            $[3] || ($[3] = h("i", { class: "pi pi-angle-right" }, null, -1))
+            y("span", null, I(C(P)), 1),
+            D[3] || (D[3] = y("i", { class: "pi pi-angle-right" }, null, -1))
           ], 8, Xa))), 128)),
-          V.value.length ? w("", !0) : (s(), m("li", Qa, "Nenhum item"))
+          M.value.length ? $("", !0) : (s(), m("li", Qa, "Nenhum item"))
         ])
       ]),
-      h("div", _a, [
-        O(v(ee), {
+      y("div", _a, [
+        Y(v(ee), {
           type: "button",
           icon: "pi pi-angle-double-right",
           text: "",
           rounded: "",
-          disabled: e.disabled || !V.value.length,
-          onClick: Z
+          disabled: e.disabled || !M.value.length,
+          onClick: G
         }, null, 8, ["disabled"]),
-        O(v(ee), {
+        Y(v(ee), {
           type: "button",
           icon: "pi pi-angle-double-left",
           text: "",
@@ -1259,33 +1259,33 @@ const Ba = { class: "w-autocompletefk" }, Wa = ["disabled"], ja = { class: "w-au
           onClick: g
         }, null, 8, ["disabled"])
       ]),
-      h("div", en, [
-        h("div", tn, [
-          $[4] || ($[4] = h("span", { class: "w-transfer__title" }, "Selecionados", -1)),
-          h("span", an, T(W.value.length), 1)
+      y("div", en, [
+        y("div", tn, [
+          D[4] || (D[4] = y("span", { class: "w-transfer__title" }, "Selecionados", -1)),
+          y("span", an, I(B.value.length), 1)
         ]),
-        O(v(qe), { class: "w-transfer__search" }, {
-          default: ne(() => [
-            O(v(He), { class: "pi pi-search" }),
-            O(v(me), {
-              modelValue: i.value,
-              "onUpdate:modelValue": $[1] || ($[1] = (x) => i.value = x),
+        Y(v(qe), { class: "w-transfer__search" }, {
+          default: oe(() => [
+            Y(v(He), { class: "pi pi-search" }),
+            Y(v(ge), {
+              modelValue: r.value,
+              "onUpdate:modelValue": D[1] || (D[1] = (P) => r.value = P),
               placeholder: "Buscar...",
               fluid: ""
             }, null, 8, ["modelValue"])
           ]),
           _: 1
         }),
-        h("ul", nn, [
-          (s(!0), m(le, null, ie(W.value, (x) => (s(), m("li", {
-            key: `s-${c(x)}`,
+        y("ul", nn, [
+          (s(!0), m(ue, null, ce(B.value, (P) => (s(), m("li", {
+            key: `s-${d(P)}`,
             class: "w-transfer__item",
-            onClick: (j) => J(x)
+            onClick: (W) => K(P)
           }, [
-            $[5] || ($[5] = h("i", { class: "pi pi-angle-left" }, null, -1)),
-            h("span", null, T(k(x)), 1)
+            D[5] || (D[5] = y("i", { class: "pi pi-angle-left" }, null, -1)),
+            y("span", null, I(C(P)), 1)
           ], 8, on))), 128)),
-          W.value.length ? w("", !0) : (s(), m("li", ln, "Nenhum item"))
+          B.value.length ? $("", !0) : (s(), m("li", ln, "Nenhum item"))
         ])
       ])
     ], 2));
@@ -1297,8 +1297,8 @@ async function sn(e) {
   try {
     const a = await fetch(`https://viacep.com.br/ws/${t}/json/`);
     if (!a.ok) return null;
-    const o = await a.json();
-    return o.erro ? null : o;
+    const n = await a.json();
+    return n.erro ? null : n;
   } catch {
     return null;
   }
@@ -1309,424 +1309,447 @@ const rn = { class: "w-crud-form" }, un = {
 }, dn = { class: "w-crud-form-group-title" }, cn = {
   key: 0,
   class: "w-crud-form-group-desc"
-}, fn = { class: "w-crud-form-fields" }, mn = {
-  key: 0,
-  class: "w-crud-form-switch"
-}, pn = { class: "w-crud-form-switch-label" }, vn = {
-  key: 1,
-  class: "w-crud-form-col-full"
-}, gn = { class: "w-crud-form-label" }, hn = {
+}, fn = { class: "w-crud-form-switch-label" }, mn = { class: "w-crud-form-label" }, pn = {
   key: 0,
   class: "w-crud-form-required"
-}, yn = { class: "w-crud-form-color-row" }, bn = {
-  key: 2,
-  class: "w-crud-form-col-full"
-}, wn = { class: "w-crud-form-label" }, kn = ["accept", "disabled", "onChange"], $n = {
-  key: 3,
-  class: "w-crud-form-col-full"
-}, Cn = { class: "w-crud-form-label" }, Dn = {
+}, vn = { class: "w-crud-form-color-row" }, gn = { class: "w-crud-form-label" }, hn = ["accept", "disabled", "onChange"], yn = { class: "w-crud-form-label" }, bn = {
   key: 0,
   class: "w-crud-form-required"
-}, xn = { class: "w-crud-form-label" }, Sn = {
+}, wn = { class: "w-crud-form-label" }, kn = {
   key: 0,
   class: "w-crud-form-required"
-}, Pn = {
+}, $n = {
   key: 1,
   class: "pi pi-spin pi-spinner w-crud-form-cep-spinner"
-}, Vn = {
+}, Cn = {
   key: 16,
   class: "w-crud-form-cep-error"
-}, En = {
+}, Dn = {
   key: 17,
   class: "w-crud-form-error"
-}, Mn = /* @__PURE__ */ de({
+}, xn = /* @__PURE__ */ fe({
   __name: "WFormRenderer",
   props: {
     fields: {},
     formData: {},
     isEditing: { type: Boolean },
-    disabled: { type: Boolean, default: !1 }
+    disabled: { type: Boolean, default: !1 },
+    columns: { default: 2 }
   },
   emits: ["update:field"],
   setup(e, { expose: t, emit: a }) {
-    const o = e, l = a, i = ge({}), r = ge({}), y = ge({}), c = ge({});
-    function k(f, P) {
-      const u = P.target.value, n = u.replace(/\D/g, "");
-      l("update:field", f.field, u), y[f.field] = null, c[f.field] && (clearTimeout(c[f.field]), c[f.field] = null), n.length === 8 && (c[f.field] = setTimeout(async () => {
-        r[f.field] = !0, y[f.field] = null;
+    const n = e, l = a, r = be({}), u = be({}), b = be({}), d = be({});
+    function C(c, i) {
+      const p = i.target.value, o = p.replace(/\D/g, "");
+      l("update:field", c.field, p), b[c.field] = null, d[c.field] && (clearTimeout(d[c.field]), d[c.field] = null), o.length === 8 && (d[c.field] = setTimeout(async () => {
+        u[c.field] = !0, b[c.field] = null;
         try {
-          const p = await sn(n);
-          if (!p)
-            y[f.field] = "CEP não encontrado. Preencha os campos manualmente.";
+          const w = await sn(o);
+          if (!w)
+            b[c.field] = "CEP não encontrado. Preencha os campos manualmente.";
           else {
-            const d = f.cepFields || {}, E = Object.keys(d);
-            for (const R of E) {
-              const G = d[R];
-              if (!G) continue;
-              const se = o.formData[G];
-              (se == null || se === "") && l("update:field", G, p[R] ?? "");
+            const ne = c.cepFields || {}, me = Object.keys(ne);
+            for (const we of me) {
+              const se = ne[we];
+              if (!se) continue;
+              const ie = n.formData[se];
+              (ie == null || ie === "") && l("update:field", se, w[we] ?? "");
             }
           }
         } finally {
-          r[f.field] = !1;
+          u[c.field] = !1;
         }
       }, 400));
     }
-    const F = H(
-      () => o.fields.filter((f) => f.visible === void 0 || f.visible === !0 ? !0 : typeof f.visible == "function" ? f.visible(o.formData, o.isEditing) : f.visible)
+    const F = q(
+      () => n.fields.filter((c) => c.visible === void 0 || c.visible === !0 ? !0 : typeof c.visible == "function" ? c.visible(n.formData, n.isEditing) : c.visible)
     );
-    function V(f) {
-      return o.disabled || f.disabledOnEdit && o.isEditing ? !0 : typeof f.disabled == "function" ? f.disabled(o.formData, o.isEditing) : !!f.disabled;
+    function M(c) {
+      return n.disabled || c.disabledOnEdit && n.isEditing ? !0 : typeof c.disabled == "function" ? c.disabled(n.formData, n.isEditing) : !!c.disabled;
     }
-    function W(f) {
-      return Ut(f) ? f.value : f;
+    function B(c) {
+      return Ut(c) ? c.value : c;
     }
-    const L = H(() => {
-      const f = o.isEditing ? "edit" : "create", P = o.fields.find(
-        (n) => n.autofocus === !0 || n.autofocus === f
+    const T = q(() => {
+      const c = n.isEditing ? "edit" : "create", i = n.fields.find(
+        (o) => o.autofocus === !0 || o.autofocus === c
       );
-      if (P) return P.field;
-      const u = F.value.find((n) => !(n.type === "switch" || n.type === "fk" || n.type === "select" || n.type === "image" || n.disabled === !0 || n.disabledOnEdit && o.isEditing));
-      return (u == null ? void 0 : u.field) ?? null;
+      if (i) return i.field;
+      const p = F.value.find((o) => !(o.type === "switch" || o.type === "fk" || o.type === "select" || o.type === "image" || o.disabled === !0 || o.disabledOnEdit && n.isEditing));
+      return (p == null ? void 0 : p.field) ?? null;
     });
-    function J(f) {
-      return f.field === L.value;
+    function K(c) {
+      return c.field === T.value;
     }
-    function Z(f) {
-      if (f)
-        return f.replace(/9/g, "#").replace(/a/g, "S").replace(/\*/g, "X");
+    function G(c) {
+      if (c)
+        return c.replace(/9/g, "#").replace(/a/g, "S").replace(/\*/g, "X");
     }
-    function g(f) {
-      if (!f) return "";
-      const P = String(f).replace(/\D/g, "").slice(0, 14);
-      return P.length <= 11 ? P.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2") : P.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+    function g(c) {
+      if (!c) return "";
+      const i = String(c).replace(/\D/g, "").slice(0, 14);
+      return i.length <= 11 ? i.replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d{1,2})$/, "$1-$2") : i.replace(/(\d{2})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1.$2").replace(/(\d{3})(\d)/, "$1/$2").replace(/(\d{4})(\d{1,2})$/, "$1-$2");
     }
-    function b(f, P) {
-      const u = P.target.value.replace(/\D/g, "").slice(0, 14);
-      l("update:field", f, u);
+    function k(c, i) {
+      const p = i.target.value.replace(/\D/g, "").slice(0, 14);
+      l("update:field", c, p);
     }
-    const $ = ge({});
-    function x(f) {
-      const P = o.formData[f.field];
-      if (P == null) return null;
-      const u = f.optionValue || "value";
-      return (W(f.options) || []).find(
-        (p) => p[u] === P
+    const D = be({});
+    function P(c) {
+      const i = n.formData[c.field];
+      if (i == null) return null;
+      const p = c.optionValue || "value";
+      return (B(c.options) || []).find(
+        (w) => w[p] === i
       ) ?? null;
     }
-    function j(f) {
-      return $[f.field] || [];
+    function W(c) {
+      return D[c.field] || [];
     }
-    function U(f, P) {
-      const u = (P.query || "").toLowerCase(), n = W(f.options) || [], p = f.optionLabel || "label";
-      $[f.field] = n.filter(
-        (d) => String(d[p] || "").toLowerCase().includes(u)
+    function j(c, i) {
+      const p = (i.query || "").toLowerCase(), o = B(c.options) || [], w = c.optionLabel || "label";
+      D[c.field] = o.filter(
+        (ne) => String(ne[w] || "").toLowerCase().includes(p)
       );
     }
-    function N(f, P) {
-      const u = f.optionValue || "value";
-      l("update:field", f.field, P.value[u]);
+    function z(c, i) {
+      const p = c.optionValue || "value";
+      l("update:field", c.field, i.value[p]);
     }
-    function K(f) {
-      const P = o.formData[f.field];
-      return P ? String(P).replace("#", "") : "FFFFFF";
+    function H(c) {
+      const i = n.formData[c.field];
+      return i ? String(i).replace("#", "") : "FFFFFF";
     }
-    function B(f, P) {
-      l("update:field", f.field, `#${P}`);
+    function O(c, i) {
+      l("update:field", c.field, `#${i}`);
     }
-    function X(f) {
-      if (typeof f.validate == "function") {
-        const P = f.validate(o.formData[f.field]);
-        i[f.field] = P || null;
+    function Z(c) {
+      if (typeof c.validate == "function") {
+        const i = c.validate(n.formData[c.field]);
+        r[c.field] = i || null;
       }
     }
-    function oe() {
-      const f = [];
-      for (const P of o.fields)
-        if (typeof P.validate == "function") {
-          const u = P.validate(o.formData[P.field]);
-          i[P.field] = u || null, u && f.push(u);
+    function le() {
+      const c = [];
+      for (const i of n.fields)
+        if (typeof i.validate == "function") {
+          const p = i.validate(n.formData[i.field]);
+          r[i.field] = p || null, p && c.push(p);
         }
-      return f;
+      return c;
     }
     function ae() {
-      Object.keys(i).forEach((f) => delete i[f]);
+      Object.keys(r).forEach((c) => delete r[c]);
     }
-    const _ = H(() => {
-      var n, p, d, E;
-      const f = /* @__PURE__ */ new Map(), P = [], u = /* @__PURE__ */ new Map();
-      for (const R of F.value) {
-        const G = ((n = R.fieldGroup) == null ? void 0 : n.id) ?? "__default__";
-        f.has(G) || (f.set(G, {
-          id: G,
-          title: (p = R.fieldGroup) == null ? void 0 : p.title,
-          description: (d = R.fieldGroup) == null ? void 0 : d.description,
+    function X(c) {
+      return Math.max(1, Math.floor(c.columns ?? n.columns));
+    }
+    function J(c, i) {
+      const p = c.colSpan;
+      return p == null || p === "full" ? i : p === 0.5 ? Math.max(1, Math.round(i / 2)) : Math.min(Math.max(1, Math.floor(p)), i);
+    }
+    function Q(c, i) {
+      return { "--w-col-span": J(c, X(i)) };
+    }
+    function f(c, i) {
+      return J(c, X(i)) === X(i) ? "w-crud-form-col-full" : "w-crud-form-col-half";
+    }
+    const h = q(() => {
+      var o, w, ne, me, we;
+      const c = /* @__PURE__ */ new Map(), i = [], p = /* @__PURE__ */ new Map();
+      for (const se of F.value) {
+        const ie = ((o = se.fieldGroup) == null ? void 0 : o.id) ?? "__default__";
+        c.has(ie) || (c.set(ie, {
+          id: ie,
+          title: (w = se.fieldGroup) == null ? void 0 : w.title,
+          description: (ne = se.fieldGroup) == null ? void 0 : ne.description,
+          columns: (me = se.fieldGroup) == null ? void 0 : me.columns,
           fields: []
-        }), P.push(G), ((E = R.fieldGroup) == null ? void 0 : E.order) != null && u.set(G, R.fieldGroup.order)), f.get(G).fields.push(R);
+        }), i.push(ie), ((we = se.fieldGroup) == null ? void 0 : we.order) != null && p.set(ie, se.fieldGroup.order)), c.get(ie).fields.push(se);
       }
-      return P.slice().sort((R, G) => {
-        const se = u.get(R), pe = u.get(G);
-        return se != null && pe != null ? se - pe : se != null ? -1 : pe != null ? 1 : P.indexOf(R) - P.indexOf(G);
-      }).map((R) => f.get(R));
+      return i.slice().sort((se, ie) => {
+        const he = p.get(se), re = p.get(ie);
+        return he != null && re != null ? he - re : he != null ? -1 : re != null ? 1 : i.indexOf(se) - i.indexOf(ie);
+      }).map((se) => c.get(se));
     });
-    return t({ validateAll: oe, clearErrors: ae }), (f, P) => (s(), m("div", rn, [
-      (s(!0), m(le, null, ie(_.value, (u) => (s(), m("div", {
-        key: u.id,
+    return t({ validateAll: le, clearErrors: ae }), (c, i) => (s(), m("div", rn, [
+      (s(!0), m(ue, null, ce(h.value, (p) => (s(), m("div", {
+        key: p.id,
         class: "w-crud-form-group"
       }, [
-        u.title ? (s(), m("div", un, [
-          h("h3", dn, T(u.title), 1),
-          u.description ? (s(), m("p", cn, T(u.description), 1)) : w("", !0)
-        ])) : w("", !0),
-        h("div", fn, [
-          (s(!0), m(le, null, ie(u.fields, (n) => Y(f.$slots, `field-${n.field}`, {
-            key: n.field,
-            field: n,
+        p.title ? (s(), m("div", un, [
+          y("h3", dn, I(p.title), 1),
+          p.description ? (s(), m("p", cn, I(p.description), 1)) : $("", !0)
+        ])) : $("", !0),
+        y("div", {
+          class: "w-crud-form-fields",
+          style: $e({ "--w-form-cols": X(p) })
+        }, [
+          (s(!0), m(ue, null, ce(p.fields, (o) => N(c.$slots, `field-${o.field}`, {
+            key: o.field,
+            field: o,
             formData: e.formData,
             isEditing: e.isEditing,
-            setFormField: (p, d) => l("update:field", p, d)
+            setFormField: (w, ne) => l("update:field", w, ne)
           }, () => [
-            n.type === "switch" ? (s(), m("div", mn, [
-              O(v(_t), {
-                "model-value": e.formData[n.field],
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
+            o.type === "switch" ? (s(), m("div", {
+              key: 0,
+              class: "w-crud-form-switch",
+              style: $e(Q(o, p))
+            }, [
+              Y(v(_t), {
+                "model-value": e.formData[o.field],
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
               }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
-              h("label", pn, T(n.switchLabel || n.label), 1)
-            ])) : n.type === "color" ? (s(), m("div", vn, [
-              h("label", gn, [
-                Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", hn, "*")) : w("", !0)
+              y("label", fn, I(o.switchLabel || o.label), 1)
+            ], 4)) : o.type === "color" ? (s(), m("div", {
+              key: 1,
+              class: de(f(o, p)),
+              style: $e(Q(o, p))
+            }, [
+              y("label", mn, [
+                Ee(I(o.label) + " ", 1),
+                o.required ? (s(), m("span", pn, "*")) : $("", !0)
               ]),
-              h("div", yn, [
-                O(v(ea), {
-                  "model-value": K(n),
-                  disabled: V(n),
-                  "onUpdate:modelValue": (p) => B(n, p)
+              y("div", vn, [
+                Y(v(ea), {
+                  "model-value": H(o),
+                  disabled: M(o),
+                  "onUpdate:modelValue": (w) => O(o, w)
                 }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"]),
-                O(v(me), {
-                  "model-value": e.formData[n.field],
+                Y(v(ge), {
+                  "model-value": e.formData[o.field],
                   class: "w-28",
                   maxlength: "7",
                   placeholder: "#000000",
-                  disabled: V(n),
-                  "onUpdate:modelValue": (p) => l("update:field", n.field, p)
+                  disabled: M(o),
+                  "onUpdate:modelValue": (w) => l("update:field", o.field, w)
                 }, null, 8, ["model-value", "disabled", "onUpdate:modelValue"])
               ])
-            ])) : n.type === "image" ? (s(), m("div", bn, [
-              h("label", wn, T(n.label), 1),
-              Y(f.$slots, `image-${n.field}`, {
-                field: n,
+            ], 6)) : o.type === "image" ? (s(), m("div", {
+              key: 2,
+              class: de(f(o, p)),
+              style: $e(Q(o, p))
+            }, [
+              y("label", gn, I(o.label), 1),
+              N(c.$slots, `image-${o.field}`, {
+                field: o,
                 formData: e.formData
               }, () => [
-                h("input", {
+                y("input", {
                   type: "file",
-                  accept: n.accept || "image/*",
-                  disabled: V(n),
-                  onChange: (p) => {
-                    var E;
-                    const d = ((E = p.target.files) == null ? void 0 : E[0]) ?? null;
-                    l("update:field", n.field, d);
+                  accept: o.accept || "image/*",
+                  disabled: M(o),
+                  onChange: (w) => {
+                    var me;
+                    const ne = ((me = w.target.files) == null ? void 0 : me[0]) ?? null;
+                    l("update:field", o.field, ne);
                   }
-                }, null, 40, kn)
+                }, null, 40, hn)
               ])
-            ])) : n.type === "transfer" ? (s(), m("div", $n, [
-              h("label", Cn, [
-                Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", Dn, "*")) : w("", !0)
-              ]),
-              O(Nt, {
-                source: W(n.options) || [],
-                selected: e.formData[n.field] || [],
-                "track-by": n.optionValue || "id",
-                "option-label": n.optionLabel || "nome",
-                "search-fields": n.searchFields,
-                disabled: V(n),
-                "onUpdate:selected": (p) => l("update:field", n.field, p)
-              }, null, 8, ["source", "selected", "track-by", "option-label", "search-fields", "disabled", "onUpdate:selected"])
-            ])) : (s(), m("div", {
-              key: 4,
-              class: re(n.colSpan === 0.5 ? "w-crud-form-col-half" : "w-crud-form-col-full")
+            ], 6)) : o.type === "transfer" ? (s(), m("div", {
+              key: 3,
+              class: de(f(o, p)),
+              style: $e(Q(o, p))
             }, [
-              h("label", xn, [
-                Pe(T(n.label) + " ", 1),
-                n.required ? (s(), m("span", Sn, "*")) : w("", !0),
-                r[n.field] ? (s(), m("i", Pn)) : w("", !0)
+              y("label", yn, [
+                Ee(I(o.label) + " ", 1),
+                o.required ? (s(), m("span", bn, "*")) : $("", !0)
               ]),
-              (!n.type || n.type === "text") && n.mask ? fe((s(), A(v(me), {
+              Y(Nt, {
+                source: B(o.options) || [],
+                selected: e.formData[o.field] || [],
+                "track-by": o.optionValue || "id",
+                "option-label": o.optionLabel || "nome",
+                "search-fields": o.searchFields,
+                disabled: M(o),
+                "onUpdate:selected": (w) => l("update:field", o.field, w)
+              }, null, 8, ["source", "selected", "track-by", "option-label", "search-fields", "disabled", "onUpdate:selected"])
+            ], 6)) : (s(), m("div", {
+              key: 4,
+              class: de(f(o, p)),
+              style: $e(Q(o, p))
+            }, [
+              y("label", wn, [
+                Ee(I(o.label) + " ", 1),
+                o.required ? (s(), m("span", kn, "*")) : $("", !0),
+                u[o.field] ? (s(), m("i", $n)) : $("", !0)
+              ]),
+              (!o.type || o.type === "text") && o.mask ? ve((s(), A(v(ge), {
                 key: 0,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                autofocus: J(n) || void 0,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
+                autofocus: K(o) || void 0,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
               }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])), [
-                [v(at), { mask: Z(n.mask) }]
-              ]) : !n.type || n.type === "text" ? (s(), A(v(me), {
+                [v(at), { mask: G(o.mask) }]
+              ]) : !o.type || o.type === "text" ? (s(), A(v(ge), {
                 key: 1,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                autofocus: J(n) || void 0,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "email" ? (s(), A(v(me), {
+                autofocus: K(o) || void 0,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "email" ? (s(), A(v(ge), {
                 key: 2,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 type: "email",
                 fluid: "",
-                autofocus: J(n) || void 0,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "password" ? (s(), A(v(ta), {
+                autofocus: K(o) || void 0,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "password" ? (s(), A(v(ta), {
                 key: 3,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
                 "toggle-mask": "",
-                feedback: n.feedback !== !1,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "feedback", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "number" ? (s(), A(v(ct), {
+                feedback: o.feedback !== !1,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "feedback", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "number" ? (s(), A(v(ct), {
                 key: 4,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
                 locale: "pt-BR",
-                min: n.min,
-                max: n.max,
-                "min-fraction-digits": n.minFractionDigits,
-                "max-fraction-digits": n.maxFractionDigits,
-                suffix: n.suffix,
-                prefix: n.prefix,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "min", "max", "min-fraction-digits", "max-fraction-digits", "suffix", "prefix", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "currency" && n.fillFromRight ? (s(), A(zt, {
+                min: o.min,
+                max: o.max,
+                "min-fraction-digits": o.minFractionDigits,
+                "max-fraction-digits": o.maxFractionDigits,
+                suffix: o.suffix,
+                prefix: o.prefix,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "min", "max", "min-fraction-digits", "max-fraction-digits", "suffix", "prefix", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "currency" && o.fillFromRight ? (s(), A(zt, {
                 key: 5,
-                "model-value": e.formData[n.field],
-                decimals: n.decimals ?? 2,
+                "model-value": e.formData[o.field],
+                decimals: o.decimals ?? 2,
                 currency: "",
-                prefix: n.prefix,
-                suffix: n.suffix,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "decimals", "prefix", "suffix", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "currency" ? (s(), A(v(ct), {
+                prefix: o.prefix,
+                suffix: o.suffix,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "decimals", "prefix", "suffix", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "currency" ? (s(), A(v(ct), {
                 key: 6,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
                 mode: "currency",
                 currency: "BRL",
                 locale: "pt-BR",
-                min: n.min,
-                max: n.max,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "select" ? (s(), A(v(Qt), {
+                min: o.min,
+                max: o.max,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "select" ? (s(), A(v(Qt), {
                 key: 7,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                options: W(n.options),
-                "option-label": n.optionLabel || "label",
-                "option-value": n.optionValue || "value",
-                "show-clear": n.showClear !== !1,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "options", "option-label", "option-value", "show-clear", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "autocomplete" ? (s(), A(v(xt), {
+                options: B(o.options),
+                "option-label": o.optionLabel || "label",
+                "option-value": o.optionValue || "value",
+                "show-clear": o.showClear !== !1,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "options", "option-label", "option-value", "show-clear", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "autocomplete" ? (s(), A(v(xt), {
                 key: 8,
-                "model-value": x(n),
+                "model-value": P(o),
                 fluid: "",
-                suggestions: j(n),
-                "option-label": n.optionLabel || "label",
-                placeholder: n.placeholder,
-                disabled: V(n),
-                onComplete: (p) => U(n, p),
-                onItemSelect: (p) => N(n, p),
-                onClear: (p) => l("update:field", n.field, null)
-              }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "onComplete", "onItemSelect", "onClear"])) : n.type === "fk" ? (s(), A(Lt, {
+                suggestions: W(o),
+                "option-label": o.optionLabel || "label",
+                placeholder: o.placeholder,
+                disabled: M(o),
+                onComplete: (w) => j(o, w),
+                onItemSelect: (w) => z(o, w),
+                onClear: (w) => l("update:field", o.field, null)
+              }, null, 8, ["model-value", "suggestions", "option-label", "placeholder", "disabled", "onComplete", "onItemSelect", "onClear"])) : o.type === "fk" ? (s(), A(Lt, {
                 key: 9,
-                "model-value": e.formData[n.field],
-                endpoint: n.endpoint,
-                "endpoint-params": n.endpointParams,
-                "option-label": n.optionLabel || "nome",
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "show-clear": n.showClear !== !1,
-                "dialog-header": n.label,
-                "crud-fields": n.crudFields,
-                "crud-columns": n.crudColumns,
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "endpoint", "endpoint-params", "option-label", "placeholder", "disabled", "show-clear", "dialog-header", "crud-fields", "crud-columns", "onUpdate:modelValue"])) : n.type === "date" ? (s(), A(v(ft), {
+                "model-value": e.formData[o.field],
+                endpoint: o.endpoint,
+                "endpoint-params": o.endpointParams,
+                "option-label": o.optionLabel || "nome",
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "show-clear": o.showClear !== !1,
+                "dialog-header": o.label,
+                "crud-fields": o.crudFields,
+                "crud-columns": o.crudColumns,
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "endpoint", "endpoint-params", "option-label", "placeholder", "disabled", "show-clear", "dialog-header", "crud-fields", "crud-columns", "onUpdate:modelValue"])) : o.type === "date" ? (s(), A(v(ft), {
                 key: 10,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                "date-format": n.dateFormat || "dd/mm/yy",
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "datetime" ? (s(), A(v(ft), {
+                "date-format": o.dateFormat || "dd/mm/yy",
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "datetime" ? (s(), A(v(ft), {
                 key: 11,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
                 "show-time": "",
-                "hour-format": n.hourFormat || "24",
-                "date-format": n.dateFormat || "dd/mm/yy",
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "hour-format", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : n.type === "cpf_cnpj" ? (s(), A(v(me), {
+                "hour-format": o.hourFormat || "24",
+                "date-format": o.dateFormat || "dd/mm/yy",
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "hour-format", "date-format", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "cpf_cnpj" ? (s(), A(v(ge), {
                 key: 12,
-                "model-value": g(e.formData[n.field]),
+                "model-value": g(e.formData[o.field]),
                 fluid: "",
                 maxlength: "18",
-                placeholder: n.placeholder || "000.000.000-00",
-                disabled: V(n),
-                invalid: !!i[n.field],
-                onInput: (p) => b(n.field, p),
-                onBlur: (p) => X(n)
-              }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput", "onBlur"])) : n.type === "mask" ? fe((s(), A(v(me), {
+                placeholder: o.placeholder || "000.000.000-00",
+                disabled: M(o),
+                invalid: !!r[o.field],
+                onInput: (w) => k(o.field, w),
+                onBlur: (w) => Z(o)
+              }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput", "onBlur"])) : o.type === "mask" ? ve((s(), A(v(ge), {
                 key: 13,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                placeholder: n.placeholder,
-                disabled: V(n),
-                invalid: !!i[n.field],
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p),
-                onBlur: (p) => X(n)
+                placeholder: o.placeholder,
+                disabled: M(o),
+                invalid: !!r[o.field],
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w),
+                onBlur: (w) => Z(o)
               }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onUpdate:modelValue", "onBlur"])), [
-                [v(at), { mask: Z(n.mask) }]
-              ]) : n.type === "cep" ? fe((s(), A(v(me), {
+                [v(at), { mask: G(o.mask) }]
+              ]) : o.type === "cep" ? ve((s(), A(v(ge), {
                 key: 14,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                placeholder: n.placeholder || "00000-000",
-                disabled: V(n),
-                invalid: !!y[n.field],
-                onInput: (p) => k(n, p)
+                placeholder: o.placeholder || "00000-000",
+                disabled: M(o),
+                invalid: !!b[o.field],
+                onInput: (w) => C(o, w)
               }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput"])), [
                 [v(at), { mask: "#####-###" }]
-              ]) : n.type === "textarea" ? (s(), A(v(Xt), {
+              ]) : o.type === "textarea" ? (s(), A(v(Xt), {
                 key: 15,
-                "model-value": e.formData[n.field],
+                "model-value": e.formData[o.field],
                 fluid: "",
-                autofocus: J(n) || void 0,
-                rows: n.rows || 3,
-                placeholder: n.placeholder,
-                disabled: V(n),
-                "onUpdate:modelValue": (p) => l("update:field", n.field, p)
-              }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : w("", !0),
-              y[n.field] ? (s(), m("small", Vn, T(y[n.field]), 1)) : i[n.field] ? (s(), m("small", En, T(i[n.field]), 1)) : w("", !0)
-            ], 2))
+                autofocus: K(o) || void 0,
+                rows: o.rows || 3,
+                placeholder: o.placeholder,
+                disabled: M(o),
+                "onUpdate:modelValue": (w) => l("update:field", o.field, w)
+              }, null, 8, ["model-value", "autofocus", "rows", "placeholder", "disabled", "onUpdate:modelValue"])) : $("", !0),
+              b[o.field] ? (s(), m("small", Cn, I(b[o.field]), 1)) : r[o.field] ? (s(), m("small", Dn, I(r[o.field]), 1)) : $("", !0)
+            ], 6))
           ])), 128))
-        ])
+        ], 4)
       ]))), 128))
     ]));
   }
-}), Fn = { class: "w-crud-form-footer" }, ut = /* @__PURE__ */ de({
+}), Sn = { class: "w-crud-form-footer" }, ut = /* @__PURE__ */ fe({
   __name: "WCrudFormDialog",
   props: {
     visible: { type: Boolean },
@@ -1736,69 +1759,71 @@ const rn = { class: "w-crud-form" }, un = {
     isEditing: { type: Boolean },
     saving: { type: Boolean },
     disabled: { type: Boolean, default: !1 },
-    width: { default: "480px" }
+    width: { default: "480px" },
+    formColumns: { default: void 0 }
   },
   emits: ["update:visible", "update:field", "save"],
   setup(e, { emit: t }) {
-    const a = e, o = t, l = q(null);
-    function i() {
-      l.value ? l.value.validateAll().length === 0 && o("save") : o("save");
+    const a = e, n = t, l = U(null);
+    function r() {
+      l.value ? l.value.validateAll().length === 0 && n("save") : n("save");
     }
     return nt(
       () => a.visible,
-      (r) => {
-        r && l.value && l.value.clearErrors();
+      (u) => {
+        u && l.value && l.value.clearErrors();
       }
-    ), (r, y) => (s(), A(v(Dt), {
+    ), (u, b) => (s(), A(v(Dt), {
       visible: e.visible,
       header: e.title,
-      style: je({ width: e.width }),
+      style: $e({ width: e.width }),
       modal: "",
       draggable: !1,
       class: "w-crud-form-dialog",
-      "onUpdate:visible": y[2] || (y[2] = (c) => o("update:visible", c))
+      "onUpdate:visible": b[2] || (b[2] = (d) => n("update:visible", d))
     }, {
-      default: ne(() => [
-        h("form", {
+      default: oe(() => [
+        y("form", {
           class: "w-crud-form",
-          onSubmit: qt(i, ["prevent"])
+          onSubmit: qt(r, ["prevent"])
         }, [
-          O(Mn, {
+          Y(xn, {
             ref_key: "rendererRef",
             ref: l,
             fields: e.fields,
             "form-data": e.formData,
             "is-editing": e.isEditing,
             disabled: e.disabled,
-            "onUpdate:field": y[0] || (y[0] = (c, k) => o("update:field", c, k))
+            columns: e.formColumns,
+            "onUpdate:field": b[0] || (b[0] = (d, C) => n("update:field", d, C))
           }, ot({ _: 2 }, [
-            ie(e.fields, (c) => ({
-              name: `field-${c.field}`,
-              fn: ne((k) => [
-                Y(r.$slots, `field-${c.field}`, lt(st(k)))
+            ce(e.fields, (d) => ({
+              name: `field-${d.field}`,
+              fn: oe((C) => [
+                N(u.$slots, `field-${d.field}`, lt(st(C)))
               ])
             })),
-            ie(e.fields.filter((c) => c.type === "image"), (c) => ({
-              name: `image-${c.field}`,
-              fn: ne((k) => [
-                Y(r.$slots, `image-${c.field}`, lt(st(k)))
+            ce(e.fields.filter((d) => d.type === "image"), (d) => ({
+              name: `image-${d.field}`,
+              fn: oe((C) => [
+                N(u.$slots, `image-${d.field}`, lt(st(C)))
               ])
             }))
-          ]), 1032, ["fields", "form-data", "is-editing", "disabled"]),
-          h("div", Fn, [
-            Y(r.$slots, "footer", {
+          ]), 1032, ["fields", "form-data", "is-editing", "disabled", "columns"]),
+          y("div", Sn, [
+            N(u.$slots, "footer", {
               saving: e.saving,
               disabled: e.disabled
             }, () => [
-              O(v(ee), {
+              Y(v(ee), {
                 type: "button",
                 label: e.disabled ? "Fechar" : "Cancelar",
                 severity: "secondary",
                 text: "",
                 disabled: e.saving,
-                onClick: y[1] || (y[1] = (c) => o("update:visible", !1))
+                onClick: b[1] || (b[1] = (d) => n("update:visible", !1))
               }, null, 8, ["label", "disabled"]),
-              e.disabled ? w("", !0) : (s(), A(v(ee), {
+              e.disabled ? $("", !0) : (s(), A(v(ee), {
                 key: 0,
                 type: "submit",
                 label: e.isEditing ? "Atualizar" : "Salvar",
@@ -1813,7 +1838,7 @@ const rn = { class: "w-crud-form" }, un = {
     }, 8, ["visible", "header", "style"]));
   }
 });
-function An(e, t) {
+function Pn(e, t) {
   const a = t[e.field];
   return e.format ? e.format(a, t) : a == null ? "" : typeof a == "boolean" ? a ? "Sim" : "Não" : String(a);
 }
@@ -1821,60 +1846,60 @@ function bt(e, t) {
   return e.includes('"') || e.includes(t) || e.includes(`
 `) || e.includes("\r") ? `"${e.replace(/"/g, '""')}"` : e;
 }
-function Rn(e, t, a = {}) {
-  const o = a.separator ?? ";", l = t.map((r) => bt(r.header, o)).join(o), i = e.map(
-    (r) => t.map((y) => bt(An(y, r), o)).join(o)
+function Vn(e, t, a = {}) {
+  const n = a.separator ?? ";", l = t.map((u) => bt(u.header, n)).join(n), r = e.map(
+    (u) => t.map((b) => bt(Pn(b, u), n)).join(n)
   );
-  return "\uFEFF" + [l, ...i].join(`\r
+  return "\uFEFF" + [l, ...r].join(`\r
 `);
 }
-function In(e, t = "export.csv") {
-  const a = new Blob([e], { type: "text/csv;charset=utf-8;" }), o = URL.createObjectURL(a), l = document.createElement("a");
-  l.href = o, l.download = t, document.body.appendChild(l), l.click(), document.body.removeChild(l), URL.revokeObjectURL(o);
+function Mn(e, t = "export.csv") {
+  const a = new Blob([e], { type: "text/csv;charset=utf-8;" }), n = URL.createObjectURL(a), l = document.createElement("a");
+  l.href = n, l.download = t, document.body.appendChild(l), l.click(), document.body.removeChild(l), URL.revokeObjectURL(n);
 }
-const Tn = { class: "w-crud" }, Ln = {
+const En = { class: "w-crud" }, Fn = {
   key: 0,
   class: "w-crud-header"
-}, zn = { class: "w-crud-header-content" }, Nn = { class: "w-crud-title" }, Yn = {
+}, An = { class: "w-crud-header-content" }, Rn = { class: "w-crud-title" }, In = {
   key: 0,
   class: "w-crud-subtitle"
-}, On = { class: "w-crud-header-actions" }, Bn = {
+}, Tn = { class: "w-crud-header-actions" }, Ln = {
   key: 0,
   class: "w-crud-kpis"
-}, Wn = { class: "w-crud-kpi-content" }, jn = { class: "w-crud-kpi-label" }, Un = { class: "w-crud-kpi-value" }, qn = { class: "w-crud-content-main" }, Hn = {
+}, zn = { class: "w-crud-kpi-content" }, Nn = { class: "w-crud-kpi-label" }, Yn = { class: "w-crud-kpi-value" }, On = { class: "w-crud-content-main" }, Bn = {
   key: 0,
   class: "w-crud-table"
-}, Kn = { class: "w-crud-toolbar" }, Gn = { class: "w-crud-toolbar-start" }, Jn = { class: "w-crud-toolbar-end" }, Zn = {
+}, Wn = { class: "w-crud-toolbar" }, jn = { class: "w-crud-toolbar-start" }, Un = { class: "w-crud-toolbar-end" }, qn = {
   key: 1,
   class: "w-crud-view-toggle"
-}, Xn = { class: "w-crud-actions" }, Qn = {
+}, Hn = { class: "w-crud-actions" }, Kn = {
   key: 1,
   class: "w-crud-cards-wrap"
-}, _n = { class: "w-crud-toolbar w-crud-toolbar--standalone" }, eo = { class: "w-crud-toolbar-start" }, to = { class: "w-crud-toolbar-end" }, ao = {
+}, Gn = { class: "w-crud-toolbar w-crud-toolbar--standalone" }, Jn = { class: "w-crud-toolbar-start" }, Zn = { class: "w-crud-toolbar-end" }, Xn = {
   key: 1,
   class: "w-crud-view-toggle"
-}, no = {
+}, Qn = {
   key: 0,
   class: "w-crud-cards-loading"
-}, oo = {
+}, _n = {
   key: 2,
   class: "w-crud-cards"
-}, lo = ["onClick", "onDblclick", "onContextmenu"], so = { class: "w-crud-card-body" }, io = {
+}, eo = ["onClick", "onDblclick", "onContextmenu"], to = { class: "w-crud-card-body" }, ao = {
   key: 0,
   class: "w-crud-card-label"
-}, ro = { class: "w-crud-card-value" }, uo = {
+}, no = { class: "w-crud-card-value" }, oo = {
   key: 0,
   class: "w-crud-card-actions"
-}, co = {
+}, lo = {
   key: 0,
   class: "w-crud-rail"
-}, fo = {
+}, so = {
   key: 1,
   class: "w-crud-rail-sep"
-}, mo = {
+}, io = {
   key: 2,
   class: "w-crud-rail-sep"
-}, po = /* @__PURE__ */ de({
+}, ro = /* @__PURE__ */ fe({
   __name: "WCrudView",
   props: {
     crud: {},
@@ -1883,6 +1908,7 @@ const Tn = { class: "w-crud" }, Ln = {
     showSearch: { type: Boolean, default: !0 },
     showHeader: { type: Boolean, default: !0 },
     dialogWidth: { default: "480px" },
+    formColumns: {},
     autoInit: { type: Boolean, default: !0 },
     showKpi: { type: Boolean, default: !1 },
     kpiIcon: { default: "pi pi-list" },
@@ -1902,166 +1928,166 @@ const Tn = { class: "w-crud" }, Ln = {
   },
   emits: ["row-expand", "row-collapse", "print"],
   setup(e, { emit: t }) {
-    const a = e, o = t, l = Ht(), { formatNumber: i } = rt(), r = q({}), y = q(a.defaultView);
-    function c(u) {
-      return y.value === u;
+    const a = e, n = t, l = Ht(), { formatNumber: r } = rt(), u = U({}), b = U(a.defaultView);
+    function d(f) {
+      return b.value === f;
     }
-    function k(u) {
-      y.value = u;
+    function C(f) {
+      b.value = f;
     }
-    const F = H(
+    const F = q(
       () => (a.crud.pagination.page - 1) * a.crud.pagination.pageSize
-    ), V = H(
-      () => a.crud.config.columns.filter((u) => u.visible !== !1).map((u) => u.type === "number" && !u.align ? { ...u, align: "right" } : u.type === "currency" && !u.align ? { ...u, align: "right" } : u)
+    ), M = q(
+      () => a.crud.config.columns.filter((f) => f.visible !== !1).map((f) => f.type === "number" && !f.align ? { ...f, align: "right" } : f.type === "currency" && !f.align ? { ...f, align: "right" } : f)
     );
-    function W(u) {
-      if (u.align === "right") return "text-right";
-      if (u.align === "center") return "text-center";
+    function B(f) {
+      if (f.align === "right") return "text-right";
+      if (f.align === "center") return "text-center";
     }
-    const L = H(() => V.value.slice(0, a.cardFields)), J = H(() => {
-      const u = [];
-      return a.crud.config.canEdit !== !1 && u.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), a.crud.config.canCreate !== !1 && u.push({
+    const T = q(() => M.value.slice(0, a.cardFields)), K = q(() => {
+      const f = [];
+      return a.crud.config.canEdit !== !1 && f.push({ action: "edit", icon: "pi pi-pencil", tooltip: "Editar" }), a.crud.config.canCreate !== !1 && f.push({
         action: "duplicate",
         icon: "pi pi-copy",
         tooltip: "Duplicar",
         severity: "info"
-      }), a.crud.config.canDelete !== !1 && u.push({
+      }), a.crud.config.canDelete !== !1 && f.push({
         action: "delete",
         icon: "pi pi-trash",
         tooltip: "Excluir",
         severity: "danger"
-      }), u;
-    }), Z = H(
-      () => a.crud.config.rowActions ?? J.value
-    ), g = H(() => Z.value.length > 0 || !!l["row-actions"]);
-    function b(u, n) {
-      if (u.handler) {
-        u.handler(n);
+      }), f;
+    }), G = q(
+      () => a.crud.config.rowActions ?? K.value
+    ), g = q(() => G.value.length > 0 || !!l["row-actions"]);
+    function k(f, h) {
+      if (f.handler) {
+        f.handler(h);
         return;
       }
-      u.action === "edit" ? a.crud.openEditDialog(n) : u.action === "view" ? a.crud.openViewDialog(n) : u.action === "duplicate" ? a.crud.openDuplicateDialog(n) : u.action === "delete" && a.crud.confirmDelete(n);
+      f.action === "edit" ? a.crud.openEditDialog(h) : f.action === "view" ? a.crud.openViewDialog(h) : f.action === "duplicate" ? a.crud.openDuplicateDialog(h) : f.action === "delete" && a.crud.confirmDelete(h);
     }
-    function $(u, n) {
-      return u.visible ? u.visible(n) : !0;
+    function D(f, h) {
+      return f.visible ? f.visible(h) : !0;
     }
-    function x(u, n) {
-      return u.disabled ? u.disabled(n) : !1;
+    function P(f, h) {
+      return f.disabled ? f.disabled(h) : !1;
     }
-    const j = H(() => {
-      const u = [];
-      return a.showKpi && u.push({
+    const W = q(() => {
+      const f = [];
+      return a.showKpi && f.push({
         icon: a.kpiIcon,
         label: a.kpiLabel,
-        value: i(a.crud.pagination.rows, 0)
-      }), u.push(...a.extraKpis), u;
+        value: r(a.crud.pagination.rows, 0)
+      }), f.push(...a.extraKpis), f;
     });
-    H(() => a.crud.config.labels ?? {});
-    const U = H(() => a.crud.config.canCreate !== !1), N = q(null), K = q(null);
-    function B(u) {
-      N.value = u;
+    q(() => a.crud.config.labels ?? {});
+    const j = q(() => a.crud.config.canCreate !== !1), z = U(null), H = U(null);
+    function O(f) {
+      z.value = f;
     }
-    function X(u) {
-      var n;
-      a.contextMenu && (N.value = u.data, (n = K.value) == null || n.show(u.originalEvent));
+    function Z(f) {
+      var h;
+      a.contextMenu && (z.value = f.data, (h = H.value) == null || h.show(f.originalEvent));
     }
-    function oe(u, n) {
-      var p;
-      a.contextMenu && (u.preventDefault(), N.value = n, (p = K.value) == null || p.show(u));
+    function le(f, h) {
+      var c;
+      a.contextMenu && (f.preventDefault(), z.value = h, (c = H.value) == null || c.show(f));
     }
-    const ae = H(() => {
-      const u = N.value;
-      if (!u) return [];
-      const n = [
+    const ae = q(() => {
+      const f = z.value;
+      if (!f) return [];
+      const h = [
         {
           label: "Ver detalhes",
           icon: "pi pi-eye",
-          command: () => a.crud.openViewDialog(u)
+          command: () => a.crud.openViewDialog(f)
         }
       ];
-      for (const p of Z.value)
-        $(p, u) && n.push({
-          label: p.tooltip ?? p.action,
-          icon: p.icon,
-          class: p.severity === "danger" ? "w-crud-ctx-danger" : void 0,
-          disabled: x(p, u),
-          command: () => b(p, u)
+      for (const c of G.value)
+        D(c, f) && h.push({
+          label: c.tooltip ?? c.action,
+          icon: c.icon,
+          class: c.severity === "danger" ? "w-crud-ctx-danger" : void 0,
+          disabled: P(c, f),
+          command: () => k(c, f)
         });
-      return a.showPrint && n.push({
+      return a.showPrint && h.push({
         label: "Imprimir",
         icon: "pi pi-print",
-        command: () => o("print", u)
-      }), a.exportCsv && (n.push({ separator: !0 }), n.push({
+        command: () => n("print", f)
+      }), a.exportCsv && (h.push({ separator: !0 }), h.push({
         label: a.csvScope === "all" ? "Exportar tudo (CSV)" : "Exportar página (CSV)",
         icon: "pi pi-download",
-        command: () => P()
-      })), n;
+        command: () => Q()
+      })), h;
     });
-    function _() {
-      N.value && o("print", N.value);
+    function X() {
+      z.value && n("print", z.value);
     }
-    const f = q(!1);
-    async function P() {
-      if (!f.value) {
-        f.value = !0;
+    const J = U(!1);
+    async function Q() {
+      if (!J.value) {
+        J.value = !0;
         try {
-          const u = a.csvScope === "page" ? a.crud.items.value : await a.crud.fetchAll(a.csvPageSize), n = Rn(u, V.value);
-          In(n, a.csvFilename);
+          const f = a.csvScope === "page" ? a.crud.items.value : await a.crud.fetchAll(a.csvPageSize), h = Vn(f, M.value);
+          Mn(h, a.csvFilename);
         } finally {
-          f.value = !1;
+          J.value = !1;
         }
       }
     }
     return Kt(() => {
       a.autoInit && a.crud.init();
-    }), (u, n) => {
-      const p = kt("tooltip");
-      return s(), m("div", Tn, [
-        e.showHeader ? (s(), m("div", Ln, [
-          h("div", zn, [
-            h("h1", Nn, T(e.title), 1),
-            e.subtitle ? (s(), m("p", Yn, T(e.subtitle), 1)) : w("", !0)
+    }), (f, h) => {
+      const c = kt("tooltip");
+      return s(), m("div", En, [
+        e.showHeader ? (s(), m("div", Fn, [
+          y("div", An, [
+            y("h1", Rn, I(e.title), 1),
+            e.subtitle ? (s(), m("p", In, I(e.subtitle), 1)) : $("", !0)
           ]),
-          h("div", On, [
-            Y(u.$slots, "header-actions"),
-            U.value && !e.actionRail ? (s(), A(v(ee), {
+          y("div", Tn, [
+            N(f.$slots, "header-actions"),
+            j.value && !e.actionRail ? (s(), A(v(ee), {
               key: 0,
               label: "Novo",
               icon: "pi pi-plus",
-              onClick: n[0] || (n[0] = (d) => e.crud.openCreateDialog())
-            })) : w("", !0)
+              onClick: h[0] || (h[0] = (i) => e.crud.openCreateDialog())
+            })) : $("", !0)
           ])
-        ])) : w("", !0),
-        Y(u.$slots, "before-table", {}, () => [
-          j.value.length ? (s(), m("div", Bn, [
-            (s(!0), m(le, null, ie(j.value, (d, E) => (s(), m("div", {
-              key: E,
+        ])) : $("", !0),
+        N(f.$slots, "before-table", {}, () => [
+          W.value.length ? (s(), m("div", Ln, [
+            (s(!0), m(ue, null, ce(W.value, (i, p) => (s(), m("div", {
+              key: p,
               class: "w-crud-kpi"
             }, [
-              h("div", {
-                class: re(["w-crud-kpi-icon", d.severity ? `w-crud-kpi-icon--${d.severity}` : ""])
+              y("div", {
+                class: de(["w-crud-kpi-icon", i.severity ? `w-crud-kpi-icon--${i.severity}` : ""])
               }, [
-                h("i", {
-                  class: re([d.icon]),
-                  style: je(d.color ? `color: ${d.color}` : "")
+                y("i", {
+                  class: de([i.icon]),
+                  style: $e(i.color ? `color: ${i.color}` : "")
                 }, null, 6)
               ], 2),
-              h("div", Wn, [
-                h("div", jn, T(d.label), 1),
-                h("div", Un, T(d.value), 1)
+              y("div", zn, [
+                y("div", Nn, I(i.label), 1),
+                y("div", Yn, I(i.value), 1)
               ])
             ]))), 128))
-          ])) : w("", !0)
+          ])) : $("", !0)
         ]),
-        h("div", {
-          class: re(["w-crud-content", { "w-crud-content--rail": e.actionRail }])
+        y("div", {
+          class: de(["w-crud-content", { "w-crud-content--rail": e.actionRail }])
         }, [
-          h("div", qn, [
-            y.value === "table" ? (s(), m("div", Hn, [
-              O(v($t), {
+          y("div", On, [
+            b.value === "table" ? (s(), m("div", Bn, [
+              Y(v($t), {
                 value: e.crud.items.value,
                 loading: e.crud.loading.value,
-                "expanded-rows": r.value,
-                "onUpdate:expandedRows": n[4] || (n[4] = (d) => r.value = d),
+                "expanded-rows": u.value,
+                "onUpdate:expandedRows": h[4] || (h[4] = (i) => u.value = i),
                 paginator: "",
                 rows: e.crud.pagination.pageSize,
                 "total-records": e.crud.pagination.rows,
@@ -2076,25 +2102,25 @@ const Tn = { class: "w-crud" }, Ln = {
                 "sort-field": e.crud.sort.field ?? void 0,
                 "sort-order": e.crud.sort.order,
                 "data-key": e.crud.config.pk || "id",
-                selection: e.actionRail || e.contextMenu ? N.value : void 0,
+                selection: e.actionRail || e.contextMenu ? z.value : void 0,
                 "selection-mode": e.actionRail || e.contextMenu ? "single" : void 0,
                 "context-menu": e.contextMenu,
-                "context-menu-selection": e.contextMenu ? N.value : void 0,
-                "onUpdate:selection": n[5] || (n[5] = (d) => N.value = d),
-                "onUpdate:contextMenuSelection": n[6] || (n[6] = (d) => N.value = d),
-                onRowContextmenu: X,
+                "context-menu-selection": e.contextMenu ? z.value : void 0,
+                "onUpdate:selection": h[5] || (h[5] = (i) => z.value = i),
+                "onUpdate:contextMenuSelection": h[6] || (h[6] = (i) => z.value = i),
+                onRowContextmenu: Z,
                 onPage: e.crud.onPage,
-                onSort: n[7] || (n[7] = (d) => e.crud.onSort({ sortField: d.sortField, sortOrder: d.sortOrder })),
-                onRowExpand: n[8] || (n[8] = (d) => o("row-expand", d.data)),
-                onRowCollapse: n[9] || (n[9] = (d) => o("row-collapse", d.data))
+                onSort: h[7] || (h[7] = (i) => e.crud.onSort({ sortField: i.sortField, sortOrder: i.sortOrder })),
+                onRowExpand: h[8] || (h[8] = (i) => n("row-expand", i.data)),
+                onRowCollapse: h[9] || (h[9] = (i) => n("row-collapse", i.data))
               }, ot({
-                header: ne(() => [
-                  h("div", Kn, [
-                    h("div", Gn, [
+                header: oe(() => [
+                  y("div", Wn, [
+                    y("div", jn, [
                       e.showSearch ? (s(), A(v(qe), { key: 0 }, {
-                        default: ne(() => [
-                          O(v(He), { class: "pi pi-search" }),
-                          O(v(me), {
+                        default: oe(() => [
+                          Y(v(He), { class: "pi pi-search" }),
+                          Y(v(ge), {
                             "model-value": e.crud.search.value,
                             placeholder: "Buscar...",
                             class: "w-72",
@@ -2102,148 +2128,148 @@ const Tn = { class: "w-crud" }, Ln = {
                           }, null, 8, ["model-value", "onInput"])
                         ]),
                         _: 1
-                      })) : w("", !0),
-                      Y(u.$slots, "toolbar-start"),
-                      Y(u.$slots, "toolbar-filters")
+                      })) : $("", !0),
+                      N(f.$slots, "toolbar-start"),
+                      N(f.$slots, "toolbar-filters")
                     ]),
-                    h("div", Jn, [
-                      Y(u.$slots, "toolbar-actions"),
-                      e.exportCsv ? fe((s(), A(v(ee), {
+                    y("div", Un, [
+                      N(f.$slots, "toolbar-actions"),
+                      e.exportCsv ? ve((s(), A(v(ee), {
                         key: 0,
                         icon: "pi pi-download",
                         text: "",
                         size: "small",
-                        loading: f.value,
-                        onClick: P
+                        loading: J.value,
+                        onClick: Q
                       }, null, 8, ["loading"])), [
                         [
-                          p,
+                          c,
                           e.csvScope === "all" ? "Exportar tudo (CSV)" : "Exportar página (CSV)",
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : w("", !0),
-                      e.viewToggle ? (s(), m("div", Zn, [
-                        O(v(ee), {
+                      ]) : $("", !0),
+                      e.viewToggle ? (s(), m("div", qn, [
+                        Y(v(ee), {
                           icon: "pi pi-table",
                           size: "small",
-                          text: !c("table"),
-                          outlined: c("table"),
-                          onClick: n[1] || (n[1] = (d) => k("table"))
+                          text: !d("table"),
+                          outlined: d("table"),
+                          onClick: h[1] || (h[1] = (i) => C("table"))
                         }, null, 8, ["text", "outlined"]),
-                        O(v(ee), {
+                        Y(v(ee), {
                           icon: "pi pi-th-large",
                           size: "small",
-                          text: !c("cards"),
-                          outlined: c("cards"),
-                          onClick: n[2] || (n[2] = (d) => k("cards"))
+                          text: !d("cards"),
+                          outlined: d("cards"),
+                          onClick: h[2] || (h[2] = (i) => C("cards"))
                         }, null, 8, ["text", "outlined"])
-                      ])) : w("", !0),
-                      !e.showHeader && U.value && !e.actionRail ? (s(), A(v(ee), {
+                      ])) : $("", !0),
+                      !e.showHeader && j.value && !e.actionRail ? (s(), A(v(ee), {
                         key: 2,
                         label: "Novo",
                         icon: "pi pi-plus",
-                        onClick: n[3] || (n[3] = (d) => e.crud.openCreateDialog())
-                      })) : w("", !0)
+                        onClick: h[3] || (h[3] = (i) => e.crud.openCreateDialog())
+                      })) : $("", !0)
                     ])
                   ])
                 ]),
-                empty: ne(() => [
-                  Y(u.$slots, "empty", {}, () => [
-                    n[17] || (n[17] = h("div", { class: "w-crud-empty" }, [
-                      h("div", { class: "w-crud-empty-icon" }, [
-                        h("i", { class: "pi pi-inbox" })
+                empty: oe(() => [
+                  N(f.$slots, "empty", {}, () => [
+                    h[17] || (h[17] = y("div", { class: "w-crud-empty" }, [
+                      y("div", { class: "w-crud-empty-icon" }, [
+                        y("i", { class: "pi pi-inbox" })
                       ]),
-                      h("p", { class: "w-crud-empty-title" }, "Nenhum registro encontrado"),
-                      h("p", { class: "w-crud-empty-text" }, "Tente ajustar sua busca ou crie um novo registro")
+                      y("p", { class: "w-crud-empty-title" }, "Nenhum registro encontrado"),
+                      y("p", { class: "w-crud-empty-text" }, "Tente ajustar sua busca ou crie um novo registro")
                     ], -1))
                   ])
                 ]),
-                default: ne(() => [
-                  e.expandable ? (s(), A(v(ze), {
+                default: oe(() => [
+                  e.expandable ? (s(), A(v(Oe), {
                     key: 0,
                     expander: "",
                     style: { width: "3rem" }
-                  })) : w("", !0),
-                  (s(!0), m(le, null, ie(V.value, (d) => (s(), A(v(ze), {
-                    key: d.field,
-                    field: d.field,
-                    header: d.header,
-                    sortable: d.sortable,
-                    style: je(d.style),
-                    "header-class": W(d),
-                    "body-class": W(d)
+                  })) : $("", !0),
+                  (s(!0), m(ue, null, ce(M.value, (i) => (s(), A(v(Oe), {
+                    key: i.field,
+                    field: i.field,
+                    header: i.header,
+                    sortable: i.sortable,
+                    style: $e(i.style),
+                    "header-class": B(i),
+                    "body-class": B(i)
                   }, {
-                    body: ne(({ data: E }) => [
-                      Y(u.$slots, `column-${d.field}`, {
-                        data: E,
-                        value: E[d.field]
+                    body: oe(({ data: p }) => [
+                      N(f.$slots, `column-${i.field}`, {
+                        data: p,
+                        value: p[i.field]
                       }, () => [
-                        O(Qe, {
-                          column: d,
-                          value: E[d.field],
-                          "row-data": E
+                        Y(Qe, {
+                          column: i,
+                          value: p[i.field],
+                          "row-data": p
                         }, null, 8, ["column", "value", "row-data"])
                       ])
                     ]),
                     _: 2
                   }, 1032, ["field", "header", "sortable", "style", "header-class", "body-class"]))), 128)),
-                  g.value && !e.actionRail ? (s(), A(v(ze), {
+                  g.value && !e.actionRail ? (s(), A(v(Oe), {
                     key: 1,
                     "header-class": "w-crud-actions-header",
-                    style: je({ width: `${(Z.value.length + (v(l)["row-actions"] ? 1 : 0)) * 2.5 + 1}rem` })
+                    style: $e({ width: `${(G.value.length + (v(l)["row-actions"] ? 1 : 0)) * 2.5 + 1}rem` })
                   }, {
-                    body: ne(({ data: d }) => [
-                      h("div", Xn, [
-                        (s(!0), m(le, null, ie(Z.value, (E) => (s(), m(le, {
-                          key: E.action
+                    body: oe(({ data: i }) => [
+                      y("div", Hn, [
+                        (s(!0), m(ue, null, ce(G.value, (p) => (s(), m(ue, {
+                          key: p.action
                         }, [
-                          $(E, d) ? fe((s(), A(v(ee), {
+                          D(p, i) ? ve((s(), A(v(ee), {
                             key: 0,
-                            icon: E.icon,
+                            icon: p.icon,
                             text: "",
                             rounded: "",
                             size: "small",
-                            severity: E.severity,
-                            disabled: x(E, d),
-                            onClick: (R) => b(E, d)
+                            severity: p.severity,
+                            disabled: P(p, i),
+                            onClick: (o) => k(p, i)
                           }, null, 8, ["icon", "severity", "disabled", "onClick"])), [
                             [
-                              p,
-                              E.tooltip,
+                              c,
+                              p.tooltip,
                               void 0,
                               { top: !0 }
                             ]
-                          ]) : w("", !0)
+                          ]) : $("", !0)
                         ], 64))), 128)),
-                        Y(u.$slots, "row-actions", {
-                          data: d,
+                        N(f.$slots, "row-actions", {
+                          data: i,
                           crud: e.crud
                         })
                       ])
                     ]),
                     _: 3
-                  }, 8, ["style"])) : w("", !0)
+                  }, 8, ["style"])) : $("", !0)
                 ]),
                 _: 2
               }, [
                 e.expandable ? {
                   name: "expansion",
-                  fn: ne((d) => [
-                    Y(u.$slots, "expansion", {
-                      data: d.data
+                  fn: oe((i) => [
+                    N(f.$slots, "expansion", {
+                      data: i.data
                     })
                   ]),
                   key: "0"
                 } : void 0
               ]), 1032, ["value", "loading", "expanded-rows", "rows", "total-records", "sort-field", "sort-order", "data-key", "selection", "selection-mode", "context-menu", "context-menu-selection", "onPage"])
-            ])) : (s(), m("div", Qn, [
-              h("div", _n, [
-                h("div", eo, [
+            ])) : (s(), m("div", Kn, [
+              y("div", Gn, [
+                y("div", Jn, [
                   e.showSearch ? (s(), A(v(qe), { key: 0 }, {
-                    default: ne(() => [
-                      O(v(He), { class: "pi pi-search" }),
-                      O(v(me), {
+                    default: oe(() => [
+                      Y(v(He), { class: "pi pi-search" }),
+                      Y(v(ge), {
                         "model-value": e.crud.search.value,
                         placeholder: "Buscar...",
                         class: "w-72",
@@ -2251,111 +2277,111 @@ const Tn = { class: "w-crud" }, Ln = {
                       }, null, 8, ["model-value", "onInput"])
                     ]),
                     _: 1
-                  })) : w("", !0),
-                  Y(u.$slots, "toolbar-start"),
-                  Y(u.$slots, "toolbar-filters")
+                  })) : $("", !0),
+                  N(f.$slots, "toolbar-start"),
+                  N(f.$slots, "toolbar-filters")
                 ]),
-                h("div", to, [
-                  Y(u.$slots, "toolbar-actions"),
-                  e.exportCsv ? fe((s(), A(v(ee), {
+                y("div", Zn, [
+                  N(f.$slots, "toolbar-actions"),
+                  e.exportCsv ? ve((s(), A(v(ee), {
                     key: 0,
                     icon: "pi pi-download",
                     text: "",
                     size: "small",
-                    loading: f.value,
-                    onClick: P
+                    loading: J.value,
+                    onClick: Q
                   }, null, 8, ["loading"])), [
                     [
-                      p,
+                      c,
                       e.csvScope === "all" ? "Exportar tudo (CSV)" : "Exportar página (CSV)",
                       void 0,
                       { top: !0 }
                     ]
-                  ]) : w("", !0),
-                  e.viewToggle ? (s(), m("div", ao, [
-                    O(v(ee), {
+                  ]) : $("", !0),
+                  e.viewToggle ? (s(), m("div", Xn, [
+                    Y(v(ee), {
                       icon: "pi pi-table",
                       size: "small",
-                      text: !c("table"),
-                      outlined: c("table"),
-                      onClick: n[10] || (n[10] = (d) => k("table"))
+                      text: !d("table"),
+                      outlined: d("table"),
+                      onClick: h[10] || (h[10] = (i) => C("table"))
                     }, null, 8, ["text", "outlined"]),
-                    O(v(ee), {
+                    Y(v(ee), {
                       icon: "pi pi-th-large",
                       size: "small",
-                      text: !c("cards"),
-                      outlined: c("cards"),
-                      onClick: n[11] || (n[11] = (d) => k("cards"))
+                      text: !d("cards"),
+                      outlined: d("cards"),
+                      onClick: h[11] || (h[11] = (i) => C("cards"))
                     }, null, 8, ["text", "outlined"])
-                  ])) : w("", !0),
-                  !e.showHeader && U.value && !e.actionRail ? (s(), A(v(ee), {
+                  ])) : $("", !0),
+                  !e.showHeader && j.value && !e.actionRail ? (s(), A(v(ee), {
                     key: 2,
                     label: "Novo",
                     icon: "pi pi-plus",
-                    onClick: n[12] || (n[12] = (d) => e.crud.openCreateDialog())
-                  })) : w("", !0)
+                    onClick: h[12] || (h[12] = (i) => e.crud.openCreateDialog())
+                  })) : $("", !0)
                 ])
               ]),
-              e.crud.loading.value ? (s(), m("div", no, [...n[18] || (n[18] = [
-                h("i", { class: "pi pi-spin pi-spinner" }, null, -1)
-              ])])) : e.crud.items.value.length ? (s(), m("div", oo, [
-                (s(!0), m(le, null, ie(e.crud.items.value, (d, E) => (s(), m("div", {
-                  key: d[e.crud.config.pk || "id"] ?? E,
-                  class: re(["w-crud-card", { "w-crud-card--selected": N.value === d }]),
-                  onClick: (R) => B(d),
-                  onDblclick: (R) => e.crud.config.canEdit !== !1 && e.crud.openEditDialog(d),
-                  onContextmenu: (R) => oe(R, d)
+              e.crud.loading.value ? (s(), m("div", Qn, [...h[18] || (h[18] = [
+                y("i", { class: "pi pi-spin pi-spinner" }, null, -1)
+              ])])) : e.crud.items.value.length ? (s(), m("div", _n, [
+                (s(!0), m(ue, null, ce(e.crud.items.value, (i, p) => (s(), m("div", {
+                  key: i[e.crud.config.pk || "id"] ?? p,
+                  class: de(["w-crud-card", { "w-crud-card--selected": z.value === i }]),
+                  onClick: (o) => O(i),
+                  onDblclick: (o) => e.crud.config.canEdit !== !1 && e.crud.openEditDialog(i),
+                  onContextmenu: (o) => le(o, i)
                 }, [
-                  h("div", so, [
-                    (s(!0), m(le, null, ie(L.value, (R, G) => (s(), m("div", {
-                      key: R.field,
-                      class: re(["w-crud-card-row", { "w-crud-card-row--title": G === 0 }])
+                  y("div", to, [
+                    (s(!0), m(ue, null, ce(T.value, (o, w) => (s(), m("div", {
+                      key: o.field,
+                      class: de(["w-crud-card-row", { "w-crud-card-row--title": w === 0 }])
                     }, [
-                      G !== 0 ? (s(), m("span", io, T(R.header), 1)) : w("", !0),
-                      h("span", ro, [
-                        Y(u.$slots, `column-${R.field}`, {
-                          data: d,
-                          value: d[R.field]
+                      w !== 0 ? (s(), m("span", ao, I(o.header), 1)) : $("", !0),
+                      y("span", no, [
+                        N(f.$slots, `column-${o.field}`, {
+                          data: i,
+                          value: i[o.field]
                         }, () => [
-                          O(Qe, {
-                            column: R,
-                            value: d[R.field],
-                            "row-data": d
+                          Y(Qe, {
+                            column: o,
+                            value: i[o.field],
+                            "row-data": i
                           }, null, 8, ["column", "value", "row-data"])
                         ])
                       ])
                     ], 2))), 128))
                   ]),
-                  g.value && !e.actionRail ? (s(), m("div", uo, [
-                    (s(!0), m(le, null, ie(Z.value, (R) => (s(), m(le, {
-                      key: R.action
+                  g.value && !e.actionRail ? (s(), m("div", oo, [
+                    (s(!0), m(ue, null, ce(G.value, (o) => (s(), m(ue, {
+                      key: o.action
                     }, [
-                      $(R, d) ? fe((s(), A(v(ee), {
+                      D(o, i) ? ve((s(), A(v(ee), {
                         key: 0,
-                        icon: R.icon,
+                        icon: o.icon,
                         text: "",
                         rounded: "",
                         size: "small",
-                        severity: R.severity,
-                        disabled: x(R, d),
-                        onClick: (G) => b(R, d)
+                        severity: o.severity,
+                        disabled: P(o, i),
+                        onClick: (w) => k(o, i)
                       }, null, 8, ["icon", "severity", "disabled", "onClick"])), [
                         [
-                          p,
-                          R.tooltip,
+                          c,
+                          o.tooltip,
                           void 0,
                           { top: !0 }
                         ]
-                      ]) : w("", !0)
+                      ]) : $("", !0)
                     ], 64))), 128)),
-                    Y(u.$slots, "row-actions", {
-                      data: d,
+                    N(f.$slots, "row-actions", {
+                      data: i,
                       crud: e.crud
                     })
-                  ])) : w("", !0)
-                ], 42, lo))), 128))
-              ])) : Y(u.$slots, "empty", { key: 1 }, () => [
-                n[19] || (n[19] = Gt('<div class="w-crud-empty"><div class="w-crud-empty-icon"><i class="pi pi-inbox"></i></div><p class="w-crud-empty-title">Nenhum registro encontrado</p><p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p></div>', 1))
+                  ])) : $("", !0)
+                ], 42, eo))), 128))
+              ])) : N(f.$slots, "empty", { key: 1 }, () => [
+                h[19] || (h[19] = Gt('<div class="w-crud-empty"><div class="w-crud-empty-icon"><i class="pi pi-inbox"></i></div><p class="w-crud-empty-title">Nenhum registro encontrado</p><p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p></div>', 1))
               ]),
               e.crud.items.value.length ? (s(), A(v(Jt), {
                 key: 3,
@@ -2367,121 +2393,122 @@ const Tn = { class: "w-crud" }, Ln = {
                 "current-page-report-template": "Página {currentPage} de {totalPages}",
                 class: "w-crud-paginator",
                 onPage: e.crud.onPage
-              }, null, 8, ["rows", "total-records", "first", "onPage"])) : w("", !0)
+              }, null, 8, ["rows", "total-records", "first", "onPage"])) : $("", !0)
             ]))
           ]),
-          e.actionRail ? (s(), m("aside", co, [
-            U.value ? fe((s(), A(v(ee), {
+          e.actionRail ? (s(), m("aside", lo, [
+            j.value ? ve((s(), A(v(ee), {
               key: 0,
               icon: "pi pi-plus",
               rounded: "",
-              onClick: n[13] || (n[13] = (d) => e.crud.openCreateDialog())
+              onClick: h[13] || (h[13] = (i) => e.crud.openCreateDialog())
             }, null, 512)), [
               [
-                p,
+                c,
                 "Novo",
                 void 0,
                 { left: !0 }
               ]
-            ]) : w("", !0),
-            U.value && Z.value.length ? (s(), m("div", fo)) : w("", !0),
-            (s(!0), m(le, null, ie(Z.value, (d) => (s(), m(le, {
-              key: d.action
+            ]) : $("", !0),
+            j.value && G.value.length ? (s(), m("div", so)) : $("", !0),
+            (s(!0), m(ue, null, ce(G.value, (i) => (s(), m(ue, {
+              key: i.action
             }, [
-              !N.value || $(d, N.value) ? fe((s(), A(v(ee), {
+              !z.value || D(i, z.value) ? ve((s(), A(v(ee), {
                 key: 0,
-                icon: d.icon,
+                icon: i.icon,
                 text: "",
                 rounded: "",
-                severity: d.severity,
-                disabled: !N.value || x(d, N.value),
-                onClick: (E) => N.value && b(d, N.value)
+                severity: i.severity,
+                disabled: !z.value || P(i, z.value),
+                onClick: (p) => z.value && k(i, z.value)
               }, null, 8, ["icon", "severity", "disabled", "onClick"])), [
                 [
-                  p,
-                  d.tooltip,
+                  c,
+                  i.tooltip,
                   void 0,
                   { left: !0 }
                 ]
-              ]) : w("", !0)
+              ]) : $("", !0)
             ], 64))), 128)),
-            Y(u.$slots, "rail-actions", {
-              selected: N.value,
+            N(f.$slots, "rail-actions", {
+              selected: z.value,
               crud: e.crud
             }),
-            e.showPrint || e.exportCsv ? (s(), m("div", mo)) : w("", !0),
-            e.showPrint ? fe((s(), A(v(ee), {
+            e.showPrint || e.exportCsv ? (s(), m("div", io)) : $("", !0),
+            e.showPrint ? ve((s(), A(v(ee), {
               key: 3,
               icon: "pi pi-print",
               text: "",
               rounded: "",
-              disabled: !N.value,
-              onClick: _
+              disabled: !z.value,
+              onClick: X
             }, null, 8, ["disabled"])), [
               [
-                p,
+                c,
                 "Imprimir",
                 void 0,
                 { left: !0 }
               ]
-            ]) : w("", !0),
-            e.exportCsv ? fe((s(), A(v(ee), {
+            ]) : $("", !0),
+            e.exportCsv ? ve((s(), A(v(ee), {
               key: 4,
               icon: "pi pi-download",
               text: "",
               rounded: "",
-              loading: f.value,
-              onClick: P
+              loading: J.value,
+              onClick: Q
             }, null, 8, ["loading"])), [
               [
-                p,
+                c,
                 e.csvScope === "all" ? "Exportar tudo (CSV)" : "Exportar página (CSV)",
                 void 0,
                 { left: !0 }
               ]
-            ]) : w("", !0)
-          ])) : w("", !0)
+            ]) : $("", !0)
+          ])) : $("", !0)
         ], 2),
         e.contextMenu ? (s(), A(v(Zt), {
           key: 1,
           ref_key: "cm",
-          ref: K,
+          ref: H,
           model: ae.value
-        }, null, 8, ["model"])) : w("", !0),
-        Y(u.$slots, "form-dialog", {
+        }, null, 8, ["model"])) : $("", !0),
+        N(f.$slots, "form-dialog", {
           crud: e.crud,
           dialogWidth: e.dialogWidth
         }, () => {
-          var d;
+          var i;
           return [
-            O(ut, {
+            Y(ut, {
               visible: e.crud.dialogVisible.value,
               title: e.crud.dialogTitle.value,
               fields: e.crud.config.form,
               "form-data": e.crud.formData,
               "is-editing": e.crud.isEditing.value,
               saving: e.crud.saving.value,
-              disabled: ((d = e.crud.viewMode) == null ? void 0 : d.value) ?? !1,
+              disabled: ((i = e.crud.viewMode) == null ? void 0 : i.value) ?? !1,
               width: e.dialogWidth,
-              "onUpdate:visible": n[14] || (n[14] = (E) => {
-                e.crud.dialogVisible.value = E, E || (e.crud.editingItem.value = null);
+              "form-columns": e.formColumns ?? e.crud.config.formColumns,
+              "onUpdate:visible": h[14] || (h[14] = (p) => {
+                e.crud.dialogVisible.value = p, p || (e.crud.editingItem.value = null);
               }),
-              "onUpdate:field": n[15] || (n[15] = (E, R) => e.crud.setFormField(E, R)),
-              onSave: n[16] || (n[16] = (E) => e.crud.save())
+              "onUpdate:field": h[15] || (h[15] = (p, o) => e.crud.setFormField(p, o)),
+              onSave: h[16] || (h[16] = (p) => e.crud.save())
             }, ot({ _: 2 }, [
-              ie(e.crud.config.form, (E) => ({
-                name: `field-${E.field}`,
-                fn: ne((R) => [
-                  Y(u.$slots, `field-${E.field}`, lt(st(R)))
+              ce(e.crud.config.form, (p) => ({
+                name: `field-${p.field}`,
+                fn: oe((o) => [
+                  N(f.$slots, `field-${p.field}`, lt(st(o)))
                 ])
               }))
-            ]), 1032, ["visible", "title", "fields", "form-data", "is-editing", "saving", "disabled", "width"])
+            ]), 1032, ["visible", "title", "fields", "form-data", "is-editing", "saving", "disabled", "width", "form-columns"])
           ];
         })
       ]);
     };
   }
-}), vo = /* @__PURE__ */ de({
+}), uo = /* @__PURE__ */ fe({
   __name: "WStatusTag",
   props: {
     value: {},
@@ -2515,16 +2542,16 @@ const Tn = { class: "w-crud" }, Ln = {
       pago: { label: "Pago", severity: "success" },
       paga: { label: "Paga", severity: "success" },
       inadimplente: { label: "Inadimplente", severity: "danger" }
-    }, o = H(() => (t.map ?? a)[t.value] ?? { label: t.value, severity: "secondary" });
-    return (l, i) => (s(), A(v(Ct), {
-      value: o.value.label,
-      severity: o.value.severity
+    }, n = q(() => (t.map ?? a)[t.value] ?? { label: t.value, severity: "secondary" });
+    return (l, r) => (s(), A(v(Ct), {
+      value: n.value.label,
+      severity: n.value.severity
     }, null, 8, ["value", "severity"]));
   }
-}), go = { class: "w-page-header" }, ho = { class: "w-page-header-content" }, yo = { class: "w-page-header-title" }, bo = {
+}), co = { class: "w-page-header" }, fo = { class: "w-page-header-content" }, mo = { class: "w-page-header-title" }, po = {
   key: 0,
   class: "w-page-header-subtitle"
-}, wo = { class: "w-page-header-actions" }, Xl = /* @__PURE__ */ de({
+}, vo = { class: "w-page-header-actions" }, Hl = /* @__PURE__ */ fe({
   __name: "WPageHeader",
   props: {
     title: {},
@@ -2535,26 +2562,26 @@ const Tn = { class: "w-crud" }, Ln = {
   emits: ["action"],
   setup(e, { emit: t }) {
     const a = t;
-    return (o, l) => (s(), m("div", go, [
-      h("div", ho, [
-        h("h2", yo, T(e.title), 1),
-        e.subtitle ? (s(), m("p", bo, T(e.subtitle), 1)) : w("", !0)
+    return (n, l) => (s(), m("div", co, [
+      y("div", fo, [
+        y("h2", mo, I(e.title), 1),
+        e.subtitle ? (s(), m("p", po, I(e.subtitle), 1)) : $("", !0)
       ]),
-      h("div", wo, [
-        Y(o.$slots, "actions"),
+      y("div", vo, [
+        N(n.$slots, "actions"),
         e.actionLabel ? (s(), A(v(ee), {
           key: 0,
           label: e.actionLabel,
           icon: e.actionIcon,
-          onClick: l[0] || (l[0] = (i) => a("action"))
-        }, null, 8, ["label", "icon"])) : w("", !0)
+          onClick: l[0] || (l[0] = (r) => a("action"))
+        }, null, 8, ["label", "icon"])) : $("", !0)
       ])
     ]));
   }
-}), ko = { class: "w-empty-state" }, $o = { class: "w-empty-state-icon" }, Co = { class: "w-empty-state-title" }, Do = {
+}), go = { class: "w-empty-state" }, ho = { class: "w-empty-state-icon" }, yo = { class: "w-empty-state-title" }, bo = {
   key: 0,
   class: "w-empty-state-description"
-}, Ql = /* @__PURE__ */ de({
+}, Kl = /* @__PURE__ */ fe({
   __name: "WEmptyState",
   props: {
     icon: {},
@@ -2566,22 +2593,22 @@ const Tn = { class: "w-crud" }, Ln = {
   emits: ["action"],
   setup(e, { emit: t }) {
     const a = t;
-    return (o, l) => (s(), m("div", ko, [
-      h("div", $o, [
-        h("i", {
-          class: re(e.icon)
+    return (n, l) => (s(), m("div", go, [
+      y("div", ho, [
+        y("i", {
+          class: de(e.icon)
         }, null, 2)
       ]),
-      h("p", Co, T(e.title), 1),
-      e.description ? (s(), m("p", Do, T(e.description), 1)) : w("", !0),
+      y("p", yo, I(e.title), 1),
+      e.description ? (s(), m("p", bo, I(e.description), 1)) : $("", !0),
       e.actionLabel ? (s(), A(v(ee), {
         key: 1,
         label: e.actionLabel,
         icon: e.actionIcon,
         size: "small",
         class: "mt-3",
-        onClick: l[0] || (l[0] = (i) => a("action"))
-      }, null, 8, ["label", "icon"])) : w("", !0)
+        onClick: l[0] || (l[0] = (r) => a("action"))
+      }, null, 8, ["label", "icon"])) : $("", !0)
     ]));
   }
 });
@@ -2593,7 +2620,7 @@ const Tn = { class: "w-crud" }, Ln = {
 Symbol(process.env.NODE_ENV !== "production" ? "navigation failure" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view location matched" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view depth" : "");
-const xo = Symbol(process.env.NODE_ENV !== "production" ? "router" : "");
+const wo = Symbol(process.env.NODE_ENV !== "production" ? "router" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "route location" : "");
 Symbol(process.env.NODE_ENV !== "production" ? "router view location" : "");
 /*!
@@ -2601,13 +2628,13 @@ Symbol(process.env.NODE_ENV !== "production" ? "router view location" : "");
  * (c) 2025 Eduardo San Martin Morote
  * @license MIT
  */
-function So() {
-  return Ie(xo);
+function ko() {
+  return ze(wo);
 }
-const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" }, Eo = { class: "w-detail-header-content" }, Mo = { class: "w-detail-header-title" }, Fo = {
+const $o = { class: "w-detail-header" }, Co = { class: "w-detail-header-left" }, Do = { class: "w-detail-header-content" }, xo = { class: "w-detail-header-title" }, So = {
   key: 0,
   class: "w-detail-header-subtitle"
-}, Ao = { class: "w-detail-header-actions" }, _l = /* @__PURE__ */ de({
+}, Po = { class: "w-detail-header-actions" }, Gl = /* @__PURE__ */ fe({
   __name: "WDetailHeader",
   props: {
     title: {},
@@ -2619,81 +2646,81 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
     statusMap: {}
   },
   setup(e) {
-    const t = e, a = So();
-    function o() {
+    const t = e, a = ko();
+    function n() {
       t.backTo ? a.push(typeof t.backTo == "string" ? { name: t.backTo } : t.backTo) : t.backRoute ? a.push({ name: t.backRoute }) : a.back();
     }
-    return (l, i) => (s(), m("div", Po, [
-      h("div", Vo, [
-        O(v(ee), {
+    return (l, r) => (s(), m("div", $o, [
+      y("div", Co, [
+        Y(v(ee), {
           icon: "pi pi-arrow-left",
           text: "",
           rounded: "",
-          onClick: o
+          onClick: n
         }),
         e.icon ? (s(), m("i", {
           key: 0,
-          class: re([e.icon, "w-detail-header-icon"])
-        }, null, 2)) : w("", !0),
-        h("div", Eo, [
-          h("h2", Mo, T(e.title), 1),
-          e.subtitle ? (s(), m("p", Fo, T(e.subtitle), 1)) : w("", !0)
+          class: de([e.icon, "w-detail-header-icon"])
+        }, null, 2)) : $("", !0),
+        y("div", Do, [
+          y("h2", xo, I(e.title), 1),
+          e.subtitle ? (s(), m("p", So, I(e.subtitle), 1)) : $("", !0)
         ]),
-        e.status ? (s(), A(vo, {
+        e.status ? (s(), A(uo, {
           key: 1,
           value: e.status,
           map: e.statusMap
-        }, null, 8, ["value", "map"])) : w("", !0)
+        }, null, 8, ["value", "map"])) : $("", !0)
       ]),
-      h("div", Ao, [
-        Y(l.$slots, "actions")
+      y("div", Po, [
+        N(l.$slots, "actions")
       ])
     ]));
   }
-}), Ro = { class: "w-info-card" }, Io = {
+}), Vo = { class: "w-info-card" }, Mo = {
   key: 0,
   class: "w-info-card-title"
-}, To = { class: "w-info-card-grid" }, Lo = { class: "w-info-card-label" }, zo = { class: "w-info-card-value" }, es = /* @__PURE__ */ de({
+}, Eo = { class: "w-info-card-grid" }, Fo = { class: "w-info-card-label" }, Ao = { class: "w-info-card-value" }, Jl = /* @__PURE__ */ fe({
   __name: "WInfoCard",
   props: {
     title: {},
     fields: {}
   },
   setup(e) {
-    const { formatCurrency: t, formatDate: a, formatNumber: o } = rt();
-    function l(i) {
-      const r = i.value;
-      return r == null || r === "" ? "-" : i.format === "currency" ? t(Number(r)) : i.format === "date" ? a(String(r)) : i.format === "datetime" ? a(String(r), "DD/MM/YYYY HH:mm") : i.format === "number" ? o(Number(r)) : String(r);
+    const { formatCurrency: t, formatDate: a, formatNumber: n } = rt();
+    function l(r) {
+      const u = r.value;
+      return u == null || u === "" ? "-" : r.format === "currency" ? t(Number(u)) : r.format === "date" ? a(String(u)) : r.format === "datetime" ? a(String(u), "DD/MM/YYYY HH:mm") : r.format === "number" ? n(Number(u)) : String(u);
     }
-    return (i, r) => (s(), m("div", Ro, [
-      e.title ? (s(), m("h3", Io, T(e.title), 1)) : w("", !0),
-      h("div", To, [
-        (s(!0), m(le, null, ie(e.fields, (y) => (s(), m("div", {
-          key: y.label,
+    return (r, u) => (s(), m("div", Vo, [
+      e.title ? (s(), m("h3", Mo, I(e.title), 1)) : $("", !0),
+      y("div", Eo, [
+        (s(!0), m(ue, null, ce(e.fields, (b) => (s(), m("div", {
+          key: b.label,
           class: "w-info-card-field"
         }, [
-          h("span", Lo, T(y.label), 1),
-          h("span", zo, T(l(y)), 1)
+          y("span", Fo, I(b.label), 1),
+          y("span", Ao, I(l(b)), 1)
         ]))), 128))
       ])
     ]));
   }
-}), No = {
+}), Ro = {
   key: 0,
   class: "w-kpi-card__loading"
-}, Yo = { class: "w-kpi-card__loading-content" }, Oo = { class: "w-kpi-card__header" }, Bo = {
+}, Io = { class: "w-kpi-card__loading-content" }, To = { class: "w-kpi-card__header" }, Lo = {
   key: 0,
   class: "w-kpi-card__icon"
-}, Wo = {
+}, zo = {
   key: 1,
   class: "w-kpi-card__trend"
-}, jo = { class: "w-kpi-card__content" }, Uo = { class: "w-kpi-card__label" }, qo = { class: "w-kpi-card__value" }, Ho = {
+}, No = { class: "w-kpi-card__content" }, Yo = { class: "w-kpi-card__label" }, Oo = { class: "w-kpi-card__value" }, Bo = {
   key: 0,
   class: "w-kpi-card__hint"
-}, Ko = {
+}, Wo = {
   key: 0,
   class: "w-kpi-card__footer"
-}, Go = /* @__PURE__ */ de({
+}, jo = /* @__PURE__ */ fe({
   __name: "WKpiCard",
   props: {
     label: {},
@@ -2706,66 +2733,66 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
   },
   setup(e) {
     return (t, a) => (s(), m("article", {
-      class: re(["w-kpi-card", e.severity ? `w-kpi-card--${e.severity}` : ""])
+      class: de(["w-kpi-card", e.severity ? `w-kpi-card--${e.severity}` : ""])
     }, [
-      e.loading ? (s(), m("div", No, [
-        O(v(Ge), {
+      e.loading ? (s(), m("div", Ro, [
+        Y(v(Ge), {
           shape: "circle",
           size: "2.75rem"
         }),
-        h("div", Yo, [
-          O(v(Ge), {
+        y("div", Io, [
+          Y(v(Ge), {
             width: "6rem",
             height: "0.75rem"
           }),
-          O(v(Ge), {
+          Y(v(Ge), {
             width: "7.5rem",
             height: "1.5rem"
           }),
-          O(v(Ge), {
+          Y(v(Ge), {
             width: "5rem",
             height: "0.75rem"
           })
         ])
-      ])) : (s(), m(le, { key: 1 }, [
-        h("div", Oo, [
-          e.icon || t.$slots.icon ? (s(), m("div", Bo, [
-            Y(t.$slots, "icon", {}, () => [
+      ])) : (s(), m(ue, { key: 1 }, [
+        y("div", To, [
+          e.icon || t.$slots.icon ? (s(), m("div", Lo, [
+            N(t.$slots, "icon", {}, () => [
               e.icon ? (s(), m("i", {
                 key: 0,
-                class: re(e.icon)
-              }, null, 2)) : w("", !0)
+                class: de(e.icon)
+              }, null, 2)) : $("", !0)
             ])
-          ])) : w("", !0),
-          e.trend || t.$slots.trend ? (s(), m("div", Wo, [
-            Y(t.$slots, "trend", {}, () => [
+          ])) : $("", !0),
+          e.trend || t.$slots.trend ? (s(), m("div", zo, [
+            N(t.$slots, "trend", {}, () => [
               e.trend ? (s(), m("span", {
                 key: 0,
-                class: re(["w-kpi-card__trend-badge", e.trend.direction ? `w-kpi-card__trend-badge--${e.trend.direction}` : ""])
-              }, T(e.trend.value), 3)) : w("", !0)
+                class: de(["w-kpi-card__trend-badge", e.trend.direction ? `w-kpi-card__trend-badge--${e.trend.direction}` : ""])
+              }, I(e.trend.value), 3)) : $("", !0)
             ])
-          ])) : w("", !0)
+          ])) : $("", !0)
         ]),
-        h("div", jo, [
-          h("p", Uo, T(e.label), 1),
-          h("div", qo, [
-            Y(t.$slots, "value", {}, () => [
-              Pe(T(e.value), 1)
+        y("div", No, [
+          y("p", Yo, I(e.label), 1),
+          y("div", Oo, [
+            N(t.$slots, "value", {}, () => [
+              Ee(I(e.value), 1)
             ])
           ]),
-          e.hint || t.$slots.hint ? (s(), m("p", Ho, [
-            Y(t.$slots, "hint", {}, () => [
-              Pe(T(e.hint), 1)
+          e.hint || t.$slots.hint ? (s(), m("p", Bo, [
+            N(t.$slots, "hint", {}, () => [
+              Ee(I(e.hint), 1)
             ])
-          ])) : w("", !0)
+          ])) : $("", !0)
         ]),
-        t.$slots.footer ? (s(), m("footer", Ko, [
-          Y(t.$slots, "footer")
-        ])) : w("", !0)
+        t.$slots.footer ? (s(), m("footer", Wo, [
+          N(t.$slots, "footer")
+        ])) : $("", !0)
       ], 64))
     ], 2));
   }
-}), ts = /* @__PURE__ */ de({
+}), Zl = /* @__PURE__ */ fe({
   __name: "WKpiGrid",
   props: {
     items: { default: () => [] },
@@ -2773,39 +2800,39 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
     dense: { type: Boolean, default: !1 }
   },
   setup(e) {
-    const t = e, a = H(() => [
+    const t = e, a = q(() => [
       `w-kpi-grid--cols-${t.columns}`,
       { "w-kpi-grid--dense": t.dense }
     ]);
-    return (o, l) => (s(), m("div", {
-      class: re(["w-kpi-grid", a.value])
+    return (n, l) => (s(), m("div", {
+      class: de(["w-kpi-grid", a.value])
     }, [
-      o.$slots.item ? (s(!0), m(le, { key: 0 }, ie(e.items, (i, r) => Y(o.$slots, "item", {
-        key: r,
-        item: i,
-        index: r
-      })), 128)) : (s(!0), m(le, { key: 1 }, ie(e.items, (i, r) => (s(), A(Go, {
-        key: r,
-        label: i.label,
-        value: i.value,
-        icon: i.icon,
-        severity: i.severity || "primary",
-        hint: i.hint,
-        trend: i.trend,
-        loading: i.loading
+      n.$slots.item ? (s(!0), m(ue, { key: 0 }, ce(e.items, (r, u) => N(n.$slots, "item", {
+        key: u,
+        item: r,
+        index: u
+      })), 128)) : (s(!0), m(ue, { key: 1 }, ce(e.items, (r, u) => (s(), A(jo, {
+        key: u,
+        label: r.label,
+        value: r.value,
+        icon: r.icon,
+        severity: r.severity || "primary",
+        hint: r.hint,
+        trend: r.trend,
+        loading: r.loading
       }, null, 8, ["label", "value", "icon", "severity", "hint", "trend", "loading"]))), 128))
     ], 2));
   }
-}), Jo = { class: "w-section-header__main" }, Zo = {
+}), Uo = { class: "w-section-header__main" }, qo = {
   key: 0,
   class: "w-section-header__icon"
-}, Xo = { class: "w-section-header__content" }, Qo = { class: "w-section-header__title-row" }, _o = { class: "w-section-header__title" }, el = {
+}, Ho = { class: "w-section-header__content" }, Ko = { class: "w-section-header__title-row" }, Go = { class: "w-section-header__title" }, Jo = {
   key: 0,
   class: "w-section-header__subtitle"
-}, tl = {
+}, Zo = {
   key: 0,
   class: "w-section-header__actions"
-}, as = /* @__PURE__ */ de({
+}, Xl = /* @__PURE__ */ fe({
   __name: "WSectionHeader",
   props: {
     title: {},
@@ -2815,40 +2842,40 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
   },
   setup(e) {
     return (t, a) => (s(), m("div", {
-      class: re(["w-section-header", { "w-section-header--compact": e.compact }])
+      class: de(["w-section-header", { "w-section-header--compact": e.compact }])
     }, [
-      h("div", Jo, [
-        e.icon || t.$slots.icon ? (s(), m("div", Zo, [
-          Y(t.$slots, "icon", {}, () => [
+      y("div", Uo, [
+        e.icon || t.$slots.icon ? (s(), m("div", qo, [
+          N(t.$slots, "icon", {}, () => [
             e.icon ? (s(), m("i", {
               key: 0,
-              class: re(e.icon)
-            }, null, 2)) : w("", !0)
+              class: de(e.icon)
+            }, null, 2)) : $("", !0)
           ])
-        ])) : w("", !0),
-        h("div", Xo, [
-          h("div", Qo, [
-            h("h3", _o, T(e.title), 1),
-            Y(t.$slots, "meta")
+        ])) : $("", !0),
+        y("div", Ho, [
+          y("div", Ko, [
+            y("h3", Go, I(e.title), 1),
+            N(t.$slots, "meta")
           ]),
-          e.subtitle ? (s(), m("p", el, T(e.subtitle), 1)) : w("", !0)
+          e.subtitle ? (s(), m("p", Jo, I(e.subtitle), 1)) : $("", !0)
         ])
       ]),
-      t.$slots.actions ? (s(), m("div", tl, [
-        Y(t.$slots, "actions")
-      ])) : w("", !0)
+      t.$slots.actions ? (s(), m("div", Zo, [
+        N(t.$slots, "actions")
+      ])) : $("", !0)
     ], 2));
   }
-}), al = {
+}), Xo = {
   key: 0,
   class: "w-form-section__header"
-}, nl = { class: "w-form-section__content" }, ol = { class: "w-form-section__title" }, ll = {
+}, Qo = { class: "w-form-section__content" }, _o = { class: "w-form-section__title" }, el = {
   key: 0,
   class: "w-form-section__description"
-}, sl = {
+}, tl = {
   key: 0,
   class: "w-form-section__actions"
-}, il = { class: "w-form-section__body" }, ns = /* @__PURE__ */ de({
+}, al = { class: "w-form-section__body" }, Ql = /* @__PURE__ */ fe({
   __name: "WFormSection",
   props: {
     title: {},
@@ -2857,32 +2884,32 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
   },
   setup(e) {
     return (t, a) => (s(), m("section", {
-      class: re(["w-form-section", e.variant ? `w-form-section--${e.variant}` : ""])
+      class: de(["w-form-section", e.variant ? `w-form-section--${e.variant}` : ""])
     }, [
-      e.title || e.description || t.$slots.actions ? (s(), m("div", al, [
-        h("div", nl, [
-          h("h3", ol, T(e.title), 1),
-          e.description ? (s(), m("p", ll, T(e.description), 1)) : w("", !0)
+      e.title || e.description || t.$slots.actions ? (s(), m("div", Xo, [
+        y("div", Qo, [
+          y("h3", _o, I(e.title), 1),
+          e.description ? (s(), m("p", el, I(e.description), 1)) : $("", !0)
         ]),
-        t.$slots.actions ? (s(), m("div", sl, [
-          Y(t.$slots, "actions")
-        ])) : w("", !0)
-      ])) : w("", !0),
-      h("div", il, [
-        Y(t.$slots, "default")
+        t.$slots.actions ? (s(), m("div", tl, [
+          N(t.$slots, "actions")
+        ])) : $("", !0)
+      ])) : $("", !0),
+      y("div", al, [
+        N(t.$slots, "default")
       ])
     ], 2));
   }
-}), rl = {
+}), nl = {
   key: 0,
   class: "w-action-bar__primary"
-}, ul = {
+}, ol = {
   key: 1,
   class: "w-action-bar__filters"
-}, dl = {
+}, ll = {
   key: 2,
   class: "w-action-bar__secondary"
-}, os = /* @__PURE__ */ de({
+}, _l = /* @__PURE__ */ fe({
   __name: "WActionBar",
   props: {
     align: { default: "between" },
@@ -2890,28 +2917,28 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
   },
   setup(e) {
     return (t, a) => (s(), m("div", {
-      class: re(["w-action-bar", [
+      class: de(["w-action-bar", [
         `w-action-bar--${e.align}`,
         { "w-action-bar--stack": e.stackOnMobile }
       ]])
     }, [
-      t.$slots.primary || t.$slots.default ? (s(), m("div", rl, [
-        Y(t.$slots, "primary", {}, () => [
-          Y(t.$slots, "default")
+      t.$slots.primary || t.$slots.default ? (s(), m("div", nl, [
+        N(t.$slots, "primary", {}, () => [
+          N(t.$slots, "default")
         ])
-      ])) : w("", !0),
-      t.$slots.filters ? (s(), m("div", ul, [
-        Y(t.$slots, "filters")
-      ])) : w("", !0),
-      t.$slots.secondary ? (s(), m("div", dl, [
-        Y(t.$slots, "secondary")
-      ])) : w("", !0)
+      ])) : $("", !0),
+      t.$slots.filters ? (s(), m("div", ol, [
+        N(t.$slots, "filters")
+      ])) : $("", !0),
+      t.$slots.secondary ? (s(), m("div", ll, [
+        N(t.$slots, "secondary")
+      ])) : $("", !0)
     ], 2));
   }
-}), cl = { class: "w-progress-flow__marker" }, fl = { class: "w-progress-flow__content" }, ml = { class: "w-progress-flow__label" }, pl = {
+}), sl = { class: "w-progress-flow__marker" }, il = { class: "w-progress-flow__content" }, rl = { class: "w-progress-flow__label" }, ul = {
   key: 0,
   class: "w-progress-flow__description"
-}, ls = /* @__PURE__ */ de({
+}, es = /* @__PURE__ */ fe({
   __name: "WProgressFlow",
   props: {
     steps: {},
@@ -2919,50 +2946,50 @@ const Po = { class: "w-detail-header" }, Vo = { class: "w-detail-header-left" },
     orientation: { default: "horizontal" }
   },
   setup(e) {
-    const t = e, a = H(
+    const t = e, a = q(
       () => t.steps.findIndex((l) => l.key === t.currentStep)
     );
-    function o(l) {
+    function n(l) {
       return l < a.value ? "done" : l === a.value ? "current" : "pending";
     }
-    return (l, i) => (s(), m("div", {
-      class: re(["w-progress-flow", `w-progress-flow--${e.orientation}`])
+    return (l, r) => (s(), m("div", {
+      class: de(["w-progress-flow", `w-progress-flow--${e.orientation}`])
     }, [
-      (s(!0), m(le, null, ie(e.steps, (r, y) => (s(), m("div", {
-        key: r.key,
-        class: re(["w-progress-flow__step", `w-progress-flow__step--${o(y)}`])
+      (s(!0), m(ue, null, ce(e.steps, (u, b) => (s(), m("div", {
+        key: u.key,
+        class: de(["w-progress-flow__step", `w-progress-flow__step--${n(b)}`])
       }, [
-        Y(l.$slots, "step", {
-          step: r,
-          index: y,
-          state: o(y)
+        N(l.$slots, "step", {
+          step: u,
+          index: b,
+          state: n(b)
         }, () => [
-          h("div", cl, [
-            h("span", null, T(y + 1), 1)
+          y("div", sl, [
+            y("span", null, I(b + 1), 1)
           ]),
-          h("div", fl, [
-            h("p", ml, T(r.label), 1),
-            r.description ? (s(), m("p", pl, T(r.description), 1)) : w("", !0)
+          y("div", il, [
+            y("p", rl, I(u.label), 1),
+            u.description ? (s(), m("p", ul, I(u.description), 1)) : $("", !0)
           ])
         ])
       ], 2))), 128))
     ], 2));
   }
 });
-function vl(e, t, a) {
-  const o = e;
-  return Array.isArray(o.results) ? {
-    data: o.results,
-    page: o.page ?? t,
-    page_size: o.page_size ?? a,
-    rows: o.count ?? 0,
-    extras: o.extras ?? {}
-  } : Array.isArray(o.data) ? {
-    data: o.data,
-    page: o.page ?? t,
-    page_size: o.page_size ?? a,
-    rows: o.rows ?? 0,
-    extras: o.extras ?? {}
+function dl(e, t, a) {
+  const n = e;
+  return Array.isArray(n.results) ? {
+    data: n.results,
+    page: n.page ?? t,
+    page_size: n.page_size ?? a,
+    rows: n.count ?? 0,
+    extras: n.extras ?? {}
+  } : Array.isArray(n.data) ? {
+    data: n.data,
+    page: n.page ?? t,
+    page_size: n.page_size ?? a,
+    rows: n.rows ?? 0,
+    extras: n.extras ?? {}
   } : {
     data: Array.isArray(e) ? e : [],
     page: t,
@@ -2971,26 +2998,26 @@ function vl(e, t, a) {
     extras: {}
   };
 }
-function gl(e) {
+function cl(e) {
   return {
     async list(t, a = {}) {
-      const o = await e.get(t, { params: a });
-      return vl(
-        o.data,
+      const n = await e.get(t, { params: a });
+      return dl(
+        n.data,
         Number(a.page ?? 1),
         Number(a.page_size ?? 20)
       );
     },
-    async get(t, a, o) {
-      return { data: (await e.get(`${t}${a}/`, o)).data };
+    async get(t, a, n) {
+      return { data: (await e.get(`${t}${a}/`, n)).data };
     },
-    async create(t, a, o) {
-      return { data: (await e.post(t, a, o)).data };
+    async create(t, a, n) {
+      return { data: (await e.post(t, a, n)).data };
     },
-    async update(t, a, o, l) {
+    async update(t, a, n, l) {
       return { data: (await e.patch(
         `${t}${a}/`,
-        o,
+        n,
         l
       )).data };
     },
@@ -2999,13 +3026,13 @@ function gl(e) {
     }
   };
 }
-const ss = {
+const ts = {
   install(e, t) {
     if (!(t != null && t.axios) && !(t != null && t.dataProvider))
       throw new Error(
         '[wPrimeVueComponents] Informe "axios" ou "dataProvider" ao registrar o WPrimeVuePlugin.'
       );
-    const a = t.dataProvider ?? gl(t.axios), o = {
+    const a = t.dataProvider ?? cl(t.axios), n = {
       axios: t.axios,
       dataProvider: a,
       defaultPageSize: t.defaultPageSize ?? 20,
@@ -3014,9 +3041,9 @@ const ss = {
       locale: t.locale ?? "pt-BR",
       currency: t.currency ?? "BRL"
     };
-    t.axios && e.provide(la, t.axios), e.provide(_e, a), e.provide(et, o), t.registerComponents !== !1 && (e.component("WCrudView", po), e.component("WCrudFormDialog", ut), e.component("WCrudColumnRenderer", Qe), e.component("WAutoCompleteFK", Lt), e.component("WMoneyInput", zt), e.component("WTransferList", Nt));
+    t.axios && e.provide(la, t.axios), e.provide(_e, a), e.provide(et, n), t.registerComponents !== !1 && (e.component("WCrudView", ro), e.component("WCrudFormDialog", ut), e.component("WCrudColumnRenderer", Qe), e.component("WAutoCompleteFK", Lt), e.component("WMoneyInput", zt), e.component("WTransferList", Nt));
   }
-}, hl = {
+}, fl = {
   createTitle: "Novo Registro",
   editTitle: "Editar Registro",
   createButton: "Novo",
@@ -3031,376 +3058,376 @@ const ss = {
   successUpdate: "Registro atualizado com sucesso",
   successDelete: "Registro excluído com sucesso"
 };
-function yl(e, t) {
+function ml(e, t) {
   const a = {};
-  for (const o of Object.keys(t))
-    JSON.stringify(e[o]) !== JSON.stringify(t[o]) && (a[o] = t[o]);
+  for (const n of Object.keys(t))
+    JSON.stringify(e[n]) !== JSON.stringify(t[n]) && (a[n] = t[n]);
   return a;
 }
-function is(e) {
+function as(e) {
   const {
     endpoint: t,
     columns: a,
-    form: o,
+    form: n,
     pk: l = "id",
-    searchDebounce: i = 300,
-    partialUpdate: r = !0,
-    refetchOnSave: y = !0,
-    canCreate: c = !0,
-    canEdit: k = !0,
+    searchDebounce: r = 300,
+    partialUpdate: u = !0,
+    refetchOnSave: b = !0,
+    canCreate: d = !0,
+    canEdit: C = !0,
     canDelete: F = !0,
-    rowActions: V = void 0,
-    filterParams: W = void 0,
-    createDefaults: L = void 0,
-    transformPayload: J = void 0,
-    onAfterSave: Z = void 0,
+    rowActions: M = void 0,
+    filterParams: B = void 0,
+    createDefaults: T = void 0,
+    transformPayload: K = void 0,
+    onAfterSave: G = void 0,
     onAfterDelete: g = void 0
-  } = e, b = Ie(_e);
-  if (!b)
+  } = e, k = ze(_e);
+  if (!k)
     throw new Error(
       "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager."
     );
-  const $ = b, x = Ie(et), j = e.pageSize ?? (x == null ? void 0 : x.defaultPageSize) ?? 20, U = { ...hl, ...e.labels }, N = It(), { confirmDelete: K } = Tt(), B = q([]), X = q({}), oe = q(!1), ae = q(!1), _ = q(""), f = q(!1), P = q(!1), u = q(null), n = ge({});
-  let p = null;
-  const d = ge({
+  const D = k, P = ze(et), W = e.pageSize ?? (P == null ? void 0 : P.defaultPageSize) ?? 20, j = { ...fl, ...e.labels }, z = It(), { confirmDelete: H } = Tt(), O = U([]), Z = U({}), le = U(!1), ae = U(!1), X = U(""), J = U(!1), Q = U(!1), f = U(null), h = be({});
+  let c = null;
+  const i = be({
     page: 1,
-    pageSize: j,
+    pageSize: W,
     rows: 0,
     totalPages: 0
-  }), E = ge({
+  }), p = be({
     field: null,
     order: 0
   });
-  function R() {
-    const D = {};
-    for (const M of o)
-      D[M.field] = M.defaultValue !== void 0 ? typeof M.defaultValue == "function" ? M.defaultValue() : M.defaultValue : null;
-    return D;
+  function o() {
+    const S = {};
+    for (const E of n)
+      S[E.field] = E.defaultValue !== void 0 ? typeof E.defaultValue == "function" ? E.defaultValue() : E.defaultValue : null;
+    return S;
   }
-  const G = R();
-  for (const D of Object.keys(G))
-    n[D] = G[D];
-  const se = H(
-    () => u.value !== null && !P.value
-  ), pe = H(() => P.value), Ne = H(
-    () => P.value ? U.viewTitle ?? "Visualizar Registro" : se.value ? U.editTitle : U.createTitle
-  ), Ye = H(() => d.page <= 1), we = H(() => d.page >= d.totalPages);
-  let ke = null;
-  async function ue(D = {}) {
-    oe.value = !0;
+  const w = o();
+  for (const S of Object.keys(w))
+    h[S] = w[S];
+  const ne = q(
+    () => f.value !== null && !Q.value
+  ), me = q(() => Q.value), we = q(
+    () => Q.value ? j.viewTitle ?? "Visualizar Registro" : ne.value ? j.editTitle : j.createTitle
+  ), se = q(() => i.page <= 1), ie = q(() => i.page >= i.totalPages);
+  let he = null;
+  async function re(S = {}) {
+    le.value = !0;
     try {
-      const M = {
-        page: d.page,
-        page_size: d.pageSize,
-        ...D
+      const E = {
+        page: i.page,
+        page_size: i.pageSize,
+        ...S
       };
-      _.value && (M.search = _.value), E.field && E.order !== 0 && (M.ordering = E.order === -1 ? `-${E.field}` : E.field), W && Object.assign(M, W());
-      const I = await $.list(t, M);
-      B.value = I.data, d.rows = I.rows, X.value = I.extras ?? {}, I.page && (d.page = I.page), I.page_size && (d.pageSize = I.page_size), d.totalPages = Math.ceil(d.rows / d.pageSize) || 0;
+      X.value && (E.search = X.value), p.field && p.order !== 0 && (E.ordering = p.order === -1 ? `-${p.field}` : p.field), B && Object.assign(E, B());
+      const R = await D.list(t, E);
+      O.value = R.data, i.rows = R.rows, Z.value = R.extras ?? {}, R.page && (i.page = R.page), R.page_size && (i.pageSize = R.page_size), i.totalPages = Math.ceil(i.rows / i.pageSize) || 0;
     } finally {
-      oe.value = !1;
+      le.value = !1;
     }
   }
-  async function ve() {
-    await ue();
+  async function ye() {
+    await re();
   }
-  async function Ce() {
-    await ue();
+  async function Se() {
+    await re();
   }
-  async function Ee(D = 200) {
-    const M = {};
-    _.value && (M.search = _.value), E.field && E.order !== 0 && (M.ordering = E.order === -1 ? `-${E.field}` : E.field), W && Object.assign(M, W());
-    const I = [];
-    let Q = 1;
-    const Le = 1e4;
-    for (; Q <= Le; ) {
-      const be = await $.list(t, {
-        ...M,
-        page: Q,
-        page_size: D
+  async function Ae(S = 200) {
+    const E = {};
+    X.value && (E.search = X.value), p.field && p.order !== 0 && (E.ordering = p.order === -1 ? `-${p.field}` : p.field), B && Object.assign(E, B());
+    const R = [];
+    let _ = 1;
+    const Ye = 1e4;
+    for (; _ <= Ye; ) {
+      const De = await D.list(t, {
+        ...E,
+        page: _,
+        page_size: S
       });
-      I.push(...be.data);
-      const he = be.rows ?? I.length;
-      if (be.data.length === 0 || I.length >= he) break;
-      Q++;
+      R.push(...De.data);
+      const ke = De.rows ?? R.length;
+      if (De.data.length === 0 || R.length >= ke) break;
+      _++;
     }
-    return I;
+    return R;
   }
-  function De(D) {
-    _.value = D, ke && clearTimeout(ke), ke = setTimeout(() => {
-      d.page = 1, ue();
-    }, i);
+  function Pe(S) {
+    X.value = S, he && clearTimeout(he), he = setTimeout(() => {
+      i.page = 1, re();
+    }, r);
   }
-  function Me(D) {
-    const M = D.target;
-    De(M.value);
+  function Re(S) {
+    const E = S.target;
+    Pe(E.value);
   }
-  function ye(D) {
-    d.page = D, ue();
+  function Ce(S) {
+    i.page = S, re();
   }
-  function xe() {
-    ye(1);
+  function Ve() {
+    Ce(1);
   }
-  function Fe() {
-    ye(d.totalPages);
+  function Ie() {
+    Ce(i.totalPages);
   }
-  function Ae(D) {
-    d.page = D.page + 1, d.pageSize = D.rows, ue();
+  function Te(S) {
+    i.page = S.page + 1, i.pageSize = S.rows, re();
   }
-  function Re(D) {
-    E.field = D.sortField ?? null, E.order = D.sortOrder ?? 0, d.page = 1, ue();
+  function Le(S) {
+    p.field = S.sortField ?? null, p.order = S.sortOrder ?? 0, i.page = 1, re();
   }
-  function C() {
-    const D = R();
-    for (const M of Object.keys(D))
-      n[M] = D[M];
+  function x() {
+    const S = o();
+    for (const E of Object.keys(S))
+      h[E] = S[E];
   }
-  function S(D, M) {
-    n[D] = M;
+  function V(S, E) {
+    h[S] = E;
   }
   function te() {
-    if (P.value = !1, u.value = null, p = null, C(), L) {
-      const D = L();
-      for (const [M, I] of Object.entries(D))
-        n[M] = I;
+    if (Q.value = !1, f.value = null, c = null, x(), T) {
+      const S = T();
+      for (const [E, R] of Object.entries(S))
+        h[E] = R;
     }
-    f.value = !0;
+    J.value = !0;
   }
-  function z(D) {
-    const M = {};
-    for (const I of o) {
-      let Q = D[I.field] !== void 0 ? D[I.field] : null;
-      Q && (I.type === "date" || I.type === "datetime") && typeof Q == "string" && (Q = it(Q)), n[I.field] = Q, M[I.field] = Q;
+  function L(S) {
+    const E = {};
+    for (const R of n) {
+      let _ = S[R.field] !== void 0 ? S[R.field] : null;
+      _ && (R.type === "date" || R.type === "datetime") && typeof _ == "string" && (_ = it(_)), h[R.field] = _, E[R.field] = _;
     }
-    p = M;
+    c = E;
   }
-  function ce(D) {
-    P.value = !1, u.value = D, z(D), f.value = !0;
+  function pe(S) {
+    Q.value = !1, f.value = S, L(S), J.value = !0;
   }
-  function Ot(D) {
-    P.value = !0, u.value = D, z(D), f.value = !0;
+  function Ot(S) {
+    Q.value = !0, f.value = S, L(S), J.value = !0;
   }
-  function Bt(D) {
-    P.value = !1, u.value = null, p = null, C();
-    for (const M of o) {
-      if (M.field === l) continue;
-      let I = D[M.field] !== void 0 ? D[M.field] : n[M.field];
-      I && (M.type === "date" || M.type === "datetime") && typeof I == "string" && (I = it(I)), n[M.field] = I;
+  function Bt(S) {
+    Q.value = !1, f.value = null, c = null, x();
+    for (const E of n) {
+      if (E.field === l) continue;
+      let R = S[E.field] !== void 0 ? S[E.field] : h[E.field];
+      R && (E.type === "date" || E.type === "datetime") && typeof R == "string" && (R = it(R)), h[E.field] = R;
     }
-    if (L) {
-      const M = L();
-      for (const [I, Q] of Object.entries(M))
-        n[I] = Q;
+    if (T) {
+      const E = T();
+      for (const [R, _] of Object.entries(E))
+        h[R] = _;
     }
-    f.value = !0;
+    J.value = !0;
   }
-  function dt(D) {
-    const M = { ...D };
-    for (const I of o) {
-      const Q = M[I.field];
-      if (I.type === "date" && Q instanceof Date ? M[I.field] = St(Q) : I.type === "datetime" && Q instanceof Date && (M[I.field] = Pt(Q)), I.type === "fk" && Q !== null && typeof Q == "object") {
-        const Le = I.optionValue || "id";
-        M[I.field] = Q[Le] ?? Q;
+  function dt(S) {
+    const E = { ...S };
+    for (const R of n) {
+      const _ = E[R.field];
+      if (R.type === "date" && _ instanceof Date ? E[R.field] = St(_) : R.type === "datetime" && _ instanceof Date && (E[R.field] = Pt(_)), R.type === "fk" && _ !== null && typeof _ == "object") {
+        const Ye = R.optionValue || "id";
+        E[R.field] = _[Ye] ?? _;
       }
-      (I.type === "mask" || I.type === "cpf_cnpj") && typeof Q == "string" && (M[I.field] = Ve(Q));
+      (R.type === "mask" || R.type === "cpf_cnpj") && typeof _ == "string" && (E[R.field] = Fe(_));
     }
-    return M;
+    return E;
   }
   async function Wt() {
-    for (const D of o) {
-      if (D.validate) {
-        const M = D.validate(n[D.field]);
-        if (M)
-          return N.error(M), null;
+    for (const S of n) {
+      if (S.validate) {
+        const E = S.validate(h[S.field]);
+        if (E)
+          return z.error(E), null;
       }
-      if (D.required) {
-        const M = n[D.field];
-        if (M == null || M === "")
-          return N.error(`${D.label} é obrigatório`), null;
+      if (S.required) {
+        const E = h[S.field];
+        if (E == null || E === "")
+          return z.error(`${S.label} é obrigatório`), null;
       }
     }
     ae.value = !0;
     try {
-      let D = dt(n);
-      if (!se.value && L && Object.assign(D, L()), se.value && r && p) {
-        const he = dt(p);
-        if (D = yl(he, D), Object.keys(D).length === 0 && !J) {
-          f.value = !1;
-          const Se = u.value;
-          return u.value = null, p = null, Se;
+      let S = dt(h);
+      if (!ne.value && T && Object.assign(S, T()), ne.value && u && c) {
+        const ke = dt(c);
+        if (S = ml(ke, S), Object.keys(S).length === 0 && !K) {
+          J.value = !1;
+          const Me = f.value;
+          return f.value = null, c = null, Me;
         }
       }
-      J && (D = J(D, se.value));
-      const M = o.some(
-        (he) => he.type === "image" && D[he.field] instanceof File
+      K && (S = K(S, ne.value));
+      const E = n.some(
+        (ke) => ke.type === "image" && S[ke.field] instanceof File
       );
-      let I = D, Q;
-      if (M) {
-        const he = new Set(
-          o.filter(($e) => $e.type === "image").map(($e) => $e.field)
-        ), Se = new FormData();
-        for (const [$e, Oe] of Object.entries(D))
-          if (Oe != null)
-            if (Oe instanceof File)
-              Se.append($e, Oe);
+      let R = S, _;
+      if (E) {
+        const ke = new Set(
+          n.filter((xe) => xe.type === "image").map((xe) => xe.field)
+        ), Me = new FormData();
+        for (const [xe, Be] of Object.entries(S))
+          if (Be != null)
+            if (Be instanceof File)
+              Me.append(xe, Be);
             else {
-              if (he.has($e))
+              if (ke.has(xe))
                 continue;
-              Se.append($e, String(Oe));
+              Me.append(xe, String(Be));
             }
-        I = Se, Q = { "Content-Type": "multipart/form-data" };
+        R = Me, _ = { "Content-Type": "multipart/form-data" };
       }
-      const Le = Q ? { headers: Q } : void 0;
-      let be;
-      if (se.value && u.value) {
-        const he = u.value[l];
-        if (be = await $.update(
+      const Ye = _ ? { headers: _ } : void 0;
+      let De;
+      if (ne.value && f.value) {
+        const ke = f.value[l];
+        if (De = await D.update(
           t,
-          he,
-          I,
-          Le
-        ), !y) {
-          const Se = B.value.findIndex(
-            ($e) => $e[l] === he
+          ke,
+          R,
+          Ye
+        ), !b) {
+          const Me = O.value.findIndex(
+            (xe) => xe[l] === ke
           );
-          Se !== -1 && (B.value[Se] = be.data);
+          Me !== -1 && (O.value[Me] = De.data);
         }
-        N.success(U.successUpdate);
+        z.success(j.successUpdate);
       } else
-        be = await $.create(t, I, Le), y || (B.value.unshift(be.data), d.rows++), N.success(U.successCreate);
-      return f.value = !1, u.value = null, p = null, y && await ue(), Z && Z(be.data, se.value), be.data;
-    } catch (D) {
-      return N.error(Ke(D, "Erro ao salvar registro")), null;
+        De = await D.create(t, R, Ye), b || (O.value.unshift(De.data), i.rows++), z.success(j.successCreate);
+      return J.value = !1, f.value = null, c = null, b && await re(), G && G(De.data, ne.value), De.data;
+    } catch (S) {
+      return z.error(Ke(S, "Erro ao salvar registro")), null;
     } finally {
       ae.value = !1;
     }
   }
-  function jt(D) {
-    K(async () => {
+  function jt(S) {
+    H(async () => {
       try {
-        const M = D[l];
-        await $.delete(t, M);
-        const I = B.value.findIndex((Q) => Q[l] === M);
-        I !== -1 && (B.value.splice(I, 1), d.rows--), N.success(U.successDelete), g && g(D);
-      } catch (M) {
-        N.error(Ke(M, "Erro ao excluir registro"));
+        const E = S[l];
+        await D.delete(t, E);
+        const R = O.value.findIndex((_) => _[l] === E);
+        R !== -1 && (O.value.splice(R, 1), i.rows--), z.success(j.successDelete), g && g(S);
+      } catch (E) {
+        z.error(Ke(E, "Erro ao excluir registro"));
       }
-    }, U.deleteConfirmMessage);
+    }, j.deleteConfirmMessage);
   }
   return {
-    items: B,
-    extras: X,
-    loading: oe,
+    items: O,
+    extras: Z,
+    loading: le,
     saving: ae,
-    search: _,
-    dialogVisible: f,
-    editingItem: u,
-    formData: n,
-    pagination: d,
-    sort: E,
-    isEditing: se,
-    isViewing: pe,
-    viewMode: P,
-    dialogTitle: Ne,
-    isFirstPage: Ye,
-    isLastPage: we,
-    init: ve,
-    fetchItems: ue,
-    fetchAll: Ee,
-    refresh: Ce,
-    setSearch: De,
-    onSearch: Me,
-    onPage: Ae,
-    onSort: Re,
+    search: X,
+    dialogVisible: J,
+    editingItem: f,
+    formData: h,
+    pagination: i,
+    sort: p,
+    isEditing: ne,
+    isViewing: me,
+    viewMode: Q,
+    dialogTitle: we,
+    isFirstPage: se,
+    isLastPage: ie,
+    init: ye,
+    fetchItems: re,
+    fetchAll: Ae,
+    refresh: Se,
+    setSearch: Pe,
+    onSearch: Re,
+    onPage: Te,
+    onSort: Le,
     openCreateDialog: te,
-    openEditDialog: ce,
+    openEditDialog: pe,
     openViewDialog: Ot,
     openDuplicateDialog: Bt,
     save: Wt,
     confirmDelete: jt,
-    setFormField: S,
-    resetForm: C,
-    goToPage: ye,
-    firstPage: xe,
-    lastPage: Fe,
+    setFormField: V,
+    resetForm: x,
+    goToPage: Ce,
+    firstPage: Ve,
+    lastPage: Ie,
     config: e
   };
 }
-function rs(e) {
-  const { endpoint: t, searchDebounce: a = 300, immediate: o = !1 } = e, l = Ie(_e);
+function ns(e) {
+  const { endpoint: t, searchDebounce: a = 300, immediate: n = !1 } = e, l = ze(_e);
   if (!l)
     throw new Error(
       "[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useApi."
     );
-  const i = l, r = Ie(et), y = e.pageSize ?? (r == null ? void 0 : r.defaultPageSize) ?? 20, c = q([]), k = q(!1), F = q(""), V = q({}), W = ge({}), L = ge({
+  const r = l, u = ze(et), b = e.pageSize ?? (u == null ? void 0 : u.defaultPageSize) ?? 20, d = U([]), C = U(!1), F = U(""), M = U({}), B = be({}), T = be({
     page: 1,
-    pageSize: y,
+    pageSize: b,
     rows: 0,
     totalPages: 0
-  }), J = ge({
+  }), K = be({
     field: null,
     order: 0
   });
-  let Z = null;
-  async function g(K = {}) {
-    k.value = !0;
+  let G = null;
+  async function g(H = {}) {
+    C.value = !0;
     try {
-      const B = {
-        page: L.page,
-        page_size: L.pageSize,
-        ...K
+      const O = {
+        page: T.page,
+        page_size: T.pageSize,
+        ...H
       };
-      F.value && (B.search = F.value), J.field && J.order !== 0 && (B.ordering = J.order === -1 ? `-${J.field}` : J.field);
-      for (const [oe, ae] of Object.entries(W))
-        ae != null && ae !== "" && (B[oe] = ae);
-      const X = await i.list(t, B);
-      c.value = X.data, L.rows = X.rows, X.page && (L.page = X.page), X.page_size && (L.pageSize = X.page_size), L.totalPages = Math.ceil(L.rows / L.pageSize) || 0, V.value = X.extras ?? {};
+      F.value && (O.search = F.value), K.field && K.order !== 0 && (O.ordering = K.order === -1 ? `-${K.field}` : K.field);
+      for (const [le, ae] of Object.entries(B))
+        ae != null && ae !== "" && (O[le] = ae);
+      const Z = await r.list(t, O);
+      d.value = Z.data, T.rows = Z.rows, Z.page && (T.page = Z.page), Z.page_size && (T.pageSize = Z.page_size), T.totalPages = Math.ceil(T.rows / T.pageSize) || 0, M.value = Z.extras ?? {};
     } finally {
-      k.value = !1;
+      C.value = !1;
     }
   }
-  async function b() {
+  async function k() {
     await g();
   }
-  function $(K) {
-    F.value = K, Z && clearTimeout(Z), Z = setTimeout(() => {
-      L.page = 1, g();
+  function D(H) {
+    F.value = H, G && clearTimeout(G), G = setTimeout(() => {
+      T.page = 1, g();
     }, a);
   }
-  function x(K, B) {
-    W[K] = B, L.page = 1, g();
+  function P(H, O) {
+    B[H] = O, T.page = 1, g();
   }
-  function j() {
-    for (const K of Object.keys(W))
-      delete W[K];
-    L.page = 1, g();
+  function W() {
+    for (const H of Object.keys(B))
+      delete B[H];
+    T.page = 1, g();
   }
-  function U(K) {
-    L.page = K.page + 1, L.pageSize = K.rows, g();
+  function j(H) {
+    T.page = H.page + 1, T.pageSize = H.rows, g();
   }
-  function N(K) {
-    J.field = K.sortField ?? null, J.order = K.sortOrder ?? 0, L.page = 1, g();
+  function z(H) {
+    K.field = H.sortField ?? null, K.order = H.sortOrder ?? 0, T.page = 1, g();
   }
-  return o && g(), {
-    items: c,
-    loading: k,
+  return n && g(), {
+    items: d,
+    loading: C,
     search: F,
-    pagination: L,
-    sort: J,
-    extras: V,
+    pagination: T,
+    sort: K,
+    extras: M,
     fetchItems: g,
-    refresh: b,
-    setSearch: $,
-    setFilter: x,
-    clearFilters: j,
-    onPage: U,
-    onSort: N
+    refresh: k,
+    setSearch: D,
+    setFilter: P,
+    clearFilters: W,
+    onPage: j,
+    onSort: z
   };
 }
-function bl(e) {
+function pl(e) {
   return e.split("?")[0].replace(/^\/+|\/+$/g, "").replace(/^api\/v\d+\//, "");
 }
-function wl(e) {
+function vl(e) {
   return typeof e == "string" ? { table: e } : e;
 }
 function Yt(e, t = 400) {
@@ -3419,7 +3446,7 @@ function wt(e) {
     );
   return e;
 }
-function Be(e) {
+function We(e) {
   throw {
     response: {
       data: {
@@ -3432,120 +3459,120 @@ function Be(e) {
     message: (e == null ? void 0 : e.message) ?? "Erro ao consultar Supabase"
   };
 }
-function We(e, t) {
-  var l, i;
-  const a = bl(e), o = (l = t.resources) == null ? void 0 : l[a];
-  if (o)
-    return wl(o);
-  if ((i = t.allowedTables) != null && i.includes(a))
+function je(e, t) {
+  var l, r;
+  const a = pl(e), n = (l = t.resources) == null ? void 0 : l[a];
+  if (n)
+    return vl(n);
+  if ((r = t.allowedTables) != null && r.includes(a))
     return { table: a };
   throw Yt(
     `Recurso Supabase nao registrado para o endpoint "${e}".`,
     404
   );
 }
-function kl(e, t, a) {
-  const o = /* @__PURE__ */ new Set(["page", "page_size", "search", "ordering"]), l = { ...a.defaultFilters, ...t };
-  for (const [i, r] of Object.entries(l))
-    o.has(i) || r === null || r === void 0 || r === "" || (e = e.eq(i, r));
+function gl(e, t, a) {
+  const n = /* @__PURE__ */ new Set(["page", "page_size", "search", "ordering"]), l = { ...a.defaultFilters, ...t };
+  for (const [r, u] of Object.entries(l))
+    n.has(r) || u === null || u === void 0 || u === "" || (e = e.eq(r, u));
   return e;
 }
-function $l(e, t, a) {
+function hl(e, t, a) {
   if (typeof t != "string" || !t.trim() || !(a != null && a.length))
     return e;
-  const o = t.trim().replace(/,/g, "\\,"), l = a.map((i) => `${i}.ilike.%${o}%`).join(",");
+  const n = t.trim().replace(/,/g, "\\,"), l = a.map((r) => `${r}.ilike.%${n}%`).join(",");
   return e.or(l);
 }
-function Cl(e, t) {
+function yl(e, t) {
   const a = typeof e == "string" && e ? e : t;
   return a ? {
     field: a.startsWith("-") ? a.slice(1) : a,
     ascending: !a.startsWith("-")
   } : null;
 }
-function Dl(e, t) {
+function bl(e, t) {
   return e ? t.mapListItem ? e.map(
     (a) => {
-      var o;
-      return (o = t.mapListItem) == null ? void 0 : o.call(t, a);
+      var n;
+      return (n = t.mapListItem) == null ? void 0 : n.call(t, a);
     }
   ) : e : [];
 }
-function us(e) {
+function os(e) {
   const t = e.defaultSelect ?? "*";
   return {
-    async list(a, o = {}) {
-      var W;
-      const l = We(a, e), i = Math.max(Number(o.page ?? 1), 1), r = Math.max(Number(o.page_size ?? 20), 1), y = (i - 1) * r, c = y + r - 1;
-      let k = e.client.from(l.table).select(l.select ?? t, { count: "exact" });
-      k = kl(k, o, l), k = $l(k, o.search, l.searchFields);
-      const F = Cl(o.ordering, l.defaultOrdering);
-      F && (k = k.order(F.field, { ascending: F.ascending }));
-      const V = await k.range(y, c);
-      return V.error && Be(V.error), {
-        data: Dl(V.data, l),
-        page: i,
-        page_size: r,
-        rows: V.count ?? ((W = V.data) == null ? void 0 : W.length) ?? 0,
+    async list(a, n = {}) {
+      var B;
+      const l = je(a, e), r = Math.max(Number(n.page ?? 1), 1), u = Math.max(Number(n.page_size ?? 20), 1), b = (r - 1) * u, d = b + u - 1;
+      let C = e.client.from(l.table).select(l.select ?? t, { count: "exact" });
+      C = gl(C, n, l), C = hl(C, n.search, l.searchFields);
+      const F = yl(n.ordering, l.defaultOrdering);
+      F && (C = C.order(F.field, { ascending: F.ascending }));
+      const M = await C.range(b, d);
+      return M.error && We(M.error), {
+        data: bl(M.data, l),
+        page: r,
+        page_size: u,
+        rows: M.count ?? ((B = M.data) == null ? void 0 : B.length) ?? 0,
         extras: {}
       };
     },
-    async get(a, o, l) {
-      const i = We(a, e), r = i.pk ?? "id", y = await e.client.from(i.table).select(i.select ?? t).eq(r, o).single();
-      return y.error && Be(y.error), { data: y.data };
+    async get(a, n, l) {
+      const r = je(a, e), u = r.pk ?? "id", b = await e.client.from(r.table).select(r.select ?? t).eq(u, n).single();
+      return b.error && We(b.error), { data: b.data };
     },
-    async create(a, o, l) {
-      const i = We(a, e), r = wt(o), y = i.mapPayload ? i.mapPayload(r, "create") : r, c = await e.client.from(i.table).insert(y).select(i.select ?? t).single();
-      return c.error && Be(c.error), { data: c.data };
+    async create(a, n, l) {
+      const r = je(a, e), u = wt(n), b = r.mapPayload ? r.mapPayload(u, "create") : u, d = await e.client.from(r.table).insert(b).select(r.select ?? t).single();
+      return d.error && We(d.error), { data: d.data };
     },
-    async update(a, o, l, i) {
-      const r = We(a, e), y = r.pk ?? "id", c = wt(l), k = r.mapPayload ? r.mapPayload(c, "update") : c, F = await e.client.from(r.table).update(k).eq(y, o).select(r.select ?? t).single();
-      return F.error && Be(F.error), { data: F.data };
+    async update(a, n, l, r) {
+      const u = je(a, e), b = u.pk ?? "id", d = wt(l), C = u.mapPayload ? u.mapPayload(d, "update") : d, F = await e.client.from(u.table).update(C).eq(b, n).select(u.select ?? t).single();
+      return F.error && We(F.error), { data: F.data };
     },
-    async delete(a, o) {
-      const l = We(a, e), i = l.pk ?? "id", r = l.softDelete === !0 ? { is_active: !1 } : typeof l.softDelete == "object" ? l.softDelete : null, y = r ? await e.client.from(l.table).update(r).eq(i, o) : await e.client.from(l.table).delete().eq(i, o);
-      y.error && Be(y.error);
+    async delete(a, n) {
+      const l = je(a, e), r = l.pk ?? "id", u = l.softDelete === !0 ? { is_active: !1 } : typeof l.softDelete == "object" ? l.softDelete : null, b = u ? await e.client.from(l.table).update(u).eq(r, n) : await e.client.from(l.table).delete().eq(r, n);
+      b.error && We(b.error);
     }
   };
 }
 export {
-  hl as DEFAULT_CRUD_LABELS,
-  os as WActionBar,
+  fl as DEFAULT_CRUD_LABELS,
+  _l as WActionBar,
   Lt as WAutoCompleteFK,
   Qe as WCrudColumnRenderer,
   ut as WCrudFormDialog,
-  po as WCrudView,
-  _l as WDetailHeader,
-  Ql as WEmptyState,
-  Mn as WFormRenderer,
-  ns as WFormSection,
-  es as WInfoCard,
-  Go as WKpiCard,
-  ts as WKpiGrid,
+  ro as WCrudView,
+  Gl as WDetailHeader,
+  Kl as WEmptyState,
+  xn as WFormRenderer,
+  Ql as WFormSection,
+  Jl as WInfoCard,
+  jo as WKpiCard,
+  Zl as WKpiGrid,
   zt as WMoneyInput,
-  Xl as WPageHeader,
-  ss as WPrimeVuePlugin,
-  ls as WProgressFlow,
-  as as WSectionHeader,
-  vo as WStatusTag,
+  Hl as WPageHeader,
+  ts as WPrimeVuePlugin,
+  es as WProgressFlow,
+  Xl as WSectionHeader,
+  uo as WStatusTag,
   Nt as WTransferList,
   la as W_AXIOS_KEY,
   et as W_CONFIG_KEY,
   _e as W_DATA_PROVIDER_KEY,
-  gl as createAxiosDataProvider,
-  us as createSupabaseDataProvider,
-  In as downloadCsv,
+  cl as createAxiosDataProvider,
+  os as createSupabaseDataProvider,
+  Mn as downloadCsv,
   Ke as extractApiError,
   za as mapApiFieldToColumnDef,
   Ia as mapApiFieldToFieldDef,
   Na as mapApiFieldsToColumnDefs,
   Ta as mapApiFieldsToFieldDefs,
-  Rn as toCsv,
-  rs as useApi,
-  Zl as useApiError,
+  Vn as toCsv,
+  ns as useApi,
+  ql as useApiError,
   Tt as useAppConfirm,
   It as useAppToast,
-  is as useCrudManager,
+  as as useCrudManager,
   rt as useFormatters
 };
 //# sourceMappingURL=index.js.map
