@@ -8,6 +8,8 @@ type __VLS_Props = {
     saving: boolean;
     disabled?: boolean;
     width?: string;
+    /** Nº de colunas do grid do form (repassado ao WFormRenderer; default 2). */
+    formColumns?: number;
 };
 declare function __VLS_template(): {
     attrs: Partial<{}>;
@@ -34,6 +36,7 @@ declare function __VLS_template(): {
                 readonly formData: Record<string, unknown>;
                 readonly isEditing: boolean;
                 readonly disabled?: boolean | undefined;
+                readonly columns?: number | undefined;
                 readonly "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
             } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps;
             $attrs: {
@@ -55,6 +58,7 @@ declare function __VLS_template(): {
                 formData: Record<string, unknown>;
                 isEditing: boolean;
                 disabled?: boolean;
+                columns?: number;
             }> & Readonly<{
                 "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
             }>, {
@@ -64,6 +68,7 @@ declare function __VLS_template(): {
                 "update:field": (field: string, value: unknown) => any;
             }, string, {
                 disabled: boolean;
+                columns: number;
             }, {}, string, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, import('vue').ComponentProvideOptions> & {
                 beforeCreate?: (() => void) | (() => void)[];
                 created?: (() => void) | (() => void)[];
@@ -86,14 +91,16 @@ declare function __VLS_template(): {
             $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, import('@vue/reactivity').OnCleanup]) => any : (...args: [any, any, import('@vue/reactivity').OnCleanup]) => any, options?: import('vue').WatchOptions): import('vue').WatchStopHandle;
         } & Readonly<{
             disabled: boolean;
+            columns: number;
         }> & Omit<Readonly<{
             fields: FieldDef[];
             formData: Record<string, unknown>;
             isEditing: boolean;
             disabled?: boolean;
+            columns?: number;
         }> & Readonly<{
             "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
-        }>, "disabled" | "validateAll" | "clearErrors"> & import('vue').ShallowUnwrapRef<{
+        }>, ("disabled" | "columns") | "validateAll" | "clearErrors"> & import('vue').ShallowUnwrapRef<{
             validateAll: () => string[];
             clearErrors: () => void;
         }> & {} & import('vue').ComponentCustomProperties & {} & {
@@ -122,6 +129,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
 }>, {
     disabled: boolean;
     width: string;
+    formColumns: number;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {
     rendererRef: ({
         $: import('vue').ComponentInternalInstance;
@@ -131,6 +139,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             readonly formData: Record<string, unknown>;
             readonly isEditing: boolean;
             readonly disabled?: boolean | undefined;
+            readonly columns?: number | undefined;
             readonly "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
         } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps;
         $attrs: {
@@ -152,6 +161,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             formData: Record<string, unknown>;
             isEditing: boolean;
             disabled?: boolean;
+            columns?: number;
         }> & Readonly<{
             "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
         }>, {
@@ -161,6 +171,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             "update:field": (field: string, value: unknown) => any;
         }, string, {
             disabled: boolean;
+            columns: number;
         }, {}, string, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, import('vue').ComponentProvideOptions> & {
             beforeCreate?: (() => void) | (() => void)[];
             created?: (() => void) | (() => void)[];
@@ -183,14 +194,16 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
         $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, import('@vue/reactivity').OnCleanup]) => any : (...args: [any, any, import('@vue/reactivity').OnCleanup]) => any, options?: import('vue').WatchOptions): import('vue').WatchStopHandle;
     } & Readonly<{
         disabled: boolean;
+        columns: number;
     }> & Omit<Readonly<{
         fields: FieldDef[];
         formData: Record<string, unknown>;
         isEditing: boolean;
         disabled?: boolean;
+        columns?: number;
     }> & Readonly<{
         "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
-    }>, "disabled" | "validateAll" | "clearErrors"> & import('vue').ShallowUnwrapRef<{
+    }>, ("disabled" | "columns") | "validateAll" | "clearErrors"> & import('vue').ShallowUnwrapRef<{
         validateAll: () => string[];
         clearErrors: () => void;
     }> & {} & import('vue').ComponentCustomProperties & {} & {

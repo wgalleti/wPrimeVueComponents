@@ -15,10 +15,13 @@ const props = withDefaults(
     saving: boolean
     disabled?: boolean
     width?: string
+    /** Nº de colunas do grid do form (repassado ao WFormRenderer; default 2). */
+    formColumns?: number
   }>(),
   {
     width: '480px',
     disabled: false,
+    formColumns: undefined,
   },
 )
 
@@ -69,6 +72,7 @@ watch(
         :form-data="formData"
         :is-editing="isEditing"
         :disabled="disabled"
+        :columns="formColumns"
         @update:field="(f, v) => emit('update:field', f, v)"
       >
         <!-- Forward field-* slots from parent -->

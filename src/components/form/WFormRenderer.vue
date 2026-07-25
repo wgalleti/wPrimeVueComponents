@@ -22,9 +22,13 @@ const props = withDefaults(
     formData: Record<string, unknown>
     isEditing: boolean
     disabled?: boolean
+    /** Nº de colunas do grid (default 2). Campos ocupam frações via `colSpan`;
+     *  grupos podem sobrepor via `fieldGroup.columns`. */
+    columns?: number
   }>(),
   {
     disabled: false,
+    columns: 2,
   },
 )
 
@@ -229,7 +233,35 @@ interface FieldGroup {
   id: string
   title?: string
   description?: string
+  columns?: number
   fields: FieldDef[]
+}
+
+// --- Grid columns / span ---
+
+function groupColumns(group: FieldGroup): number {
+  return Math.max(1, Math.floor(group.columns ?? props.columns))
+}
+
+/** Resolve o colSpan do campo em nº de colunas do grid do grupo.
+ *  - omitido ou 'full' → linha inteira
+ *  - 0.5 → metade da linha (independe do nº de colunas)
+ *  - inteiro ≥ 1 → N colunas (limitado ao total) */
+function fieldSpan(field: FieldDef, cols: number): number {
+  const span = field.colSpan
+  if (span == null || span === 'full') return cols
+  if (span === 0.5) return Math.max(1, Math.round(cols / 2))
+  return Math.min(Math.max(1, Math.floor(span)), cols)
+}
+
+function fieldSpanStyle(field: FieldDef, group: FieldGroup) {
+  return { '--w-col-span': fieldSpan(field, groupColumns(group)) }
+}
+
+function fieldSpanClass(field: FieldDef, group: FieldGroup): string {
+  return fieldSpan(field, groupColumns(group)) === groupColumns(group)
+    ? 'w-crud-form-col-full'
+    : 'w-crud-form-col-half'
 }
 
 const groupedFields = computed((): FieldGroup[] => {
@@ -245,6 +277,7 @@ const groupedFields = computed((): FieldGroup[] => {
         id: groupId,
         title: field.fieldGroup?.title,
         description: field.fieldGroup?.description,
+        columns: field.fieldGroup?.columns,
         fields: [],
       })
       groupOrder.push(groupId)
@@ -279,7 +312,10 @@ defineExpose({ validateAll, clearErrors })
         <h3 class="w-crud-form-group-title">{{ group.title }}</h3>
         <p v-if="group.description" class="w-crud-form-group-desc">{{ group.description }}</p>
       </div>
-      <div class="w-crud-form-fields">
+      <div
+        class="w-crud-form-fields"
+        :style="{ '--w-form-cols': groupColumns(group) }"
+      >
         <template v-for="field in group.fields" :key="field.field">
           <slot
             :name="`field-${field.field}`"
@@ -292,6 +328,7 @@ defineExpose({ validateAll, clearErrors })
             <div
               v-if="field.type === 'switch'"
               class="w-crud-form-switch"
+              :style="fieldSpanStyle(field, group)"
             >
               <ToggleSwitch
                 :model-value="formData[field.field] as boolean"
@@ -302,7 +339,11 @@ defineExpose({ validateAll, clearErrors })
             </div>
 
             <!-- Color -->
-            <div v-else-if="field.type === 'color'" class="w-crud-form-col-full">
+            <div
+              v-else-if="field.type === 'color'"
+              :class="fieldSpanClass(field, group)"
+              :style="fieldSpanStyle(field, group)"
+            >
               <label class="w-crud-form-label">
                 {{ field.label }}
                 <span v-if="field.required" class="w-crud-form-required">*</span>
@@ -325,7 +366,11 @@ defineExpose({ validateAll, clearErrors })
             </div>
 
             <!-- Image -->
-            <div v-else-if="field.type === 'image'" class="w-crud-form-col-full">
+            <div
+              v-else-if="field.type === 'image'"
+              :class="fieldSpanClass(field, group)"
+              :style="fieldSpanStyle(field, group)"
+            >
               <label class="w-crud-form-label">
                 {{ field.label }}
               </label>
@@ -343,7 +388,11 @@ defineExpose({ validateAll, clearErrors })
             </div>
 
             <!-- Transfer (dual list) -->
-            <div v-else-if="field.type === 'transfer'" class="w-crud-form-col-full">
+            <div
+              v-else-if="field.type === 'transfer'"
+              :class="fieldSpanClass(field, group)"
+              :style="fieldSpanStyle(field, group)"
+            >
               <label class="w-crud-form-label">
                 {{ field.label }}
                 <span v-if="field.required" class="w-crud-form-required">*</span>
@@ -362,7 +411,8 @@ defineExpose({ validateAll, clearErrors })
             <!-- All other types -->
             <div
               v-else
-              :class="field.colSpan === 0.5 ? 'w-crud-form-col-half' : 'w-crud-form-col-full'"
+              :class="fieldSpanClass(field, group)"
+              :style="fieldSpanStyle(field, group)"
             >
               <label class="w-crud-form-label">
                 {{ field.label }}

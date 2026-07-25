@@ -4,6 +4,9 @@ type __VLS_Props = {
     formData: Record<string, unknown>;
     isEditing: boolean;
     disabled?: boolean;
+    /** Nº de colunas do grid (default 2). Campos ocupam frações via `colSpan`;
+     *  grupos podem sobrepor via `fieldGroup.columns`. */
+    columns?: number;
 };
 declare function validateAll(): string[];
 declare function clearErrors(): void;
@@ -31,6 +34,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {
     "onUpdate:field"?: ((field: string, value: unknown) => any) | undefined;
 }>, {
     disabled: boolean;
+    columns: number;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, HTMLDivElement>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 export default _default;

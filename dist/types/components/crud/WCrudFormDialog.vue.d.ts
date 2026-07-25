@@ -8,6 +8,8 @@ type __VLS_Props = {
     saving: boolean;
     disabled?: boolean;
     width?: string;
+    /** Nº de colunas do grid do form (repassado ao WFormRenderer; default 2). */
+    formColumns?: number;
 };
 declare var __VLS_20: `field-${string}`, __VLS_21: {
     field: FieldDef;
@@ -39,6 +41,7 @@ declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {}, {}
 }>, {
     disabled: boolean;
     width: string;
+    formColumns: number;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const _default: __VLS_WithSlots<typeof __VLS_component, __VLS_Slots>;
 export default _default;
