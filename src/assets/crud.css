@@ -837,6 +837,19 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.w-kpi-grid--cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.w-kpi-grid--cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow) */
+.w-kpi-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
 .w-kpi-grid--dense {
   gap: 0.5rem;
 }
