@@ -1,7 +1,12 @@
 import type { KpiItem } from '@/types/crud';
 type __VLS_Props = {
     items?: KpiItem[];
-    columns?: 2 | 3 | 4;
+    /**
+     * Número fixo de colunas (2–6) ou 'auto' para preencher a largura com quantos
+     * KPIs couberem (responsivo, sem overflow). Use 'auto' em dashboards que devem
+     * aproveitar o máximo da tela.
+     */
+    columns?: 2 | 3 | 4 | 5 | 6 | 'auto';
     dense?: boolean;
 };
 declare var __VLS_1: {
@@ -13,7 +18,7 @@ type __VLS_Slots = {} & {
     item?: (props: typeof __VLS_1) => any;
 };
 declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {
-    columns: 2 | 3 | 4;
+    columns: 2 | 3 | 4 | 5 | 6 | "auto";
     items: KpiItem[];
     dense: boolean;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;

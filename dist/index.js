@@ -2801,7 +2801,7 @@ const $o = { class: "w-detail-header" }, Co = { class: "w-detail-header-left" },
   },
   setup(e) {
     const t = e, a = q(() => [
-      `w-kpi-grid--cols-${t.columns}`,
+      t.columns === "auto" ? "w-kpi-grid--auto" : `w-kpi-grid--cols-${t.columns}`,
       { "w-kpi-grid--dense": t.dense }
     ]);
     return (n, l) => (s(), m("div", {

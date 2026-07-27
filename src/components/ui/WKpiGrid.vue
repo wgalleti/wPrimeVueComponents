@@ -7,7 +7,12 @@ import WKpiCard from './WKpiCard.vue'
 const props = withDefaults(
   defineProps<{
     items?: KpiItem[]
-    columns?: 2 | 3 | 4
+    /**
+     * Número fixo de colunas (2–6) ou 'auto' para preencher a largura com quantos
+     * KPIs couberem (responsivo, sem overflow). Use 'auto' em dashboards que devem
+     * aproveitar o máximo da tela.
+     */
+    columns?: 2 | 3 | 4 | 5 | 6 | 'auto'
     dense?: boolean
   }>(),
   {
@@ -18,7 +23,7 @@ const props = withDefaults(
 )
 
 const gridClass = computed(() => [
-  `w-kpi-grid--cols-${props.columns}`,
+  props.columns === 'auto' ? 'w-kpi-grid--auto' : `w-kpi-grid--cols-${props.columns}`,
   { 'w-kpi-grid--dense': props.dense },
 ])
 </script>
