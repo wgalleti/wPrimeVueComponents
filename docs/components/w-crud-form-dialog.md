@@ -21,25 +21,9 @@ Normalmente voce nao usa este componente diretamente — o `WCrudView` ja o rend
 />
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Padrao | Descricao |
-|------|------|--------|-----------|
-| `visible` | `boolean` | — | Controla visibilidade do dialog |
-| `title` | `string` | — | Titulo do dialog |
-| `fields` | `FieldDef[]` | — | Definicao dos campos |
-| `formData` | `Record<string, unknown>` | — | Dados reativos do formulario |
-| `isEditing` | `boolean` | — | Se esta editando ou criando |
-| `saving` | `boolean` | — | Estado de salvamento |
-| `width` | `string` | `'480px'` | Largura do dialog |
-
-## Eventos
-
-| Evento | Payload | Descricao |
-|--------|---------|-----------|
-| `update:visible` | `boolean` | Quando o dialog abre/fecha |
-| `update:field` | `(field: string, value: unknown)` | Quando um campo muda |
-| `save` | — | Quando o formulario e submetido |
+<ApiTable name="WCrudFormDialog" />
 
 ## Tipos de Campo Suportados
 

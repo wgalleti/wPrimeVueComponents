@@ -2,21 +2,9 @@
 
 Estado vazio generico com icone, titulo, descricao e CTA opcional.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `icon` | `string` | obrigatorio | Icone PrimeIcons |
-| `title` | `string` | obrigatorio | Titulo do estado vazio |
-| `description` | `string` | `undefined` | Descricao opcional |
-| `actionLabel` | `string` | `undefined` | Label do CTA |
-| `actionIcon` | `string` | `undefined` | Icone do CTA |
-
-## Emits
-
-| Evento | Descricao |
-|---|---|
-| `action` | Disparado ao clicar no CTA |
+<ApiTable name="WEmptyState" />
 
 ## Exemplo
 

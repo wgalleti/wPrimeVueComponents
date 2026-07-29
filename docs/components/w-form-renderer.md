@@ -10,20 +10,9 @@ import { WFormRenderer } from '@wgalleti/primevue-components'
 </script>
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `fields` | `FieldDef[]` | **obrigatorio** | Definicao dos campos |
-| `formData` | `Record<string, unknown>` | **obrigatorio** | Dados do formulario (reativo) |
-| `isEditing` | `boolean` | **obrigatorio** | Modo edicao (altera autofocus e disabledOnEdit) |
-| `disabled` | `boolean` | `false` | Desabilita todos os campos |
-
-## Eventos
-
-| Evento | Payload | Descricao |
-|---|---|---|
-| `update:field` | `(field: string, value: unknown)` | Emitido quando um campo muda de valor |
+<ApiTable name="WFormRenderer" />
 
 ## Metodos Expostos (ref)
 
@@ -31,13 +20,6 @@ import { WFormRenderer } from '@wgalleti/primevue-components'
 |---|---|---|
 | `validateAll()` | `string[]` | Executa validacoes customizadas de todos os campos. Retorna array de mensagens de erro (vazio = valido) |
 | `clearErrors()` | `void` | Limpa todas as mensagens de erro |
-
-## Slots
-
-| Slot | Scope | Descricao |
-|---|---|---|
-| `field-{fieldName}` | `{ field, formData, isEditing, setFormField }` | Override de campo individual |
-| `image-{fieldName}` | `{ field, formData }` | Override do input de imagem |
 
 ## Diferenca entre WFormRenderer e WCrudFormDialog
 

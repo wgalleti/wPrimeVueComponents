@@ -10,27 +10,9 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 </script>
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `modelValue` | `unknown` | — | Valor selecionado (ID ou objeto) |
-| `endpoint` | `string` | **obrigatorio** | Endpoint base da API (sem query string — veja `endpointParams`) |
-| `endpointParams` | `Record<string, string \| number \| boolean>` | `undefined` | Parametros extras enviados como query string nas buscas (autocomplete e modal). **Nao** sao incluidos na URL de detalhe (`GET /{id}/`). Veja [endpointParams](#endpointparams). |
-| `optionLabel` | `string` | `'nome'` | Propriedade do objeto para exibicao |
-| `optionValue` | `string` | `'id'` | Propriedade do objeto para valor |
-| `placeholder` | `string` | `'Buscar...'` | Placeholder do input |
-| `disabled` | `boolean` | `false` | Desabilitar campo |
-| `showClear` | `boolean` | `true` | Mostrar botao limpar |
-| `dialogHeader` | `string` | `undefined` | Titulo do modal de busca |
-| `crudFields` | `FieldDef[]` | `undefined` | Campos do formulario para CRUD inline no modal (v0.2.0+) |
-| `crudColumns` | `ColumnDef[]` | `undefined` | Colunas da tabela para CRUD inline no modal (v0.2.0+) |
-
-## Eventos
-
-| Evento | Payload | Descricao |
-|---|---|---|
-| `update:modelValue` | `unknown` | Valor selecionado mudou |
+<ApiTable name="WAutoCompleteFK" />
 
 ## Comportamento
 

@@ -26,29 +26,9 @@ const crud = useCrudManager({
 </template>
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Padrao | Descricao |
-|------|------|--------|-----------|
-| `crud` | `CrudManagerReturn` | **obrigatorio** | Retorno do `useCrudManager` |
-| `title` | `string` | **obrigatorio** | Titulo do CRUD |
-| `subtitle` | `string` | — | Subtitulo exibido abaixo do titulo |
-| `showSearch` | `boolean` | `true` | Exibe campo de busca no toolbar |
-| `showHeader` | `boolean` | `true` | Exibe header com titulo e botao "Novo" |
-| `dialogWidth` | `string` | `'480px'` | Largura do dialog de formulario |
-| `autoInit` | `boolean` | `true` | Chama `crud.init()` automaticamente no mount |
-| `showKpi` | `boolean` | `false` | Exibe KPI de total de registros |
-| `kpiIcon` | `string` | `'pi pi-list'` | Icone do KPI padrao |
-| `kpiLabel` | `string` | `'Total de Registros'` | Label do KPI padrao |
-| `extraKpis` | `KpiItem[]` | `[]` | KPIs adicionais |
-| `expandable` | `boolean` | `false` | Habilita linhas expandiveis |
-
-## Eventos
-
-| Evento | Payload | Descricao |
-|--------|---------|-----------|
-| `row-expand` | `data: unknown` | Quando uma linha e expandida |
-| `row-collapse` | `data: unknown` | Quando uma linha e colapsada |
+<ApiTable name="WCrudView" />
 
 ## Slots
 
