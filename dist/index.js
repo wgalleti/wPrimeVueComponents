@@ -1,38 +1,38 @@
-import { inject as Le, defineComponent as fe, openBlock as i, createElementBlock as m, createBlock as A, unref as g, toDisplayString as T, ref as K, computed as O, watch as Qe, reactive as we, resolveDirective as xt, Fragment as ie, createElementVNode as h, createVNode as Y, withDirectives as he, withCtx as se, createCommentVNode as S, renderList as ce, normalizeStyle as Ce, createTextVNode as Fe, normalizeClass as re, renderSlot as N, isRef as Ut, withModifiers as qt, createSlots as ut, normalizeProps as dt, guardReactiveProps as ct, useSlots as Ht, onMounted as Kt, createStaticVNode as Gt } from "vue";
+import { inject as Le, defineComponent as fe, openBlock as i, createElementBlock as m, createBlock as A, unref as g, toDisplayString as T, ref as K, computed as O, watch as Qe, reactive as we, resolveDirective as xt, Fragment as ie, createElementVNode as h, mergeProps as Ut, createVNode as Y, withDirectives as he, withCtx as se, createCommentVNode as S, renderList as ce, normalizeStyle as Ce, createTextVNode as Fe, normalizeClass as re, renderSlot as N, isRef as qt, withModifiers as Ht, createSlots as ut, normalizeProps as dt, guardReactiveProps as ct, useSlots as Kt, onMounted as Gt, createStaticVNode as Jt } from "vue";
 import St from "primevue/datatable";
 import Oe from "primevue/column";
 import ae from "primevue/button";
 import ye from "primevue/inputtext";
 import qe from "primevue/iconfield";
 import He from "primevue/inputicon";
-import Jt from "primevue/paginator";
-import Zt from "primevue/contextmenu";
+import Zt from "primevue/paginator";
+import Xt from "primevue/contextmenu";
 import Pt from "primevue/tag";
 import ze from "dayjs";
 import Vt from "primevue/dialog";
 import vt from "primevue/inputnumber";
-import Xt from "primevue/textarea";
-import Qt from "primevue/select";
+import Qt from "primevue/textarea";
+import _t from "primevue/select";
 import Mt from "primevue/autocomplete";
 import gt from "primevue/datepicker";
-import _t from "primevue/toggleswitch";
-import ea from "primevue/colorpicker";
-import ta from "primevue/password";
-import { useToast as aa } from "primevue/usetoast";
-import { useConfirm as na } from "primevue/useconfirm";
-import oa from "primevue/inputgroup";
+import ea from "primevue/toggleswitch";
+import ta from "primevue/colorpicker";
+import aa from "primevue/password";
+import { useToast as na } from "primevue/usetoast";
+import { useConfirm as oa } from "primevue/useconfirm";
+import la from "primevue/inputgroup";
 import ht from "primevue/inputgroupaddon";
 import Ze from "primevue/skeleton";
-const la = Symbol("w-axios"), at = Symbol("w-data-provider"), nt = Symbol("w-config");
-function sa(e) {
+const sa = Symbol("w-axios"), at = Symbol("w-data-provider"), nt = Symbol("w-config");
+function ia(e) {
   return e && e.__esModule && Object.prototype.hasOwnProperty.call(e, "default") ? e.default : e;
 }
-var _e = { exports: {} }, ia = _e.exports, yt;
-function ra() {
+var _e = { exports: {} }, ra = _e.exports, yt;
+function ua() {
   return yt || (yt = 1, (function(e, a) {
     (function(t, n) {
       e.exports = n();
-    })(ia, (function() {
+    })(ra, (function() {
       var t = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, n = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|Q|YYYY|YY?|ww?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, s = /\d/, r = /\d\d/, u = /\d\d?/, b = /\d*[^-_:/,()\s\d]+/, d = {}, x = function(v) {
         return (v = +v) + (v > 68 ? 1900 : 2e3);
       }, F = function(v) {
@@ -150,9 +150,9 @@ function ra() {
     }));
   })(_e)), _e.exports;
 }
-var ua = ra();
-const da = /* @__PURE__ */ sa(ua);
-ze.extend(da);
+var da = ua();
+const ca = /* @__PURE__ */ ia(da);
+ze.extend(ca);
 function ft(e) {
   if (!e) return null;
   if (e instanceof Date) return e;
@@ -165,10 +165,10 @@ function Et(e) {
 function Ft(e) {
   return e ? typeof e == "string" ? e : ze(e).toISOString() : null;
 }
-function ca(e, a = "DD/MM/YYYY") {
+function fa(e, a = "DD/MM/YYYY") {
   return e ? ze(e).format(a) : "—";
 }
-function fa(e) {
+function ma(e) {
   return e ? ze(e).format("DD/MM/YYYY HH:mm") : "—";
 }
 function Ae(e) {
@@ -187,12 +187,12 @@ function Rt(e) {
     "$1.$2.$3/$4-$5"
   );
 }
-function ma(e) {
+function pa(e) {
   if (!e) return "—";
   const a = Ae(e);
   return a.length === 11 ? At(e) : a.length === 14 ? Rt(e) : e;
 }
-function pa(e) {
+function va(e) {
   if (!e) return "—";
   const a = Ae(e);
   return a.length === 11 ? a.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3") : a.length === 10 ? a.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3") : e;
@@ -231,7 +231,7 @@ function Tt(e) {
   const b = s < 2 ? 0 : 11 - s;
   return parseInt(a[13]) !== b ? "CNPJ inválido." : null;
 }
-function va(e) {
+function ga(e) {
   if (!e) return null;
   const a = Ae(e);
   return a.length === 11 ? It(e) : a.length === 14 ? Tt(e) : "CPF deve ter 11 dígitos ou CNPJ deve ter 14 dígitos.";
@@ -245,7 +245,7 @@ function bt(e, a) {
     maximumFractionDigits: a
   }), et.set(t, n)), n;
 }
-function ga(e, a) {
+function ha(e, a) {
   const t = `${e}-${a}`;
   let n = et.get(t);
   return n || (n = new Intl.NumberFormat(e, {
@@ -262,16 +262,16 @@ function mt() {
     currency: "BRL"
   }), a = (e == null ? void 0 : e.locale) ?? "pt-BR", t = (e == null ? void 0 : e.currency) ?? "BRL";
   function n(d) {
-    return d == null ? "—" : ga(a, t).format(d);
+    return d == null ? "—" : ha(a, t).format(d);
   }
   function s(d, x = 2) {
     return d == null ? "—" : bt(a, x).format(d);
   }
   function r(d, x) {
-    return ca(d, x ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
+    return fa(d, x ?? (e == null ? void 0 : e.dateFormat) ?? "DD/MM/YYYY");
   }
   function u(d) {
-    return fa(d);
+    return ma(d);
   }
   function b(d) {
     return d == null ? "—" : `${bt(a, 2).format(d)}%`;
@@ -284,32 +284,32 @@ function mt() {
     formatPercent: b,
     formatCpf: At,
     formatCnpj: Rt,
-    formatCpfCnpj: ma,
-    formatTelefone: pa,
+    formatCpfCnpj: pa,
+    formatTelefone: va,
     validateCpf: It,
     validateCnpj: Tt,
-    validateCpfCnpj: va,
+    validateCpfCnpj: ga,
     parseDate: ft,
     toDateString: Et,
     toDateTimeString: Ft
   };
 }
-const ha = {
+const ya = {
   key: 0,
   class: "text-muted-color text-xs"
-}, ya = ["src", "alt"], ba = {
+}, ba = ["src", "alt"], wa = {
   key: 3,
   class: "text-muted-color tabular-nums text-[0.8125rem]"
-}, wa = {
+}, ka = {
   key: 4,
   class: "text-muted-color tabular-nums text-[0.8125rem]"
-}, ka = {
+}, $a = {
   key: 5,
   class: "font-semibold tabular-nums text-[0.8125rem]"
-}, $a = {
+}, Ca = {
   key: 6,
   class: "font-semibold tabular-nums text-[0.8125rem]"
-}, Ca = {
+}, Da = {
   key: 7,
   class: "text-[0.8125rem]"
 }, tt = /* @__PURE__ */ fe({
@@ -321,20 +321,20 @@ const ha = {
   },
   setup(e) {
     const { formatDate: a, formatDateTime: t, formatCurrency: n, formatNumber: s } = mt();
-    return (r, u) => e.value == null ? (i(), m("span", ha, "—")) : e.column.type === "image" ? (i(), m("img", {
+    return (r, u) => e.value == null ? (i(), m("span", ya, "—")) : e.column.type === "image" ? (i(), m("img", {
       key: 1,
       src: String(e.value),
       alt: e.column.header,
       class: "size-9 rounded-lg object-cover ring-1 ring-surface-200 dark:ring-surface-700"
-    }, null, 8, ya)) : e.column.type === "boolean" ? (i(), A(g(Pt), {
+    }, null, 8, ba)) : e.column.type === "boolean" ? (i(), A(g(Pt), {
       key: 2,
       value: e.column.tagValue ? e.column.tagValue(e.value, e.rowData) : e.value ? "Ativo" : "Inativo",
       severity: e.column.tagSeverity ? e.column.tagSeverity(e.value, e.rowData) : e.value ? "success" : "danger",
       class: "text-xs"
-    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (i(), m("span", ba, T(g(a)(e.value)), 1)) : e.column.type === "datetime" ? (i(), m("span", wa, T(g(t)(e.value)), 1)) : e.column.type === "currency" ? (i(), m("span", ka, T(g(n)(e.value)), 1)) : e.column.type === "number" ? (i(), m("span", $a, T(e.column.format ? e.column.format(e.value, e.rowData) : g(s)(e.value, e.column.decimals ?? 0)), 1)) : (i(), m("span", Ca, T(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
+    }, null, 8, ["value", "severity"])) : e.column.type === "date" ? (i(), m("span", wa, T(g(a)(e.value)), 1)) : e.column.type === "datetime" ? (i(), m("span", ka, T(g(t)(e.value)), 1)) : e.column.type === "currency" ? (i(), m("span", $a, T(g(n)(e.value)), 1)) : e.column.type === "number" ? (i(), m("span", Ca, T(e.column.format ? e.column.format(e.value, e.rowData) : g(s)(e.value, e.column.decimals ?? 0)), 1)) : (i(), m("span", Da, T(e.column.format ? e.column.format(e.value, e.rowData) : e.value), 1));
   }
 });
-var Da = Object.defineProperty, xa = (e, a, t) => a in e ? Da(e, a, { enumerable: !0, configurable: !0, writable: !0, value: t }) : e[a] = t, Ue = (e, a, t) => xa(e, typeof a != "symbol" ? a + "" : a, t);
+var xa = Object.defineProperty, Sa = (e, a, t) => a in e ? xa(e, a, { enumerable: !0, configurable: !0, writable: !0, value: t }) : e[a] = t, Ue = (e, a, t) => Sa(e, typeof a != "symbol" ? a + "" : a, t);
 const wt = {
   "#": { pattern: /[0-9]/ },
   "@": { pattern: /[a-zA-Z]/ },
@@ -346,7 +346,7 @@ const wt = {
     maximumFractionDigits: a,
     roundingMode: "trunc"
   });
-}, Sa = (e, a = !0, t) => {
+}, Pa = (e, a = !0, t) => {
   var n, s, r, u;
   const b = ((n = t.number) == null ? void 0 : n.unsigned) !== !0 && e.startsWith("-") ? "-" : "", d = ((s = t.number) == null ? void 0 : s.fraction) ?? 0;
   let x = $t(0, d, t);
@@ -359,12 +359,12 @@ const wt = {
   }
   let J = x.format(parseFloat(I));
   return a ? d > 0 && I.endsWith(".") && !I.slice(0, -1).includes(".") && (J += z) : J = kt(J, E, z), b + J;
-}, Lt = (e) => JSON.parse(e.replaceAll("'", '"')), Pa = (e, a = {}) => {
+}, Lt = (e) => JSON.parse(e.replaceAll("'", '"')), Va = (e, a = {}) => {
   const t = { ...a };
-  e.dataset.maska != null && e.dataset.maska !== "" && (t.mask = Va(e.dataset.maska)), e.dataset.maskaEager != null && (t.eager = Xe(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (t.reversed = Xe(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (t.tokensReplace = Xe(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (t.tokens = Ma(e.dataset.maskaTokens));
+  e.dataset.maska != null && e.dataset.maska !== "" && (t.mask = Ma(e.dataset.maska)), e.dataset.maskaEager != null && (t.eager = Xe(e.dataset.maskaEager)), e.dataset.maskaReversed != null && (t.reversed = Xe(e.dataset.maskaReversed)), e.dataset.maskaTokensReplace != null && (t.tokensReplace = Xe(e.dataset.maskaTokensReplace)), e.dataset.maskaTokens != null && (t.tokens = Ea(e.dataset.maskaTokens));
   const n = {};
   return e.dataset.maskaNumberLocale != null && (n.locale = e.dataset.maskaNumberLocale), e.dataset.maskaNumberFraction != null && (n.fraction = parseInt(e.dataset.maskaNumberFraction)), e.dataset.maskaNumberUnsigned != null && (n.unsigned = Xe(e.dataset.maskaNumberUnsigned)), (e.dataset.maskaNumber != null || Object.values(n).length > 0) && (t.number = n), t;
-}, Xe = (e) => e !== "" ? !!JSON.parse(e) : !0, Va = (e) => e.startsWith("[") && e.endsWith("]") ? Lt(e) : e, Ma = (e) => {
+}, Xe = (e) => e !== "" ? !!JSON.parse(e) : !0, Ma = (e) => e.startsWith("[") && e.endsWith("]") ? Lt(e) : e, Ea = (e) => {
   if (e.startsWith("{") && e.endsWith("}"))
     return Lt(e);
   const a = {};
@@ -384,7 +384,7 @@ const wt = {
     return !1;
   }
 };
-class Ea {
+class Fa {
   constructor(a = {}) {
     Ue(this, "opts", {}), Ue(this, "memo", /* @__PURE__ */ new Map());
     const t = { ...a };
@@ -432,7 +432,7 @@ class Ea {
     }), { mask: t.join(""), escaped: n };
   }
   process(a, t, n = !0) {
-    if (this.opts.number != null) return Sa(a, n, this.opts);
+    if (this.opts.number != null) return Pa(a, n, this.opts);
     if (t == null) return a;
     const s = `v=${a},mr=${t},m=${n ? 1 : 0}`;
     if (this.memo.has(s)) return this.memo.get(s);
@@ -454,7 +454,7 @@ class Ea {
     return this.memo.set(s, b.join("")), this.memo.get(s);
   }
 }
-class Fa {
+class Aa {
   constructor(a, t = {}) {
     Ue(this, "items", /* @__PURE__ */ new Map()), Ue(this, "eventAbortController"), Ue(this, "onInput", (n) => {
       if (n instanceof CustomEvent && n.type === "input" && !n.isTrusted && !n.bubbles)
@@ -482,7 +482,7 @@ class Fa {
         const { signal: r } = this.eventAbortController;
         n.addEventListener("input", this.onInput, { capture: !0, signal: r });
       }
-      const s = new Ea(Pa(n, t));
+      const s = new Fa(Va(n, t));
       this.items.set(n, s), queueMicrotask(() => this.updateValue(n)), n.selectionStart === null && s.isEager() && console.warn("Maska: input of `%s` type is not supported", n.type);
     }
   }
@@ -519,7 +519,7 @@ class Fa {
     };
   }
 }
-const it = /* @__PURE__ */ new WeakMap(), Aa = (e, a) => {
+const it = /* @__PURE__ */ new WeakMap(), Ra = (e, a) => {
   if (e.arg == null || e.instance == null) return;
   const t = "setup" in e.instance.$.type;
   e.arg in e.instance ? e.instance[e.arg] = a : t && console.warn("Maska: please expose `%s` using defineExpose", e.arg);
@@ -531,12 +531,12 @@ const it = /* @__PURE__ */ new WeakMap(), Aa = (e, a) => {
   if (a.value != null && (s = typeof a.value == "string" ? { mask: a.value } : { ...a.value }), a.arg != null) {
     const r = (u) => {
       const b = a.modifiers.unmasked ? u.unmasked : a.modifiers.completed ? u.completed : u.masked;
-      Aa(a, b);
+      Ra(a, b);
     };
     s.onMaska = s.onMaska == null ? r : Array.isArray(s.onMaska) ? [...s.onMaska, r] : [s.onMaska, r];
   }
-  it.has(n) ? (t = it.get(n)) == null || t.update(s) : it.set(n, new Fa(n, s));
-}, Ra = {
+  it.has(n) ? (t = it.get(n)) == null || t.update(s) : it.set(n, new Aa(n, s));
+}, Ia = {
   string: "text",
   integer: "number",
   decimal: "number",
@@ -551,9 +551,9 @@ const it = /* @__PURE__ */ new WeakMap(), Aa = (e, a) => {
   slug: "text",
   text: "textarea"
 };
-function Ia(e) {
+function Ta(e) {
   var n;
-  const a = Ra[e.type] ?? "text", t = {
+  const a = Ia[e.type] ?? "text", t = {
     field: e.name,
     label: e.label,
     type: a,
@@ -564,10 +564,10 @@ function Ia(e) {
     value: s.value
   }))), e.type === "fk" && (t.endpoint = e.endpoint, e.option_label && (t.optionLabel = e.option_label), e.option_value && (t.optionValue = e.option_value)), t;
 }
-function Ta(e) {
-  return e.filter((a) => !a.read_only && a.name !== "id").map(Ia);
+function La(e) {
+  return e.filter((a) => !a.read_only && a.name !== "id").map(Ta);
 }
-const La = {
+const za = {
   boolean: "boolean",
   date: "date",
   datetime: "datetime",
@@ -575,19 +575,19 @@ const La = {
   float: "number",
   integer: "number"
 };
-function za(e) {
+function Na(e) {
   return {
     field: e.type === "fk" ? `${e.name}_nome` : e.name,
     header: e.label,
-    type: La[e.type],
+    type: za[e.type],
     sortable: !0
   };
 }
-function Na(e, a = 6) {
-  return e.filter((t) => !t.read_only && t.name !== "id").slice(0, a).map(za);
+function Ya(e, a = 6) {
+  return e.filter((t) => !t.read_only && t.name !== "id").slice(0, a).map(Na);
 }
 function Nt() {
-  const e = aa();
+  const e = na();
   function a(r, u = "Sucesso") {
     e.add({ severity: "success", summary: u, detail: r, life: 3e3 });
   }
@@ -603,7 +603,7 @@ function Nt() {
   return { success: a, error: t, warn: n, info: s };
 }
 function Yt() {
-  const e = na();
+  const e = oa();
   function a(n, s = "Deseja realmente excluir este registro?") {
     e.require({
       message: s,
@@ -637,10 +637,10 @@ function Yt() {
   }
   return { confirmDelete: a, confirmAction: t };
 }
-function Ya(e) {
+function Oa(e) {
   return e.replace(/_/g, " ").replace(/^\w/, (a) => a.toUpperCase());
 }
-function Oa(e) {
+function Ba(e) {
   if (typeof e == "string")
     return e;
   if (Array.isArray(e)) {
@@ -654,7 +654,7 @@ function Oa(e) {
     const t = [];
     for (const [n, s] of Object.entries(a)) {
       if (n === "non_field_errors") continue;
-      const r = Ya(n);
+      const r = Oa(n);
       if (Array.isArray(s)) {
         const u = s.filter((b) => typeof b == "string");
         u.length > 0 && t.push(`${r}: ${u.join(" ")}`);
@@ -672,12 +672,13 @@ function Ke(e, a = "Erro inesperado") {
   if (!n || typeof n != "object")
     return t.message || a;
   const s = n.detail ?? n;
-  return Oa(s) || a;
+  return Ba(s) || a;
 }
 function ql() {
   return { extractApiError: Ke };
 }
-const Ba = { class: "w-autocompletefk" }, ja = ["disabled"], Wa = { class: "w-autocompletefk-toolbar" }, Ua = { class: "w-autocompletefk-toolbar-actions" }, qa = { class: "flex items-center justify-end gap-1" }, Ha = { class: "w-autocompletefk-footer" }, Ot = /* @__PURE__ */ fe({
+const ja = ["disabled"], Wa = { class: "w-autocompletefk-toolbar" }, Ua = { class: "w-autocompletefk-toolbar-actions" }, qa = { class: "flex items-center justify-end gap-1" }, Ha = { class: "w-autocompletefk-footer" }, Ot = /* @__PURE__ */ fe({
+  inheritAttrs: !1,
   __name: "WAutoCompleteFK",
   props: {
     modelValue: {},
@@ -803,14 +804,14 @@ const Ba = { class: "w-autocompletefk" }, ja = ["disabled"], Wa = { class: "w-au
       return (y = t.crudFields) != null && y.length ? !0 : l.value.length > 0;
     }), k = O(() => t.canCreate ?? f.value), o = O(() => t.canEdit ?? f.value), $ = O(() => t.canDelete ?? f.value), ue = O(() => o.value || $.value), me = O(() => {
       var y;
-      return (y = t.crudFields) != null && y.length ? t.crudFields : Ta(l.value);
+      return (y = t.crudFields) != null && y.length ? t.crudFields : La(l.value);
     }), ke = O(() => {
       var y, C;
       return (y = t.crudColumns) != null && y.length ? t.crudColumns : (C = t.columns) != null && C.length ? t.columns.map((Q) => ({
         field: Q.field,
         header: Q.header,
         sortable: !0
-      })) : l.value.length ? Na(l.value) : [
+      })) : l.value.length ? Ya(l.value) : [
         { field: t.optionLabel, header: t.optionLabel, sortable: !0 }
       ];
     });
@@ -937,7 +938,7 @@ const Ba = { class: "w-autocompletefk" }, ja = ["disabled"], Wa = { class: "w-au
     return (y, C) => {
       const Q = xt("tooltip");
       return i(), m(ie, null, [
-        h("div", Ba, [
+        h("div", Ut({ class: "w-autocompletefk" }, y.$attrs), [
           Y(g(Mt), {
             "model-value": d.value,
             suggestions: x.value,
@@ -966,7 +967,7 @@ const Ba = { class: "w-autocompletefk" }, ja = ["disabled"], Wa = { class: "w-au
               { top: !0 }
             ]
           ])
-        ]),
+        ], 16),
         Y(g(Vt), {
           visible: q.value,
           "onUpdate:visible": C[4] || (C[4] = (L) => q.value = L),
@@ -1162,7 +1163,7 @@ const Ba = { class: "w-autocompletefk" }, ja = ["disabled"], Wa = { class: "w-au
       const F = Number(x) / Math.pow(10, t.decimals);
       n("update:modelValue", F);
     }
-    return (d, x) => r.value ? (i(), A(g(oa), {
+    return (d, x) => r.value ? (i(), A(g(la), {
       key: 0,
       class: "w-money-input"
     }, {
@@ -1416,7 +1417,7 @@ const rn = { class: "w-crud-form" }, un = {
       return n.disabled || l.disabledOnEdit && n.isEditing ? !0 : typeof l.disabled == "function" ? l.disabled(n.formData, n.isEditing) : !!l.disabled;
     }
     function z(l) {
-      return Ut(l) ? l.value : l;
+      return qt(l) ? l.value : l;
     }
     const I = O(() => {
       const l = n.isEditing ? "edit" : "create", f = n.fields.find(
@@ -1553,7 +1554,7 @@ const rn = { class: "w-crud-form" }, un = {
               class: "w-crud-form-switch",
               style: Ce(c(o, k))
             }, [
-              Y(g(_t), {
+              Y(g(ea), {
                 "model-value": e.formData[o.field],
                 disabled: E(o),
                 "onUpdate:modelValue": ($) => s("update:field", o.field, $)
@@ -1569,7 +1570,7 @@ const rn = { class: "w-crud-form" }, un = {
                 o.required ? (i(), m("span", pn, "*")) : S("", !0)
               ]),
               h("div", vn, [
-                Y(g(ea), {
+                Y(g(ta), {
                   "model-value": q(o),
                   disabled: E(o),
                   "onUpdate:modelValue": ($) => j(o, $)
@@ -1659,7 +1660,7 @@ const rn = { class: "w-crud-form" }, un = {
                 placeholder: o.placeholder,
                 disabled: E(o),
                 "onUpdate:modelValue": ($) => s("update:field", o.field, $)
-              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "password" ? (i(), A(g(ta), {
+              }, null, 8, ["model-value", "autofocus", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "password" ? (i(), A(g(aa), {
                 key: 3,
                 "model-value": e.formData[o.field],
                 fluid: "",
@@ -1704,7 +1705,7 @@ const rn = { class: "w-crud-form" }, un = {
                 placeholder: o.placeholder,
                 disabled: E(o),
                 "onUpdate:modelValue": ($) => s("update:field", o.field, $)
-              }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "select" ? (i(), A(g(Qt), {
+              }, null, 8, ["model-value", "min", "max", "placeholder", "disabled", "onUpdate:modelValue"])) : o.type === "select" ? (i(), A(g(_t), {
                 key: 7,
                 "model-value": e.formData[o.field],
                 fluid: "",
@@ -1790,7 +1791,7 @@ const rn = { class: "w-crud-form" }, un = {
                 onInput: ($) => x(o, $)
               }, null, 8, ["model-value", "placeholder", "disabled", "invalid", "onInput"])), [
                 [g(rt), { mask: "#####-###" }]
-              ]) : o.type === "textarea" ? (i(), A(g(Xt), {
+              ]) : o.type === "textarea" ? (i(), A(g(Qt), {
                 key: 15,
                 "model-value": e.formData[o.field],
                 fluid: "",
@@ -1843,7 +1844,7 @@ const rn = { class: "w-crud-form" }, un = {
       default: se(() => [
         h("form", {
           class: "w-crud-form",
-          onSubmit: qt(r, ["prevent"])
+          onSubmit: Ht(r, ["prevent"])
         }, [
           Y(xn, {
             ref_key: "rendererRef",
@@ -1986,7 +1987,7 @@ const En = { class: "w-crud" }, Fn = {
   },
   emits: ["row-expand", "row-collapse", "print"],
   setup(e, { emit: a }) {
-    const t = e, n = a, s = Ht(), { formatNumber: r } = mt(), u = K({}), b = K(t.defaultView);
+    const t = e, n = a, s = Kt(), { formatNumber: r } = mt(), u = K({}), b = K(t.defaultView);
     function d(c) {
       return b.value === c;
     }
@@ -2095,7 +2096,7 @@ const En = { class: "w-crud" }, Fn = {
         }
       }
     }
-    return Kt(() => {
+    return Gt(() => {
       t.autoInit && t.crud.init();
     }), (c, p) => {
       const U = xt("tooltip");
@@ -2439,9 +2440,9 @@ const En = { class: "w-crud" }, Fn = {
                   ])) : S("", !0)
                 ], 42, eo))), 128))
               ])) : N(c.$slots, "empty", { key: 1 }, () => [
-                p[19] || (p[19] = Gt('<div class="w-crud-empty"><div class="w-crud-empty-icon"><i class="pi pi-inbox"></i></div><p class="w-crud-empty-title">Nenhum registro encontrado</p><p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p></div>', 1))
+                p[19] || (p[19] = Jt('<div class="w-crud-empty"><div class="w-crud-empty-icon"><i class="pi pi-inbox"></i></div><p class="w-crud-empty-title">Nenhum registro encontrado</p><p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p></div>', 1))
               ]),
-              e.crud.items.value.length ? (i(), A(g(Jt), {
+              e.crud.items.value.length ? (i(), A(g(Zt), {
                 key: 3,
                 rows: e.crud.pagination.pageSize,
                 "total-records": e.crud.pagination.rows,
@@ -2526,7 +2527,7 @@ const En = { class: "w-crud" }, Fn = {
             ]) : S("", !0)
           ])) : S("", !0)
         ], 2),
-        e.contextMenu ? (i(), A(g(Zt), {
+        e.contextMenu ? (i(), A(g(Xt), {
           key: 1,
           ref_key: "cm",
           ref: q,
@@ -3099,7 +3100,7 @@ const ts = {
       locale: a.locale ?? "pt-BR",
       currency: a.currency ?? "BRL"
     };
-    a.axios && e.provide(la, a.axios), e.provide(at, t), e.provide(nt, n), a.registerComponents !== !1 && (e.component("WCrudView", ro), e.component("WCrudFormDialog", pt), e.component("WCrudColumnRenderer", tt), e.component("WAutoCompleteFK", Ot), e.component("WMoneyInput", Bt), e.component("WTransferList", jt));
+    a.axios && e.provide(sa, a.axios), e.provide(at, t), e.provide(nt, n), a.registerComponents !== !1 && (e.component("WCrudView", ro), e.component("WCrudFormDialog", pt), e.component("WCrudColumnRenderer", tt), e.component("WAutoCompleteFK", Ot), e.component("WMoneyInput", Bt), e.component("WTransferList", jt));
   }
 }, fl = {
   createTitle: "Novo Registro",
@@ -3614,17 +3615,17 @@ export {
   Xl as WSectionHeader,
   uo as WStatusTag,
   jt as WTransferList,
-  la as W_AXIOS_KEY,
+  sa as W_AXIOS_KEY,
   nt as W_CONFIG_KEY,
   at as W_DATA_PROVIDER_KEY,
   cl as createAxiosDataProvider,
   os as createSupabaseDataProvider,
   Mn as downloadCsv,
   Ke as extractApiError,
-  za as mapApiFieldToColumnDef,
-  Ia as mapApiFieldToFieldDef,
-  Na as mapApiFieldsToColumnDefs,
-  Ta as mapApiFieldsToFieldDefs,
+  Na as mapApiFieldToColumnDef,
+  Ta as mapApiFieldToFieldDef,
+  Ya as mapApiFieldsToColumnDefs,
+  La as mapApiFieldsToFieldDefs,
   Vn as toCsv,
   ns as useApi,
   ql as useApiError,
