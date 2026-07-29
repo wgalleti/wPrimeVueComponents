@@ -13,6 +13,7 @@ const links = [
   { label: 'CRUD Avançado', to: '/advanced-crud', icon: 'pi pi-cog' },
   { label: 'Showcase (novidades)', to: '/showcase', icon: 'pi pi-sparkles' },
   { label: 'API Real', to: '/real-api', icon: 'pi pi-server' },
+  { label: 'Workbench', to: '/workbench', icon: 'pi pi-th-large' },
 ]
 
 const isDark = ref(document.documentElement.classList.contains('dark'))

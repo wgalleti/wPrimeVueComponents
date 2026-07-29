@@ -28,5 +28,10 @@ export const router = createRouter({
       name: 'real-api',
       component: () => import('./views/real-api/RealApiCrudView.vue'),
     },
+    {
+      path: '/workbench',
+      name: 'workbench',
+      component: () => import('./views/WorkbenchView.vue'),
+    },
   ],
 })
