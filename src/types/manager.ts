@@ -55,6 +55,8 @@ export interface CrudManagerReturn<T> {
   items: Ref<T[]>
   /** Itens marcados quando `selectionMode: 'multiple'`. */
   selectedItems: Ref<T[]>
+  /** Filtros de coluna ativos (param → valor), enviados na requisição de `list`. */
+  columnFilters: Record<string, unknown>
   extras: Ref<Record<string, unknown>>
   loading: Ref<boolean>
   saving: Ref<boolean>
@@ -95,6 +97,10 @@ export interface CrudManagerReturn<T> {
   lastPage(): void
   /** Limpa a seleção múltipla. */
   clearSelection(): void
+  /** Define (ou remove, se vazio) um filtro de coluna e recarrega a lista. */
+  setColumnFilter(param: string, value: unknown): void
+  /** Limpa todos os filtros de coluna e recarrega a lista. */
+  clearColumnFilters(): void
 
   // config
   config: CrudManagerConfig<T>

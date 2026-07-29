@@ -138,3 +138,25 @@ describe('useCrudManager — seleção múltipla', () => {
     expect(crud.selectedItems.value).toEqual([])
   })
 })
+
+describe('useCrudManager — filtros de coluna', () => {
+  it('setColumnFilter envia o param no list e volta pra página 1; vazio/clear removem', async () => {
+    const list = okList()
+    const crud = setup({ endpoint: '/p', columns: [], form: [] }, { list })
+    crud.pagination.page = 3
+    crud.setColumnFilter('status', 'ativo')
+    await tick()
+    const call = list.mock.calls[list.mock.calls.length - 1][1]
+    expect(call).toMatchObject({ status: 'ativo', page: 1 })
+    expect(crud.columnFilters).toEqual({ status: 'ativo' })
+
+    crud.setColumnFilter('status', null) // valor vazio remove o filtro
+    await tick()
+    expect(crud.columnFilters).toEqual({})
+
+    crud.setColumnFilter('status', 'ativo')
+    crud.clearColumnFilters()
+    await tick()
+    expect(crud.columnFilters).toEqual({})
+  })
+})
