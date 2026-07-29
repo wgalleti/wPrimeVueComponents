@@ -80,6 +80,11 @@ const emit = defineEmits<{
   'update:modelValue': [value: Record<string, unknown> | null]
 }>()
 
+// O template tem múltiplos nós raiz (o campo + os overlays Dialog/WCrudFormDialog).
+// Sem isto, `class`/`id`/`style` do consumidor não têm onde herdar e o Vue emite
+// warning de "extraneous non-props attributes". Aplicamos os attrs no nó visível.
+defineOptions({ inheritAttrs: false })
+
 const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
 if (!dataProvider) {
   throw new Error(
@@ -523,7 +528,7 @@ function confirmDelete(item: Record<string, unknown>) {
 </script>
 
 <template>
-  <div class="w-autocompletefk">
+  <div class="w-autocompletefk" v-bind="$attrs">
     <AutoComplete
       :model-value="selectedItem"
       :suggestions="suggestions"
