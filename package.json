@@ -43,6 +43,8 @@
   "scripts": {
     "dev": "yarn --cwd playground dev",
     "build": "vite build",
+    "meta": "node scripts/gen-component-meta.mjs --write",
+    "meta:check": "node scripts/gen-component-meta.mjs --check",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint \"src/**/*.{vue,js,ts}\"",
     "lint:fix": "eslint \"src/**/*.{vue,js,ts}\" --fix",
@@ -94,6 +96,7 @@
     "vite-plugin-dts": "^4.0.0",
     "vitepress": "^1.6.4",
     "vue": "^3.5.0",
+    "vue-component-meta": "^2.2.0",
     "vue-router": "^4.4.0",
     "vue-tsc": "^2.2.0"
   },

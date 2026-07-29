@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: Componentes
-      link: /components/wcrud-view
+      link: /components/w-crud-view
     - theme: alt
       text: GitHub
       link: https://github.com/wgalleti/wPrimeVueComponents

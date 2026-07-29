@@ -23,6 +23,9 @@ jobs:
       - name: Type-check
         run: yarn type-check
 
+      - name: Metadata manifest up to date
+        run: yarn meta:check
+
       - name: Lint
         run: yarn lint
 
