@@ -4,6 +4,8 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Select from 'primevue/select'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
@@ -12,6 +14,7 @@ import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
 import type { RowAction } from '@/types/action'
+import type { ColumnDef } from '@/types/column'
 import type { KpiItem } from '@/types/kpi'
 import type { MenuItem } from 'primevue/menuitem'
 import type { Slots } from 'vue'
@@ -201,6 +204,24 @@ const selectedRow = ref<Record<string, unknown> | null>(null)
 
 // Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
 const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
+
+// Filtros declarativos de coluna.
+const filterableColumns = computed<ColumnDef[]>(() =>
+  props.crud.config.columns.filter((c) => c.filter),
+)
+const booleanFilterOptions = [
+  { label: 'Sim', value: true },
+  { label: 'Não', value: false },
+]
+function fParam(col: ColumnDef): string {
+  return col.filter?.param || col.field
+}
+const filterTimers: Record<string, ReturnType<typeof setTimeout>> = {}
+function onTextFilter(col: ColumnDef, value: string) {
+  const param = fParam(col)
+  if (filterTimers[param]) clearTimeout(filterTimers[param])
+  filterTimers[param] = setTimeout(() => props.crud.setColumnFilter(param, value || null), 300)
+}
 const cm = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 function selectRow(row: Record<string, unknown>) {
@@ -330,6 +351,66 @@ onMounted(() => {
     <!-- Content (table/cards + optional action rail) -->
     <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
       <div class="w-crud-content-main">
+        <!-- Barra de filtros de coluna (declarativos, opt-in via ColumnDef.filter) -->
+        <div
+          v-if="filterableColumns.length"
+          class="w-crud-filters"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+          "
+        >
+          <template v-for="col in filterableColumns" :key="col.field">
+            <InputText
+              v-if="(col.filter?.type || 'text') === 'text'"
+              :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
+              :placeholder="col.filter?.placeholder || col.header"
+              size="small"
+              @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
+            />
+            <Select
+              v-else-if="col.filter?.type === 'select'"
+              :model-value="crud.columnFilters[fParam(col)]"
+              :options="col.filter?.options"
+              option-label="label"
+              option-value="value"
+              :placeholder="col.filter?.placeholder || col.header"
+              show-clear
+              size="small"
+              @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+            />
+            <Select
+              v-else-if="col.filter?.type === 'boolean'"
+              :model-value="crud.columnFilters[fParam(col)]"
+              :options="booleanFilterOptions"
+              option-label="label"
+              option-value="value"
+              :placeholder="col.filter?.placeholder || col.header"
+              show-clear
+              size="small"
+              @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+            />
+            <InputNumber
+              v-else-if="col.filter?.type === 'numeric'"
+              :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
+              :placeholder="col.filter?.placeholder || col.header"
+              size="small"
+              @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
+            />
+          </template>
+          <Button
+            v-if="Object.keys(crud.columnFilters).length"
+            label="Limpar filtros"
+            icon="pi pi-filter-slash"
+            text
+            size="small"
+            @click="crud.clearColumnFilters()"
+          />
+        </div>
+
         <!-- Table -->
         <div v-if="displayMode === 'table'" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->

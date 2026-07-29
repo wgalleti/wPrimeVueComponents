@@ -87,6 +87,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     order: 0,
   })
 
+  // Filtros de coluna ativos (param → valor). Persistem entre páginas/ordenação.
+  const columnFilters = reactive<Record<string, unknown>>({})
+
   // ---------------------------------------------------------------------------
   // Defaults
   // ---------------------------------------------------------------------------
@@ -153,6 +156,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
         Object.assign(queryParams, filterParams())
       }
 
+      // Filtros de coluna ativos (ignora vazios).
+      for (const [key, val] of Object.entries(columnFilters)) {
+        if (val !== null && val !== undefined && val !== '') queryParams[key] = val
+      }
+
       const responseData = await provider.list<T>(endpoint, queryParams)
       items.value = responseData.data
       selectedItems.value = [] // seleção anterior fica obsoleta ao recarregar
@@ -185,6 +193,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       base.ordering = sort.order === -1 ? `-${sort.field}` : sort.field
     }
     if (filterParams) Object.assign(base, filterParams())
+    for (const [key, val] of Object.entries(columnFilters)) {
+      if (val !== null && val !== undefined && val !== '') base[key] = val
+    }
 
     const all: T[] = []
     let page = 1
@@ -513,6 +524,22 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     selectedItems.value = []
   }
 
+  function setColumnFilter(param: string, value: unknown): void {
+    if (value === null || value === undefined || value === '') {
+      delete columnFilters[param]
+    } else {
+      columnFilters[param] = value
+    }
+    pagination.page = 1
+    fetchItems()
+  }
+
+  function clearColumnFilters(): void {
+    for (const key of Object.keys(columnFilters)) delete columnFilters[key]
+    pagination.page = 1
+    fetchItems()
+  }
+
   // ---------------------------------------------------------------------------
   // Return
   // ---------------------------------------------------------------------------
@@ -520,6 +547,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   return {
     items,
     selectedItems,
+    columnFilters,
     extras,
     loading,
     saving,
@@ -555,6 +583,8 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     firstPage,
     lastPage,
     clearSelection,
+    setColumnFilter,
+    clearColumnFilters,
     config,
   }
 }
