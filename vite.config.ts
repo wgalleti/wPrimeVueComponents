@@ -10,6 +10,8 @@ export default defineConfig({
       insertTypesEntry: true,
       outDir: 'dist',
       tsconfigPath: './tsconfig.json',
+      // não publicar tipos de testes nem dos sidecars de autoria
+      exclude: ['**/*.test.ts', '**/*.spec.ts', '**/*.meta.ts'],
     }),
   ],
   resolve: {
