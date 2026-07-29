@@ -13,10 +13,7 @@ export function formatCnpj(value: string | null | undefined): string {
   if (!value) return '—'
   const digits = stripMask(value)
   if (digits.length !== 14) return value
-  return digits.replace(
-    /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-    '$1.$2.$3/$4-$5',
-  )
+  return digits.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
 }
 
 export function formatCpfCnpj(value: string | null | undefined): string {
@@ -30,10 +27,8 @@ export function formatCpfCnpj(value: string | null | undefined): string {
 export function formatTelefone(value: string | null | undefined): string {
   if (!value) return '—'
   const digits = stripMask(value)
-  if (digits.length === 11)
-    return digits.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
-  if (digits.length === 10)
-    return digits.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
+  if (digits.length === 11) return digits.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+  if (digits.length === 10) return digits.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
   return value
 }
 
@@ -75,9 +70,7 @@ export function validateCnpj(value: string | null | undefined): string | null {
   return null
 }
 
-export function validateCpfCnpj(
-  value: string | null | undefined,
-): string | null {
+export function validateCpfCnpj(value: string | null | undefined): string | null {
   if (!value) return null
   const digits = stripMask(value)
   if (digits.length === 11) return validateCpf(value)

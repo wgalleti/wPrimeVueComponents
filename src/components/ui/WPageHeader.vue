@@ -21,12 +21,7 @@ const emit = defineEmits<{
     </div>
     <div class="w-page-header-actions">
       <slot name="actions" />
-      <Button
-        v-if="actionLabel"
-        :label="actionLabel"
-        :icon="actionIcon"
-        @click="emit('action')"
-      />
+      <Button v-if="actionLabel" :label="actionLabel" :icon="actionIcon" @click="emit('action')" />
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef, watch, ref } from 'vue'
+import { computed, reactive, isRef } from 'vue'
 import { vMaska } from 'maska/vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -10,9 +10,10 @@ import DatePicker from 'primevue/datepicker'
 import ToggleSwitch from 'primevue/toggleswitch'
 import ColorPicker from 'primevue/colorpicker'
 import Password from 'primevue/password'
-import type { FieldDef } from '@/types/crud'
+import type { FieldDef } from '@/types/field'
 import WAutoCompleteFK from '@/components/form/WAutoCompleteFK.vue'
 import WMoneyInput from '@/components/form/WMoneyInput.vue'
+import WImageCropper from '@/components/form/WImageCropper.vue'
 import WTransferList from '@/components/form/WTransferList.vue'
 import { lookupCep } from '@/utils/cep'
 
@@ -98,22 +99,19 @@ const visibleFields = computed(() =>
 function isFieldDisabled(field: FieldDef): boolean {
   if (props.disabled) return true
   if (field.disabledOnEdit && props.isEditing) return true
-  if (typeof field.disabled === 'function')
-    return field.disabled(props.formData, props.isEditing)
+  if (typeof field.disabled === 'function') return field.disabled(props.formData, props.isEditing)
   return !!field.disabled
 }
 
 function unwrapRef<V>(val: V): V extends import('vue').Ref<infer U> ? U : V {
-  return isRef(val) ? (val as { value: unknown }).value as never : val as never
+  return isRef(val) ? ((val as { value: unknown }).value as never) : (val as never)
 }
 
 // --- Autofocus ---
 
 const autofocusField = computed(() => {
   const mode = props.isEditing ? 'edit' : 'create'
-  const explicit = props.fields.find(
-    (f) => f.autofocus === true || f.autofocus === mode,
-  )
+  const explicit = props.fields.find((f) => f.autofocus === true || f.autofocus === mode)
   if (explicit) return explicit.field
   const first = visibleFields.value.find((f) => {
     if (f.type === 'switch' || f.type === 'fk' || f.type === 'select' || f.type === 'image')
@@ -168,9 +166,7 @@ function getAutocompleteValue(field: FieldDef) {
   if (val == null) return null
   const optionValue = field.optionValue || 'value'
   const options = unwrapRef(field.options) || []
-  return (options as Record<string, unknown>[]).find(
-    (o) => o[optionValue] === val,
-  ) ?? null
+  return (options as Record<string, unknown>[]).find((o) => o[optionValue] === val) ?? null
 }
 
 function getFilteredSuggestions(field: FieldDef) {
@@ -181,8 +177,10 @@ function onAutocompleteSearch(field: FieldDef, event: { query: string }) {
   const query = (event.query || '').toLowerCase()
   const options = unwrapRef(field.options) || []
   const optionLabel = field.optionLabel || 'label'
-  autocompleteSuggestions[field.field] = (options as Record<string, unknown>[]).filter(
-    (o) => String(o[optionLabel] || '').toLowerCase().includes(query),
+  autocompleteSuggestions[field.field] = (options as Record<string, unknown>[]).filter((o) =>
+    String(o[optionLabel] || '')
+      .toLowerCase()
+      .includes(query),
   )
 }
 
@@ -326,10 +324,7 @@ defineExpose({ validateAll, clearErrors })
         <h3 class="w-crud-form-group-title">{{ group.title }}</h3>
         <p v-if="group.description" class="w-crud-form-group-desc">{{ group.description }}</p>
       </div>
-      <div
-        class="w-crud-form-fields"
-        :style="{ '--w-form-cols': groupColumns(group) }"
-      >
+      <div class="w-crud-form-fields" :style="{ '--w-form-cols': groupColumns(group) }">
         <template v-for="field in group.fields" :key="field.field">
           <slot
             :name="`field-${field.field}`"
@@ -389,16 +384,20 @@ defineExpose({ validateAll, clearErrors })
                 {{ field.label }}
               </label>
               <slot :name="`image-${field.field}`" :field="field" :form-data="formData">
-                <input
-                  type="file"
+                <WImageCropper
+                  :model-value="formData[field.field] as File | string | null"
                   :accept="field.accept || 'image/*'"
-                  :disabled="isFieldDisabled(field)"
-                  @change="(e) => {
-                    const file = (e.target as HTMLInputElement).files?.[0] ?? null
-                    emit('update:field', field.field, file)
-                  }"
+                  @update:model-value="(file) => emit('update:field', field.field, file)"
+                  @error="
+                    (msg) => {
+                      fieldErrors[field.field] = msg
+                    }
+                  "
                 />
               </slot>
+              <small v-if="fieldErrors[field.field]" class="w-crud-form-error">
+                {{ fieldErrors[field.field] }}
+              </small>
             </div>
 
             <!-- Transfer (dual list) -->
@@ -423,15 +422,14 @@ defineExpose({ validateAll, clearErrors })
             </div>
 
             <!-- All other types -->
-            <div
-              v-else
-              :class="fieldSpanClass(field, group)"
-              :style="fieldSpanStyle(field, group)"
-            >
+            <div v-else :class="fieldSpanClass(field, group)" :style="fieldSpanStyle(field, group)">
               <label class="w-crud-form-label">
                 {{ field.label }}
                 <span v-if="field.required" class="w-crud-form-required">*</span>
-                <i v-if="cepLoading[field.field]" class="pi pi-spin pi-spinner w-crud-form-cep-spinner" />
+                <i
+                  v-if="cepLoading[field.field]"
+                  class="pi pi-spin pi-spinner w-crud-form-cep-spinner"
+                />
               </label>
 
               <!-- Text with mask (maska) -->

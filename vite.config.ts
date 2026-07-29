@@ -19,10 +19,16 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
-      name: 'WPrimeVueComponents',
+      // Multiplas entradas para subpath exports ("./components", etc.) e
+      // tree-shaking mais granular no consumidor.
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        components: resolve(__dirname, 'src/components/index.ts'),
+        composables: resolve(__dirname, 'src/composables/index.ts'),
+        types: resolve(__dirname, 'src/types/index.ts'),
+      },
       formats: ['es', 'cjs'],
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
       external: ['vue', 'primevue', 'axios', 'dayjs', /^primevue\/.*/],

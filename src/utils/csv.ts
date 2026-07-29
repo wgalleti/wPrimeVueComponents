@@ -1,4 +1,4 @@
-import type { ColumnDef } from '@/types/crud'
+import type { ColumnDef } from '@/types/column'
 
 export interface ToCsvOptions {
   /** Field separator (default: ';' — friendly to pt-BR Excel). */
@@ -37,9 +37,7 @@ export function toCsv(
 ): string {
   const sep = options.separator ?? ';'
   const header = columns.map((c) => escapeCell(c.header, sep)).join(sep)
-  const lines = rows.map((row) =>
-    columns.map((c) => escapeCell(cellValue(c, row), sep)).join(sep),
-  )
+  const lines = rows.map((row) => columns.map((c) => escapeCell(cellValue(c, row), sep)).join(sep))
   return '﻿' + [header, ...lines].join('\r\n')
 }
 

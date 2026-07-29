@@ -14,10 +14,7 @@ withDefaults(
 <template>
   <div
     class="w-action-bar"
-    :class="[
-      `w-action-bar--${align}`,
-      { 'w-action-bar--stack': stackOnMobile },
-    ]"
+    :class="[`w-action-bar--${align}`, { 'w-action-bar--stack': stackOnMobile }]"
   >
     <div v-if="$slots.primary || $slots.default" class="w-action-bar__primary">
       <slot name="primary">

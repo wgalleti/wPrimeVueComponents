@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag'
-import type { ColumnDef } from '@/types/crud'
+import type { ColumnDef } from '@/types/column'
 import { useFormatters } from '@/composables/useFormatters'
 
 defineProps<{
@@ -25,8 +25,14 @@ const { formatDate, formatDateTime, formatCurrency, formatNumber } = useFormatte
 
   <template v-else-if="column.type === 'boolean'">
     <Tag
-      :value="column.tagValue ? column.tagValue(value, rowData) : (value ? 'Ativo' : 'Inativo')"
-      :severity="(column.tagSeverity ? column.tagSeverity(value, rowData) : (value ? 'success' : 'danger')) as any"
+      :value="column.tagValue ? column.tagValue(value, rowData) : value ? 'Ativo' : 'Inativo'"
+      :severity="
+        (column.tagSeverity
+          ? column.tagSeverity(value, rowData)
+          : value
+            ? 'success'
+            : 'danger') as any
+      "
       class="text-xs"
     />
   </template>
@@ -35,7 +41,10 @@ const { formatDate, formatDateTime, formatCurrency, formatNumber } = useFormatte
     {{ formatDate(value as string) }}
   </span>
 
-  <span v-else-if="column.type === 'datetime'" class="text-muted-color tabular-nums text-[0.8125rem]">
+  <span
+    v-else-if="column.type === 'datetime'"
+    class="text-muted-color tabular-nums text-[0.8125rem]"
+  >
     {{ formatDateTime(value as string) }}
   </span>
 
@@ -44,7 +53,11 @@ const { formatDate, formatDateTime, formatCurrency, formatNumber } = useFormatte
   </span>
 
   <span v-else-if="column.type === 'number'" class="font-semibold tabular-nums text-[0.8125rem]">
-    {{ column.format ? column.format(value, rowData) : formatNumber(value as number, column.decimals ?? 0) }}
+    {{
+      column.format
+        ? column.format(value, rowData)
+        : formatNumber(value as number, column.decimals ?? 0)
+    }}
   </span>
 
   <span v-else class="text-[0.8125rem]">

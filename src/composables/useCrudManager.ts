@@ -3,15 +3,9 @@ import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { PaginationState, SortState } from '@/types/api'
-import type {
-  CrudManagerConfig,
-  CrudManagerReturn,
-  CrudLabels,
-  FieldDef,
-  ColumnDef,
-  RowAction,
-} from '@/types/crud'
-import { DEFAULT_CRUD_LABELS } from '@/types/crud'
+import type { CrudManagerConfig, CrudManagerReturn } from '@/types/manager'
+import type { CrudLabels } from '@/types/labels'
+import { DEFAULT_CRUD_LABELS } from '@/types/labels'
 import { useAppToast } from './useAppToast'
 import { useAppConfirm } from './useAppConfirm'
 import { extractApiError } from './useApiError'
@@ -32,21 +26,16 @@ function diffRecord(
   return out
 }
 
-export function useCrudManager<
-  T extends Record<string, unknown> = Record<string, unknown>,
->(config: CrudManagerConfig<T>): CrudManagerReturn<T> {
+export function useCrudManager<T extends Record<string, unknown> = Record<string, unknown>>(
+  config: CrudManagerConfig<T>,
+): CrudManagerReturn<T> {
   const {
     endpoint,
-    columns,
     form: formFields,
     pk = 'id',
     searchDebounce = 300,
     partialUpdate = true,
     refetchOnSave = true,
-    canCreate = true,
-    canEdit = true,
-    canDelete = true,
-    rowActions = undefined,
     filterParams = undefined,
     createDefaults = undefined,
     transformPayload = undefined,
@@ -124,9 +113,7 @@ export function useCrudManager<
   // Computed
   // ---------------------------------------------------------------------------
 
-  const isEditing = computed(
-    () => editingItem.value !== null && !viewMode.value,
-  )
+  const isEditing = computed(() => editingItem.value !== null && !viewMode.value)
   const isViewing = computed(() => viewMode.value)
   const dialogTitle = computed(() =>
     viewMode.value
@@ -144,9 +131,7 @@ export function useCrudManager<
 
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-  async function fetchItems(
-    params: Record<string, unknown> = {},
-  ): Promise<void> {
+  async function fetchItems(params: Record<string, unknown> = {}): Promise<void> {
     loading.value = true
     try {
       const queryParams: Record<string, unknown> = {
@@ -173,8 +158,7 @@ export function useCrudManager<
       extras.value = responseData.extras ?? {}
       if (responseData.page) pagination.page = responseData.page
       if (responseData.page_size) pagination.pageSize = responseData.page_size
-      pagination.totalPages =
-        Math.ceil(pagination.rows / pagination.pageSize) || 0
+      pagination.totalPages = Math.ceil(pagination.rows / pagination.pageSize) || 0
     } finally {
       loading.value = false
     }
@@ -259,10 +243,7 @@ export function useCrudManager<
     fetchItems()
   }
 
-  function onSort(event: {
-    sortField?: string | null
-    sortOrder?: 1 | -1 | 0 | null
-  }): void {
+  function onSort(event: { sortField?: string | null; sortOrder?: 1 | -1 | 0 | null }): void {
     sort.field = event.sortField ?? null
     sort.order = event.sortOrder ?? 0
     pagination.page = 1
@@ -303,11 +284,7 @@ export function useCrudManager<
     const snapshot: Record<string, unknown> = {}
     for (const f of formFields) {
       let value = item[f.field] !== undefined ? item[f.field] : null
-      if (
-        value &&
-        (f.type === 'date' || f.type === 'datetime') &&
-        typeof value === 'string'
-      ) {
+      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
         value = parseDate(value)
       }
       formData[f.field] = value
@@ -340,11 +317,7 @@ export function useCrudManager<
     for (const f of formFields) {
       if (f.field === pk) continue
       let value = item[f.field] !== undefined ? item[f.field] : formData[f.field]
-      if (
-        value &&
-        (f.type === 'date' || f.type === 'datetime') &&
-        typeof value === 'string'
-      ) {
+      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
         value = parseDate(value)
       }
       formData[f.field] = value
@@ -365,9 +338,7 @@ export function useCrudManager<
 
   // Apply automatic conversions (dates, FK objects, masks) to a record,
   // returning a fresh plain object suitable for the API payload.
-  function convertRecord(
-    record: Record<string, unknown>,
-  ): Record<string, unknown> {
+  function convertRecord(record: Record<string, unknown>): Record<string, unknown> {
     const out: Record<string, unknown> = { ...record }
     for (const f of formFields) {
       const val = out[f.field]
@@ -386,10 +357,7 @@ export function useCrudManager<
       }
 
       // Máscaras — strip para enviar só dígitos
-      if (
-        (f.type === 'mask' || f.type === 'cpf_cnpj') &&
-        typeof val === 'string'
-      ) {
+      if ((f.type === 'mask' || f.type === 'cpf_cnpj') && typeof val === 'string') {
         out[f.field] = stripMask(val)
       }
     }
@@ -444,9 +412,7 @@ export function useCrudManager<
       }
 
       // Detecta se tem arquivo (image) → FormData
-      const hasFile = formFields.some(
-        (f) => f.type === 'image' && payload[f.field] instanceof File,
-      )
+      const hasFile = formFields.some((f) => f.type === 'image' && payload[f.field] instanceof File)
 
       let body: Record<string, unknown> | FormData = payload
       let headers: Record<string, string> | undefined
@@ -483,9 +449,7 @@ export function useCrudManager<
           requestConfig,
         )
         if (!refetchOnSave) {
-          const index = items.value.findIndex(
-            (i) => i[pk as keyof T] === itemPk,
-          )
+          const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
           if (index !== -1) {
             items.value[index] = response.data
           }

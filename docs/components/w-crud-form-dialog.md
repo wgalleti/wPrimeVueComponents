@@ -1,115 +1,159 @@
 # WCrudFormDialog
 
-Componente de dialog modal com formulario gerado automaticamente a partir da definicao de campos (`FieldDef[]`).
+Dialog modal com formulario gerado automaticamente a partir da definicao de campos (`FieldDef[]`).
 
-Usado internamente pelo `WCrudView`, mas pode ser usado standalone.
+## Uso
 
-> **Nota (v0.2.0+):** Internamente, este componente usa o [`WFormRenderer`](./w-form-renderer.md) para renderizar os campos. Se voce precisa de um formulario **sem dialog** (ex: dentro de um Card ou uma area da pagina), use o `WFormRenderer` diretamente.
-
-## Import
+Normalmente voce nao usa este componente diretamente — o `WCrudView` ja o renderiza internamente. Mas ele pode ser usado de forma independente:
 
 ```vue
-<script setup>
-import { WCrudFormDialog } from '@wgalleti/primevue-components'
-</script>
+<WCrudFormDialog
+  :visible="crud.dialogVisible.value"
+  :title="crud.dialogTitle.value"
+  :fields="crud.config.form"
+  :form-data="crud.formData"
+  :is-editing="crud.isEditing.value"
+  :saving="crud.saving.value"
+  width="600px"
+  @update:visible="(v) => { crud.dialogVisible.value = v }"
+  @update:field="(field, val) => crud.setFormField(field, val)"
+  @save="crud.save()"
+/>
 ```
 
 ## Props
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `visible` | `boolean` | **obrigatorio** | Controla visibilidade (v-model) |
-| `title` | `string` | `'Novo Registro'` | Titulo do dialog |
-| `fields` | `FieldDef[]` | **obrigatorio** | Definicao dos campos |
-| `formData` | `Record<string, unknown>` | **obrigatorio** | Dados do formulario (reativo) |
-| `isEditing` | `boolean` | `false` | Modo edicao |
-| `saving` | `boolean` | `false` | Estado de salvamento (desabilita botoes) |
+| Prop | Tipo | Padrao | Descricao |
+|------|------|--------|-----------|
+| `visible` | `boolean` | — | Controla visibilidade do dialog |
+| `title` | `string` | — | Titulo do dialog |
+| `fields` | `FieldDef[]` | — | Definicao dos campos |
+| `formData` | `Record<string, unknown>` | — | Dados reativos do formulario |
+| `isEditing` | `boolean` | — | Se esta editando ou criando |
+| `saving` | `boolean` | — | Estado de salvamento |
 | `width` | `string` | `'480px'` | Largura do dialog |
-| `saveLabel` | `string` | `'Salvar'` | Label do botao salvar |
-| `cancelLabel` | `string` | `'Cancelar'` | Label do botao cancelar |
 
 ## Eventos
 
 | Evento | Payload | Descricao |
-|---|---|---|
-| `update:visible` | `boolean` | Fecha o dialog |
-| `save` | — | Formulario submetido (apos validacao) |
-| `cancel` | — | Botao cancelar clicado |
-
-## Slots
-
-| Slot | Scope | Descricao |
-|---|---|---|
-| `header` | — | Override do header do dialog |
-| `before-fields` | `{ formData, isEditing }` | Conteudo antes dos campos |
-| `after-fields` | `{ formData, isEditing }` | Conteudo apos os campos |
-| `field-{fieldName}` | `{ formData, isEditing, setFormField }` | Override de campo individual |
-| `footer` | `{ saving }` | Override dos botoes de acao |
+|--------|---------|-----------|
+| `update:visible` | `boolean` | Quando o dialog abre/fecha |
+| `update:field` | `(field: string, value: unknown)` | Quando um campo muda |
+| `save` | — | Quando o formulario e submetido |
 
 ## Tipos de Campo Suportados
 
-| Tipo | Componente PrimeVue | Notas |
-|---|---|---|
-| `text` | InputText | |
-| `email` | InputText type=email | |
-| `password` | Password | Com `feedback` opcional |
-| `number` | InputNumber | `min`, `max`, `fraction` |
-| `currency` | InputNumber | Prefixo R$, 2 decimais |
-| `date` | DatePicker | Formato pt-BR |
-| `datetime` | DatePicker showTime | Formato 24h |
-| `select` | Select | `options`, `optionLabel` |
-| `autocomplete` | AutoComplete | Com filtragem local |
-| `fk` | WAutoCompleteFK | Busca na API + modal |
-| `switch` | ToggleSwitch | Com `switchLabel` |
-| `textarea` | Textarea | `rows` configuravel |
-| `color` | ColorPicker | |
-| `cpf_cnpj` | InputText + mask auto | Detecta CPF ou CNPJ |
-| `mask` | InputText + maska | Pattern customizado |
-| `image` | WImageCropper | Upload + crop |
+| Tipo | Componente PrimeVue | Descricao |
+|------|---------------------|-----------|
+| `text` | `InputText` | Texto simples |
+| `email` | `InputText` (type=email) | Email |
+| `password` | `Password` | Senha com toggle |
+| `number` | `InputNumber` | Numero com locale pt-BR |
+| `currency` | `InputNumber` (mode=currency) | Valor monetario BRL |
+| `date` | `DatePicker` | Seletor de data |
+| `datetime` | `DatePicker` (showTime) | Data e hora |
+| `select` | `Select` | Dropdown |
+| `autocomplete` | `AutoComplete` | Autocomplete com opcoes locais |
+| `fk` | `WAutoCompleteFK` | Autocomplete com busca na API |
+| `switch` | `ToggleSwitch` | Toggle on/off |
+| `textarea` | `Textarea` | Texto multilinha |
+| `color` | `ColorPicker` + `InputText` | Seletor de cor |
+| `cpf_cnpj` | `InputText` | CPF/CNPJ com mascara automatica |
+| `mask` | `InputText` + maska | Campo com mascara customizada |
+| `image` | `input[type=file]` | Upload de imagem |
 
-## Layout do Grid
+## Layout do Formulario
 
-O formulario usa grid de 2 colunas:
+O formulario usa um grid de 2 colunas. Controle o span com `colSpan`:
 
-- `colSpan: 1` (default) → campo ocupa a linha inteira
-- `colSpan: 0.5` → campo ocupa metade da linha
-
-```typescript
-// Dois campos lado a lado
-{ field: 'first_name', label: 'Nome', colSpan: 0.5 },
-{ field: 'last_name', label: 'Sobrenome', colSpan: 0.5 },
-
-// Campo que ocupa a linha toda
-{ field: 'email', label: 'Email' },
+```ts
+form: [
+  { field: 'nome', label: 'Nome', colSpan: 1 },        // ocupa 2 colunas (padrao)
+  { field: 'codigo', label: 'Codigo', colSpan: 0.5 },   // ocupa 1 coluna
+  { field: 'preco', label: 'Preco', type: 'currency', colSpan: 0.5 },
+]
 ```
 
-## Uso Standalone
+- `colSpan: 1` (padrao) → largura total (2 colunas do grid)
+- `colSpan: 0.5` → meia largura (1 coluna do grid)
+
+## Validacao
+
+```ts
+form: [
+  {
+    field: 'cpf',
+    label: 'CPF',
+    type: 'cpf_cnpj',
+    required: true,
+    validate: (value) => {
+      if (!value) return 'CPF obrigatorio'
+      const digits = String(value).replace(/\D/g, '')
+      if (digits.length !== 11) return 'CPF deve ter 11 digitos'
+      return null // sem erro
+    },
+  },
+]
+```
+
+## Visibilidade Condicional
+
+```ts
+form: [
+  { field: 'tipo', label: 'Tipo', type: 'select', options: [...] },
+  {
+    field: 'cnpj',
+    label: 'CNPJ',
+    type: 'cpf_cnpj',
+    visible: (formData) => formData.tipo === 'juridica',
+  },
+]
+```
+
+## Desabilitar em Edicao
+
+```ts
+form: [
+  { field: 'codigo', label: 'Codigo', disabledOnEdit: true },
+]
+```
+
+## Autofocus
+
+```ts
+form: [
+  { field: 'nome', label: 'Nome', autofocus: true },
+  // ou especifico por modo:
+  { field: 'email', label: 'Email', autofocus: 'create' },
+]
+```
+
+## Slots
+
+### `field-{field}`
+
+Renderizacao customizada de um campo:
 
 ```vue
-<script setup>
-const dialogVisible = ref(false)
-const formData = reactive({ nome: '', email: '' })
+<template #field-cor="{ field, formData, setFormField }">
+  <div class="w-crud-form-col-full">
+    <label class="w-crud-form-label">{{ field.label }}</label>
+    <MyColorPicker
+      :value="formData.cor"
+      @change="(v) => setFormField('cor', v)"
+    />
+  </div>
+</template>
+```
 
-const fields: FieldDef[] = [
-  { field: 'nome', label: 'Nome', required: true },
-  { field: 'email', label: 'Email', type: 'email' },
-]
+### `footer`
 
-const handleSave = async () => {
-  await api.post('/api/v1/convites/', formData)
-  dialogVisible.value = false
-}
-</script>
+Botoes customizados no rodape:
 
-<template>
-  <Button label="Convidar" @click="dialogVisible = true" />
-
-  <WCrudFormDialog
-    v-model:visible="dialogVisible"
-    title="Novo Convite"
-    :fields="fields"
-    :form-data="formData"
-    @save="handleSave"
-  />
+```vue
+<template #footer="{ saving }">
+  <Button label="Fechar" severity="secondary" @click="close" />
+  <Button label="Salvar e Novo" :loading="saving" @click="saveAndNew" />
+  <Button label="Salvar" :loading="saving" @click="save" />
 </template>
 ```

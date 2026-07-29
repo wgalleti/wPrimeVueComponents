@@ -446,7 +446,9 @@
   background: transparent;
   border-left: 1px solid var(--p-content-border-color);
   border-radius: 0 var(--p-border-radius) var(--p-border-radius) 0;
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
   font-size: 0.875rem;
 }
 
@@ -1091,7 +1093,9 @@
   border-radius: 0.75rem;
   background: var(--p-content-background);
   cursor: default;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .w-crud-card:hover {

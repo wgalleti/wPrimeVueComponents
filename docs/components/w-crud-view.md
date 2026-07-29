@@ -1,183 +1,220 @@
 # WCrudView
 
-Componente container que monta a interface CRUD completa: header, busca, tabela paginada, acoes de linha e dialog de formulario.
-
-## Import
-
-```vue
-<script setup>
-import { WCrudView } from '@wgalleti/primevue-components'
-</script>
-```
+Componente principal que renderiza header, KPIs, DataTable com paginacao/ordenacao server-side e dialog de formulario.
 
 ## Uso Basico
 
 ```vue
+<script setup lang="ts">
+import { useCrudManager, WCrudView } from '@wgalleti/primevue-components'
+
+const crud = useCrudManager({
+  endpoint: '/api/produtos/',
+  columns: [
+    { field: 'nome', header: 'Nome', sortable: true },
+    { field: 'preco', header: 'Preco', type: 'currency' },
+  ],
+  form: [
+    { field: 'nome', label: 'Nome', required: true },
+    { field: 'preco', label: 'Preco', type: 'currency' },
+  ],
+})
+</script>
+
 <template>
-  <WCrudView :crud="crud" title="Produtos" />
+  <WCrudView :crud="crud" title="Produtos" subtitle="Gerenciar produtos" />
 </template>
 ```
 
 ## Props
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `crud` | `CrudManagerReturn<T>` | **obrigatorio** | Retorno do `useCrudManager()` |
-| `title` | `string` | **obrigatorio** | Titulo da pagina |
-| `subtitle` | `string` | `undefined` | Subtitulo |
-| `showSearch` | `boolean` | `true` | Exibir campo de busca |
-| `showHeader` | `boolean` | `true` | Exibir header com titulo e botao novo |
+| Prop | Tipo | Padrao | Descricao |
+|------|------|--------|-----------|
+| `crud` | `CrudManagerReturn` | **obrigatorio** | Retorno do `useCrudManager` |
+| `title` | `string` | **obrigatorio** | Titulo do CRUD |
+| `subtitle` | `string` | — | Subtitulo exibido abaixo do titulo |
+| `showSearch` | `boolean` | `true` | Exibe campo de busca no toolbar |
+| `showHeader` | `boolean` | `true` | Exibe header com titulo e botao "Novo" |
 | `dialogWidth` | `string` | `'480px'` | Largura do dialog de formulario |
-| `autoInit` | `boolean` | `true` | Chamar `crud.init()` automaticamente no mount |
-| `showKpi` | `boolean` | `false` | Exibir barra de KPIs |
-| `kpiIcon` | `string` | `'pi pi-list'` | Icone do KPI principal |
-| `kpiLabel` | `string` | `'Total de Registros'` | Label do KPI principal |
+| `autoInit` | `boolean` | `true` | Chama `crud.init()` automaticamente no mount |
+| `showKpi` | `boolean` | `false` | Exibe KPI de total de registros |
+| `kpiIcon` | `string` | `'pi pi-list'` | Icone do KPI padrao |
+| `kpiLabel` | `string` | `'Total de Registros'` | Label do KPI padrao |
 | `extraKpis` | `KpiItem[]` | `[]` | KPIs adicionais |
-| `expandable` | `boolean` | `false` | Habilitar linhas expandiveis |
+| `expandable` | `boolean` | `false` | Habilita linhas expandiveis |
+
+## Eventos
+
+| Evento | Payload | Descricao |
+|--------|---------|-----------|
+| `row-expand` | `data: unknown` | Quando uma linha e expandida |
+| `row-collapse` | `data: unknown` | Quando uma linha e colapsada |
 
 ## Slots
 
-### Header e Toolbar
+### `header-actions`
 
-| Slot | Descricao |
-|---|---|
-| `header-actions` | Botoes extras ao lado do "Novo" |
-| `toolbar-start` | Inicio da barra de ferramentas (antes da busca) |
-| `toolbar-filters` | Filtros customizados na barra |
-| `toolbar-actions` | Acoes extras na barra |
-
-### Tabela
-
-| Slot | Descricao | Scope |
-|---|---|---|
-| `before-table` | Conteudo acima da tabela (KPIs, filtros) | — |
-| `column-{field}` | Renderizacao customizada de uma coluna | `{ data, value }` |
-| `row-actions` | Acoes extras nas linhas | `{ data }` |
-| `expansion` | Conteudo da linha expandida | `{ data }` |
-| `empty` | Mensagem quando nao ha registros | — |
-
-### Formulario
-
-| Slot | Descricao | Scope |
-|---|---|---|
-| `form-header` | Conteudo acima do formulario | `{ isEditing }` |
-| `form-footer` | Conteudo abaixo do formulario (acima dos botoes) | `{ isEditing }` |
-| `field-{field}` | Override completo de um campo do form | `{ formData, isEditing, setFormField }` |
-| `form-dialog` | Override completo do dialog | `{ dialogWidth }` |
-
-## Exemplos
-
-### Com slots de coluna customizada
+Acoes extras no header, ao lado do botao "Novo":
 
 ```vue
-<WCrudView :crud="crud" title="Usuarios">
-  <template #column-avatar="{ data }">
-    <img :src="data.avatar" class="w-8 h-8 rounded-full" />
-  </template>
-
-  <template #column-status="{ data }">
-    <Tag :value="data.status" :severity="statusSeverity(data.status)" />
-  </template>
-</WCrudView>
-```
-
-### Com filtros na toolbar
-
-```vue
-<WCrudView :crud="crud" title="Pedidos">
-  <template #toolbar-filters>
-    <Select
-      v-model="statusFilter"
-      :options="statusOptions"
-      placeholder="Status"
-      class="w-48"
-    />
-    <DatePicker
-      v-model="dateFilter"
-      placeholder="Data"
-      date-format="dd/mm/yy"
-    />
-  </template>
-</WCrudView>
-```
-
-### Com acoes extras no header
-
-```vue
-<WCrudView :crud="crud" title="Relatorios">
+<WCrudView :crud="crud" title="Produtos">
   <template #header-actions>
-    <Button
-      label="Exportar"
-      icon="pi pi-download"
-      severity="secondary"
-      @click="exportar"
-    />
+    <Button label="Exportar" icon="pi pi-download" severity="secondary" />
   </template>
 </WCrudView>
 ```
 
-### Com linhas expandiveis
+### `before-table`
+
+Conteudo entre o header e a tabela (substitui os KPIs):
+
+```vue
+<template #before-table>
+  <div class="my-custom-stats">...</div>
+</template>
+```
+
+### `toolbar-start`
+
+Conteudo no inicio do toolbar (apos a busca):
+
+```vue
+<template #toolbar-start>
+  <Select v-model="filtroCategoria" :options="categorias" placeholder="Categoria" />
+</template>
+```
+
+### `toolbar-filters`
+
+Alias para filtros no toolbar.
+
+### `toolbar-actions`
+
+Acoes no final do toolbar:
+
+```vue
+<template #toolbar-actions>
+  <Button icon="pi pi-refresh" text @click="crud.refresh()" />
+</template>
+```
+
+### `empty`
+
+Estado vazio customizado:
+
+```vue
+<template #empty>
+  <div class="text-center p-8">
+    <p>Nenhum produto cadastrado</p>
+  </div>
+</template>
+```
+
+### `column-{field}`
+
+Renderizacao customizada de uma coluna:
+
+```vue
+<template #column-nome="{ data, value }">
+  <strong>{{ value }}</strong>
+  <small class="block text-muted">{{ data.codigo }}</small>
+</template>
+```
+
+### `row-actions`
+
+Acoes customizadas por linha:
+
+```vue
+<template #row-actions="{ data, crud }">
+  <Button icon="pi pi-eye" text rounded @click="viewDetail(data)" />
+  <Button icon="pi pi-pencil" text rounded @click="crud.openEditDialog(data)" />
+</template>
+```
+
+### `expansion`
+
+Conteudo da linha expandida:
 
 ```vue
 <WCrudView :crud="crud" title="Pedidos" expandable>
   <template #expansion="{ data }">
-    <div class="p-4">
-      <h4>Itens do Pedido #{{ data.id }}</h4>
-      <DataTable :value="data.itens" size="small">
-        <Column field="produto" header="Produto" />
-        <Column field="quantidade" header="Qtd" />
-        <Column field="preco" header="Preco" />
-      </DataTable>
-    </div>
+    <DataTable :value="data.itens" size="small">
+      <Column field="produto" header="Produto" />
+      <Column field="quantidade" header="Qtd" />
+    </DataTable>
   </template>
 </WCrudView>
 ```
 
-### Com KPIs
+### `form-dialog`
+
+Substitui completamente o dialog de formulario:
+
+```vue
+<template #form-dialog="{ crud, dialogWidth }">
+  <MyCustomDialog :crud="crud" :width="dialogWidth" />
+</template>
+```
+
+### `field-{field}`
+
+Renderizacao customizada de um campo do formulario:
+
+```vue
+<template #field-descricao="{ field, formData, setFormField }">
+  <div class="w-crud-form-col-full">
+    <label class="w-crud-form-label">{{ field.label }}</label>
+    <MyRichEditor
+      :model-value="formData.descricao"
+      @update:model-value="(v) => setFormField('descricao', v)"
+    />
+  </div>
+</template>
+```
+
+## KPIs
 
 ```vue
 <WCrudView
   :crud="crud"
-  title="Financeiro"
+  title="Produtos"
   show-kpi
-  kpi-icon="pi pi-dollar"
-  kpi-label="Total de Lancamentos"
   :extra-kpis="[
-    { icon: 'pi pi-arrow-up', label: 'Receitas', value: totalReceitas, color: 'green' },
-    { icon: 'pi pi-arrow-down', label: 'Despesas', value: totalDespesas, color: 'red' },
+    { icon: 'pi pi-check', label: 'Ativos', value: '42', color: '#22c55e' },
+    { icon: 'pi pi-ban', label: 'Inativos', value: '8', color: '#ef4444' },
   ]"
 />
 ```
 
-### Com campo de formulario customizado
+## Row Actions Customizadas
 
-```vue
-<WCrudView :crud="crud" title="Eventos" dialog-width="640px">
-  <template #field-endereco="{ formData, setFormField }">
-    <div class="col-span-2">
-      <label>Endereco</label>
-      <AddressAutocomplete
-        :model-value="formData.endereco"
-        @update:model-value="(v) => setFormField('endereco', v)"
-      />
-    </div>
-  </template>
-</WCrudView>
-```
+Por padrao, o componente gera botoes de editar e excluir. Para customizar:
 
-### Sem auto-init (controle manual)
-
-```vue
-<script setup>
-const crud = useCrudManager({ ... })
-
-// Carrega dados apenas quando filtro estiver pronto
-watch(tenantId, async (id) => {
-  if (id) await crud.init()
+```ts
+const crud = useCrudManager({
+  endpoint: '/api/pedidos/',
+  columns: [...],
+  form: [...],
+  rowActions: [
+    {
+      action: 'view',
+      icon: 'pi pi-eye',
+      tooltip: 'Visualizar',
+      handler: (data) => router.push(`/pedidos/${data.id}`),
+    },
+    {
+      action: 'edit',
+      icon: 'pi pi-pencil',
+      tooltip: 'Editar',
+    },
+    {
+      action: 'delete',
+      icon: 'pi pi-trash',
+      tooltip: 'Excluir',
+      severity: 'danger',
+      visible: (data) => data.status !== 'finalizado',
+    },
+  ],
 })
-</script>
-
-<template>
-  <WCrudView :crud="crud" title="Dados" :auto-init="false" />
-</template>
 ```
