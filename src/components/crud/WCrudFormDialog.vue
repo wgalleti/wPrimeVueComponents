@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import type { FieldDef } from '@/types/crud'
+import type { FieldDef } from '@/types/field'
 import WFormRenderer from '@/components/form/WFormRenderer.vue'
 
 const props = withDefaults(
@@ -85,7 +85,7 @@ watch(
         </template>
         <!-- Forward image-* slots from parent -->
         <template
-          v-for="field in fields.filter(f => f.type === 'image')"
+          v-for="field in fields.filter((f) => f.type === 'image')"
           :key="`img-${field.field}`"
           #[`image-${field.field}`]="slotData"
         >

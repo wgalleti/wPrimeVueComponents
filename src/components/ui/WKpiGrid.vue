@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { KpiItem } from '@/types/crud'
+import type { KpiItem } from '@/types/kpi'
 import WKpiCard from './WKpiCard.vue'
 
 const props = withDefaults(
@@ -31,13 +31,7 @@ const gridClass = computed(() => [
 <template>
   <div class="w-kpi-grid" :class="gridClass">
     <template v-if="$slots.item">
-      <slot
-        v-for="(item, index) in items"
-        :key="index"
-        name="item"
-        :item="item"
-        :index="index"
-      />
+      <slot v-for="(item, index) in items" :key="index" name="item" :item="item" :index="index" />
     </template>
     <template v-else>
       <WKpiCard

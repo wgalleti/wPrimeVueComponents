@@ -51,20 +51,18 @@ function matches(item: Item, term: string): boolean {
   if (!term) return true
   const q = term.toLowerCase()
   return fields.value.some((f) =>
-    String(item[f] ?? '').toLowerCase().includes(q),
+    String(item[f] ?? '')
+      .toLowerCase()
+      .includes(q),
   )
 }
 
 const available = computed(() =>
-  props.source.filter(
-    (i) => !selectedSet.value.has(idOf(i)) && matches(i, leftSearch.value),
-  ),
+  props.source.filter((i) => !selectedSet.value.has(idOf(i)) && matches(i, leftSearch.value)),
 )
 
 const chosen = computed(() =>
-  props.source.filter(
-    (i) => selectedSet.value.has(idOf(i)) && matches(i, rightSearch.value),
-  ),
+  props.source.filter((i) => selectedSet.value.has(idOf(i)) && matches(i, rightSearch.value)),
 )
 
 function add(item: Item) {
@@ -75,7 +73,10 @@ function add(item: Item) {
 function remove(item: Item) {
   if (props.disabled) return
   const id = idOf(item)
-  emit('update:selected', props.selected.filter((s) => s !== id))
+  emit(
+    'update:selected',
+    props.selected.filter((s) => s !== id),
+  )
 }
 
 function addAll() {

@@ -1,7 +1,13 @@
 import { inject } from 'vue'
 import { W_CONFIG_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
-import { formatDateValue, formatDateTimeValue, parseDate, toDateString, toDateTimeString } from '@/utils/dates'
+import {
+  formatDateValue,
+  formatDateTimeValue,
+  parseDate,
+  toDateString,
+  toDateTimeString,
+} from '@/utils/dates'
 import {
   formatCpf,
   formatCnpj,

@@ -8,3 +8,7 @@ playground/dist/
 *.png
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+# Build output — publicado via npm (files:["dist"] + prepublishOnly), não versionado
+dist/
+# Grafo gerado pelo graphify
+graphify-out/

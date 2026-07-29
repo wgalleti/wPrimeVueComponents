@@ -10,7 +10,9 @@ import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
-import type { CrudManagerReturn, RowAction, KpiItem } from '@/types/crud'
+import type { CrudManagerReturn } from '@/types/manager'
+import type { RowAction } from '@/types/action'
+import type { KpiItem } from '@/types/kpi'
 import type { MenuItem } from 'primevue/menuitem'
 import type { Slots } from 'vue'
 import { useFormatters } from '@/composables/useFormatters'
@@ -18,6 +20,10 @@ import { toCsv, downloadCsv } from '@/utils/csv'
 
 const props = withDefaults(
   defineProps<{
+    // WCrudView é agnóstico ao tipo do registro (trata linhas como Record<string, unknown>
+    // internamente); a prop aceita o CrudManagerReturn de qualquer T do consumidor.
+    // TODO(tipagem): tornar o componente genérico <T> e tipar selectedRow/eventos.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     crud: CrudManagerReturn<any>
     title: string
     subtitle?: string
@@ -141,7 +147,9 @@ const effectiveRowActions = computed<RowAction[]>(
   () => props.crud.config.rowActions ?? defaultActions.value,
 )
 
-const hasActions = computed(() => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']))
+const hasActions = computed(
+  () => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']),
+)
 
 function handleRowAction(action: RowAction, data: Record<string, unknown>) {
   // Custom handler tem prioridade — permite sobrescrever ações nomeadas.
@@ -185,9 +193,6 @@ const allKpis = computed<KpiItem[]>(() => {
   return kpis
 })
 
-// --- Labels from config ---
-
-const labels = computed(() => props.crud.config.labels ?? {})
 const canCreate = computed(() => props.crud.config.canCreate !== false)
 
 // --- Selection (drives action rail + context menu) ---
@@ -307,11 +312,7 @@ onMounted(() => {
     <!-- KPIs -->
     <slot name="before-table">
       <div v-if="allKpis.length" class="w-crud-kpis">
-        <div
-          v-for="(kpi, idx) in allKpis"
-          :key="idx"
-          class="w-crud-kpi"
-        >
+        <div v-for="(kpi, idx) in allKpis" :key="idx" class="w-crud-kpi">
           <div :class="['w-crud-kpi-icon', kpi.severity ? `w-crud-kpi-icon--${kpi.severity}` : '']">
             <i :class="[kpi.icon]" :style="kpi.color ? `color: ${kpi.color}` : ''" />
           </div>
@@ -325,41 +326,164 @@ onMounted(() => {
 
     <!-- Content (table/cards + optional action rail) -->
     <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
-    <div class="w-crud-content-main">
-    <!-- Table -->
-    <div v-if="displayMode === 'table'" class="w-crud-table">
-      <DataTable
-        :value="crud.items.value"
-        :loading="crud.loading.value"
-        v-model:expanded-rows="expandedRows"
-        paginator
-        :rows="crud.pagination.pageSize"
-        :total-records="crud.pagination.rows"
-        :rows-per-page-options="[10, 20, 50]"
-        paginator-template="CurrentPageReport PrevPageLink NextPageLink"
-        current-page-report-template="Página {currentPage} de {totalPages}"
-        :pt="{ pcPaginator: { root: { class: 'w-crud-paginator' } } }"
-        lazy
-        striped-rows
-        removable-sort
-        size="small"
-        :sort-field="crud.sort.field ?? undefined"
-        :sort-order="crud.sort.order"
-        :data-key="crud.config.pk || 'id'"
-        :selection="(actionRail || contextMenu) ? selectedRow : undefined"
-        :selection-mode="(actionRail || contextMenu) ? 'single' : undefined"
-        :context-menu="contextMenu"
-        :context-menu-selection="contextMenu ? selectedRow : undefined"
-        @update:selection="(v: any) => (selectedRow = v)"
-        @update:context-menu-selection="(v: any) => (selectedRow = v)"
-        @row-contextmenu="onRowContextMenu"
-        @page="crud.onPage"
-        @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
-        @row-expand="(e) => emit('row-expand', e.data)"
-        @row-collapse="(e) => emit('row-collapse', e.data)"
-      >
-        <template #header>
-          <div class="w-crud-toolbar">
+      <div class="w-crud-content-main">
+        <!-- Table -->
+        <div v-if="displayMode === 'table'" class="w-crud-table">
+          <DataTable
+            v-model:expanded-rows="expandedRows"
+            :value="crud.items.value"
+            :loading="crud.loading.value"
+            paginator
+            :rows="crud.pagination.pageSize"
+            :total-records="crud.pagination.rows"
+            :rows-per-page-options="[10, 20, 50]"
+            paginator-template="CurrentPageReport PrevPageLink NextPageLink"
+            current-page-report-template="Página {currentPage} de {totalPages}"
+            :pt="{ pcPaginator: { root: { class: 'w-crud-paginator' } } }"
+            lazy
+            striped-rows
+            removable-sort
+            size="small"
+            :sort-field="crud.sort.field ?? undefined"
+            :sort-order="crud.sort.order"
+            :data-key="crud.config.pk || 'id'"
+            :selection="actionRail || contextMenu ? selectedRow : undefined"
+            :selection-mode="actionRail || contextMenu ? 'single' : undefined"
+            :context-menu="contextMenu"
+            :context-menu-selection="contextMenu ? selectedRow : undefined"
+            @update:selection="(v: any) => (selectedRow = v)"
+            @update:context-menu-selection="(v: any) => (selectedRow = v)"
+            @row-contextmenu="onRowContextMenu"
+            @page="crud.onPage"
+            @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
+            @row-expand="(e) => emit('row-expand', e.data)"
+            @row-collapse="(e) => emit('row-collapse', e.data)"
+          >
+            <template #header>
+              <div class="w-crud-toolbar">
+                <div class="w-crud-toolbar-start">
+                  <IconField v-if="showSearch">
+                    <InputIcon class="pi pi-search" />
+                    <InputText
+                      :model-value="crud.search.value"
+                      placeholder="Buscar..."
+                      class="w-72"
+                      @input="crud.onSearch"
+                    />
+                  </IconField>
+                  <slot name="toolbar-start" />
+                  <slot name="toolbar-filters" />
+                </div>
+                <div class="w-crud-toolbar-end">
+                  <slot name="toolbar-actions" />
+                  <Button
+                    v-if="exportCsv"
+                    v-tooltip.top="
+                      csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'
+                    "
+                    icon="pi pi-download"
+                    text
+                    size="small"
+                    :loading="exporting"
+                    @click="doExportCsv"
+                  />
+                  <div v-if="viewToggle" class="w-crud-view-toggle">
+                    <Button
+                      icon="pi pi-table"
+                      size="small"
+                      :text="!isView('table')"
+                      :outlined="isView('table')"
+                      @click="setView('table')"
+                    />
+                    <Button
+                      icon="pi pi-th-large"
+                      size="small"
+                      :text="!isView('cards')"
+                      :outlined="isView('cards')"
+                      @click="setView('cards')"
+                    />
+                  </div>
+                  <Button
+                    v-if="!showHeader && canCreate && !actionRail"
+                    label="Novo"
+                    icon="pi pi-plus"
+                    @click="crud.openCreateDialog()"
+                  />
+                </div>
+              </div>
+            </template>
+
+            <template #empty>
+              <slot name="empty">
+                <div class="w-crud-empty">
+                  <div class="w-crud-empty-icon">
+                    <i class="pi pi-inbox" />
+                  </div>
+                  <p class="w-crud-empty-title">Nenhum registro encontrado</p>
+                  <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
+                </div>
+              </slot>
+            </template>
+
+            <!-- Expander -->
+            <Column v-if="expandable" expander style="width: 3rem" />
+
+            <!-- Data columns -->
+            <Column
+              v-for="col in visibleColumns"
+              :key="col.field"
+              :field="col.field"
+              :header="col.header"
+              :sortable="col.sortable"
+              :style="col.style"
+              :header-class="colAlignClass(col)"
+              :body-class="colAlignClass(col)"
+            >
+              <template #body="{ data }">
+                <slot :name="`column-${col.field}`" :data="data" :value="data[col.field]">
+                  <WCrudColumnRenderer :column="col" :value="data[col.field]" :row-data="data" />
+                </slot>
+              </template>
+            </Column>
+
+            <!-- Actions column (oculta quando a action rail está ativa) -->
+            <Column
+              v-if="hasActions && !actionRail"
+              header-class="w-crud-actions-header"
+              :style="{
+                width: `${(effectiveRowActions.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem`,
+              }"
+            >
+              <template #body="{ data }">
+                <div class="w-crud-actions">
+                  <template v-for="action in effectiveRowActions" :key="action.action">
+                    <Button
+                      v-if="isActionVisible(action, data)"
+                      v-tooltip.top="action.tooltip"
+                      :icon="action.icon"
+                      text
+                      rounded
+                      size="small"
+                      :severity="action.severity as any"
+                      :disabled="isActionDisabled(action, data)"
+                      @click="handleRowAction(action, data)"
+                    />
+                  </template>
+                  <slot name="row-actions" :data="data" :crud="crud" />
+                </div>
+              </template>
+            </Column>
+
+            <!-- Expansion -->
+            <template v-if="expandable" #expansion="slotProps">
+              <slot name="expansion" :data="slotProps.data" />
+            </template>
+          </DataTable>
+        </div>
+
+        <!-- Cards view -->
+        <div v-else class="w-crud-cards-wrap">
+          <div class="w-crud-toolbar w-crud-toolbar--standalone">
             <div class="w-crud-toolbar-start">
               <IconField v-if="showSearch">
                 <InputIcon class="pi pi-search" />
@@ -408,10 +532,12 @@ onMounted(() => {
               />
             </div>
           </div>
-        </template>
 
-        <template #empty>
-          <slot name="empty">
+          <div v-if="crud.loading.value" class="w-crud-cards-loading">
+            <i class="pi pi-spin pi-spinner" />
+          </div>
+
+          <slot v-else-if="!crud.items.value.length" name="empty">
             <div class="w-crud-empty">
               <div class="w-crud-empty-icon">
                 <i class="pi pi-inbox" />
@@ -420,189 +546,65 @@ onMounted(() => {
               <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
             </div>
           </slot>
-        </template>
 
-        <!-- Expander -->
-        <Column v-if="expandable" expander style="width: 3rem" />
-
-        <!-- Data columns -->
-        <Column
-          v-for="col in visibleColumns"
-          :key="col.field"
-          :field="col.field"
-          :header="col.header"
-          :sortable="col.sortable"
-          :style="col.style"
-          :header-class="colAlignClass(col)"
-          :body-class="colAlignClass(col)"
-        >
-          <template #body="{ data }">
-            <slot :name="`column-${col.field}`" :data="data" :value="data[col.field]">
-              <WCrudColumnRenderer
-                :column="col"
-                :value="data[col.field]"
-                :row-data="data"
-              />
-            </slot>
-          </template>
-        </Column>
-
-        <!-- Actions column (oculta quando a action rail está ativa) -->
-        <Column
-          v-if="hasActions && !actionRail"
-          header-class="w-crud-actions-header"
-          :style="{ width: `${(effectiveRowActions.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem` }"
-        >
-          <template #body="{ data }">
-            <div class="w-crud-actions">
-              <template v-for="action in effectiveRowActions" :key="action.action">
-                <Button
-                  v-if="isActionVisible(action, data)"
-                  v-tooltip.top="action.tooltip"
-                  :icon="action.icon"
-                  text
-                  rounded
-                  size="small"
-                  :severity="action.severity as any"
-                  :disabled="isActionDisabled(action, data)"
-                  @click="handleRowAction(action, data)"
-                />
-              </template>
-              <slot name="row-actions" :data="data" :crud="crud" />
-            </div>
-          </template>
-        </Column>
-
-        <!-- Expansion -->
-        <template v-if="expandable" #expansion="slotProps">
-          <slot name="expansion" :data="slotProps.data" />
-        </template>
-      </DataTable>
-    </div>
-
-    <!-- Cards view -->
-    <div v-else class="w-crud-cards-wrap">
-      <div class="w-crud-toolbar w-crud-toolbar--standalone">
-        <div class="w-crud-toolbar-start">
-          <IconField v-if="showSearch">
-            <InputIcon class="pi pi-search" />
-            <InputText
-              :model-value="crud.search.value"
-              placeholder="Buscar..."
-              class="w-72"
-              @input="crud.onSearch"
-            />
-          </IconField>
-          <slot name="toolbar-start" />
-          <slot name="toolbar-filters" />
-        </div>
-        <div class="w-crud-toolbar-end">
-          <slot name="toolbar-actions" />
-          <Button
-            v-if="exportCsv"
-            v-tooltip.top="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
-            icon="pi pi-download"
-            text
-            size="small"
-            :loading="exporting"
-            @click="doExportCsv"
-          />
-          <div v-if="viewToggle" class="w-crud-view-toggle">
-            <Button
-              icon="pi pi-table"
-              size="small"
-              :text="!isView('table')"
-              :outlined="isView('table')"
-              @click="setView('table')"
-            />
-            <Button
-              icon="pi pi-th-large"
-              size="small"
-              :text="!isView('cards')"
-              :outlined="isView('cards')"
-              @click="setView('cards')"
-            />
-          </div>
-          <Button
-            v-if="!showHeader && canCreate && !actionRail"
-            label="Novo"
-            icon="pi pi-plus"
-            @click="crud.openCreateDialog()"
-          />
-        </div>
-      </div>
-
-      <div v-if="crud.loading.value" class="w-crud-cards-loading">
-        <i class="pi pi-spin pi-spinner" />
-      </div>
-
-      <slot v-else-if="!crud.items.value.length" name="empty">
-        <div class="w-crud-empty">
-          <div class="w-crud-empty-icon">
-            <i class="pi pi-inbox" />
-          </div>
-          <p class="w-crud-empty-title">Nenhum registro encontrado</p>
-          <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
-        </div>
-      </slot>
-
-      <div v-else class="w-crud-cards">
-        <div
-          v-for="(row, idx) in crud.items.value"
-          :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
-          class="w-crud-card"
-          :class="{ 'w-crud-card--selected': selectedRow === row }"
-          @click="selectRow(row)"
-          @dblclick="crud.config.canEdit !== false && crud.openEditDialog(row)"
-          @contextmenu="onCardContextMenu($event, row)"
-        >
-          <div class="w-crud-card-body">
+          <div v-else class="w-crud-cards">
             <div
-              v-for="(col, ci) in cardColumns"
-              :key="col.field"
-              class="w-crud-card-row"
-              :class="{ 'w-crud-card-row--title': ci === 0 }"
+              v-for="(row, idx) in crud.items.value"
+              :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
+              class="w-crud-card"
+              :class="{ 'w-crud-card--selected': selectedRow === row }"
+              @click="selectRow(row)"
+              @dblclick="crud.config.canEdit !== false && crud.openEditDialog(row)"
+              @contextmenu="onCardContextMenu($event, row)"
             >
-              <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
-              <span class="w-crud-card-value">
-                <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
-                  <WCrudColumnRenderer :column="col" :value="row[col.field]" :row-data="row" />
-                </slot>
-              </span>
+              <div class="w-crud-card-body">
+                <div
+                  v-for="(col, ci) in cardColumns"
+                  :key="col.field"
+                  class="w-crud-card-row"
+                  :class="{ 'w-crud-card-row--title': ci === 0 }"
+                >
+                  <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
+                  <span class="w-crud-card-value">
+                    <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
+                      <WCrudColumnRenderer :column="col" :value="row[col.field]" :row-data="row" />
+                    </slot>
+                  </span>
+                </div>
+              </div>
+              <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
+                <template v-for="action in effectiveRowActions" :key="action.action">
+                  <Button
+                    v-if="isActionVisible(action, row)"
+                    v-tooltip.top="action.tooltip"
+                    :icon="action.icon"
+                    text
+                    rounded
+                    size="small"
+                    :severity="action.severity as any"
+                    :disabled="isActionDisabled(action, row)"
+                    @click="handleRowAction(action, row)"
+                  />
+                </template>
+                <slot name="row-actions" :data="row" :crud="crud" />
+              </div>
             </div>
           </div>
-          <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
-            <template v-for="action in effectiveRowActions" :key="action.action">
-              <Button
-                v-if="isActionVisible(action, row)"
-                v-tooltip.top="action.tooltip"
-                :icon="action.icon"
-                text
-                rounded
-                size="small"
-                :severity="action.severity as any"
-                :disabled="isActionDisabled(action, row)"
-                @click="handleRowAction(action, row)"
-              />
-            </template>
-            <slot name="row-actions" :data="row" :crud="crud" />
-          </div>
+
+          <Paginator
+            v-if="crud.items.value.length"
+            :rows="crud.pagination.pageSize"
+            :total-records="crud.pagination.rows"
+            :first="paginatorFirst"
+            :rows-per-page-options="[10, 20, 50]"
+            template="CurrentPageReport PrevPageLink NextPageLink"
+            current-page-report-template="Página {currentPage} de {totalPages}"
+            class="w-crud-paginator"
+            @page="crud.onPage"
+          />
         </div>
       </div>
-
-      <Paginator
-        v-if="crud.items.value.length"
-        :rows="crud.pagination.pageSize"
-        :total-records="crud.pagination.rows"
-        :first="paginatorFirst"
-        :rows-per-page-options="[10, 20, 50]"
-        template="CurrentPageReport PrevPageLink NextPageLink"
-        current-page-report-template="Página {currentPage} de {totalPages}"
-        class="w-crud-paginator"
-        @page="crud.onPage"
-      />
-    </div>
-    </div><!-- /.w-crud-content-main -->
+      <!-- /.w-crud-content-main -->
 
       <!-- Floating action rail (todas as actions vivem aqui) -->
       <aside v-if="actionRail" class="w-crud-rail">
@@ -613,10 +615,7 @@ onMounted(() => {
           rounded
           @click="crud.openCreateDialog()"
         />
-        <div
-          v-if="canCreate && effectiveRowActions.length"
-          class="w-crud-rail-sep"
-        />
+        <div v-if="canCreate && effectiveRowActions.length" class="w-crud-rail-sep" />
         <template v-for="action in effectiveRowActions" :key="action.action">
           <Button
             v-if="!selectedRow || isActionVisible(action, selectedRow)"
@@ -650,7 +649,8 @@ onMounted(() => {
           @click="doExportCsv"
         />
       </aside>
-    </div><!-- /.w-crud-content -->
+    </div>
+    <!-- /.w-crud-content -->
 
     <!-- Context menu -->
     <ContextMenu v-if="contextMenu" ref="cm" :model="contextMenuItems" />
@@ -667,7 +667,12 @@ onMounted(() => {
         :disabled="crud.viewMode?.value ?? false"
         :width="dialogWidth"
         :form-columns="formColumns ?? crud.config.formColumns"
-        @update:visible="(v) => { crud.dialogVisible.value = v; if (!v) crud.editingItem.value = null }"
+        @update:visible="
+          (v) => {
+            crud.dialogVisible.value = v
+            if (!v) crud.editingItem.value = null
+          }
+        "
         @update:field="(field, val) => crud.setFormField(field, val)"
         @save="crud.save()"
       >

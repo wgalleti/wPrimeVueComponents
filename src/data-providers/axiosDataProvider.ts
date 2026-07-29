@@ -81,11 +81,7 @@ export function createAxiosDataProvider(axios: AxiosInstance): DataProvider {
       payload: Record<string, unknown> | FormData,
       config?: DataProviderRequestConfig,
     ): Promise<DataProviderResponse<T>> {
-      const response = await axios.patch<T>(
-        `${endpoint}${id}/`,
-        payload,
-        config,
-      )
+      const response = await axios.patch<T>(`${endpoint}${id}/`, payload, config)
       return { data: response.data }
     },
 

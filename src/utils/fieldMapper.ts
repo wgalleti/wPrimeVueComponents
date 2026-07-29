@@ -1,4 +1,5 @@
-import type { FieldDef, ColumnDef, SelectOption } from '@/types/crud'
+import type { FieldDef, SelectOption } from '@/types/field'
+import type { ColumnDef } from '@/types/column'
 
 export interface ApiFieldMeta {
   name: string
@@ -65,9 +66,7 @@ export function mapApiFieldToFieldDef(apiField: ApiFieldMeta): FieldDef {
 }
 
 export function mapApiFieldsToFieldDefs(apiFields: ApiFieldMeta[]): FieldDef[] {
-  return apiFields
-    .filter((f) => !f.read_only && f.name !== 'id')
-    .map(mapApiFieldToFieldDef)
+  return apiFields.filter((f) => !f.read_only && f.name !== 'id').map(mapApiFieldToFieldDef)
 }
 
 const COLUMN_TYPE_MAP: Record<string, ColumnDef['type']> = {

@@ -1,17 +1,10 @@
 import { ref, reactive, inject } from 'vue'
-import type {
-  PaginationState,
-  SortState,
-  UseApiOptions,
-  UseApiReturn,
-} from '@/types/api'
+import type { PaginationState, SortState, UseApiOptions, UseApiReturn } from '@/types/api'
 import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 
-export function useApi<T = Record<string, unknown>>(
-  options: UseApiOptions,
-): UseApiReturn<T> {
+export function useApi<T = Record<string, unknown>>(options: UseApiOptions): UseApiReturn<T> {
   const { endpoint, searchDebounce = 300, immediate = false } = options
 
   const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
@@ -47,9 +40,7 @@ export function useApi<T = Record<string, unknown>>(
   // Debounce
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-  async function fetchItems(
-    params: Record<string, unknown> = {},
-  ): Promise<void> {
+  async function fetchItems(params: Record<string, unknown> = {}): Promise<void> {
     loading.value = true
     try {
       const queryParams: Record<string, unknown> = {
@@ -78,8 +69,7 @@ export function useApi<T = Record<string, unknown>>(
       pagination.rows = responseData.rows
       if (responseData.page) pagination.page = responseData.page
       if (responseData.page_size) pagination.pageSize = responseData.page_size
-      pagination.totalPages =
-        Math.ceil(pagination.rows / pagination.pageSize) || 0
+      pagination.totalPages = Math.ceil(pagination.rows / pagination.pageSize) || 0
       extras.value = responseData.extras ?? {}
     } finally {
       loading.value = false

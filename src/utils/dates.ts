@@ -30,9 +30,7 @@ export function formatDateValue(
   return dayjs(value).format(format)
 }
 
-export function formatDateTimeValue(
-  value: string | Date | null | undefined,
-): string {
+export function formatDateTimeValue(value: string | Date | null | undefined): string {
   if (!value) return '—'
   return dayjs(value).format('DD/MM/YYYY HH:mm')
 }

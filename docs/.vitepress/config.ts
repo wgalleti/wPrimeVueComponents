@@ -14,7 +14,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guia', link: '/guide/getting-started' },
-      { text: 'Componentes', link: '/components/wcrud-view' },
+      { text: 'Componentes', link: '/components/w-crud-view' },
       { text: 'Composables', link: '/composables/use-crud-manager' },
       { text: 'CSS', link: '/css/classes' },
     ],
@@ -31,10 +31,11 @@ export default defineConfig({
       {
         text: 'Componentes',
         items: [
-          { text: 'WCrudView', link: '/components/wcrud-view' },
-          { text: 'WCrudFormDialog', link: '/components/wcrud-form-dialog' },
-          { text: 'WCrudColumnRenderer', link: '/components/wcrud-column-renderer' },
-          { text: 'WAutoCompleteFK', link: '/components/wauto-complete-fk' },
+          { text: 'WCrudView', link: '/components/w-crud-view' },
+          { text: 'WCrudFormDialog', link: '/components/w-crud-form-dialog' },
+          { text: 'WCrudColumnRenderer', link: '/components/w-crud-column-renderer' },
+          { text: 'WAutoCompleteFK', link: '/components/w-auto-complete-fk' },
+          { text: 'WImageCropper', link: '/components/w-image-cropper' },
           { text: 'WPageHeader', link: '/components/w-page-header' },
           { text: 'WSectionHeader', link: '/components/w-section-header' },
           { text: 'WFormSection', link: '/components/w-form-section' },

@@ -10,12 +10,10 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import { W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
-import type { FieldDef, ColumnDef } from '@/types/crud'
+import type { FieldDef } from '@/types/field'
+import type { ColumnDef } from '@/types/column'
 import type { ApiFieldMeta } from '@/utils/fieldMapper'
-import {
-  mapApiFieldsToFieldDefs,
-  mapApiFieldsToColumnDefs,
-} from '@/utils/fieldMapper'
+import { mapApiFieldsToFieldDefs, mapApiFieldsToColumnDefs } from '@/utils/fieldMapper'
 import { useAppToast } from '@/composables/useAppToast'
 import { useAppConfirm } from '@/composables/useAppConfirm'
 import { extractApiError } from '@/composables/useApiError'
@@ -87,9 +85,7 @@ defineOptions({ inheritAttrs: false })
 
 const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
 if (!dataProvider) {
-  throw new Error(
-    '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin.',
-  )
+  throw new Error('[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin.')
 }
 const provider = dataProvider
 
@@ -208,18 +204,11 @@ watch(
   () => props.modelValue,
   async (newVal) => {
     if (newVal != null) {
-      if (
-        typeof newVal === 'object' &&
-        newVal !== null &&
-        props.optionLabel in newVal
-      ) {
+      if (typeof newVal === 'object' && newVal !== null && props.optionLabel in newVal) {
         selectedItem.value = newVal as Record<string, unknown>
         return
       }
-      if (
-        !selectedItem.value ||
-        selectedItem.value[props.optionValue] !== newVal
-      ) {
+      if (!selectedItem.value || selectedItem.value[props.optionValue] !== newVal) {
         await fetchById(newVal as string | number)
       }
     } else {
@@ -279,9 +268,7 @@ const modalColumns = computed<ColumnDef[]>(() => {
   if (apiFields.value.length) {
     return mapApiFieldsToColumnDefs(apiFields.value)
   }
-  return [
-    { field: props.optionLabel, header: props.optionLabel, sortable: true },
-  ]
+  return [{ field: props.optionLabel, header: props.optionLabel, sortable: true }]
 })
 
 // ---------------------------------------------------------------------------
@@ -306,20 +293,14 @@ async function fetchModalData() {
     if (modalSearch.value) params.search = modalSearch.value
     if (modalSortField.value && modalSortOrder.value !== 0) {
       params.ordering =
-        modalSortOrder.value === -1
-          ? `-${modalSortField.value}`
-          : modalSortField.value
+        modalSortOrder.value === -1 ? `-${modalSortField.value}` : modalSortField.value
     }
     const response = await provider.list(props.endpoint, params)
     modalData.value = response.data
     modalTotalRecords.value = response.rows
 
     // Captura metadata de campos na primeira requisição
-    if (
-      response.extras?.fields &&
-      !props.columns?.length &&
-      !props.crudFields?.length
-    ) {
+    if (response.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
       apiFields.value = response.extras.fields as ApiFieldMeta[]
     }
   } catch {
@@ -404,9 +385,7 @@ const editingItem = ref<Record<string, unknown> | null>(null)
 const formData = reactive<Record<string, unknown>>({})
 
 const isEditing = computed(() => editingItem.value !== null)
-const formDialogTitle = computed(() =>
-  isEditing.value ? 'Editar Registro' : 'Novo Registro',
-)
+const formDialogTitle = computed(() => (isEditing.value ? 'Editar Registro' : 'Novo Registro'))
 
 function getDefaults(): Record<string, unknown> {
   const defaults: Record<string, unknown> = {}
@@ -467,11 +446,7 @@ async function saveForm() {
 
     if (isEditing.value && editingItem.value) {
       const pk = editingItem.value[props.optionValue]
-      response = await provider.update(
-        props.endpoint,
-        pk as string | number,
-        payload,
-      )
+      response = await provider.update(props.endpoint, pk as string | number, payload)
       // Atualiza na lista do modal
       const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
@@ -513,10 +488,7 @@ function confirmDelete(item: Record<string, unknown>) {
         selectedItem.value = null
         emit('update:modelValue', null)
       }
-      if (
-        modalSelection.value &&
-        modalSelection.value[props.optionValue] === pk
-      ) {
+      if (modalSelection.value && modalSelection.value[props.optionValue] === pk) {
         modalSelection.value = null
       }
       toast.success('Registro excluído com sucesso')
@@ -565,11 +537,7 @@ function confirmDelete(item: Record<string, unknown>) {
     <div class="w-autocompletefk-toolbar">
       <IconField class="w-autocompletefk-toolbar-search">
         <InputIcon class="pi pi-search" />
-        <InputText
-          v-model="modalSearch"
-          placeholder="Pesquisar..."
-          class="w-full"
-        />
+        <InputText v-model="modalSearch" placeholder="Pesquisar..." class="w-full" />
       </IconField>
       <div class="w-autocompletefk-toolbar-actions">
         <Button
@@ -598,10 +566,7 @@ function confirmDelete(item: Record<string, unknown>) {
       selection-mode="single"
       :data-key="optionValue"
       @page="onModalPage"
-      @sort="
-        (e: any) =>
-          onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })
-      "
+      @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
       @row-dblclick="onRowDblClick"
     >
       <Column selection-mode="single" header-style="width: 3rem" />
@@ -660,12 +625,7 @@ function confirmDelete(item: Record<string, unknown>) {
 
     <template #footer>
       <div class="w-autocompletefk-footer">
-        <Button
-          label="Cancelar"
-          severity="secondary"
-          text
-          @click="modalVisible = false"
-        />
+        <Button label="Cancelar" severity="secondary" text @click="modalVisible = false" />
         <Button
           label="Selecionar"
           icon="pi pi-check"

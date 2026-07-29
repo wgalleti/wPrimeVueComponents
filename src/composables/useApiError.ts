@@ -16,9 +16,7 @@ function extractMessage(detail: unknown): string | null {
     const obj = detail as Record<string, unknown>
 
     if (Array.isArray(obj.non_field_errors) && obj.non_field_errors.length > 0) {
-      return obj.non_field_errors
-        .filter((item: unknown) => typeof item === 'string')
-        .join(' ')
+      return obj.non_field_errors.filter((item: unknown) => typeof item === 'string').join(' ')
     }
 
     const messages: string[] = []

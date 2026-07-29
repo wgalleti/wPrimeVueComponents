@@ -34,9 +34,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: number | null]
 }>()
 
-const resolvedPrefix = computed(() =>
-  props.prefix ?? (props.currency ? 'R$' : undefined),
-)
+const resolvedPrefix = computed(() => props.prefix ?? (props.currency ? 'R$' : undefined))
 
 const hasAddon = computed(() => !!resolvedPrefix.value || !!props.suffix)
 

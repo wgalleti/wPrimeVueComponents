@@ -38,10 +38,7 @@ export {
 } from './composables'
 
 // Data providers
-export {
-  createAxiosDataProvider,
-  createSupabaseDataProvider,
-} from './data-providers'
+export { createAxiosDataProvider, createSupabaseDataProvider } from './data-providers'
 
 // Types
 export type {
@@ -77,12 +74,7 @@ export type {
   SupabaseResourceConfig,
 } from './data-providers'
 
-export {
-  DEFAULT_CRUD_LABELS,
-  W_AXIOS_KEY,
-  W_CONFIG_KEY,
-  W_DATA_PROVIDER_KEY,
-} from './types'
+export { DEFAULT_CRUD_LABELS, W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from './types'
 
 // Utils
 export type { ApiFieldMeta } from './utils/fieldMapper'

@@ -19,8 +19,7 @@ export const WPrimeVuePlugin: Plugin = {
       )
     }
 
-    const dataProvider =
-      options.dataProvider ?? createAxiosDataProvider(options.axios!)
+    const dataProvider = options.dataProvider ?? createAxiosDataProvider(options.axios!)
 
     const config: WPluginConfig = {
       axios: options.axios,

@@ -18,9 +18,7 @@ const props = withDefaults(
   },
 )
 
-const currentIndex = computed(() =>
-  props.steps.findIndex((step) => step.key === props.currentStep),
-)
+const currentIndex = computed(() => props.steps.findIndex((step) => step.key === props.currentStep))
 
 function stepState(index: number) {
   if (index < currentIndex.value) return 'done'

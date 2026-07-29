@@ -25,10 +25,7 @@ type SupabaseFilterBuilder<T> = PromiseLike<SupabaseResult<T>> & {
   eq(column: string, value: unknown): SupabaseFilterBuilder<T>
   ilike(column: string, pattern: string): SupabaseFilterBuilder<T>
   or(filters: string): SupabaseFilterBuilder<T>
-  order(
-    column: string,
-    options?: { ascending?: boolean },
-  ): SupabaseFilterBuilder<T>
+  order(column: string, options?: { ascending?: boolean }): SupabaseFilterBuilder<T>
   range(from: number, to: number): SupabaseFilterBuilder<T>
   single(): Promise<SupabaseResult<T>>
 }
@@ -76,9 +73,7 @@ function normalizeEndpoint(endpoint: string): string {
     .replace(/^api\/v\d+\//, '')
 }
 
-function toResourceConfig(
-  resource: SupabaseResourceConfig | string,
-): SupabaseResourceConfig {
+function toResourceConfig(resource: SupabaseResourceConfig | string): SupabaseResourceConfig {
   return typeof resource === 'string' ? { table: resource } : resource
 }
 
@@ -92,9 +87,7 @@ function createProviderError(message: string, status = 400) {
   }
 }
 
-function assertPlainPayload(
-  payload: Record<string, unknown> | FormData,
-): Record<string, unknown> {
+function assertPlainPayload(payload: Record<string, unknown> | FormData): Record<string, unknown> {
   if (payload instanceof FormData) {
     throw createProviderError(
       'SupabaseDataProvider nao envia FormData diretamente. Faça upload do arquivo no Storage e envie a URL/caminho no payload.',
@@ -104,9 +97,7 @@ function assertPlainPayload(
   return payload
 }
 
-function normalizeSupabaseError(
-  error: SupabaseResult<unknown>['error'],
-): never {
+function normalizeSupabaseError(error: SupabaseResult<unknown>['error']): never {
   throw {
     response: {
       data: {
@@ -135,10 +126,7 @@ function resolveResource(
     return { table: resourceName }
   }
 
-  throw createProviderError(
-    `Recurso Supabase nao registrado para o endpoint "${endpoint}".`,
-    404,
-  )
+  throw createProviderError(`Recurso Supabase nao registrado para o endpoint "${endpoint}".`, 404)
 }
 
 function applyFilters<T>(
@@ -150,12 +138,7 @@ function applyFilters<T>(
   const filters = { ...resource.defaultFilters, ...params }
 
   for (const [key, value] of Object.entries(filters)) {
-    if (
-      reservedKeys.has(key) ||
-      value === null ||
-      value === undefined ||
-      value === ''
-    ) {
+    if (reservedKeys.has(key) || value === null || value === undefined || value === '') {
       continue
     }
     query = query.eq(key, value)
@@ -174,9 +157,7 @@ function applySearch<T>(
   }
 
   const escapedSearch = search.trim().replace(/,/g, '\\,')
-  const expression = searchFields
-    .map((field) => `${field}.ilike.%${escapedSearch}%`)
-    .join(',')
+  const expression = searchFields.map((field) => `${field}.ilike.%${escapedSearch}%`).join(',')
 
   return query.or(expression)
 }
@@ -195,9 +176,7 @@ function mapList<T>(data: T[] | null, resource: SupabaseResourceConfig): T[] {
   if (!data) return []
   if (!resource.mapListItem) return data
 
-  return data.map((item) =>
-    resource.mapListItem?.(item as Record<string, unknown>),
-  ) as T[]
+  return data.map((item) => resource.mapListItem?.(item as Record<string, unknown>)) as T[]
 }
 
 export function createSupabaseDataProvider(
@@ -311,10 +290,7 @@ export function createSupabaseDataProvider(
             : null
 
       const result = softDeletePayload
-        ? await options.client
-            .from(resource.table)
-            .update(softDeletePayload)
-            .eq(pk, id)
+        ? await options.client.from(resource.table).update(softDeletePayload).eq(pk, id)
         : await options.client.from(resource.table).delete().eq(pk, id)
 
       if (result.error) normalizeSupabaseError(result.error)
