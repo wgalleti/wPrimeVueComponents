@@ -12,3 +12,7 @@ docs/.vitepress/dist/
 dist/
 # Grafo gerado pelo graphify
 graphify-out/
+# Config/tooling local do Claude Code (settings de máquina + skill vendorada)
+.claude/settings.json
+.claude/settings.local.json
+.claude/skills/
