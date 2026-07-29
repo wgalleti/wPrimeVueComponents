@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # Biblioteca (raiz) — agrupa updates por tipo para reduzir ruído de PR.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      producao:
+        dependency-type: production
+      desenvolvimento:
+        dependency-type: development
+
+  # Playground (app de teste local, não publicado).
+  - package-ecosystem: npm
+    directory: "/playground"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      playground:
+        patterns:
+          - "*"
+
+  # Actions usadas nos workflows de CI/deploy.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
