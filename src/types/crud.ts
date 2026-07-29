@@ -57,6 +57,20 @@ export interface SelectOption {
   [key: string]: unknown
 }
 
+/**
+ * Filtro em cascata (drill-down) de um campo FK: torna a busca dependente do valor
+ * de outro campo do formulário, aplicando-o como filtro na requisição à API.
+ */
+export interface FieldDependency {
+  /** Campo do formulário cujo valor alimenta o filtro (ex.: 'unidade_producao'). */
+  field: string
+  /** Nome do parâmetro enviado à API. Default: o próprio `field`. */
+  param?: string
+  /** Se true, a busca só ocorre quando o valor de origem estiver preenchido
+   *  (cascata obrigatória). Default: true. */
+  required?: boolean
+}
+
 export interface FieldDef {
   field: string
   label: string
@@ -91,6 +105,14 @@ export interface FieldDef {
   // fk
   endpoint?: string
   endpointParams?: Record<string, string | number | boolean>
+  /** Filtro em cascata: torna esta FK dependente do valor de outro(s) campo(s) do
+   *  formulário, aplicando-o(s) como filtro na busca da API (ex.: um "local" que só
+   *  lista os da "unidade_producao" selecionada). Com `required` (default true), a
+   *  busca só ocorre após o campo de origem estar preenchido. */
+  dependsOn?: FieldDependency | FieldDependency[]
+  /** Placeholder da FK enquanto uma cascata obrigatória (`dependsOn`) não estiver
+   *  preenchida — ex.: "Selecione a unidade primeiro". */
+  blockedPlaceholder?: string
   crudFields?: FieldDef[]
   crudColumns?: ColumnDef[]
 

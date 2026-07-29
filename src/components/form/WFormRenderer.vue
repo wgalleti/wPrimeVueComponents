@@ -202,6 +202,20 @@ function onColorChange(field: FieldDef, value: string) {
   emit('update:field', field.field, `#${value}`)
 }
 
+// --- Drill-down (filtro em cascata das FKs) ---
+
+/** Resolve o `dependsOn` do campo em filtros já com o valor atual do formulário. */
+function resolveDrilldown(field: FieldDef) {
+  const dep = field.dependsOn
+  if (!dep) return undefined
+  const list = Array.isArray(dep) ? dep : [dep]
+  return list.map((d) => ({
+    field: d.param || d.field,
+    value: props.formData[d.field],
+    required: d.required,
+  }))
+}
+
 // --- Validation ---
 
 function validateField(field: FieldDef) {
@@ -546,6 +560,8 @@ defineExpose({ validateAll, clearErrors })
                 :model-value="formData[field.field] as any"
                 :endpoint="field.endpoint!"
                 :endpoint-params="field.endpointParams"
+                :drilldown="resolveDrilldown(field)"
+                :blocked-placeholder="field.blockedPlaceholder"
                 :option-label="field.optionLabel || 'nome'"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"

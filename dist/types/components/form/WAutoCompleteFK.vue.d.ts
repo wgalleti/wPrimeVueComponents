@@ -3,13 +3,24 @@ interface ColumnMeta {
     field: string;
     header: string;
 }
+/** Filtro em cascata já resolvido (nome do parâmetro + valor atual). */
+interface DrilldownFilter {
+    field: string;
+    value: unknown;
+    required?: boolean;
+}
 type __VLS_Props = {
     modelValue: string | number | Record<string, unknown> | null;
     endpoint: string;
     endpointParams?: Record<string, string | number | boolean>;
+    /** Filtro(s) em cascata resolvido(s): aplicado(s) como parâmetro na busca. Com
+     *  `required` (default true), a busca só ocorre quando o valor estiver preenchido. */
+    drilldown?: DrilldownFilter | DrilldownFilter[];
     optionLabel?: string;
     optionValue?: string;
     placeholder?: string;
+    /** Placeholder exibido enquanto uma cascata obrigatória não estiver preenchida. */
+    blockedPlaceholder?: string;
     disabled?: boolean;
     showClear?: boolean;
     forceSelection?: boolean;

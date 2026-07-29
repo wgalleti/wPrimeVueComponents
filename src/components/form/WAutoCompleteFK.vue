@@ -27,14 +27,26 @@ interface ColumnMeta {
   header: string
 }
 
+/** Filtro em cascata já resolvido (nome do parâmetro + valor atual). */
+interface DrilldownFilter {
+  field: string
+  value: unknown
+  required?: boolean
+}
+
 const props = withDefaults(
   defineProps<{
     modelValue: string | number | Record<string, unknown> | null
     endpoint: string
     endpointParams?: Record<string, string | number | boolean>
+    /** Filtro(s) em cascata resolvido(s): aplicado(s) como parâmetro na busca. Com
+     *  `required` (default true), a busca só ocorre quando o valor estiver preenchido. */
+    drilldown?: DrilldownFilter | DrilldownFilter[]
     optionLabel?: string
     optionValue?: string
     placeholder?: string
+    /** Placeholder exibido enquanto uma cascata obrigatória não estiver preenchida. */
+    blockedPlaceholder?: string
     disabled?: boolean
     showClear?: boolean
     forceSelection?: boolean
@@ -88,6 +100,52 @@ const suggestions = ref<Record<string, unknown>[]>([])
 const searching = ref(false)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
+// ---------------------------------------------------------------------------
+// Filtro em cascata (drill-down)
+// ---------------------------------------------------------------------------
+
+function isEmptyValue(v: unknown): boolean {
+  return v === null || v === undefined || v === ''
+}
+
+/** Um campo FK guarda o objeto inteiro; extrai o identificador escalar para o filtro. */
+function normalizeDrillValue(v: unknown): unknown {
+  if (v && typeof v === 'object') {
+    const o = v as Record<string, unknown>
+    return o.id ?? o.value ?? o
+  }
+  return v
+}
+
+const drilldownList = computed<DrilldownFilter[]>(() => {
+  const d = props.drilldown
+  if (!d) return []
+  return Array.isArray(d) ? d : [d]
+})
+
+/** true quando alguma cascata obrigatória ainda não tem valor → não busca. */
+const blockedByRequired = computed(() =>
+  drilldownList.value.some(
+    (d) => (d.required ?? true) && isEmptyValue(normalizeDrillValue(d.value)),
+  ),
+)
+
+/** Parâmetros de filtro derivados das cascatas com valor preenchido. */
+function drilldownParams(): Record<string, unknown> {
+  const params: Record<string, unknown> = {}
+  for (const d of drilldownList.value) {
+    const val = normalizeDrillValue(d.value)
+    if (!isEmptyValue(val)) params[d.field] = val
+  }
+  return params
+}
+
+const effectivePlaceholder = computed(() =>
+  blockedByRequired.value && props.blockedPlaceholder
+    ? props.blockedPlaceholder
+    : props.placeholder,
+)
+
 async function fetchById(id: string | number) {
   try {
     const response = await provider.get(props.endpoint, id)
@@ -98,11 +156,17 @@ async function fetchById(id: string | number) {
 }
 
 async function search(query: string) {
+  // Cascata obrigatória sem valor → não busca (evita listar tudo).
+  if (blockedByRequired.value) {
+    suggestions.value = []
+    return
+  }
   searching.value = true
   try {
     const params: Record<string, unknown> = {
       page_size: 20,
       ...props.endpointParams,
+      ...drilldownParams(),
     }
     if (query) params.search = query
     const response = await provider.list(props.endpoint, params)
@@ -220,12 +284,19 @@ const modalColumns = computed<ColumnDef[]>(() => {
 // ---------------------------------------------------------------------------
 
 async function fetchModalData() {
+  // Cascata obrigatória sem valor → não lista (o modal mostra estado vazio).
+  if (blockedByRequired.value) {
+    modalData.value = []
+    modalTotalRecords.value = 0
+    return
+  }
   modalLoading.value = true
   try {
     const params: Record<string, unknown> = {
       page: modalPage.value,
       page_size: modalPageSize.value,
       ...props.endpointParams,
+      ...drilldownParams(),
     }
     if (modalSearch.value) params.search = modalSearch.value
     if (modalSortField.value && modalSortOrder.value !== 0) {
@@ -298,6 +369,25 @@ watch(modalSearch, () => {
     fetchModalData()
   }, 300)
 })
+
+// Reage à mudança das cascatas: rebusca (se o modal estiver aberto) e limpa a
+// seleção que ficou obsoleta ao trocar a origem — sem apagar na carga inicial.
+watch(
+  () => drilldownList.value.map((d) => normalizeDrillValue(d.value)),
+  (novos, antigos) => {
+    if (modalVisible.value) {
+      modalPage.value = 1
+      fetchModalData()
+    }
+    if (!antigos) return
+    const mudou = novos.some((v, i) => v !== antigos[i])
+    const tinhaValorAntes = antigos.some((v) => !isEmptyValue(v))
+    if (mudou && tinhaValorAntes && selectedItem.value) {
+      selectedItem.value = null
+      emit('update:modelValue', null)
+    }
+  },
+)
 
 // ---------------------------------------------------------------------------
 // Modal — CRUD
@@ -438,7 +528,7 @@ function confirmDelete(item: Record<string, unknown>) {
       :model-value="selectedItem"
       :suggestions="suggestions"
       :option-label="optionLabel"
-      :placeholder="placeholder"
+      :placeholder="effectivePlaceholder"
       :disabled="disabled"
       :force-selection="forceSelection"
       :loading="searching"
