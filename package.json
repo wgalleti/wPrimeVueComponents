@@ -40,6 +40,9 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "resolutions": {
+    "esbuild": "^0.25.0"
+  },
   "scripts": {
     "dev": "yarn --cwd playground dev",
     "build": "vite build",
