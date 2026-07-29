@@ -31,19 +31,45 @@ export default defineConfig({
       {
         text: 'Componentes',
         items: [
-          { text: 'WCrudView', link: '/components/w-crud-view' },
-          { text: 'WCrudFormDialog', link: '/components/w-crud-form-dialog' },
-          { text: 'WCrudColumnRenderer', link: '/components/w-crud-column-renderer' },
-          { text: 'WAutoCompleteFK', link: '/components/w-auto-complete-fk' },
-          { text: 'WImageCropper', link: '/components/w-image-cropper' },
-          { text: 'WPageHeader', link: '/components/w-page-header' },
-          { text: 'WSectionHeader', link: '/components/w-section-header' },
-          { text: 'WFormSection', link: '/components/w-form-section' },
-          { text: 'WActionBar', link: '/components/w-action-bar' },
-          { text: 'WKpiCard', link: '/components/w-kpi-card' },
-          { text: 'WKpiGrid', link: '/components/w-kpi-grid' },
-          { text: 'WProgressFlow', link: '/components/w-progress-flow' },
-          { text: 'WEmptyState', link: '/components/w-empty-state' },
+          {
+            text: 'CRUD',
+            items: [
+              { text: 'WCrudView', link: '/components/w-crud-view' },
+              { text: 'WCrudFormDialog', link: '/components/w-crud-form-dialog' },
+              { text: 'WCrudColumnRenderer', link: '/components/w-crud-column-renderer' },
+            ],
+          },
+          {
+            text: 'Formulário',
+            items: [
+              { text: 'WAutoCompleteFK', link: '/components/w-auto-complete-fk' },
+              { text: 'WFormRenderer', link: '/components/w-form-renderer' },
+              { text: 'WFormSection', link: '/components/w-form-section' },
+              { text: 'WImageCropper', link: '/components/w-image-cropper' },
+              { text: 'WMoneyInput', link: '/components/w-money-input' },
+              { text: 'WTransferList', link: '/components/w-transfer-list' },
+            ],
+          },
+          {
+            text: 'Layout',
+            items: [
+              { text: 'WActionBar', link: '/components/w-action-bar' },
+              { text: 'WPageHeader', link: '/components/w-page-header' },
+              { text: 'WSectionHeader', link: '/components/w-section-header' },
+              { text: 'WDetailHeader', link: '/components/w-detail-header' },
+            ],
+          },
+          {
+            text: 'UI',
+            items: [
+              { text: 'WEmptyState', link: '/components/w-empty-state' },
+              { text: 'WInfoCard', link: '/components/w-info-card' },
+              { text: 'WKpiCard', link: '/components/w-kpi-card' },
+              { text: 'WKpiGrid', link: '/components/w-kpi-grid' },
+              { text: 'WProgressFlow', link: '/components/w-progress-flow' },
+              { text: 'WStatusTag', link: '/components/w-status-tag' },
+            ],
+          },
         ],
       },
       {

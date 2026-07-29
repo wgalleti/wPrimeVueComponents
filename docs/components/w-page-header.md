@@ -2,20 +2,9 @@
 
 Cabecalho de pagina simples para titulo, subtitulo e acoes principais.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `title` | `string` | obrigatorio | Titulo principal |
-| `subtitle` | `string` | `undefined` | Subtitulo opcional |
-| `actionLabel` | `string` | `undefined` | Label do botao principal |
-| `actionIcon` | `string` | `undefined` | Icone PrimeIcons do botao |
-
-## Slots
-
-| Slot | Descricao |
-|---|---|
-| `actions` | Acoes adicionais ao lado do botao principal |
+<ApiTable name="WPageHeader" />
 
 ## Exemplo
 

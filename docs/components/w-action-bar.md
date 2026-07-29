@@ -2,21 +2,9 @@
 
 Faixa flexivel para acoes principais, filtros e acoes secundarias.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `align` | `'between' \| 'start' \| 'end'` | `'between'` | Alinhamento principal |
-| `stackOnMobile` | `boolean` | `true` | Empilha em telas pequenas |
-
-## Slots
-
-| Slot | Descricao |
-|---|---|
-| default | Conteudo principal |
-| `primary` | Grupo principal |
-| `filters` | Filtros |
-| `secondary` | Grupo secundario |
+<ApiTable name="WActionBar" />
 
 ## Exemplo
 

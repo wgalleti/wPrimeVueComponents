@@ -10,13 +10,9 @@ Normalmente voce nao usa este componente diretamente. O `WCrudView` o utiliza in
 <WCrudColumnRenderer :column="col" :value="data[col.field]" :row-data="data" />
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Padrao | Descricao |
-|------|------|--------|-----------|
-| `column` | `ColumnDef` | **obrigatorio** | Definicao da coluna |
-| `value` | `unknown` | — | Valor da celula |
-| `rowData` | `Record<string, unknown>` | — | Dados completos da linha |
+<ApiTable name="WCrudColumnRenderer" />
 
 ## Renderizacao por Tipo
 

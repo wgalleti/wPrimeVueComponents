@@ -2,22 +2,9 @@
 
 Cabecalho para secoes internas de pagina, cards e fluxos guiados.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `title` | `string` | obrigatorio | Titulo da secao |
-| `subtitle` | `string` | `undefined` | Texto auxiliar |
-| `icon` | `string` | `undefined` | Icone opcional |
-| `compact` | `boolean` | `false` | Reduz espacamento inferior |
-
-## Slots
-
-| Slot | Descricao |
-|---|---|
-| `icon` | Override do bloco de icone |
-| `meta` | Meta-informacoes ao lado do titulo |
-| `actions` | Acoes da secao |
+<ApiTable name="WSectionHeader" />
 
 ## Exemplo
 

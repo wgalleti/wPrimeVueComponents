@@ -10,24 +10,9 @@ import { WImageCropper } from '@wgalleti/primevue-components'
 </script>
 ```
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `modelValue` | `File \| string \| null` | — | Arquivo ou URL da imagem atual |
-| `accept` | `string` | `'image/*'` | Tipos de arquivo aceitos |
-| `maxSize` | `number` | `5242880` | Tamanho maximo em bytes (5MB) |
-| `aspectRatio` | `number` | `1` | Proporcao do crop (1 = quadrado) |
-| `circular` | `boolean` | `false` | Stencil circular (avatar) |
-| `width` | `number` | `200` | Largura do preview em px |
-| `height` | `number` | `200` | Altura do preview em px |
-
-## Eventos
-
-| Evento | Payload | Descricao |
-|---|---|---|
-| `update:modelValue` | `File \| null` | Arquivo cropado |
-| `error` | `string` | Mensagem de erro (tamanho, tipo) |
+<ApiTable name="WImageCropper" />
 
 ## Comportamento
 

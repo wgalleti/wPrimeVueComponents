@@ -2,19 +2,9 @@
 
 Componente visual para indicar progresso em fluxos curtos por etapas.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `steps` | `Array<{ key: string; label: string; description?: string }>` | obrigatorio | Lista de etapas |
-| `currentStep` | `string` | obrigatorio | Chave da etapa atual |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Orientacao do fluxo |
-
-## Slots
-
-| Slot | Descricao |
-|---|---|
-| `step` | Override de cada etapa (`{ step, index, state }`) |
+<ApiTable name="WProgressFlow" />
 
 ## Exemplo
 

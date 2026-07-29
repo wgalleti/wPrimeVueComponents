@@ -2,20 +2,9 @@
 
 Container visual para agrupar campos relacionados em formularios.
 
-## Props
+## API
 
-| Prop | Tipo | Default | Descricao |
-|---|---|---|---|
-| `title` | `string` | obrigatorio | Titulo do grupo |
-| `description` | `string` | `undefined` | Texto de apoio |
-| `variant` | `'default' \| 'muted' \| 'outlined'` | `'default'` | Variante visual |
-
-## Slots
-
-| Slot | Descricao |
-|---|---|
-| default | Conteudo da secao |
-| `actions` | Acoes no cabecalho |
+<ApiTable name="WFormSection" />
 
 ## Exemplo
 
