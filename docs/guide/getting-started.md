@@ -101,4 +101,4 @@ const crud = useCrudManager({
 
 ## Proximo Passo
 
-Veja o [WCrudView](/components/wcrud-view) para entender todas as opcoes do componente principal.
+Veja o [WCrudView](/components/w-crud-view) para entender todas as opcoes do componente principal.

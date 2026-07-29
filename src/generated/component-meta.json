@@ -1,0 +1,1246 @@
+{
+  "$generatedBy": "scripts/gen-component-meta.mjs",
+  "components": {
+    "WCrudColumnRenderer": {
+      "file": "src/components/crud/WCrudColumnRenderer.vue",
+      "props": [
+        {
+          "name": "column",
+          "type": "ColumnDef",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "value",
+          "type": "unknown",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "rowData",
+          "type": "Record<string, unknown>",
+          "required": true,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
+    "WCrudFormDialog": {
+      "file": "src/components/crud/WCrudFormDialog.vue",
+      "props": [
+        {
+          "name": "visible",
+          "type": "boolean",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "fields",
+          "type": "FieldDef[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "formData",
+          "type": "Record<string, unknown>",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "isEditing",
+          "type": "boolean",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "saving",
+          "type": "boolean",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "width",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"480px\"",
+          "description": ""
+        },
+        {
+          "name": "formColumns",
+          "type": "number | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Nº de colunas do grid do form (repassado ao WFormRenderer; default 2)."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:visible",
+          "type": "[value: boolean]",
+          "description": ""
+        },
+        {
+          "name": "update:field",
+          "type": "[field: string, value: unknown]",
+          "description": ""
+        },
+        {
+          "name": "save",
+          "type": "[]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "footer",
+          "type": "{ saving: boolean; disabled: boolean; }",
+          "description": ""
+        }
+      ]
+    },
+    "WCrudView": {
+      "file": "src/components/crud/WCrudView.vue",
+      "props": [
+        {
+          "name": "crud",
+          "type": "CrudManagerReturn<any>",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "showSearch",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "showHeader",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "dialogWidth",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"480px\"",
+          "description": ""
+        },
+        {
+          "name": "formColumns",
+          "type": "number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Nº de colunas do grid do form dialog (default: `formColumns` da config\ndo useCrudManager, senão 2)."
+        },
+        {
+          "name": "autoInit",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "showKpi",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "kpiIcon",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"pi pi-list\"",
+          "description": ""
+        },
+        {
+          "name": "kpiLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Total de Registros\"",
+          "description": ""
+        },
+        {
+          "name": "extraKpis",
+          "type": "KpiItem[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": ""
+        },
+        {
+          "name": "expandable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "viewToggle",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "defaultView",
+          "type": "\"table\" | \"cards\" | undefined",
+          "required": false,
+          "default": "\"table\"",
+          "description": ""
+        },
+        {
+          "name": "cardFields",
+          "type": "number | undefined",
+          "required": false,
+          "default": "4",
+          "description": ""
+        },
+        {
+          "name": "actionRail",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "contextMenu",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "showPrint",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "exportCsv",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "csvFilename",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"export.csv\"",
+          "description": ""
+        },
+        {
+          "name": "csvScope",
+          "type": "\"all\" | \"page\" | undefined",
+          "required": false,
+          "default": "\"all\"",
+          "description": ""
+        },
+        {
+          "name": "csvPageSize",
+          "type": "number | undefined",
+          "required": false,
+          "default": "200",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "row-expand",
+          "type": "[data: unknown]",
+          "description": ""
+        },
+        {
+          "name": "row-collapse",
+          "type": "[data: unknown]",
+          "description": ""
+        },
+        {
+          "name": "print",
+          "type": "[data: Record<string, unknown>]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "header-actions",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "before-table",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "toolbar-start",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "toolbar-filters",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "toolbar-actions",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "row-actions",
+          "type": "{ data: any; crud: CrudManagerReturn<any>; }",
+          "description": ""
+        },
+        {
+          "name": "expansion",
+          "type": "{ data: any; }",
+          "description": ""
+        },
+        {
+          "name": "rail-actions",
+          "type": "{ selected: Record<string, unknown> | null; crud: CrudManagerReturn<any>; }",
+          "description": ""
+        },
+        {
+          "name": "form-dialog",
+          "type": "{ crud: CrudManagerReturn<any>; dialogWidth: string; }",
+          "description": ""
+        }
+      ]
+    },
+    "WAutoCompleteFK": {
+      "file": "src/components/form/WAutoCompleteFK.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string | number | Record<string, unknown> | null",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "endpoint",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "endpointParams",
+          "type": "Record<string, string | number | boolean> | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "drilldown",
+          "type": "DrilldownFilter | DrilldownFilter[] | undefined",
+          "required": false,
+          "default": null,
+          "description": "Filtro(s) em cascata resolvido(s): aplicado(s) como parâmetro na busca. Com\n`required` (default true), a busca só ocorre quando o valor estiver preenchido."
+        },
+        {
+          "name": "optionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"nome\"",
+          "description": ""
+        },
+        {
+          "name": "optionValue",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": ""
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Buscar...\"",
+          "description": ""
+        },
+        {
+          "name": "blockedPlaceholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Placeholder exibido enquanto uma cascata obrigatória não estiver preenchida."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "showClear",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "forceSelection",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "columns",
+          "type": "ColumnMeta[] | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "minLength",
+          "type": "number | undefined",
+          "required": false,
+          "default": "0",
+          "description": ""
+        },
+        {
+          "name": "dialogHeader",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "canCreate",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": ""
+        },
+        {
+          "name": "canEdit",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": ""
+        },
+        {
+          "name": "canDelete",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": ""
+        },
+        {
+          "name": "crudFields",
+          "type": "FieldDef[] | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "crudColumns",
+          "type": "ColumnDef[] | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "dialogWidth",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"480px\"",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: Record<string, unknown> | null]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WFormRenderer": {
+      "file": "src/components/form/WFormRenderer.vue",
+      "props": [
+        {
+          "name": "fields",
+          "type": "FieldDef[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "formData",
+          "type": "Record<string, unknown>",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "isEditing",
+          "type": "boolean",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "columns",
+          "type": "number | undefined",
+          "required": false,
+          "default": "2",
+          "description": "Nº de colunas do grid (default 2). Campos ocupam frações via `colSpan`;\ngrupos podem sobrepor via `fieldGroup.columns`."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:field",
+          "type": "[field: string, value: unknown]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WImageCropper": {
+      "file": "src/components/form/WImageCropper.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string | File | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": ""
+        },
+        {
+          "name": "accept",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"image/*\"",
+          "description": ""
+        },
+        {
+          "name": "maxSize",
+          "type": "number | undefined",
+          "required": false,
+          "default": "5242880",
+          "description": "Tamanho máximo em bytes (default 5MB)."
+        },
+        {
+          "name": "aspectRatio",
+          "type": "number | undefined",
+          "required": false,
+          "default": "1",
+          "description": "Proporção do recorte (1 = quadrado). Ignorado quando `circular`."
+        },
+        {
+          "name": "circular",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Stencil circular (avatar). Força proporção 1 e saída PNG com alpha."
+        },
+        {
+          "name": "width",
+          "type": "number | undefined",
+          "required": false,
+          "default": "200",
+          "description": "Dimensões do preview em px."
+        },
+        {
+          "name": "height",
+          "type": "number | undefined",
+          "required": false,
+          "default": "200",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: File | null]",
+          "description": ""
+        },
+        {
+          "name": "error",
+          "type": "[message: string]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "placeholder",
+          "type": "{ open: () => void; }",
+          "description": ""
+        }
+      ]
+    },
+    "WMoneyInput": {
+      "file": "src/components/form/WMoneyInput.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "number | null",
+          "required": true,
+          "default": null,
+          "description": "Numeric model — the real value sent to the API (e.g. 1234.56)."
+        },
+        {
+          "name": "decimals",
+          "type": "number | undefined",
+          "required": false,
+          "default": "2",
+          "description": "Fixed decimal places (default: 2)."
+        },
+        {
+          "name": "currency",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Show a \"R$\" prefix. Ignored when `prefix` is set."
+        },
+        {
+          "name": "prefix",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Custom leading addon (overrides `currency`)."
+        },
+        {
+          "name": "suffix",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Trailing addon."
+        },
+        {
+          "name": "locale",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"pt-BR\"",
+          "description": "Display locale for grouping/decimal separators (default: 'pt-BR')."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "invalid",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: number | null]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WTransferList": {
+      "file": "src/components/form/WTransferList.vue",
+      "props": [
+        {
+          "name": "source",
+          "type": "Item[]",
+          "required": true,
+          "default": null,
+          "description": "Full pool of available records."
+        },
+        {
+          "name": "selected",
+          "type": "Id[]",
+          "required": false,
+          "default": "[]",
+          "description": "Currently selected ids (v-model:selected)."
+        },
+        {
+          "name": "trackBy",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": "Field used as the record id (default: 'id')."
+        },
+        {
+          "name": "optionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"nome\"",
+          "description": "Field used for the visible label (default: 'nome')."
+        },
+        {
+          "name": "searchFields",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": null,
+          "description": "Fields to match when searching (default: [optionLabel])."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:selected",
+          "type": "[ids: Id[]]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WActionBar": {
+      "file": "src/components/ui/WActionBar.vue",
+      "props": [
+        {
+          "name": "align",
+          "type": "\"between\" | \"start\" | \"end\" | undefined",
+          "required": false,
+          "default": "\"between\"",
+          "description": ""
+        },
+        {
+          "name": "stackOnMobile",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "primary",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "filters",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "secondary",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WDetailHeader": {
+      "file": "src/components/ui/WDetailHeader.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "icon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "backRoute",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "backTo",
+          "type": "string | Record<string, unknown> | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "status",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "statusMap",
+          "type": "Record<string, { label: string; severity: string; }> | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WEmptyState": {
+      "file": "src/components/ui/WEmptyState.vue",
+      "props": [
+        {
+          "name": "icon",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "description",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actionIcon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "action",
+          "type": "[]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WFormSection": {
+      "file": "src/components/ui/WFormSection.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "description",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "variant",
+          "type": "\"default\" | \"muted\" | \"outlined\" | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WInfoCard": {
+      "file": "src/components/ui/WInfoCard.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "fields",
+          "type": "InfoField[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
+    "WKpiCard": {
+      "file": "src/components/ui/WKpiCard.vue",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "value",
+          "type": "string | number",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "icon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "hint",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "severity",
+          "type": "\"success\" | \"info\" | \"danger\" | \"primary\" | \"warning\" | \"neutral\" | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "trend",
+          "type": "{ value: string; direction?: \"neutral\" | \"up\" | \"down\" | undefined; } | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "icon",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "trend",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "value",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "hint",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "footer",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WKpiGrid": {
+      "file": "src/components/ui/WKpiGrid.vue",
+      "props": [
+        {
+          "name": "items",
+          "type": "KpiItem[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": ""
+        },
+        {
+          "name": "columns",
+          "type": "2 | 3 | 4 | 5 | 6 | \"auto\" | undefined",
+          "required": false,
+          "default": "4",
+          "description": "Número fixo de colunas (2–6) ou 'auto' para preencher a largura com quantos\nKPIs couberem (responsivo, sem overflow). Use 'auto' em dashboards que devem\naproveitar o máximo da tela."
+        },
+        {
+          "name": "dense",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "item",
+          "type": "{ key: number; item: KpiItem; index: number; }",
+          "description": ""
+        }
+      ]
+    },
+    "WPageHeader": {
+      "file": "src/components/ui/WPageHeader.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actionIcon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "action",
+          "type": "[]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WProgressFlow": {
+      "file": "src/components/ui/WProgressFlow.vue",
+      "props": [
+        {
+          "name": "steps",
+          "type": "ProgressStep[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "currentStep",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "orientation",
+          "type": "\"horizontal\" | \"vertical\" | undefined",
+          "required": false,
+          "default": "\"horizontal\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "step",
+          "type": "{ step: ProgressStep; index: number; state: string; }",
+          "description": ""
+        }
+      ]
+    },
+    "WSectionHeader": {
+      "file": "src/components/ui/WSectionHeader.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "icon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "compact",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "icon",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "meta",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WStatusTag": {
+      "file": "src/components/ui/WStatusTag.vue",
+      "props": [
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "map",
+          "type": "Record<string, StatusMapping> | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
+    }
+  }
+}
