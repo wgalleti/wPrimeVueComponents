@@ -198,6 +198,9 @@ const canCreate = computed(() => props.crud.config.canCreate !== false)
 // --- Selection (drives action rail + context menu) ---
 
 const selectedRow = ref<Record<string, unknown> | null>(null)
+
+// Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
+const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
 const cm = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 function selectRow(row: Record<string, unknown>) {
@@ -329,6 +332,45 @@ onMounted(() => {
       <div class="w-crud-content-main">
         <!-- Table -->
         <div v-if="displayMode === 'table'" class="w-crud-table">
+          <!-- Barra de ações em lote (seleção múltipla) -->
+          <div
+            v-if="isMultiSelect && crud.selectedItems.value.length"
+            class="w-crud-bulkbar"
+            style="
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              padding: 0.5rem 0.75rem;
+              border-radius: 8px;
+              background: var(--p-primary-50, #eef2ff);
+              color: var(--p-primary-700, #3730a3);
+            "
+          >
+            <span style="font-weight: 600; font-size: 0.85rem; margin-right: auto">
+              {{ crud.selectedItems.value.length }} selecionado(s)
+            </span>
+            <slot name="bulk-actions" :selected="crud.selectedItems.value" :crud="crud">
+              <Button
+                v-for="ba in crud.config.bulkActions || []"
+                :key="ba.action"
+                :label="ba.label"
+                :icon="ba.icon"
+                :severity="ba.severity"
+                size="small"
+                :disabled="ba.disabled ? ba.disabled(crud.selectedItems.value) : false"
+                @click="ba.handler(crud.selectedItems.value)"
+              />
+            </slot>
+            <Button
+              v-tooltip.top="'Limpar seleção'"
+              icon="pi pi-times"
+              text
+              rounded
+              size="small"
+              @click="crud.clearSelection()"
+            />
+          </div>
           <DataTable
             v-model:expanded-rows="expandedRows"
             :value="crud.items.value"
@@ -347,11 +389,21 @@ onMounted(() => {
             :sort-field="crud.sort.field ?? undefined"
             :sort-order="crud.sort.order"
             :data-key="crud.config.pk || 'id'"
-            :selection="actionRail || contextMenu ? selectedRow : undefined"
-            :selection-mode="actionRail || contextMenu ? 'single' : undefined"
+            :selection="
+              isMultiSelect
+                ? crud.selectedItems.value
+                : actionRail || contextMenu
+                  ? selectedRow
+                  : undefined
+            "
+            :selection-mode="
+              isMultiSelect ? undefined : actionRail || contextMenu ? 'single' : undefined
+            "
             :context-menu="contextMenu"
             :context-menu-selection="contextMenu ? selectedRow : undefined"
-            @update:selection="(v: any) => (selectedRow = v)"
+            @update:selection="
+              (v: any) => (isMultiSelect ? (crud.selectedItems.value = v) : (selectedRow = v))
+            "
             @update:context-menu-selection="(v: any) => (selectedRow = v)"
             @row-contextmenu="onRowContextMenu"
             @page="crud.onPage"
@@ -424,6 +476,9 @@ onMounted(() => {
                 </div>
               </slot>
             </template>
+
+            <!-- Seleção múltipla (checkbox) -->
+            <Column v-if="isMultiSelect" selection-mode="multiple" style="width: 3rem" />
 
             <!-- Expander -->
             <Column v-if="expandable" expander style="width: 3rem" />

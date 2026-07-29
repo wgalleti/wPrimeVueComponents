@@ -2,7 +2,7 @@ import type { ComputedRef, Ref } from 'vue'
 import type { PaginationState, SortState } from './api'
 import type { ColumnDef } from './column'
 import type { FieldDef } from './field'
-import type { RowAction } from './action'
+import type { RowAction, BulkAction } from './action'
 import type { CrudLabels } from './labels'
 
 // ---------------------------------------------------------------------------
@@ -31,6 +31,10 @@ export interface CrudManagerConfig<T> {
   canEdit?: boolean
   canDelete?: boolean
   rowActions?: RowAction<T>[]
+  /** Habilita seleção múltipla na tabela (checkbox + barra de ações em lote). */
+  selectionMode?: 'multiple'
+  /** Ações aplicadas ao conjunto selecionado, exibidas na barra de lote. */
+  bulkActions?: BulkAction<T>[]
   filterParams?: () => Record<string, unknown>
   transformPayload?: (
     payload: Record<string, unknown>,
@@ -49,6 +53,8 @@ export interface CrudManagerConfig<T> {
 export interface CrudManagerReturn<T> {
   // state
   items: Ref<T[]>
+  /** Itens marcados quando `selectionMode: 'multiple'`. */
+  selectedItems: Ref<T[]>
   extras: Ref<Record<string, unknown>>
   loading: Ref<boolean>
   saving: Ref<boolean>
@@ -87,6 +93,8 @@ export interface CrudManagerReturn<T> {
   goToPage(page: number): void
   firstPage(): void
   lastPage(): void
+  /** Limpa a seleção múltipla. */
+  clearSelection(): void
 
   // config
   config: CrudManagerConfig<T>

@@ -121,3 +121,20 @@ describe('useCrudManager — save', () => {
     expect(update).toHaveBeenCalledWith('/p', 1, { nome: 'B' }, undefined)
   })
 })
+
+describe('useCrudManager — seleção múltipla', () => {
+  it('selectedItems começa vazio; clearSelection e recarga limpam', async () => {
+    const list = okList([{ id: 1 }], 1)
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [], selectionMode: 'multiple' },
+      { list },
+    )
+    expect(crud.selectedItems.value).toEqual([])
+    crud.selectedItems.value = [{ id: 1 }]
+    crud.clearSelection()
+    expect(crud.selectedItems.value).toEqual([])
+    crud.selectedItems.value = [{ id: 1 }]
+    await crud.init() // recarregar torna a seleção obsoleta → limpa
+    expect(crud.selectedItems.value).toEqual([])
+  })
+})

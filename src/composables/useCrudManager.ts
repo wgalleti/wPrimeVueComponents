@@ -63,6 +63,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // ---------------------------------------------------------------------------
 
   const items = ref<T[]>([]) as import('vue').Ref<T[]>
+  const selectedItems = ref<T[]>([]) as import('vue').Ref<T[]>
   const extras = ref<Record<string, unknown>>({})
   const loading = ref(false)
   const saving = ref(false)
@@ -154,6 +155,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
       const responseData = await provider.list<T>(endpoint, queryParams)
       items.value = responseData.data
+      selectedItems.value = [] // seleção anterior fica obsoleta ao recarregar
       pagination.rows = responseData.rows
       extras.value = responseData.extras ?? {}
       if (responseData.page) pagination.page = responseData.page
@@ -507,12 +509,17 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     }, labels.deleteConfirmMessage)
   }
 
+  function clearSelection(): void {
+    selectedItems.value = []
+  }
+
   // ---------------------------------------------------------------------------
   // Return
   // ---------------------------------------------------------------------------
 
   return {
     items,
+    selectedItems,
     extras,
     loading,
     saving,
@@ -547,6 +554,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     goToPage,
     firstPage,
     lastPage,
+    clearSelection,
     config,
   }
 }

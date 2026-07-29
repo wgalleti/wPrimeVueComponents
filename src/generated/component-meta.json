@@ -315,6 +315,11 @@
           "description": ""
         },
         {
+          "name": "bulk-actions",
+          "type": "{ selected: any[]; crud: CrudManagerReturn<any>; }",
+          "description": ""
+        },
+        {
           "name": "toolbar-start",
           "type": "{}",
           "description": ""
