@@ -94,6 +94,13 @@
           "required": false,
           "default": "undefined",
           "description": "Nº de colunas do grid do form (repassado ao WFormRenderer; default 2)."
+        },
+        {
+          "name": "keyboardNav",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": "Navegação por teclado estilo desktop: foca o 1º campo ao abrir e o Enter\npula para o próximo campo até o botão de salvar. Opt-in."
         }
       ],
       "events": [

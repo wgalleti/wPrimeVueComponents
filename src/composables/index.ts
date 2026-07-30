@@ -1,5 +1,6 @@
 export { useCrudManager } from './useCrudManager'
 export { defineCrudConfig } from './defineCrudConfig'
+export { useFormKeyboardNav } from './useFormKeyboardNav'
 export { useApi } from './useApi'
 export { useAppToast } from './useAppToast'
 export { useAppConfirm } from './useAppConfirm'
