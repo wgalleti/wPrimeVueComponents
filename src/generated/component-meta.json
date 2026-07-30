@@ -284,6 +284,13 @@
           "required": false,
           "default": "200",
           "description": ""
+        },
+        {
+          "name": "persistState",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Chave de persistência do estado de coluna (visibilidade) em localStorage.\nOpt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado."
         }
       ],
       "events": [
