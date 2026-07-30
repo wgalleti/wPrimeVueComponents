@@ -8,8 +8,13 @@
     "registry": "https://registry.npmjs.org/"
   },
   "packageManager": "yarn@1.22.22",
+  "bin": {
+    "wpvc": "bin/wpvc.mjs"
+  },
   "files": [
-    "dist"
+    "dist",
+    "bin",
+    "skill"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

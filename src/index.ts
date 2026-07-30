@@ -12,6 +12,7 @@ export {
   WAutoCompleteFK,
   WFormRenderer,
   WDatePicker,
+  WDateRange,
   WMoneyInput,
   WTransferList,
   WStatusTag,

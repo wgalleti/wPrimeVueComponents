@@ -25,6 +25,18 @@ Se o projeto usar a camada Axios padrao, instale tambem `axios@^1.0`.
 
 ## Setup
 
+### Rápido (CLI)
+
+Num app consumidor, rode:
+
+```bash
+npx @wgalleti/primevue-components init
+```
+
+O comando checa as peer deps, registra o `WPrimeVuePlugin` e o CSS no `main` (de forma idempotente, complementando só o que falta) e instala a skill do Claude Code em `.claude/skills/wpvc/`. Use `--dry-run` para ver o que faria sem escrever.
+
+### Manual
+
 ```typescript
 // main.ts
 import { createApp } from 'vue'
@@ -32,6 +44,7 @@ import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 import { WPrimeVuePlugin } from '@wgalleti/primevue-components'
+import '@wgalleti/primevue-components/style.css' // estilos dos componentes (uma vez)
 import api from './plugins/axios' // sua instância axios configurada
 
 const app = createApp(App)
@@ -44,9 +57,13 @@ app.use(WPrimeVuePlugin, {
   axios: api, // compatibilidade: cria um dataProvider Axios automaticamente
   defaultPageSize: 20, // opcional (default: 20)
   dateFormat: 'DD/MM/YYYY', // opcional (default: 'DD/MM/YYYY')
+  dateTimeFormat: 'DD/MM/YYYY HH:mm', // opcional
   locale: 'pt-BR', // opcional (default: 'pt-BR')
+  currency: 'BRL', // opcional (default: 'BRL')
 })
 ```
+
+> **Ordem importa:** registre o `WPrimeVuePlugin` **depois** de `PrimeVue`, `ToastService` e `ConfirmationService` — os componentes usam Toast/Confirm.
 
 ### Setup com Supabase
 
