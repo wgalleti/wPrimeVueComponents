@@ -1,6 +1,8 @@
 export { useCrudManager } from './useCrudManager'
 export { defineCrudConfig } from './defineCrudConfig'
 export { useFormKeyboardNav } from './useFormKeyboardNav'
+export { useDateInput } from './useDateInput'
+export type { DateValueFormat } from './useDateInput'
 export { useApi } from './useApi'
 export { useAppToast } from './useAppToast'
 export { useAppConfirm } from './useAppConfirm'

@@ -528,6 +528,96 @@
       ],
       "slots": []
     },
+    "WDatePicker": {
+      "file": "src/components/form/WDatePicker.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string | Date | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": ""
+        },
+        {
+          "name": "valueFormat",
+          "type": "DateValueFormat | undefined",
+          "required": false,
+          "default": "\"iso\"",
+          "description": "Formato do valor emitido: `'iso'` (YYYY-MM-DD, default) ou `'date'` (Date)."
+        },
+        {
+          "name": "showTime",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "autonow",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "No mount: se o valor for `null`, preenche a data de hoje."
+        },
+        {
+          "name": "minDate",
+          "type": "string | Date | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "maxDate",
+          "type": "string | Date | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "showClear",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "invalid",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "inputId",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: string | Date | null]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
     "WDateRange": {
       "file": "src/components/form/WDateRange.vue",
       "props": [
