@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.7.1...v0.8.0) (2026-07-30)
+
+### Funcionalidades
+
+* componentes novos — WDateRange, WFileUpload + defineCrudConfig<T> (Track D) ([7f3e3dd](https://github.com/wgalleti/wPrimeVueComponents/commit/7f3e3dd7fe4582c1538f7300de5301eac1449916))
+* **crud:** edição inline por célula (editMode: 'cell') ([4b716ba](https://github.com/wgalleti/wPrimeVueComponents/commit/4b716baafbddb5412ac5d109f44ee4753c0a37e6))
+* **crud:** seletor de colunas + persistência de visibilidade (persistState) ([0e885c6](https://github.com/wgalleti/wPrimeVueComponents/commit/0e885c631004a272d92ca92eda8b1cbb1a4e0a6d))
 ## [0.7.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.6.1...v0.7.1) (2026-07-30)
 
 ### Funcionalidades
