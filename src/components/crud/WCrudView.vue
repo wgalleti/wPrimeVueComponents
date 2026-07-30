@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, useSlots } from 'vue'
+import { ref, reactive, computed, onMounted, useSlots } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
+import Popover from 'primevue/popover'
+import Checkbox from 'primevue/checkbox'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
@@ -52,6 +54,9 @@ const props = withDefaults(
     csvFilename?: string
     csvScope?: 'all' | 'page'
     csvPageSize?: number
+    /** Chave de persistência do estado de coluna (visibilidade) em localStorage.
+     *  Opt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado. */
+    persistState?: string
   }>(),
   {
     showSearch: true,
@@ -102,9 +107,38 @@ const paginatorFirst = computed(
 
 // --- Columns ---
 
+// Estado de coluna (opt-in via persistState): visibilidade persistida em localStorage.
+const columnState = reactive<{ hidden: string[] }>({ hidden: [] })
+const chooser = ref<InstanceType<typeof Popover> | null>(null)
+function colStateKey(): string | null {
+  return props.persistState ? `wcrud:cols:${props.persistState}` : null
+}
+function loadColumnState() {
+  const key = colStateKey()
+  if (!key) return
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '{}')
+    if (Array.isArray(parsed.hidden)) columnState.hidden = parsed.hidden
+  } catch {
+    /* estado inválido — ignora */
+  }
+}
+function saveColumnState() {
+  const key = colStateKey()
+  if (key) localStorage.setItem(key, JSON.stringify({ hidden: columnState.hidden }))
+}
+// Colunas base (respeita visible:false do consumidor) — fonte do seletor de colunas.
+const baseColumns = computed(() => props.crud.config.columns.filter((c) => c.visible !== false))
+function toggleColumn(field: string, visible: boolean) {
+  columnState.hidden = visible
+    ? columnState.hidden.filter((f) => f !== field)
+    : [...new Set([...columnState.hidden, field])]
+  saveColumnState()
+}
+
 const visibleColumns = computed(() =>
   props.crud.config.columns
-    .filter((c) => c.visible !== false)
+    .filter((c) => c.visible !== false && !columnState.hidden.includes(c.field))
     .map((c) => {
       if (c.type === 'number' && !c.align) return { ...c, align: 'right' as const }
       if (c.type === 'currency' && !c.align) return { ...c, align: 'right' as const }
@@ -308,6 +342,7 @@ async function doExportCsv() {
 // --- Init ---
 
 onMounted(() => {
+  loadColumnState()
   if (props.autoInit) {
     props.crud.init()
   }
@@ -509,6 +544,44 @@ onMounted(() => {
                 </div>
                 <div class="w-crud-toolbar-end">
                   <slot name="toolbar-actions" />
+                  <template v-if="persistState">
+                    <Button
+                      v-tooltip.top="'Colunas'"
+                      icon="pi pi-sliders-h"
+                      text
+                      size="small"
+                      @click="(e) => chooser?.toggle(e)"
+                    />
+                    <Popover ref="chooser">
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: column;
+                          gap: 0.35rem;
+                          min-width: 180px;
+                        "
+                      >
+                        <div
+                          v-for="col in baseColumns"
+                          :key="col.field"
+                          style="display: flex; align-items: center; gap: 0.5rem"
+                        >
+                          <Checkbox
+                            :model-value="!columnState.hidden.includes(col.field)"
+                            :input-id="`wcrud-col-${col.field}`"
+                            binary
+                            @update:model-value="(v) => toggleColumn(col.field, !!v)"
+                          />
+                          <label
+                            :for="`wcrud-col-${col.field}`"
+                            style="font-size: 0.85rem; cursor: pointer"
+                          >
+                            {{ col.header }}
+                          </label>
+                        </div>
+                      </div>
+                    </Popover>
+                  </template>
                   <Button
                     v-if="exportCsv"
                     v-tooltip.top="
