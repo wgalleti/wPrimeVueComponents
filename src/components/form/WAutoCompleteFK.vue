@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, inject, reactive, nextTick } from 'vue'
+import { ref, watch, computed, inject, reactive, nextTick, onMounted } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
@@ -58,6 +58,10 @@ const props = withDefaults(
     crudFields?: FieldDef[]
     crudColumns?: ColumnDef[]
     dialogWidth?: string
+    /** Foca o campo ao montar. Marca o input com o atributo nativo `autofocus`
+     *  para que o `focus()` do PrimeVue Dialog (em onAfterEnter) o encontre e
+     *  não roube o foco para o botão de fechar. */
+    autofocus?: boolean
   }>(),
   {
     optionLabel: 'nome',
@@ -71,6 +75,7 @@ const props = withDefaults(
     canEdit: undefined,
     canDelete: undefined,
     dialogWidth: '480px',
+    autofocus: false,
   },
 )
 
@@ -100,6 +105,22 @@ const selectedItem = ref<Record<string, unknown> | null>(null)
 const suggestions = ref<Record<string, unknown>[]>([])
 const searching = ref(false)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+// Referência ao AutoComplete para aplicar o autofocus no input nativo.
+const acRef = ref<{ $el?: HTMLElement } | null>(null)
+
+onMounted(() => {
+  if (!props.autofocus) return
+  nextTick(() => {
+    const input = acRef.value?.$el?.querySelector?.('input') as HTMLInputElement | null
+    if (!input) return
+    // O atributo nativo faz o Dialog.focus() (onAfterEnter) mirar este input
+    // em vez do botão fechar; o focus() cobre o caso fora de Dialog.
+    input.setAttribute('autofocus', '')
+    input.focus()
+    input.select?.()
+  })
+})
 
 // ---------------------------------------------------------------------------
 // Filtro em cascata (drill-down)
@@ -559,6 +580,7 @@ function confirmDelete(item: Record<string, unknown>) {
 <template>
   <div class="w-autocompletefk" v-bind="$attrs">
     <AutoComplete
+      ref="acRef"
       :model-value="selectedItem"
       :suggestions="suggestions"
       :option-label="optionLabel"

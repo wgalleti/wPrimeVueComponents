@@ -556,6 +556,7 @@ defineExpose({ validateAll, clearErrors })
               <WAutoCompleteFK
                 v-else-if="field.type === 'fk'"
                 :model-value="formData[field.field] as any"
+                :autofocus="shouldAutofocus(field) || undefined"
                 :endpoint="field.endpoint!"
                 :endpoint-params="field.endpointParams"
                 :drilldown="resolveDrilldown(field)"
