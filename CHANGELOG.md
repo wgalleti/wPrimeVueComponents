@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.1...v0.8.2) (2026-07-30)
+
+### Funcionalidades
+
+* **dx:** CLI de integração (init) + skill do Claude Code ([aabaf3c](https://github.com/wgalleti/wPrimeVueComponents/commit/aabaf3c5d10be0ca54b22e9351d3c28e713f8272))
 ## [0.8.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.0...v0.8.1) (2026-07-30)
 
 ### Funcionalidades
