@@ -10,6 +10,16 @@
 | dayjs | ^1.11 |
 | Node.js | ^18.0 |
 
+## Setup rápido (CLI)
+
+Depois de instalar, rode na raiz do app consumidor:
+
+```bash
+npx @wgalleti/primevue-components init
+```
+
+Ele checa as peer deps, registra o `WPrimeVuePlugin` + o CSS no seu `main` (idempotente — complementa só o que falta, com backup `.bak`) e instala a skill do Claude Code em `.claude/skills/wpvc/`. `--dry-run` mostra o que faria sem escrever; `--force` sobrescreve a skill.
+
 ## Instalação via Git
 
 ```bash
@@ -49,10 +59,11 @@ yarn build
 
 ## Verificação
 
-Após instalar, verifique que o import funciona:
+Após instalar, verifique que o import funciona e que o CSS foi importado uma vez no `main`:
 
 ```typescript
 import { WCrudView, useCrudManager } from '@wgalleti/primevue-components'
+import '@wgalleti/primevue-components/style.css'
 ```
 
 Se usar TypeScript, os tipos devem ser reconhecidos automaticamente via `exports` do package.json.
