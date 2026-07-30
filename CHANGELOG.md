@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.0...v0.8.1) (2026-07-30)
+
+### Funcionalidades
+
+* **autocomplete-fk:** navegação por teclado no modal de busca ([29a7471](https://github.com/wgalleti/wPrimeVueComponents/commit/29a747122e5416d91a84205fddf57b735a1c8eab))
+* **form:** navegação por teclado estilo desktop (keyboardNav) ([15fef3f](https://github.com/wgalleti/wPrimeVueComponents/commit/15fef3fcc78e224e95c02f56c38054d0672dd60f))
+* **form:** WDatePicker — campo de data pt-BR padronizado ([f2ea726](https://github.com/wgalleti/wPrimeVueComponents/commit/f2ea726f89d52558014ff10d3a4097f0c4ebda4a))
 ## [0.8.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.7.1...v0.8.0) (2026-07-30)
 
 ### Funcionalidades
