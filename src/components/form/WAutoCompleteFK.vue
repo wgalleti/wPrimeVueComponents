@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, inject, reactive } from 'vue'
+import { ref, watch, computed, inject, reactive, nextTick } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
 import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
@@ -356,10 +356,59 @@ function onRowDblClick(event: { data: Record<string, unknown> }) {
   modalVisible.value = false
 }
 
+// --- Modal: teclado (foco → pesquisa → grid) ---
+const modalSearchInput = ref<{ $el?: HTMLElement } | null>(null)
+const modalTableWrap = ref<HTMLElement | null>(null)
+let lastSearched = ''
+
+function onModalShow() {
+  lastSearched = ''
+  nextTick(() => {
+    const el = modalSearchInput.value?.$el as HTMLInputElement | undefined
+    el?.focus?.()
+    el?.select?.()
+  })
+}
+
+function focusModalGrid() {
+  nextTick(() => {
+    const row = modalTableWrap.value?.querySelector<HTMLElement>('.p-datatable-tbody > tr')
+    row?.focus()
+  })
+}
+
+function onModalSearchKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Enter' || e.isComposing) return
+  e.preventDefault()
+  const q = modalSearch.value.trim()
+  // Vazio ou já pesquisado → move o foco para o grid.
+  if (q === '' || q === lastSearched) {
+    focusModalGrid()
+    return
+  }
+  // Texto novo → pesquisa imediata (cancela o debounce); o próximo Enter vai ao grid.
+  if (modalSearchTimer) clearTimeout(modalSearchTimer)
+  lastSearched = q
+  modalPage.value = 1
+  fetchModalData()
+}
+
+function onModalGridKeydown(e: KeyboardEvent) {
+  // Enter no grid = confirmar a seleção (marcada com Espaço). Interceptado (capture)
+  // antes do handler nativo do DataTable para não apenas alternar a marca.
+  if (e.key === 'Enter') {
+    e.preventDefault()
+    e.stopPropagation()
+    if (modalSelection.value) confirmModalSelection()
+  }
+  // Espaço e setas: tratados nativamente pelo DataTable (marca/navega).
+}
+
 watch(modalSearch, () => {
   if (modalSearchTimer) clearTimeout(modalSearchTimer)
   modalSearchTimer = setTimeout(() => {
     modalPage.value = 1
+    lastSearched = modalSearch.value.trim()
     fetchModalData()
   }, 300)
 })
@@ -524,9 +573,11 @@ function confirmDelete(item: Record<string, unknown>) {
       @keydown="onInputKeydown"
     />
     <button
-      v-tooltip.top="'Pesquisar'"
+      v-tooltip.top="'Pesquisar (F2)'"
       type="button"
       :disabled="disabled"
+      data-kbd-skip
+      tabindex="-1"
       class="w-autocompletefk-trigger"
       @click="openModal"
     >
@@ -542,11 +593,19 @@ function confirmDelete(item: Record<string, unknown>) {
     modal
     :draggable="false"
     class="w-autocompletefk-dialog"
+    @show="onModalShow"
   >
     <div class="w-autocompletefk-toolbar">
       <IconField class="w-autocompletefk-toolbar-search">
         <InputIcon class="pi pi-search" />
-        <InputText v-model="modalSearch" placeholder="Pesquisar..." class="w-full" />
+        <InputText
+          ref="modalSearchInput"
+          v-model="modalSearch"
+          placeholder="Pesquisar..."
+          class="w-full"
+          autofocus
+          @keydown="onModalSearchKeydown"
+        />
       </IconField>
       <div class="w-autocompletefk-toolbar-actions">
         <Button
@@ -559,78 +618,81 @@ function confirmDelete(item: Record<string, unknown>) {
       </div>
     </div>
 
-    <DataTable
-      v-model:selection="modalSelection"
-      :value="modalData"
-      :loading="modalLoading"
-      paginator
-      lazy
-      striped-rows
-      removable-sort
-      size="small"
-      :rows="modalPageSize"
-      :total-records="modalTotalRecords"
-      :sort-field="modalSortField ?? undefined"
-      :sort-order="modalSortOrder"
-      selection-mode="single"
-      :data-key="optionValue"
-      @page="onModalPage"
-      @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
-      @row-dblclick="onRowDblClick"
-    >
-      <Column selection-mode="single" header-style="width: 3rem" />
-      <Column
-        v-for="col in modalColumns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-        :sortable="(col as ColumnDef).sortable ?? true"
-        :style="(col as ColumnDef).style"
+    <div ref="modalTableWrap" @keydown.capture="onModalGridKeydown">
+      <DataTable
+        v-model:selection="modalSelection"
+        :meta-key-selection="false"
+        :value="modalData"
+        :loading="modalLoading"
+        paginator
+        lazy
+        striped-rows
+        removable-sort
+        size="small"
+        :rows="modalPageSize"
+        :total-records="modalTotalRecords"
+        :sort-field="modalSortField ?? undefined"
+        :sort-order="modalSortOrder"
+        selection-mode="single"
+        :data-key="optionValue"
+        @page="onModalPage"
+        @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
+        @row-dblclick="onRowDblClick"
       >
-        <template #body="{ data }">
-          <WCrudColumnRenderer
-            v-if="(col as ColumnDef).type"
-            :column="col as ColumnDef"
-            :value="data[col.field]"
-            :row-data="data"
-          />
-          <template v-else>
-            {{ data[col.field] }}
+        <Column selection-mode="single" header-style="width: 3rem" />
+        <Column
+          v-for="col in modalColumns"
+          :key="col.field"
+          :field="col.field"
+          :header="col.header"
+          :sortable="(col as ColumnDef).sortable ?? true"
+          :style="(col as ColumnDef).style"
+        >
+          <template #body="{ data }">
+            <WCrudColumnRenderer
+              v-if="(col as ColumnDef).type"
+              :column="col as ColumnDef"
+              :value="data[col.field]"
+              :row-data="data"
+            />
+            <template v-else>
+              {{ data[col.field] }}
+            </template>
           </template>
-        </template>
-      </Column>
+        </Column>
 
-      <!-- Coluna de ações CRUD -->
-      <Column v-if="hasRowActions" header="" :style="{ width: '6rem' }">
-        <template #body="{ data }">
-          <div class="flex items-center justify-end gap-1">
-            <Button
-              v-if="showEdit"
-              v-tooltip.top="'Editar'"
-              icon="pi pi-pencil"
-              text
-              rounded
-              size="small"
-              @click="openEditForm(data)"
-            />
-            <Button
-              v-if="showDelete"
-              v-tooltip.top="'Excluir'"
-              icon="pi pi-trash"
-              text
-              rounded
-              size="small"
-              severity="danger"
-              @click="confirmDelete(data)"
-            />
-          </div>
-        </template>
-      </Column>
+        <!-- Coluna de ações CRUD -->
+        <Column v-if="hasRowActions" header="" :style="{ width: '6rem' }">
+          <template #body="{ data }">
+            <div class="flex items-center justify-end gap-1">
+              <Button
+                v-if="showEdit"
+                v-tooltip.top="'Editar'"
+                icon="pi pi-pencil"
+                text
+                rounded
+                size="small"
+                @click="openEditForm(data)"
+              />
+              <Button
+                v-if="showDelete"
+                v-tooltip.top="'Excluir'"
+                icon="pi pi-trash"
+                text
+                rounded
+                size="small"
+                severity="danger"
+                @click="confirmDelete(data)"
+              />
+            </div>
+          </template>
+        </Column>
 
-      <template #empty>
-        <div class="w-autocompletefk-empty">Nenhum registro encontrado</div>
-      </template>
-    </DataTable>
+        <template #empty>
+          <div class="w-autocompletefk-empty">Nenhum registro encontrado</div>
+        </template>
+      </DataTable>
+    </div>
 
     <template #footer>
       <div class="w-autocompletefk-footer">
