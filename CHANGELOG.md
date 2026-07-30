@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.7.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.7.0...v0.7.1) (2026-07-30)
 ## [0.7.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.6.1...v0.7.0) (2026-07-30)
 
 ### Funcionalidades
