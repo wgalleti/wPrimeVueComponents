@@ -499,6 +499,26 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   }
 
   // ---------------------------------------------------------------------------
+  // Inline (cell) edit
+  // ---------------------------------------------------------------------------
+
+  async function updateField(item: T, field: string, value: unknown): Promise<void> {
+    const itemPk = item[pk as keyof T]
+    const fdef = formFields.find((f) => f.field === field)
+    let v = value
+    if (fdef?.type === 'date' && v instanceof Date) v = toDateString(v)
+    else if (fdef?.type === 'datetime' && v instanceof Date) v = toDateTimeString(v)
+    try {
+      const response = await provider.update<T>(endpoint, itemPk as string | number, { [field]: v })
+      const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
+      if (index !== -1) items.value[index] = { ...items.value[index], ...response.data }
+      toast.success(labels.successUpdate)
+    } catch (err) {
+      toast.error(extractApiError(err, 'Erro ao salvar o campo'))
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Delete
   // ---------------------------------------------------------------------------
 
@@ -576,6 +596,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     openViewDialog,
     openDuplicateDialog,
     save,
+    updateField,
     confirmDelete,
     setFormField,
     resetForm,

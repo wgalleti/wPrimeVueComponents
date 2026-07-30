@@ -27,6 +27,9 @@ export interface CrudManagerConfig<T> {
    *  search or filter position. Defaults to `true`. Set `false` to keep the
    *  optimistic in-place update instead. */
   refetchOnSave?: boolean
+  /** Modo de edição: 'dialog' (default — abre o form dialog) ou 'cell' (edição
+   *  inline por célula, com PATCH só do campo alterado). */
+  editMode?: 'cell' | 'dialog'
   canCreate?: boolean
   canEdit?: boolean
   canDelete?: boolean
@@ -89,6 +92,8 @@ export interface CrudManagerReturn<T> {
   openViewDialog(item: T): void
   openDuplicateDialog(item: T): void
   save(): Promise<T | null>
+  /** Salva um único campo de um item (edição inline por célula) via PATCH. */
+  updateField(item: T, field: string, value: unknown): Promise<void>
   confirmDelete(item: T): void
   setFormField(field: string, value: unknown): void
   resetForm(): void

@@ -160,3 +160,18 @@ describe('useCrudManager — filtros de coluna', () => {
     expect(crud.columnFilters).toEqual({})
   })
 })
+
+describe('useCrudManager — edição inline', () => {
+  it('updateField faz PATCH de um único campo e atualiza o item local', async () => {
+    const list = okList([{ id: 1, nome: 'A', preco: 10 }], 1)
+    const update = vi.fn().mockResolvedValue({ data: { id: 1, nome: 'A', preco: 25 } })
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [{ field: 'preco', label: 'Preço', type: 'number' }] },
+      { list, update },
+    )
+    await crud.init()
+    await crud.updateField({ id: 1, nome: 'A', preco: 10 }, 'preco', 25)
+    expect(update).toHaveBeenCalledWith('/p', 1, { preco: 25 })
+    expect(crud.items.value[0]).toMatchObject({ preco: 25 })
+  })
+})

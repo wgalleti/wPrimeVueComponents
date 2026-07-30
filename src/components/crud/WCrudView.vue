@@ -17,6 +17,7 @@ import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
 import type { RowAction } from '@/types/action'
 import type { ColumnDef } from '@/types/column'
+import type { FieldDef } from '@/types/field'
 import type { KpiItem } from '@/types/kpi'
 import type { MenuItem } from 'primevue/menuitem'
 import type { Slots } from 'vue'
@@ -238,6 +239,24 @@ const selectedRow = ref<Record<string, unknown> | null>(null)
 
 // Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
 const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
+
+// Edição inline por célula — opt-in via config.editMode: 'cell'.
+const isCellEdit = computed(() => props.crud.config.editMode === 'cell')
+const formFieldMap = computed(() => new Map(props.crud.config.form.map((f) => [f.field, f])))
+const INLINE_TYPES = ['text', 'email', 'number', 'currency']
+function inlineField(field: string): FieldDef | undefined {
+  const f = formFieldMap.value.get(field)
+  return f && INLINE_TYPES.includes(f.type || 'text') ? f : undefined
+}
+function onCellEditComplete(e: {
+  data: Record<string, unknown>
+  field: string
+  value?: unknown
+  newValue: unknown
+}) {
+  if (e.newValue === (e.value ?? e.data[e.field])) return
+  props.crud.updateField(e.data, e.field, e.newValue)
+}
 
 // Filtros declarativos de coluna.
 const filterableColumns = computed<ColumnDef[]>(() =>
@@ -505,6 +524,7 @@ onMounted(() => {
             :sort-field="crud.sort.field ?? undefined"
             :sort-order="crud.sort.order"
             :data-key="crud.config.pk || 'id'"
+            :edit-mode="isCellEdit ? 'cell' : undefined"
             :selection="
               isMultiSelect
                 ? crud.selectedItems.value
@@ -526,6 +546,7 @@ onMounted(() => {
             @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
             @row-expand="(e) => emit('row-expand', e.data)"
             @row-collapse="(e) => emit('row-collapse', e.data)"
+            @cell-edit-complete="onCellEditComplete"
           >
             <template #header>
               <div class="w-crud-toolbar">
@@ -652,6 +673,28 @@ onMounted(() => {
                 <slot :name="`column-${col.field}`" :data="data" :value="data[col.field]">
                   <WCrudColumnRenderer :column="col" :value="data[col.field]" :row-data="data" />
                 </slot>
+              </template>
+              <template v-if="isCellEdit && inlineField(col.field)" #editor="{ data }">
+                <InputNumber
+                  v-if="['number', 'currency'].includes(inlineField(col.field)?.type || '')"
+                  :model-value="(data[col.field] as number) ?? null"
+                  fluid
+                  @update:model-value="
+                    (v) => {
+                      data[col.field] = v
+                    }
+                  "
+                />
+                <InputText
+                  v-else
+                  :model-value="(data[col.field] as string) ?? ''"
+                  fluid
+                  @update:model-value="
+                    (v) => {
+                      data[col.field] = v
+                    }
+                  "
+                />
               </template>
             </Column>
 
