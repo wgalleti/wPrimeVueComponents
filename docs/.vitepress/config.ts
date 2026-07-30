@@ -46,6 +46,8 @@ export default defineConfig({
               { text: 'WFormRenderer', link: '/components/w-form-renderer' },
               { text: 'WFormSection', link: '/components/w-form-section' },
               { text: 'WImageCropper', link: '/components/w-image-cropper' },
+              { text: 'WDateRange', link: '/components/w-date-range' },
+              { text: 'WFileUpload', link: '/components/w-file-upload' },
               { text: 'WMoneyInput', link: '/components/w-money-input' },
               { text: 'WTransferList', link: '/components/w-transfer-list' },
             ],

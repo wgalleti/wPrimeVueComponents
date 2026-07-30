@@ -1,4 +1,5 @@
 export { useCrudManager } from './useCrudManager'
+export { defineCrudConfig } from './defineCrudConfig'
 export { useApi } from './useApi'
 export { useAppToast } from './useAppToast'
 export { useAppConfirm } from './useAppConfirm'
