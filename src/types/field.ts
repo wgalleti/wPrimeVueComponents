@@ -100,6 +100,11 @@ export interface FieldDef {
   // date / datetime
   dateFormat?: string
   hourFormat?: '12' | '24'
+  /** No mount: se o valor for `null`, preenche a data de hoje; senão mantém. */
+  autonow?: boolean
+  /** Data mínima/máxima selecionável (string `YYYY-MM-DD` ou `Date`). */
+  minDate?: string | Date
+  maxDate?: string | Date
 
   // mask
   mask?: string

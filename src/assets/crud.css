@@ -430,7 +430,7 @@
   padding-right: 2.5rem;
 }
 
-/* Search trigger button (inside the input) */
+/* Search trigger — apenas o ícone (lupa) sobreposto à direita do input */
 .w-autocompletefk-trigger {
   position: absolute;
   right: 0;
@@ -444,17 +444,12 @@
   cursor: pointer;
   border: none;
   background: transparent;
-  border-left: 1px solid var(--p-content-border-color);
-  border-radius: 0 var(--p-border-radius) var(--p-border-radius) 0;
-  transition:
-    color 0.15s,
-    background-color 0.15s;
+  transition: color 0.15s;
   font-size: 0.875rem;
 }
 
 .w-autocompletefk-trigger:hover {
-  color: var(--p-text-color);
-  background: var(--p-content-hover-background);
+  color: var(--p-primary-color);
 }
 
 .w-autocompletefk-trigger:disabled {
@@ -1353,4 +1348,45 @@
   .w-transfer__controls {
     flex-direction: row;
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * WDatePicker
+ * ------------------------------------------------------------------------- */
+.w-datepicker {
+  width: 100%;
+}
+
+.w-datepicker .p-iconfield {
+  width: 100%;
+}
+
+.w-datepicker-icon {
+  cursor: pointer;
+  color: var(--p-text-muted-color);
+  transition: color 0.15s;
+}
+
+.w-datepicker-icon:hover {
+  color: var(--p-primary-color);
+}
+
+.w-datepicker-icon-disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.w-datepicker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.w-datepicker-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-top: 1px solid var(--p-content-border-color);
+  padding-top: 0.5rem;
 }

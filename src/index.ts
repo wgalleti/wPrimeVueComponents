@@ -11,6 +11,7 @@ export {
   WCrudColumnRenderer,
   WAutoCompleteFK,
   WFormRenderer,
+  WDatePicker,
   WMoneyInput,
   WTransferList,
   WStatusTag,
@@ -35,7 +36,9 @@ export {
   useApiError,
   extractApiError,
   useFormatters,
+  useDateInput,
 } from './composables'
+export type { DateValueFormat } from './composables'
 
 // Data providers
 export { createAxiosDataProvider, createSupabaseDataProvider } from './data-providers'

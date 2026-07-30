@@ -6,12 +6,12 @@ import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select'
 import AutoComplete from 'primevue/autocomplete'
-import DatePicker from 'primevue/datepicker'
 import ToggleSwitch from 'primevue/toggleswitch'
 import ColorPicker from 'primevue/colorpicker'
 import Password from 'primevue/password'
 import type { FieldDef } from '@/types/field'
 import WAutoCompleteFK from '@/components/form/WAutoCompleteFK.vue'
+import WDatePicker from '@/components/form/WDatePicker.vue'
 import WMoneyInput from '@/components/form/WMoneyInput.vue'
 import WImageCropper from '@/components/form/WImageCropper.vue'
 import WTransferList from '@/components/form/WTransferList.vue'
@@ -571,24 +571,27 @@ defineExpose({ validateAll, clearErrors })
               />
 
               <!-- Date -->
-              <DatePicker
+              <WDatePicker
                 v-else-if="field.type === 'date'"
-                :model-value="formData[field.field] as Date"
-                fluid
-                :date-format="field.dateFormat || 'dd/mm/yy'"
+                :model-value="formData[field.field] as Date | string | null"
+                value-format="date"
+                :autonow="field.autonow"
+                :min-date="field.minDate"
+                :max-date="field.maxDate"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- Datetime -->
-              <DatePicker
+              <WDatePicker
                 v-else-if="field.type === 'datetime'"
-                :model-value="formData[field.field] as Date"
-                fluid
+                :model-value="formData[field.field] as Date | string | null"
+                value-format="date"
                 show-time
-                :hour-format="field.hourFormat || '24'"
-                :date-format="field.dateFormat || 'dd/mm/yy'"
+                :autonow="field.autonow"
+                :min-date="field.minDate"
+                :max-date="field.maxDate"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
