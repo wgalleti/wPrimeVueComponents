@@ -521,6 +521,127 @@
       ],
       "slots": []
     },
+    "WDateRange": {
+      "file": "src/components/form/WDateRange.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "Date[] | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": ""
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Selecione o per\\u00EDodo\"",
+          "description": ""
+        },
+        {
+          "name": "minDate",
+          "type": "Date | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "maxDate",
+          "type": "Date | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "showButtonBar",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: Date[] | null]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
+    "WFileUpload": {
+      "file": "src/components/form/WFileUpload.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "File | File[] | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": ""
+        },
+        {
+          "name": "multiple",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "accept",
+          "type": "string | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": ""
+        },
+        {
+          "name": "maxSize",
+          "type": "number | undefined",
+          "required": false,
+          "default": "10485760",
+          "description": "Tamanho máximo por arquivo em bytes (default 10MB)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "chooseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Selecionar arquivo\"",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: File | File[] | null]",
+          "description": ""
+        },
+        {
+          "name": "error",
+          "type": "[message: string]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WFormRenderer": {
       "file": "src/components/form/WFormRenderer.vue",
       "props": [
