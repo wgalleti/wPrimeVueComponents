@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.2...v0.8.3) (2026-07-30)
+
+### Correções
+
+* **form:** FK honra autofocus e evita o Dialog roubar foco para o botão fechar ([14efacc](https://github.com/wgalleti/wPrimeVueComponents/commit/14efacc82cbf8be8c9f0fb1da831d7d42575651c))
 ## [0.8.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.1...v0.8.2) (2026-07-30)
 
 ### Funcionalidades
