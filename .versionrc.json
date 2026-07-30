@@ -1,0 +1,17 @@
+{
+  "types": [
+    { "type": "feat", "section": "Funcionalidades" },
+    { "type": "fix", "section": "Correções" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "refactor", "section": "Refatorações" },
+    { "type": "docs", "section": "Documentação" },
+    { "type": "revert", "section": "Revertidos" },
+    { "type": "test", "hidden": true },
+    { "type": "chore", "hidden": true },
+    { "type": "style", "hidden": true },
+    { "type": "build", "hidden": true },
+    { "type": "ci", "hidden": true }
+  ],
+  "commitUrlFormat": "https://github.com/wgalleti/wPrimeVueComponents/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/wgalleti/wPrimeVueComponents/compare/{{previousTag}}...{{currentTag}}"
+}
