@@ -33,5 +33,10 @@ export const router = createRouter({
       name: 'workbench',
       component: () => import('./views/WorkbenchView.vue'),
     },
+    {
+      path: '/keyboard',
+      name: 'keyboard',
+      component: () => import('./views/KeyboardCrudView.vue'),
+    },
   ],
 })

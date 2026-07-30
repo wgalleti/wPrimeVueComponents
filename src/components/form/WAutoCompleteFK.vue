@@ -311,6 +311,14 @@ async function fetchModalData() {
   }
 }
 
+function onInputKeydown(e: KeyboardEvent) {
+  // F2 abre o modal de pesquisa (atalho estilo desktop).
+  if (e.key === 'F2' && !props.disabled) {
+    e.preventDefault()
+    openModal()
+  }
+}
+
 function openModal() {
   if (props.disabled) return
   modalSearch.value = ''
@@ -513,6 +521,7 @@ function confirmDelete(item: Record<string, unknown>) {
       @complete="onSearch"
       @item-select="onSelect"
       @clear="onClear"
+      @keydown="onInputKeydown"
     />
     <button
       v-tooltip.top="'Pesquisar'"

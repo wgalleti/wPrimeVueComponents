@@ -919,6 +919,7 @@ onMounted(() => {
         :disabled="crud.viewMode?.value ?? false"
         :width="dialogWidth"
         :form-columns="formColumns ?? crud.config.formColumns"
+        :keyboard-nav="crud.config.keyboardNav"
         @update:visible="
           (v) => {
             crud.dialogVisible.value = v

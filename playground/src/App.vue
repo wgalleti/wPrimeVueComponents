@@ -14,6 +14,7 @@ const links = [
   { label: 'Showcase (novidades)', to: '/showcase', icon: 'pi pi-sparkles' },
   { label: 'API Real', to: '/real-api', icon: 'pi pi-server' },
   { label: 'Workbench', to: '/workbench', icon: 'pi pi-th-large' },
+  { label: 'Teclado', to: '/keyboard', icon: 'pi pi-bolt' },
 ]
 
 const isDark = ref(document.documentElement.classList.contains('dark'))

@@ -30,6 +30,9 @@ export interface CrudManagerConfig<T> {
   /** Modo de edição: 'dialog' (default — abre o form dialog) ou 'cell' (edição
    *  inline por célula, com PATCH só do campo alterado). */
   editMode?: 'cell' | 'dialog'
+  /** Navegação por teclado no form dialog: foca o 1º campo ao abrir e o Enter
+   *  pula para o próximo campo até o botão salvar (F2 abre a busca em FKs). */
+  keyboardNav?: boolean
   canCreate?: boolean
   canEdit?: boolean
   canDelete?: boolean

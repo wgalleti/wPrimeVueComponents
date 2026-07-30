@@ -4,6 +4,7 @@ import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import type { FieldDef } from '@/types/field'
 import WFormRenderer from '@/components/form/WFormRenderer.vue'
+import { useFormKeyboardNav } from '@/composables/useFormKeyboardNav'
 
 const props = withDefaults(
   defineProps<{
@@ -17,6 +18,9 @@ const props = withDefaults(
     width?: string
     /** Nº de colunas do grid do form (repassado ao WFormRenderer; default 2). */
     formColumns?: number
+    /** Navegação por teclado estilo desktop: foca o 1º campo ao abrir e o Enter
+     *  pula para o próximo campo até o botão de salvar. Opt-in. */
+    keyboardNav?: boolean
   }>(),
   {
     width: '480px',
@@ -32,6 +36,7 @@ const emit = defineEmits<{
 }>()
 
 const rendererRef = ref<InstanceType<typeof WFormRenderer> | null>(null)
+const formRef = ref<HTMLFormElement | null>(null)
 
 function onSave() {
   if (rendererRef.value) {
@@ -43,6 +48,12 @@ function onSave() {
     emit('save')
   }
 }
+
+// Navegação por teclado (opt-in) — sem watchers: @keydown no <form> + @show no Dialog.
+const { focusFirst, handleKeydown } = useFormKeyboardNav(formRef, {
+  enabled: () => props.keyboardNav === true,
+  onSubmit: onSave,
+})
 
 // Clear errors when dialog opens
 watch(
@@ -64,8 +75,9 @@ watch(
     :draggable="false"
     class="w-crud-form-dialog"
     @update:visible="emit('update:visible', $event)"
+    @show="focusFirst"
   >
-    <form class="w-crud-form" @submit.prevent="onSave">
+    <form ref="formRef" class="w-crud-form" @submit.prevent="onSave" @keydown="handleKeydown">
       <WFormRenderer
         ref="rendererRef"
         :fields="fields"
@@ -102,6 +114,7 @@ watch(
             severity="secondary"
             text
             :disabled="saving"
+            data-kbd-skip
             @click="emit('update:visible', false)"
           />
           <Button
