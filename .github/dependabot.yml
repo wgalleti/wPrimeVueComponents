@@ -1,44 +1,23 @@
 version: 2
+# PRs de version-update DESATIVADOS (open-pull-requests-limit: 0) — biblioteca de
+# uso interno/solo, sem necessidade de bumps de rotina. Atualizações de SEGURANÇA
+# continuam funcionando (não são limitadas por isto). Para retomar bumps de rotina,
+# suba o limite (ex.: 5) e reintroduza os `groups`.
 updates:
-  # Biblioteca (raiz): minor/patch agrupados (PRs pequenos e verdes);
-  # majors ficam FORA dos grupos e vêm como PRs individuais (revisão/teste isolado).
   - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 10
-    groups:
-      producao:
-        dependency-type: production
-        update-types:
-          - minor
-          - patch
-      desenvolvimento:
-        dependency-type: development
-        update-types:
-          - minor
-          - patch
+    open-pull-requests-limit: 0
 
-  # Playground (app de teste local, não publicado): minor/patch agrupados.
   - package-ecosystem: npm
     directory: "/playground"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
-    groups:
-      playground:
-        patterns:
-          - "*"
-        update-types:
-          - minor
-          - patch
+    open-pull-requests-limit: 0
 
-  # Actions dos workflows de CI/deploy.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
-    groups:
-      actions:
-        patterns:
-          - "*"
+    open-pull-requests-limit: 0
