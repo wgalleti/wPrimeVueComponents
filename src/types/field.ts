@@ -60,6 +60,15 @@ export interface FieldDef {
   placeholder?: string
   validate?: (value: unknown) => string | null
   autofocus?: boolean | 'create' | 'edit'
+  /** Campo somente-leitura: renderiza desabilitado (o valor ainda vai no payload). */
+  readonly?: boolean
+  /** Campo calculado: o valor é derivado dos demais via `calculate` e o campo fica
+   *  somente-leitura. Recomputado sempre que o `formData` muda. */
+  computed?: boolean
+  /** Função que deriva o valor de um campo `computed` a partir do formData atual.
+   *  Deve ser pura e cair no valor existente quando não puder derivar (ex.: na edição,
+   *  quando a FK já vem como id e não como objeto). */
+  calculate?: (formData: Record<string, unknown>, isEditing: boolean) => unknown
 
   // select / autocomplete / transfer
   options?: SelectOption[] | Ref<SelectOption[]>
@@ -72,7 +81,12 @@ export interface FieldDef {
 
   // fk
   endpoint?: string
-  endpointParams?: Record<string, string | number | boolean>
+  /** Filtros fixos enviados à API na busca da FK. Pode ser uma função para depender
+   *  de contexto do pai (ex.: `() => ({ com_saldo_local: local })`) — reavaliada a
+   *  cada render, então reativa a refs/props externas. */
+  endpointParams?:
+    | Record<string, string | number | boolean>
+    | (() => Record<string, string | number | boolean>)
   /** Filtro em cascata: torna esta FK dependente do valor de outro(s) campo(s) do
    *  formulário, aplicando-o(s) como filtro na busca da API (ex.: um "local" que só
    *  lista os da "unidade_producao" selecionada). Com `required` (default true), a
@@ -83,6 +97,12 @@ export interface FieldDef {
   blockedPlaceholder?: string
   crudFields?: FieldDef[]
   crudColumns?: ColumnDef[]
+  /** Controla o CRUD inline da FK (criar/editar/excluir no modal de busca). Omitido =
+   *  auto-detecta (há `crudFields` ou a API expõe `extras.fields`). Use `false` para
+   *  forçar desligado (ex.: lote que não pode ser criado sem semear o produto irmão). */
+  canCreate?: boolean
+  canEdit?: boolean
+  canDelete?: boolean
 
   // number / currency
   min?: number

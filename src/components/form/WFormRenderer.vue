@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef } from 'vue'
+import { computed, reactive, isRef, watch } from 'vue'
 import { vMaska } from 'maska/vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
@@ -98,10 +98,36 @@ const visibleFields = computed(() =>
 
 function isFieldDisabled(field: FieldDef): boolean {
   if (props.disabled) return true
+  // Somente-leitura / calculado → sempre desabilitado (o valor ainda vai no payload).
+  if (field.readonly || field.computed) return true
   if (field.disabledOnEdit && props.isEditing) return true
   if (typeof field.disabled === 'function') return field.disabled(props.formData, props.isEditing)
   return !!field.disabled
 }
+
+/** Resolve `endpointParams` estático ou por função (contexto do pai). */
+function resolveEndpointParams(field: FieldDef) {
+  const ep = field.endpointParams
+  return typeof ep === 'function' ? ep() : ep
+}
+
+// --- Campos calculados ---
+// Derivam o valor dos demais campos e o escrevem de volta no formData (para irem no
+// payload). Recomputa a cada mudança do formData; só emite quando o valor muda de fato
+// (o `!==` evita laço de atualização). A função `calculate` deve cair no valor atual
+// quando não puder derivar (ex.: na edição, com a FK já como id).
+const calculatedFields = computed(() => props.fields.filter((f) => typeof f.calculate === 'function'))
+
+watch(
+  () => props.formData,
+  () => {
+    for (const f of calculatedFields.value) {
+      const next = f.calculate!(props.formData, props.isEditing)
+      if (props.formData[f.field] !== next) emit('update:field', f.field, next)
+    }
+  },
+  { deep: true, immediate: true },
+)
 
 function unwrapRef<V>(val: V): V extends import('vue').Ref<infer U> ? U : V {
   return isRef(val) ? ((val as { value: unknown }).value as never) : (val as never)
@@ -558,7 +584,7 @@ defineExpose({ validateAll, clearErrors })
                 :model-value="formData[field.field] as any"
                 :autofocus="shouldAutofocus(field) || undefined"
                 :endpoint="field.endpoint!"
-                :endpoint-params="field.endpointParams"
+                :endpoint-params="resolveEndpointParams(field)"
                 :drilldown="resolveDrilldown(field)"
                 :blocked-placeholder="field.blockedPlaceholder"
                 :option-label="field.optionLabel || 'nome'"
@@ -568,6 +594,9 @@ defineExpose({ validateAll, clearErrors })
                 :dialog-header="field.label"
                 :crud-fields="field.crudFields"
                 :crud-columns="field.crudColumns"
+                :can-create="field.canCreate"
+                :can-edit="field.canEdit"
+                :can-delete="field.canDelete"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
