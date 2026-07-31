@@ -98,6 +98,9 @@ export interface CrudManagerReturn<T> {
   /** Salva um único campo de um item (edição inline por célula) via PATCH. */
   updateField(item: T, field: string, value: unknown): Promise<void>
   confirmDelete(item: T): void
+  /** Exclui o item sem o confirm de serviço — para quem controla a própria
+   *  confirmação (ex.: WCrudView com o slot `delete-message`). */
+  performDelete(item: T): Promise<void>
   setFormField(field: string, value: unknown): void
   resetForm(): void
   goToPage(page: number): void

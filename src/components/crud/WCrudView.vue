@@ -12,6 +12,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
+import Dialog from 'primevue/dialog'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
@@ -202,7 +203,31 @@ function handleRowAction(action: RowAction, data: Record<string, unknown>) {
   } else if (action.action === 'duplicate') {
     props.crud.openDuplicateDialog(data)
   } else if (action.action === 'delete') {
-    props.crud.confirmDelete(data)
+    // Com slot `delete-message`, usa o diálogo próprio (permite conteúdo rico,
+    // ex.: avisos por registro); senão, o confirm de serviço padrão.
+    if (slots['delete-message']) {
+      deleteTarget.value = data
+      deleteDialogVisible.value = true
+    } else {
+      props.crud.confirmDelete(data)
+    }
+  }
+}
+
+// --- Diálogo de exclusão próprio (só quando há slot `delete-message`) ---
+const deleteTarget = ref<Record<string, unknown> | null>(null)
+const deleteDialogVisible = ref(false)
+const deleting = ref(false)
+
+async function onConfirmDelete() {
+  if (!deleteTarget.value) return
+  deleting.value = true
+  try {
+    await props.crud.performDelete(deleteTarget.value)
+    deleteDialogVisible.value = false
+    deleteTarget.value = null
+  } finally {
+    deleting.value = false
   }
 }
 
@@ -938,5 +963,37 @@ onMounted(() => {
         </template>
       </WCrudFormDialog>
     </slot>
+
+    <!-- Diálogo de exclusão próprio: renderizado só quando o consumidor fornece
+         o slot `delete-message` (permite conteúdo rico por registro). -->
+    <Dialog
+      v-if="$slots['delete-message']"
+      v-model:visible="deleteDialogVisible"
+      header="Confirmar Exclusão"
+      modal
+      :draggable="false"
+      class="w-crud-delete-dialog"
+      :style="{ width: '30rem' }"
+    >
+      <slot name="delete-message" :item="deleteTarget" />
+      <template #footer>
+        <Button
+          type="button"
+          label="Cancelar"
+          severity="secondary"
+          text
+          :disabled="deleting"
+          @click="deleteDialogVisible = false"
+        />
+        <Button
+          type="button"
+          label="Excluir"
+          icon="pi pi-trash"
+          severity="danger"
+          :loading="deleting"
+          @click="onConfirmDelete"
+        />
+      </template>
+    </Dialog>
   </div>
 </template>
