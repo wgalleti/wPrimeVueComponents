@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.0...v0.9.1) (2026-07-31)
+
+### Correções
+
+* **WFormRenderer:** campo calculado não reagia no fluxo do WCrudFormDialog ([23d00c7](https://github.com/wgalleti/wPrimeVueComponents/commit/23d00c71dc83c6dca3ed241beaea9300706d7345))
 ## [0.9.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.3...v0.9.0) (2026-07-31)
 
 ### Funcionalidades
