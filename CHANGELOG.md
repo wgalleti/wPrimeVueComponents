@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.3...v0.9.0) (2026-07-31)
+
+### Funcionalidades
+
+* **WFormRenderer:** campos calculados, endpointParams por função e toggles de CRUD inline na FK ([551ac15](https://github.com/wgalleti/wPrimeVueComponents/commit/551ac15bdff3110c9c8f6efb3891bb8a95943531))
 ## [0.8.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.8.2...v0.8.3) (2026-07-30)
 
 ### Correções
