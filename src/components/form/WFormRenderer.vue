@@ -113,20 +113,22 @@ function resolveEndpointParams(field: FieldDef) {
 
 // --- Campos calculados ---
 // Derivam o valor dos demais campos e o escrevem de volta no formData (para irem no
-// payload). Recomputa a cada mudança do formData; só emite quando o valor muda de fato
-// (o `!==` evita laço de atualização). A função `calculate` deve cair no valor atual
-// quando não puder derivar (ex.: na edição, com a FK já como id).
+// payload). O SOURCE do watch chama `calculate` — assim as dependências reativas exatas
+// (ex.: `formData.produto.unidade_medida`) são coletadas e o watch dispara quando elas
+// mudam. (Um `watch(() => formData, …, { deep })` não reage de forma confiável ao
+// `formData` que chega por prop no fluxo do WCrudFormDialog.) Só emite quando o valor
+// muda de fato (o `!==` evita laço). A função `calculate` deve cair no valor atual quando
+// não puder derivar (ex.: na edição, com a FK já como id).
 const calculatedFields = computed(() => props.fields.filter((f) => typeof f.calculate === 'function'))
 
 watch(
-  () => props.formData,
-  () => {
-    for (const f of calculatedFields.value) {
-      const next = f.calculate!(props.formData, props.isEditing)
-      if (props.formData[f.field] !== next) emit('update:field', f.field, next)
-    }
+  () => calculatedFields.value.map((f) => f.calculate!(props.formData, props.isEditing)),
+  (nexts) => {
+    calculatedFields.value.forEach((f, i) => {
+      if (props.formData[f.field] !== nexts[i]) emit('update:field', f.field, nexts[i])
+    })
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 )
 
 function unwrapRef<V>(val: V): V extends import('vue').Ref<infer U> ? U : V {
