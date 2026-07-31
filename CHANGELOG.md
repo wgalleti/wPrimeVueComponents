@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.1...v0.9.2) (2026-07-31)
+
+### Funcionalidades
+
+* **WCrudView:** slot delete-message no diálogo de exclusão + performDelete no useCrudManager ([4bac5ca](https://github.com/wgalleti/wPrimeVueComponents/commit/4bac5ca0a21ced6de6696f1627ef5f5fb3ee81cb)), references [#delete-message](https://github.com/wgalleti/wPrimeVueComponents/issues/delete-message)
 ## [0.9.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.0...v0.9.1) (2026-07-31)
 
 ### Correções
