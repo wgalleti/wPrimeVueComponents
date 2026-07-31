@@ -175,3 +175,21 @@ describe('useCrudManager — edição inline', () => {
     expect(crud.items.value[0]).toMatchObject({ preco: 25 })
   })
 })
+
+describe('useCrudManager — exclusão', () => {
+  it('performDelete exclui via provider (sem confirm), remove o item e chama onAfterDelete', async () => {
+    const list = okList([{ id: 1 }, { id: 2 }], 2)
+    const del = vi.fn().mockResolvedValue(undefined)
+    const onAfterDelete = vi.fn()
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [], onAfterDelete },
+      { list, delete: del },
+    )
+    await crud.init()
+    await crud.performDelete({ id: 1 })
+    expect(del).toHaveBeenCalledWith('/p', 1)
+    expect(crud.items.value.map((i) => i.id)).toEqual([2])
+    expect(crud.pagination.rows).toBe(1)
+    expect(onAfterDelete).toHaveBeenCalledWith({ id: 1 })
+  })
+})

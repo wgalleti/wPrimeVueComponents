@@ -372,6 +372,11 @@
           "name": "form-dialog",
           "type": "{ crud: CrudManagerReturn<any>; dialogWidth: string; }",
           "description": ""
+        },
+        {
+          "name": "delete-message",
+          "type": "{ item: Record<string, unknown> | null; }",
+          "description": ""
         }
       ]
     },
@@ -517,6 +522,13 @@
           "required": false,
           "default": "\"480px\"",
           "description": ""
+        },
+        {
+          "name": "autofocus",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Foca o campo ao montar. Marca o input com o atributo nativo `autofocus`\npara que o `focus()` do PrimeVue Dialog (em onAfterEnter) o encontre e\nnão roube o foco para o botão de fechar."
         }
       ],
       "events": [

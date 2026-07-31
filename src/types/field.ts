@@ -85,8 +85,7 @@ export interface FieldDef {
    *  de contexto do pai (ex.: `() => ({ com_saldo_local: local })`) — reavaliada a
    *  cada render, então reativa a refs/props externas. */
   endpointParams?:
-    | Record<string, string | number | boolean>
-    | (() => Record<string, string | number | boolean>)
+    Record<string, string | number | boolean> | (() => Record<string, string | number | boolean>)
   /** Filtro em cascata: torna esta FK dependente do valor de outro(s) campo(s) do
    *  formulário, aplicando-o(s) como filtro na busca da API (ex.: um "local" que só
    *  lista os da "unidade_producao" selecionada). Com `required` (default true), a

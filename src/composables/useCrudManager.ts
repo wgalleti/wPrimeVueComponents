@@ -522,22 +522,26 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // Delete
   // ---------------------------------------------------------------------------
 
-  function confirmDelete(item: T): void {
-    confirmDeleteDialog(async () => {
-      try {
-        const itemPk = item[pk as keyof T]
-        await provider.delete(endpoint, itemPk as string | number)
-        const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
-        if (index !== -1) {
-          items.value.splice(index, 1)
-          pagination.rows--
-        }
-        toast.success(labels.successDelete)
-        if (onAfterDelete) onAfterDelete(item)
-      } catch (err) {
-        toast.error(extractApiError(err, 'Erro ao excluir registro'))
+  // Exclusão crua (sem o confirm de serviço) — para quem controla a própria
+  // confirmação, ex.: WCrudView com diálogo de exclusão próprio (slot de mensagem).
+  async function performDelete(item: T): Promise<void> {
+    try {
+      const itemPk = item[pk as keyof T]
+      await provider.delete(endpoint, itemPk as string | number)
+      const index = items.value.findIndex((i) => i[pk as keyof T] === itemPk)
+      if (index !== -1) {
+        items.value.splice(index, 1)
+        pagination.rows--
       }
-    }, labels.deleteConfirmMessage)
+      toast.success(labels.successDelete)
+      if (onAfterDelete) onAfterDelete(item)
+    } catch (err) {
+      toast.error(extractApiError(err, 'Erro ao excluir registro'))
+    }
+  }
+
+  function confirmDelete(item: T): void {
+    confirmDeleteDialog(() => performDelete(item), labels.deleteConfirmMessage)
   }
 
   function clearSelection(): void {
@@ -598,6 +602,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     save,
     updateField,
     confirmDelete,
+    performDelete,
     setFormField,
     resetForm,
     goToPage,

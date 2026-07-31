@@ -119,7 +119,9 @@ function resolveEndpointParams(field: FieldDef) {
 // `formData` que chega por prop no fluxo do WCrudFormDialog.) Só emite quando o valor
 // muda de fato (o `!==` evita laço). A função `calculate` deve cair no valor atual quando
 // não puder derivar (ex.: na edição, com a FK já como id).
-const calculatedFields = computed(() => props.fields.filter((f) => typeof f.calculate === 'function'))
+const calculatedFields = computed(() =>
+  props.fields.filter((f) => typeof f.calculate === 'function'),
+)
 
 watch(
   () => calculatedFields.value.map((f) => f.calculate!(props.formData, props.isEditing)),
