@@ -400,9 +400,19 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     try {
       let payload: Record<string, unknown> = convertRecord(formData)
 
-      // Merge createDefaults into payload for new records (hidden parent FKs, etc.)
+      // createDefaults é PREFILL (já aplicado ao abrir o diálogo), não um override
+      // no submit: só completa chaves ausentes/nulas do payload, sem SOBRESCREVER o
+      // que o usuário definiu no form. Senão um campo editável pré-preenchido (ex.:
+      // a unidade da baliza) voltaria ao default mesmo depois de o usuário trocar o
+      // valor. Continua cobrindo FK-pai oculta de master-detail (chave ausente).
       if (!isEditing.value && createDefaults) {
-        Object.assign(payload, createDefaults())
+        const extra = createDefaults()
+        for (const [key, value] of Object.entries(extra)) {
+          const current = payload[key]
+          if (current === undefined || current === null || current === '') {
+            payload[key] = value
+          }
+        }
       }
 
       // Edição: enviar apenas os campos alterados (diff) quando partialUpdate.
