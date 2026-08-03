@@ -98,6 +98,46 @@ describe('useCrudManager — save', () => {
     expect(res).toEqual(created)
   })
 
+  it('createDefaults não sobrescreve valor que o usuário definiu no form (create)', async () => {
+    const list = okList()
+    const create = vi.fn().mockResolvedValue({ data: { id: 1 } })
+    const crud = setup(
+      {
+        endpoint: '/p',
+        columns: [],
+        form: [{ field: 'unidade', label: 'Unidade', type: 'fk' }],
+        refetchOnSave: false,
+        // Prefill da baliza (unidade padrão do site). O usuário troca no form.
+        createDefaults: () => ({ unidade: 'PADRAO' }),
+      },
+      { list, create },
+    )
+    crud.openCreateDialog() // aplica o prefill 'PADRAO'
+    crud.setFormField('unidade', 'ESCOLHIDA') // usuário troca
+    await crud.save()
+    expect(create).toHaveBeenCalledWith('/p', { unidade: 'ESCOLHIDA' }, undefined)
+  })
+
+  it('createDefaults preenche FK-pai oculta ausente do payload (create)', async () => {
+    const list = okList()
+    const create = vi.fn().mockResolvedValue({ data: { id: 1 } })
+    const crud = setup(
+      {
+        endpoint: '/p',
+        columns: [],
+        form: [{ field: 'nome', label: 'Nome' }],
+        refetchOnSave: false,
+        // pai não é campo do form (oculto) — deve entrar no payload.
+        createDefaults: () => ({ nota_fiscal: 42 }),
+      },
+      { list, create },
+    )
+    crud.openCreateDialog()
+    crud.setFormField('nome', 'Item')
+    await crud.save()
+    expect(create).toHaveBeenCalledWith('/p', { nome: 'Item', nota_fiscal: 42 }, undefined)
+  })
+
   it('edição com partialUpdate envia apenas os campos alterados (diff)', async () => {
     const list = okList()
     const update = vi.fn().mockResolvedValue({ data: { id: 1, nome: 'B', ativo: true } })
