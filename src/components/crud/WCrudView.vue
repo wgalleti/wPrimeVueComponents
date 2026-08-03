@@ -96,12 +96,29 @@ const expandedRows = ref({})
 
 // --- Display mode (table / cards) ---
 
-const displayMode = ref<'table' | 'cards'>(props.defaultView)
+// Persistência do modo de visualização (opt-in via `persistState`): a escolha do
+// usuário fica em localStorage sob a MESMA chave base do grid (rota + grid, provida
+// pelo consumidor). Leitura síncrona no setup evita flash table→cards. Default =
+// `defaultView` (por padrão 'table' = linha).
+function viewKey(): string | null {
+  return props.persistState ? `wcrud:view:${props.persistState}` : null
+}
+function loadView(): 'table' | 'cards' {
+  const key = viewKey()
+  if (key) {
+    const stored = localStorage.getItem(key)
+    if (stored === 'table' || stored === 'cards') return stored
+  }
+  return props.defaultView
+}
+const displayMode = ref<'table' | 'cards'>(loadView())
 function isView(mode: 'table' | 'cards'): boolean {
   return displayMode.value === mode
 }
 function setView(mode: 'table' | 'cards'): void {
   displayMode.value = mode
+  const key = viewKey()
+  if (key) localStorage.setItem(key, mode)
 }
 const paginatorFirst = computed(
   () => (props.crud.pagination.page - 1) * props.crud.pagination.pageSize,
