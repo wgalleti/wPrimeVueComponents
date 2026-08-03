@@ -834,37 +834,43 @@ onMounted(() => {
               @dblclick="crud.config.canEdit !== false && crud.openEditDialog(row)"
               @contextmenu="onCardContextMenu($event, row)"
             >
-              <div class="w-crud-card-body">
-                <div
-                  v-for="(col, ci) in cardColumns"
-                  :key="col.field"
-                  class="w-crud-card-row"
-                  :class="{ 'w-crud-card-row--title': ci === 0 }"
-                >
-                  <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
-                  <span class="w-crud-card-value">
-                    <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
-                      <WCrudColumnRenderer :column="col" :value="row[col.field]" :row-data="row" />
-                    </slot>
-                  </span>
+              <!-- Slot `card`: assume o CONTEÚDO do card (corpo + ações), mantendo o
+                   wrapper do WCrudView (chrome, seleção, dblclick-editar, contextmenu,
+                   toolbar/loading/empty/paginação). Sem o slot, cai no card padrão
+                   (título + label:valor das `cardColumns` + ações de linha). -->
+              <slot name="card" :data="row" :crud="crud" :columns="cardColumns" :index="idx">
+                <div class="w-crud-card-body">
+                  <div
+                    v-for="(col, ci) in cardColumns"
+                    :key="col.field"
+                    class="w-crud-card-row"
+                    :class="{ 'w-crud-card-row--title': ci === 0 }"
+                  >
+                    <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
+                    <span class="w-crud-card-value">
+                      <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
+                        <WCrudColumnRenderer :column="col" :value="row[col.field]" :row-data="row" />
+                      </slot>
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
-                <template v-for="action in effectiveRowActions" :key="action.action">
-                  <Button
-                    v-if="isActionVisible(action, row)"
-                    v-tooltip.top="action.tooltip"
-                    :icon="action.icon"
-                    text
-                    rounded
-                    size="small"
-                    :severity="action.severity as any"
-                    :disabled="isActionDisabled(action, row)"
-                    @click="handleRowAction(action, row)"
-                  />
-                </template>
-                <slot name="row-actions" :data="row" :crud="crud" />
-              </div>
+                <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
+                  <template v-for="action in effectiveRowActions" :key="action.action">
+                    <Button
+                      v-if="isActionVisible(action, row)"
+                      v-tooltip.top="action.tooltip"
+                      :icon="action.icon"
+                      text
+                      rounded
+                      size="small"
+                      :severity="action.severity as any"
+                      :disabled="isActionDisabled(action, row)"
+                      @click="handleRowAction(action, row)"
+                    />
+                  </template>
+                  <slot name="row-actions" :data="row" :crud="crud" />
+                </div>
+              </slot>
             </div>
           </div>
 
