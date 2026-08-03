@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.2...v0.9.3) (2026-08-03)
+
+### Correções
+
+* **useCrudManager:** createDefaults não sobrescreve valor editável no submit ([ac7a5e3](https://github.com/wgalleti/wPrimeVueComponents/commit/ac7a5e3d02f4bd5530129af8d7859aa5653ae6ee))
 ## [0.9.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.1...v0.9.2) (2026-07-31)
 
 ### Funcionalidades
