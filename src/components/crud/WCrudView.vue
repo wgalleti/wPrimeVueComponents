@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, useSlots } from 'vue'
+import { ref, reactive, computed, onMounted, watch, useSlots } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -49,6 +49,10 @@ const props = withDefaults(
     viewToggle?: boolean
     defaultView?: 'table' | 'cards'
     cardFields?: number
+    /** Cards "sem moldura": remove o chrome padrão do card (borda/sombra/padding/
+     *  seleção) para o slot `#card` desenhar o card inteiro (ex.: um card de design
+     *  próprio). O wrapper vira só a célula do grid. */
+    cardBare?: boolean
     actionRail?: boolean
     contextMenu?: boolean
     showPrint?: boolean
@@ -146,6 +150,43 @@ function saveColumnState() {
   const key = colStateKey()
   if (key) localStorage.setItem(key, JSON.stringify({ hidden: columnState.hidden }))
 }
+
+// Estado de FILTROS (opt-in via persistState): filtros de coluna + busca ficam em
+// localStorage sob a mesma chave base do grid (rota + grid). Restaurados ANTES do
+// primeiro fetch, então o F5 mantém os últimos filtros aplicados.
+function filtersKey(): string | null {
+  return props.persistState ? `wcrud:filters:${props.persistState}` : null
+}
+function loadFilters() {
+  const key = filtersKey()
+  if (!key) return
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '{}')
+    if (parsed && typeof parsed.columnFilters === 'object' && parsed.columnFilters) {
+      for (const [k, v] of Object.entries(parsed.columnFilters)) {
+        if (v !== null && v !== undefined && v !== '') props.crud.columnFilters[k] = v
+      }
+    }
+    if (typeof parsed.search === 'string' && parsed.search) {
+      props.crud.search.value = parsed.search
+    }
+  } catch {
+    /* estado inválido — ignora */
+  }
+}
+function saveFilters() {
+  const key = filtersKey()
+  if (!key) return
+  localStorage.setItem(
+    key,
+    JSON.stringify({
+      columnFilters: { ...props.crud.columnFilters },
+      search: props.crud.search.value,
+    }),
+  )
+}
+watch(props.crud.columnFilters, saveFilters, { deep: true })
+watch(props.crud.search, saveFilters)
 // Colunas base (respeita visible:false do consumidor) — fonte do seletor de colunas.
 const baseColumns = computed(() => props.crud.config.columns.filter((c) => c.visible !== false))
 function toggleColumn(field: string, visible: boolean) {
@@ -404,6 +445,7 @@ async function doExportCsv() {
 
 onMounted(() => {
   loadColumnState()
+  loadFilters() // restaura filtros/busca ANTES do init para o fetch já sair filtrado
   if (props.autoInit) {
     props.crud.init()
   }
@@ -841,15 +883,18 @@ onMounted(() => {
             </div>
           </slot>
 
-          <div v-else class="w-crud-cards">
+          <div v-else class="w-crud-cards" :class="{ 'w-crud-cards--bare': cardBare }">
             <div
               v-for="(row, idx) in crud.items.value"
               :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
-              class="w-crud-card"
-              :class="{ 'w-crud-card--selected': selectedRow === row }"
-              @click="selectRow(row)"
-              @dblclick="crud.config.canEdit !== false && crud.openEditDialog(row)"
-              @contextmenu="onCardContextMenu($event, row)"
+              :class="
+                cardBare
+                  ? 'w-crud-card-bare'
+                  : ['w-crud-card', { 'w-crud-card--selected': selectedRow === row }]
+              "
+              @click="!cardBare && selectRow(row)"
+              @dblclick="!cardBare && crud.config.canEdit !== false && crud.openEditDialog(row)"
+              @contextmenu="!cardBare && onCardContextMenu($event, row)"
             >
               <!-- Slot `card`: assume o CONTEÚDO do card (corpo + ações), mantendo o
                    wrapper do WCrudView (chrome, seleção, dblclick-editar, contextmenu,

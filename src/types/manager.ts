@@ -42,6 +42,11 @@ export interface CrudManagerConfig<T> {
   /** Ações aplicadas ao conjunto selecionado, exibidas na barra de lote. */
   bulkActions?: BulkAction<T>[]
   filterParams?: () => Record<string, unknown>
+  /** Pré-processa os dados a cada carga da lista, ANTES de virarem `items`. Recebe
+   *  as linhas cruas da API e devolve o que a tela vai renderizar. Ponto único e
+   *  reaproveitável para: agrupar (ex.: por NF, com avulsos individuais), enriquecer
+   *  com campos derivados, reestruturar, ordenar. Sem ele, `items` = dados crus. */
+  transformItems?: (rawItems: T[]) => T[]
   transformPayload?: (
     payload: Record<string, unknown>,
     isEditing: boolean,

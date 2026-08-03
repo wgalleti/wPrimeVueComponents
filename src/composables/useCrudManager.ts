@@ -38,6 +38,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     refetchOnSave = true,
     filterParams = undefined,
     createDefaults = undefined,
+    transformItems = undefined,
     transformPayload = undefined,
     onAfterSave = undefined,
     onAfterDelete = undefined,
@@ -66,6 +67,8 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   const selectedItems = ref<T[]>([]) as import('vue').Ref<T[]>
   const extras = ref<Record<string, unknown>>({})
   const loading = ref(false)
+  // Contador de sequência de fetch — descarta respostas de list() fora de ordem.
+  let fetchSeq = 0
   const saving = ref(false)
   const search = ref('')
   const dialogVisible = ref(false)
@@ -136,6 +139,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
   async function fetchItems(params: Record<string, unknown> = {}): Promise<void> {
+    // Sequencing: ignora respostas fora de ordem. Sem isso, dois fetch disparados
+    // em sequência (ex.: setar duas datas de um período) podem resolver invertidos
+    // e a resposta mais ANTIGA (menos filtrada) sobrescreve a correta.
+    const seq = ++fetchSeq
     loading.value = true
     try {
       const queryParams: Record<string, unknown> = {
@@ -162,7 +169,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       }
 
       const responseData = await provider.list<T>(endpoint, queryParams)
-      items.value = responseData.data
+      // Uma requisição mais nova já foi disparada — descarta esta resposta.
+      if (seq !== fetchSeq) return
+      // Pré-processa os dados crus (agrupar/enriquecer/reestruturar) antes de virarem
+      // `items`. Sem `transformItems`, usa os dados como vieram.
+      items.value = transformItems ? transformItems(responseData.data) : responseData.data
       selectedItems.value = [] // seleção anterior fica obsoleta ao recarregar
       pagination.rows = responseData.rows
       extras.value = responseData.extras ?? {}
@@ -170,7 +181,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       if (responseData.page_size) pagination.pageSize = responseData.page_size
       pagination.totalPages = Math.ceil(pagination.rows / pagination.pageSize) || 0
     } finally {
-      loading.value = false
+      // Só a requisição mais recente controla o loading (uma resposta antiga não
+      // deve desligar o spinner enquanto a nova ainda está em voo).
+      if (seq === fetchSeq) loading.value = false
     }
   }
 
