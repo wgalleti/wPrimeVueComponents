@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.5](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.4...v0.9.5) (2026-08-03)
+
+### Funcionalidades
+
+* **WCrudView:** persiste o modo de visualização por grid (opt-in persistState) ([98bb6f5](https://github.com/wgalleti/wPrimeVueComponents/commit/98bb6f554c2e1b6b4b7ddd71dd2fe4c874264e78))
+* **WCrudView:** slot `card` p/ card totalmente customizável no modo cards ([6f6fa8b](https://github.com/wgalleti/wPrimeVueComponents/commit/6f6fa8b22abbc4bb5dca8a7e3f535c7c760602fc))
 ## [0.9.4](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.3...v0.9.4) (2026-08-03)
 
 ### Funcionalidades

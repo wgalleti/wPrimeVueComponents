@@ -190,12 +190,17 @@
 
 .w-crud-toolbar-start {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
+  /* Permite encolher/quebrar quando os filtros estouram a largura. */
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .w-crud-toolbar-end {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
@@ -1075,15 +1080,28 @@
 
 .w-crud-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  /* Cada card dimensiona ao próprio conteúdo (não estica à altura da linha) —
+     importante quando o pré-processamento gera cards de alturas diferentes. */
+  align-items: start;
+}
+
+/* Modo "bare": o slot #card desenha o card inteiro. Sem chrome no wrapper e grid
+   com coluna mínima maior (cards de design costumam pedir ~360px). */
+.w-crud-cards--bare {
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}
+
+.w-crud-card-bare {
+  min-width: 0;
 }
 
 .w-crud-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
+  gap: 0.625rem;
+  padding: 1.25rem;
   border: 1px solid var(--p-content-border-color);
   border-radius: 0.75rem;
   background: var(--p-content-background);

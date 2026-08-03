@@ -37,6 +37,7 @@ const crud = useCrudManager({
 | `canDelete` | `boolean` | `true` | Permite exclusao |
 | `rowActions` | `RowAction[]` | auto | Acoes customizadas por linha |
 | `filterParams` | `() => Record` | — | Parametros extras para a query |
+| `transformItems` | `(rawItems) => Items[]` | — | Pre-processa os dados carregados antes de virarem `items` (agrupar, enriquecer, reestruturar) |
 | `transformPayload` | `(payload, isEditing) => Record` | — | Transforma o payload antes de enviar |
 | `onAfterSave` | `(data, isEditing) => void` | — | Callback apos salvar |
 | `onAfterDelete` | `(item) => void` | — | Callback apos excluir |
@@ -121,6 +122,43 @@ const crud = useCrudManager({
   },
 })
 ```
+
+## Pre-processar dados carregados (`transformItems`)
+
+`transformItems` roda a cada carga da lista, **antes** dos dados virarem `items`.
+Recebe as linhas cruas da API e devolve o que a tela vai renderizar. E o ponto
+unico e reaproveitavel para **agrupar, enriquecer com campos derivados,
+reestruturar ou ordenar** — sem montar nada a mao fora do `WCrudView`. Sem o hook,
+`items` = dados crus.
+
+O `#card` (e as colunas, no modo tabela) renderizam o que o hook devolveu — entao
+se ele agrupa, cada `item` passa a ser um **grupo**, e o `#card` desenha o grupo.
+
+```ts
+// Agrupamento MISTO: registros com NF agrupam pela nota; avulsos (sem NF) viram
+// grupos de 1 (aparecem individualmente). O `#card` recebe cada grupo em `data`.
+const crud = useCrudManager({
+  endpoint: '/api/analises/',
+  columns: [],
+  form: [],
+  transformItems: (rows) => {
+    const map = new Map()
+    for (const a of rows) {
+      const key = a.nota_fiscal_numero ? `nf-${a.nota_fiscal_numero}` : `avulso-${a.id}`
+      if (!map.has(key)) map.set(key, { id: a.id, chave: key, itens: [] })
+      map.get(key).itens.push(a)
+    }
+    return [...map.values()]
+  },
+})
+```
+
+::: tip Paginacao + agrupamento
+O agrupamento acontece sobre a **pagina atual** de linhas cruas. Para grupos
+contiguos, ordene a query pela chave do grupo (ou use um `pageSize` maior); um
+grupo pode se dividir na fronteira exata entre paginas. Quando precisar de grupos
+paginados com exatidao, o backend deve devolver os grupos ja prontos como linhas.
+:::
 
 ## Upload de Imagens
 
