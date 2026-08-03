@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.4](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.3...v0.9.4) (2026-08-03)
+
+### Funcionalidades
+
+* **WAutoCompleteFK:** create inline herda o pai da cascata (dependsOn) ([7a7e842](https://github.com/wgalleti/wPrimeVueComponents/commit/7a7e842178a132f5ce822d4c36b779b7b4839169))
 ## [0.9.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.2...v0.9.3) (2026-08-03)
 
 ### Correções
