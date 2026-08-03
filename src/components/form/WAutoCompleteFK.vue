@@ -532,6 +532,16 @@ async function saveForm() {
       }
       toast.success('Registro atualizado com sucesso')
     } else {
+      // Cria herdando o(s) pai(s) da cascata (dependsOn) — ex.: um novo lote nasce
+      // no produto selecionado. Sem semear o pai o backend rejeitaria o filho órfão.
+      // Só completa chaves ausentes: um campo do form com o mesmo nome prevalece.
+      const parent = drilldownParams()
+      for (const [key, value] of Object.entries(parent)) {
+        const current = payload[key]
+        if (current === undefined || current === null || current === '') {
+          payload[key] = value
+        }
+      }
       response = await provider.create(props.endpoint, payload)
       // Adiciona na lista e seleciona automaticamente
       modalData.value.unshift(response.data)
