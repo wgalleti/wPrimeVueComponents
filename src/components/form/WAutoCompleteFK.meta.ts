@@ -14,5 +14,15 @@ export default defineComponentMeta({
         placeholder: 'Buscar cliente...',
       },
     },
+    {
+      name: 'Seleção múltipla',
+      props: {
+        modelValue: [],
+        endpoint: '/api/clientes',
+        multiple: true,
+        optionLabel: 'nome',
+        placeholder: 'Buscar clientes...',
+      },
+    },
   ],
 })

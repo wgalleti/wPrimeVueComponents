@@ -32,14 +32,20 @@ interface DrilldownFilter {
   required?: boolean
 }
 
+/** Valor aceito no `v-model`: id, objeto ou — em `multiple` — lista de ids/objetos. */
+type FKValue = string | number | Record<string, unknown>
+
 const props = withDefaults(
   defineProps<{
-    modelValue: string | number | Record<string, unknown> | null
+    modelValue: FKValue | FKValue[] | null
     endpoint: string
     endpointParams?: Record<string, string | number | boolean>
     /** Filtro(s) em cascata resolvido(s): aplicado(s) como parâmetro na busca. Com
      *  `required` (default true), a busca só ocorre quando o valor estiver preenchido. */
     drilldown?: DrilldownFilter | DrilldownFilter[]
+    /** Seleção múltipla: o campo vira chips e o `v-model` passa a ser uma lista
+     *  de objetos. O modal de pesquisa ganha caixas de marcação. */
+    multiple?: boolean
     optionLabel?: string
     optionValue?: string
     placeholder?: string
@@ -64,6 +70,7 @@ const props = withDefaults(
     autofocus?: boolean
   }>(),
   {
+    multiple: false,
     optionLabel: 'nome',
     optionValue: 'id',
     placeholder: 'Buscar...',
@@ -80,7 +87,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  'update:modelValue': [value: Record<string, unknown> | null]
+  /** Objeto selecionado — ou a lista de objetos quando `multiple`. */
+  'update:modelValue': [value: Record<string, unknown> | Record<string, unknown>[] | null]
 }>()
 
 // O template tem múltiplos nós raiz (o campo + os overlays Dialog/WCrudFormDialog).
@@ -102,8 +110,36 @@ const { confirmDelete: confirmDeleteDialog } = useAppConfirm()
 // ---------------------------------------------------------------------------
 
 const selectedItem = ref<Record<string, unknown> | null>(null)
+/** Seleção quando `multiple` — o campo mostra um chip por item. */
+const selectedItems = ref<Record<string, unknown>[]>([])
 const suggestions = ref<Record<string, unknown>[]>([])
 const searching = ref(false)
+
+/** Valor entregue ao AutoComplete: objeto (single) ou lista (multiple). */
+const acModel = computed(() => (props.multiple ? selectedItems.value : selectedItem.value))
+
+/** Identificador escalar de um valor do v-model (id cru ou objeto já resolvido). */
+function keyOf(v: unknown): unknown {
+  if (v && typeof v === 'object') return (v as Record<string, unknown>)[props.optionValue]
+  return v
+}
+
+function dedupeByKey(itens: Record<string, unknown>[]): Record<string, unknown>[] {
+  const vistos = new Set<unknown>()
+  const out: Record<string, unknown>[] = []
+  for (const item of itens) {
+    const k = keyOf(item)
+    if (vistos.has(k)) continue
+    vistos.add(k)
+    out.push(item)
+  }
+  return out
+}
+
+function emitSelection() {
+  emit('update:modelValue', props.multiple ? [...selectedItems.value] : selectedItem.value)
+}
+
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 // Referência ao AutoComplete para aplicar o autofocus no input nativo.
@@ -168,13 +204,35 @@ const effectivePlaceholder = computed(() =>
     : props.placeholder,
 )
 
-async function fetchById(id: string | number) {
+async function fetchOne(id: string | number): Promise<Record<string, unknown> | null> {
   try {
     const response = await provider.get(props.endpoint, id)
-    selectedItem.value = response.data
+    return response.data
   } catch {
-    selectedItem.value = null
+    return null
   }
+}
+
+async function fetchById(id: string | number) {
+  selectedItem.value = await fetchOne(id)
+}
+
+/** Resolve a lista do v-model: objeto já resolvido passa direto, id vira GET. */
+async function resolveMany(valores: FKValue[]): Promise<Record<string, unknown>[]> {
+  const itens = await Promise.all(
+    valores.map(async (v) => {
+      if (v && typeof v === 'object') {
+        const obj = v as Record<string, unknown>
+        if (props.optionLabel in obj) return obj
+        const id = obj[props.optionValue]
+        return id != null ? await fetchOne(id as string | number) : null
+      }
+      // Reaproveita o que já está resolvido — evita GET a cada mudança da lista.
+      const atual = selectedItems.value.find((i) => i[props.optionValue] === v)
+      return atual ?? (await fetchOne(v as string | number))
+    }),
+  )
+  return itens.filter((i): i is Record<string, unknown> => i !== null)
 }
 
 async function search(query: string) {
@@ -211,19 +269,44 @@ function onSearch(event: { query: string }) {
 }
 
 function onSelect(event: { value: Record<string, unknown> }) {
+  // Em `multiple` o AutoComplete já mantém a lista — tratado em `onAcUpdate`.
+  if (props.multiple) return
   selectedItem.value = event.value
   emit('update:modelValue', event.value)
 }
 
+/** Em `multiple`, o AutoComplete emite a lista inteira ao marcar/remover chip. */
+function onAcUpdate(value: unknown) {
+  if (!props.multiple) return
+  selectedItems.value = dedupeByKey(
+    Array.isArray(value) ? (value as Record<string, unknown>[]) : [],
+  )
+  emitSelection()
+}
+
 function onClear() {
+  // Em `multiple`, o AutoComplete emite `clear` também quando só descarta o texto
+  // digitado (`forceSelection` sem correspondência) — limpar a lista aqui apagaria
+  // a seleção inteira a cada busca sem match. O clear real chega como
+  // `update:modelValue` (ícone de limpar), tratado em `onAcUpdate`.
+  if (props.multiple) return
   selectedItem.value = null
-  emit('update:modelValue', null)
+  emitSelection()
 }
 
 // Resolve initial value
 watch(
   () => props.modelValue,
   async (newVal) => {
+    if (props.multiple) {
+      const lista = newVal == null ? [] : Array.isArray(newVal) ? newVal : [newVal]
+      const chaves = lista.map(keyOf)
+      const atuais = selectedItems.value.map((i) => i[props.optionValue])
+      // Mesma lista (na mesma ordem) → nada a resolver; evita loop com o emit.
+      if (chaves.length === atuais.length && chaves.every((k, i) => k === atuais[i])) return
+      selectedItems.value = await resolveMany(lista)
+      return
+    }
     if (newVal != null) {
       if (typeof newVal === 'object' && newVal !== null && props.optionLabel in newVal) {
         selectedItem.value = newVal as Record<string, unknown>
@@ -250,7 +333,14 @@ const modalSearch = ref('')
 const modalPage = ref(1)
 const modalPageSize = ref(15)
 const modalTotalRecords = ref(0)
-const modalSelection = ref<Record<string, unknown> | null>(null)
+const modalSelection = ref<Record<string, unknown> | Record<string, unknown>[] | null>(null)
+
+/** Itens marcados no modal, normalizados (single ou multiple). */
+const modalSelecionados = computed<Record<string, unknown>[]>(() => {
+  const sel = modalSelection.value
+  if (!sel) return []
+  return Array.isArray(sel) ? sel : [sel]
+})
 const modalSortField = ref<string | null>(null)
 const modalSortOrder = ref<1 | -1 | 0>(0)
 let modalSearchTimer: ReturnType<typeof setTimeout> | null = null
@@ -346,7 +436,8 @@ function openModal() {
   modalPage.value = 1
   modalSortField.value = null
   modalSortOrder.value = 0
-  modalSelection.value = null
+  // Em `multiple` o modal abre já com o que está selecionado no campo.
+  modalSelection.value = props.multiple ? [...selectedItems.value] : null
   modalVisible.value = true
   fetchModalData()
 }
@@ -365,13 +456,26 @@ function onModalSort(event: { sortField?: string; sortOrder?: 1 | -1 | 0 }) {
 }
 
 function confirmModalSelection() {
-  if (!modalSelection.value) return
-  selectedItem.value = modalSelection.value
-  emit('update:modelValue', modalSelection.value)
+  if (props.multiple) {
+    selectedItems.value = dedupeByKey(modalSelecionados.value)
+    emitSelection()
+    modalVisible.value = false
+    return
+  }
+  const sel = modalSelecionados.value[0]
+  if (!sel) return
+  selectedItem.value = sel
+  emit('update:modelValue', sel)
   modalVisible.value = false
 }
 
 function onRowDblClick(event: { data: Record<string, unknown> }) {
+  // Em `multiple`, o duplo clique acrescenta à marcação e o modal continua
+  // aberto — fechar a cada item tornaria a seleção de vários penosa.
+  if (props.multiple) {
+    modalSelection.value = dedupeByKey([...modalSelecionados.value, event.data])
+    return
+  }
   selectedItem.value = event.data
   emit('update:modelValue', event.data)
   modalVisible.value = false
@@ -420,7 +524,8 @@ function onModalGridKeydown(e: KeyboardEvent) {
   if (e.key === 'Enter') {
     e.preventDefault()
     e.stopPropagation()
-    if (modalSelection.value) confirmModalSelection()
+    // Em `multiple` o Enter confirma a marcação atual, inclusive vazia (= limpar).
+    if (props.multiple || modalSelecionados.value.length) confirmModalSelection()
   }
   // Espaço e setas: tratados nativamente pelo DataTable (marca/navega).
 }
@@ -446,7 +551,14 @@ watch(
     if (!antigos) return
     const mudou = novos.some((v, i) => v !== antigos[i])
     const tinhaValorAntes = antigos.some((v) => !isEmptyValue(v))
-    if (mudou && tinhaValorAntes && selectedItem.value) {
+    if (!mudou || !tinhaValorAntes) return
+    if (props.multiple) {
+      if (!selectedItems.value.length) return
+      selectedItems.value = []
+      emitSelection()
+      return
+    }
+    if (selectedItem.value) {
       selectedItem.value = null
       emit('update:modelValue', null)
     }
@@ -552,8 +664,10 @@ async function saveForm() {
     formDialogVisible.value = false
     editingItem.value = null
 
-    // Auto-seleciona o registro criado/editado
-    modalSelection.value = response.data
+    // Auto-seleciona o registro criado/editado (em `multiple`, acrescenta)
+    modalSelection.value = props.multiple
+      ? dedupeByKey([...modalSelecionados.value, response.data])
+      : response.data
   } catch (err) {
     toast.error(extractApiError(err, 'Erro ao salvar registro'))
   } finally {
@@ -571,13 +685,21 @@ function confirmDelete(item: Record<string, unknown>) {
         modalData.value.splice(idx, 1)
         modalTotalRecords.value--
       }
-      // Se o item deletado era a seleção atual, limpa
-      if (selectedItem.value && selectedItem.value[props.optionValue] === pk) {
-        selectedItem.value = null
-        emit('update:modelValue', null)
-      }
-      if (modalSelection.value && modalSelection.value[props.optionValue] === pk) {
-        modalSelection.value = null
+      // Se o item deletado estava selecionado, sai da seleção
+      if (props.multiple) {
+        if (selectedItems.value.some((i) => i[props.optionValue] === pk)) {
+          selectedItems.value = selectedItems.value.filter((i) => i[props.optionValue] !== pk)
+          emitSelection()
+        }
+        modalSelection.value = modalSelecionados.value.filter((i) => i[props.optionValue] !== pk)
+      } else {
+        if (selectedItem.value && selectedItem.value[props.optionValue] === pk) {
+          selectedItem.value = null
+          emit('update:modelValue', null)
+        }
+        if (modalSelecionados.value[0]?.[props.optionValue] === pk) {
+          modalSelection.value = null
+        }
       }
       toast.success('Registro excluído com sucesso')
     } catch (err) {
@@ -591,8 +713,9 @@ function confirmDelete(item: Record<string, unknown>) {
   <div class="w-autocompletefk" v-bind="$attrs">
     <AutoComplete
       ref="acRef"
-      :model-value="selectedItem"
+      :model-value="acModel"
       :suggestions="suggestions"
+      :multiple="multiple"
       :option-label="optionLabel"
       :placeholder="effectivePlaceholder"
       :disabled="disabled"
@@ -601,6 +724,7 @@ function confirmDelete(item: Record<string, unknown>) {
       fluid
       @complete="onSearch"
       @item-select="onSelect"
+      @update:model-value="onAcUpdate"
       @clear="onClear"
       @keydown="onInputKeydown"
     />
@@ -665,13 +789,13 @@ function confirmDelete(item: Record<string, unknown>) {
         :total-records="modalTotalRecords"
         :sort-field="modalSortField ?? undefined"
         :sort-order="modalSortOrder"
-        selection-mode="single"
+        :selection-mode="multiple ? 'multiple' : 'single'"
         :data-key="optionValue"
         @page="onModalPage"
         @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
         @row-dblclick="onRowDblClick"
       >
-        <Column selection-mode="single" header-style="width: 3rem" />
+        <Column :selection-mode="multiple ? 'multiple' : 'single'" header-style="width: 3rem" />
         <Column
           v-for="col in modalColumns"
           :key="col.field"
@@ -730,9 +854,13 @@ function confirmDelete(item: Record<string, unknown>) {
       <div class="w-autocompletefk-footer">
         <Button label="Cancelar" severity="secondary" text @click="modalVisible = false" />
         <Button
-          label="Selecionar"
+          :label="
+            multiple && modalSelecionados.length
+              ? `Selecionar (${modalSelecionados.length})`
+              : 'Selecionar'
+          "
           icon="pi pi-check"
-          :disabled="!modalSelection"
+          :disabled="!multiple && !modalSelecionados.length"
           @click="confirmModalSelection"
         />
       </div>

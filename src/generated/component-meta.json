@@ -244,6 +244,13 @@
           "description": ""
         },
         {
+          "name": "cardBare",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": "Cards \"sem moldura\": remove o chrome padrão do card (borda/sombra/padding/\nseleção) para o slot `#card` desenhar o card inteiro (ex.: um card de design\npróprio). O wrapper vira só a célula do grid."
+        },
+        {
           "name": "actionRail",
           "type": "boolean | undefined",
           "required": false,
@@ -364,6 +371,11 @@
           "description": ""
         },
         {
+          "name": "card",
+          "type": "{ data: any; crud: CrudManagerReturn<any>; columns: ColumnDef[]; index: number; }",
+          "description": ""
+        },
+        {
           "name": "rail-actions",
           "type": "{ selected: Record<string, unknown> | null; crud: CrudManagerReturn<any>; }",
           "description": ""
@@ -385,7 +397,7 @@
       "props": [
         {
           "name": "modelValue",
-          "type": "string | number | Record<string, unknown> | null",
+          "type": "FKValue | FKValue[] | null",
           "required": true,
           "default": null,
           "description": ""
@@ -410,6 +422,13 @@
           "required": false,
           "default": null,
           "description": "Filtro(s) em cascata resolvido(s): aplicado(s) como parâmetro na busca. Com\n`required` (default true), a busca só ocorre quando o valor estiver preenchido."
+        },
+        {
+          "name": "multiple",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Seleção múltipla: o campo vira chips e o `v-model` passa a ser uma lista\nde objetos. O modal de pesquisa ganha caixas de marcação."
         },
         {
           "name": "optionLabel",
@@ -534,7 +553,7 @@
       "events": [
         {
           "name": "update:modelValue",
-          "type": "[value: Record<string, unknown> | null]",
+          "type": "[value: Record<string, unknown> | Record<string, unknown>[] | null]",
           "description": ""
         }
       ],

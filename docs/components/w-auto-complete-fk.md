@@ -141,6 +141,37 @@ const form: FieldDef[] = [
 />
 ```
 
+## Selecao multipla (v0.9.6+)
+
+Com `multiple`, o campo vira uma lista de chips e o modal de pesquisa ganha caixas de marcacao.
+Tipico em filtro de painel/relatorio ("comparar estes 3 fornecedores").
+
+```vue
+<WAutoCompleteFK
+  v-model="fornecedores"
+  endpoint="/api/v1/fornecedores/"
+  multiple
+  option-label="nome"
+  placeholder="Todos"
+  dialog-header="Selecionar fornecedores"
+/>
+```
+
+Comportamento:
+
+- **v-model** e uma **lista de objetos**. Pode entrar como lista de ids (cada id vira um `GET endpoint/{id}/`),
+  lista de objetos ja resolvidos, ou `[]` / `null` para vazio. O que sai no `update:modelValue` e sempre a
+  lista de objetos — mapeie para ids no consumidor: `fornecedores.map((f) => f.id)`.
+- **Chips**: remover um chip emite a lista sem ele; `showClear` limpa tudo.
+- **Modal**: abre ja marcando o que esta selecionado e o botao mostra a contagem (`Selecionar (3)`).
+  Duplo clique **acrescenta** a marcacao (sem fechar o modal); `Enter` no grid confirma — inclusive
+  vazio, que limpa a selecao.
+- **Duplicados** sao descartados pela chave `optionValue`.
+- **Cascata (`drilldown`)**: ao trocar o pai, a lista inteira e limpa, como no modo simples.
+
+> `multiple` e para uso **standalone** (filtros, telas de comparacao). O `FieldDef` de formulario
+> (`type: 'fk'`) continua single — relacao N:N em formulario ainda nao e suportada.
+
 ## Formato de Resposta Esperado
 
 ```json
