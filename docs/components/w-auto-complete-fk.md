@@ -162,7 +162,22 @@ Comportamento:
 - **v-model** e uma **lista de objetos**. Pode entrar como lista de ids (cada id vira um `GET endpoint/{id}/`),
   lista de objetos ja resolvidos, ou `[]` / `null` para vazio. O que sai no `update:modelValue` e sempre a
   lista de objetos — mapeie para ids no consumidor: `fornecedores.map((f) => f.id)`.
-- **Chips**: remover um chip emite a lista sem ele; `showClear` limpa tudo.
+- **Chips**: correm lado a lado e truncam com reticencias — nenhum chip estica o campo. Remover um chip
+  emite a lista sem ele.
+- **Limpar tudo**: com `showClear` (padrao), um `x` aparece ao lado da lupa quando ha selecao, nos dois
+  modos (simples e multiplo).
+- **`maxChips`**: em campo estreito (filtro de painel), mostra N chips e resume o resto num chip `+N`,
+  com os nomes escondidos no tooltip. `0` (padrao) mostra todos.
+
+```vue
+<WAutoCompleteFK
+  v-model="fornecedores"
+  endpoint="/api/v1/fornecedores/"
+  multiple
+  :max-chips="1"
+  placeholder="Todos"
+/>
+```
 - **Modal**: abre ja marcando o que esta selecionado e o botao mostra a contagem (`Selecionar (3)`).
   Duplo clique **acrescenta** a marcacao (sem fechar o modal); `Enter` no grid confirma — inclusive
   vazio, que limpa a selecao.
