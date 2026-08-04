@@ -160,6 +160,13 @@ const chipsOcultosLabel = computed(() =>
   selectedItems.value.slice(props.maxChips).map(labelOf).join(', '),
 )
 
+/** O `x` do chip remove só aquele item — sem deixar o clique subir para o chip
+ *  (que abre a listagem). */
+function onChipRemove(event: Event, remove: (event: Event) => void) {
+  event?.stopPropagation?.()
+  remove(event)
+}
+
 /** Limpar tudo: em `multiple` a lista inteira; no simples, o valor. */
 function limparSelecao() {
   if (props.disabled) return
@@ -179,7 +186,7 @@ function limparSelecao() {
  *  chip ilegível em campo estreito (aí eles quebram para a linha de baixo). */
 const chipStyle = computed(() =>
   props.multiple && props.maxChips > 0
-    ? { '--w-fk-chip-max': `max(7rem, calc((100% - 4.5rem) / ${props.maxChips}))` }
+    ? { '--w-fk-chip-max': `max(6rem, calc((100% - 6rem) / ${props.maxChips}))` }
     : undefined,
 )
 
@@ -251,6 +258,12 @@ const effectivePlaceholder = computed(() =>
   blockedByRequired.value && props.blockedPlaceholder
     ? props.blockedPlaceholder
     : props.placeholder,
+)
+
+/** Em `multiple` o placeholder some quando já há chips — ele descreve o estado
+ *  "sem filtro"; ao lado de uma seleção viraria informação contraditória. */
+const placeholderVisivel = computed(() =>
+  props.multiple && selectedItems.value.length ? undefined : effectivePlaceholder.value,
 )
 
 async function fetchOne(id: string | number): Promise<Record<string, unknown> | null> {
@@ -771,7 +784,7 @@ function confirmDelete(item: Record<string, unknown>) {
       :suggestions="suggestions"
       :multiple="multiple"
       :option-label="optionLabel"
-      :placeholder="effectivePlaceholder"
+      :placeholder="placeholderVisivel"
       :disabled="disabled"
       :force-selection="forceSelection"
       :loading="searching"
@@ -783,21 +796,25 @@ function confirmDelete(item: Record<string, unknown>) {
       @clear="onClear"
       @keydown="onInputKeydown"
     >
-      <!-- Com `maxChips`, os excedentes viram um chip `+N` (o resto some do
-           campo mas continua no tooltip) — chip nenhum pode esticar a caixa. -->
-      <template v-if="multiple && maxChips > 0" #chip="{ value, index, removeCallback }">
+      <!-- Chip clicado abre a listagem já marcada com a seleção atual. Com
+           `maxChips`, os excedentes viram um chip `+N` (somem do campo, mas
+           continuam no tooltip) — chip nenhum pode esticar a caixa. -->
+      <template v-if="multiple" #chip="{ value, index, removeCallback }">
         <Chip
-          v-if="index < maxChips"
-          class="p-autocomplete-chip"
+          v-if="!maxChips || index < maxChips"
+          v-tooltip.top="labelOf(value)"
+          class="p-autocomplete-chip w-autocompletefk-chip"
           :label="labelOf(value)"
           removable
-          @remove="removeCallback"
+          @click="openModal"
+          @remove="onChipRemove($event, removeCallback)"
         />
         <Chip
           v-else-if="index === maxChips"
           v-tooltip.top="chipsOcultosLabel"
-          class="p-autocomplete-chip w-autocompletefk-chip-more"
+          class="p-autocomplete-chip w-autocompletefk-chip w-autocompletefk-chip-more"
           :label="`+${chipsOcultos}`"
+          @click="openModal"
         />
         <span v-else class="w-autocompletefk-chip-hidden" />
       </template>
