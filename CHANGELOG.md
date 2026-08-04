@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.6](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.5...v0.9.6) (2026-08-04)
+
+### Funcionalidades
+
+* **WAutoCompleteFK:** limpar seleção e chips que respeitam a largura do campo ([3b2be0e](https://github.com/wgalleti/wPrimeVueComponents/commit/3b2be0eb394f608319af506ffa5d5ba1cd4d224a))
+* **WAutoCompleteFK:** seleção múltipla (chips + marcação no modal) ([9efa96c](https://github.com/wgalleti/wPrimeVueComponents/commit/9efa96cf5ea0f238978dc9f8834d28c32ff716c0))
+
+### Correções
+
+* **WAutoCompleteFK:** alinhamento do ícone, quebra de linha e chip que abre a listagem ([ea21d60](https://github.com/wgalleti/wPrimeVueComponents/commit/ea21d60a5e0b8645e01e54c1b384cba88bd94f6e))
 ## [0.9.5](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.4...v0.9.5) (2026-08-03)
 
 ### Funcionalidades
