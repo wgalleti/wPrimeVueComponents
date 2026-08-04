@@ -427,12 +427,47 @@
   width: 100%;
 }
 
+/* `min-width: 0` desarma o mínimo intrínseco do flex: sem isso um chip de nome
+   longo (modo `multiple`) estica o campo além do container e empurra a tela. */
 .w-autocompletefk .p-autocomplete {
   flex: 1;
+  min-width: 0;
 }
 
 .w-autocompletefk .p-autocomplete-input {
   padding-right: 2.5rem;
+}
+
+/* multiple: quem faz o papel de input é a lista de chips — mesmo respiro à
+   direita para os chips não passarem por baixo da lupa. O campo cresce com a
+   seleção, mas até um teto (≈3 linhas) e então rola: um filtro não pode
+   empurrar o resto da tela. */
+.w-autocompletefk .p-autocomplete-input-multiple {
+  padding-right: 2.5rem;
+  min-width: 0;
+  max-height: 7rem;
+  overflow-y: auto;
+}
+
+/* Nome longo não estica nem quebra o chip — uma linha com reticências. */
+.w-autocompletefk .p-autocomplete-chip-item,
+.w-autocompletefk .p-autocomplete-chip {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.w-autocompletefk .p-autocomplete-chip .p-chip-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Com vários chips o campo cresce em altura; a lupa acompanha a primeira
+   linha em vez de flutuar no meio da caixa. */
+.w-autocompletefk:has(.p-autocomplete-input-multiple) .w-autocompletefk-trigger {
+  align-items: flex-start;
+  padding-top: var(--p-autocomplete-padding-y, 0.5rem);
 }
 
 /* Search trigger — apenas o ícone (lupa) sobreposto à direita do input */
