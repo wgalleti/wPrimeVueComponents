@@ -911,7 +911,11 @@ onMounted(() => {
                     <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
                     <span class="w-crud-card-value">
                       <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
-                        <WCrudColumnRenderer :column="col" :value="row[col.field]" :row-data="row" />
+                        <WCrudColumnRenderer
+                          :column="col"
+                          :value="row[col.field]"
+                          :row-data="row"
+                        />
                       </slot>
                     </span>
                   </div>
