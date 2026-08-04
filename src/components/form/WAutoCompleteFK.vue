@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed, inject, reactive, nextTick, onMounted } from 'vue'
 import AutoComplete from 'primevue/autocomplete'
+import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -46,6 +47,9 @@ const props = withDefaults(
     /** Seleção múltipla: o campo vira chips e o `v-model` passa a ser uma lista
      *  de objetos. O modal de pesquisa ganha caixas de marcação. */
     multiple?: boolean
+    /** Em `multiple`, quantos chips mostrar antes de resumir o resto em `+N`
+     *  (0 = mostrar todos). Útil em campo estreito, tipo filtro de painel. */
+    maxChips?: number
     optionLabel?: string
     optionValue?: string
     placeholder?: string
@@ -71,6 +75,7 @@ const props = withDefaults(
   }>(),
   {
     multiple: false,
+    maxChips: 0,
     optionLabel: 'nome',
     optionValue: 'id',
     placeholder: 'Buscar...',
@@ -139,6 +144,50 @@ function dedupeByKey(itens: Record<string, unknown>[]): Record<string, unknown>[
 function emitSelection() {
   emit('update:modelValue', props.multiple ? [...selectedItems.value] : selectedItem.value)
 }
+
+function labelOf(item: unknown): string {
+  const v = (item as Record<string, unknown>)?.[props.optionLabel]
+  return v == null ? '' : String(v)
+}
+
+/** Quantos chips ficam escondidos atrás do `+N` (0 quando cabem todos). */
+const chipsOcultos = computed(() =>
+  props.maxChips > 0 ? Math.max(0, selectedItems.value.length - props.maxChips) : 0,
+)
+
+/** Nomes resumidos no `+N` — viram tooltip para não esconder informação. */
+const chipsOcultosLabel = computed(() =>
+  selectedItems.value.slice(props.maxChips).map(labelOf).join(', '),
+)
+
+/** Limpar tudo: em `multiple` a lista inteira; no simples, o valor. */
+function limparSelecao() {
+  if (props.disabled) return
+  if (props.multiple) {
+    if (!selectedItems.value.length) return
+    selectedItems.value = []
+  } else {
+    if (!selectedItem.value) return
+    selectedItem.value = null
+  }
+  emitSelection()
+}
+
+/** Com `maxChips`, cada chip fica com uma fração da largura do campo — assim
+ *  eles dividem a linha (em vez de um por linha) e truncam o que não couber.
+ *  A reserva cobre o chip `+N` e a área de digitação; o piso de 7rem impede
+ *  chip ilegível em campo estreito (aí eles quebram para a linha de baixo). */
+const chipStyle = computed(() =>
+  props.multiple && props.maxChips > 0
+    ? { '--w-fk-chip-max': `max(7rem, calc((100% - 4.5rem) / ${props.maxChips}))` }
+    : undefined,
+)
+
+/** Mostra o "limpar" só quando há o que limpar (e o consumidor permite). */
+const mostrarLimpar = computed(() => {
+  if (!props.showClear || props.disabled) return false
+  return props.multiple ? selectedItems.value.length > 0 : selectedItem.value !== null
+})
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -710,7 +759,12 @@ function confirmDelete(item: Record<string, unknown>) {
 </script>
 
 <template>
-  <div class="w-autocompletefk" v-bind="$attrs">
+  <div
+    class="w-autocompletefk"
+    :class="{ 'w-autocompletefk-has-clear': mostrarLimpar }"
+    :style="chipStyle"
+    v-bind="$attrs"
+  >
     <AutoComplete
       ref="acRef"
       :model-value="acModel"
@@ -721,13 +775,44 @@ function confirmDelete(item: Record<string, unknown>) {
       :disabled="disabled"
       :force-selection="forceSelection"
       :loading="searching"
+      :show-clear="false"
       fluid
       @complete="onSearch"
       @item-select="onSelect"
       @update:model-value="onAcUpdate"
       @clear="onClear"
       @keydown="onInputKeydown"
-    />
+    >
+      <!-- Com `maxChips`, os excedentes viram um chip `+N` (o resto some do
+           campo mas continua no tooltip) — chip nenhum pode esticar a caixa. -->
+      <template v-if="multiple && maxChips > 0" #chip="{ value, index, removeCallback }">
+        <Chip
+          v-if="index < maxChips"
+          class="p-autocomplete-chip"
+          :label="labelOf(value)"
+          removable
+          @remove="removeCallback"
+        />
+        <Chip
+          v-else-if="index === maxChips"
+          v-tooltip.top="chipsOcultosLabel"
+          class="p-autocomplete-chip w-autocompletefk-chip-more"
+          :label="`+${chipsOcultos}`"
+        />
+        <span v-else class="w-autocompletefk-chip-hidden" />
+      </template>
+    </AutoComplete>
+    <button
+      v-if="mostrarLimpar"
+      v-tooltip.top="'Limpar'"
+      type="button"
+      data-kbd-skip
+      tabindex="-1"
+      class="w-autocompletefk-clear"
+      @click="limparSelecao"
+    >
+      <i class="pi pi-times" />
+    </button>
     <button
       v-tooltip.top="'Pesquisar (F2)'"
       type="button"

@@ -36,8 +36,10 @@ Autocomplete inline + modal de pesquisa (tabela paginada, CRUD embutido opcional
 - Cascata (filtra por outro campo): prop `drilldown` no componente standalone; via `FieldDef { type: 'fk' }` o mesmo se declara com **`dependsOn`**.
 - `canCreate`/`canEdit`/`canDelete` + `crudFields`/`crudColumns` habilitam CRUD dentro do modal.
 - **`multiple`** (0.9.6+): vira chips e o modal ganha marcação múltipla. `v-model` = **lista de objetos**
-  (entra id ou objeto; sai objeto → mapeie com `.map((o) => o.id)`). É para filtro/tela de comparação
-  standalone — `FieldDef { type: 'fk' }` continua single.
+  (entra id ou objeto; sai objeto → mapeie com `.map((o) => o.id)`). Chips correm lado a lado e truncam;
+  `maxChips` resume o excedente num chip `+N` (bom em filtro estreito). `showClear` mostra um `x` de
+  limpar tudo ao lado da lupa. É para filtro/tela de comparação standalone — `FieldDef { type: 'fk' }`
+  continua single.
 
 ## Outros de formulário
 

@@ -431,6 +431,13 @@
           "description": "Seleção múltipla: o campo vira chips e o `v-model` passa a ser uma lista\nde objetos. O modal de pesquisa ganha caixas de marcação."
         },
         {
+          "name": "maxChips",
+          "type": "number | undefined",
+          "required": false,
+          "default": "0",
+          "description": "Em `multiple`, quantos chips mostrar antes de resumir o resto em `+N`\n(0 = mostrar todos). Útil em campo estreito, tipo filtro de painel."
+        },
+        {
           "name": "optionLabel",
           "type": "string | undefined",
           "required": false,
