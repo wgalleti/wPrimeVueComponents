@@ -162,8 +162,9 @@ Comportamento:
 - **v-model** e uma **lista de objetos**. Pode entrar como lista de ids (cada id vira um `GET endpoint/{id}/`),
   lista de objetos ja resolvidos, ou `[]` / `null` para vazio. O que sai no `update:modelValue` e sempre a
   lista de objetos — mapeie para ids no consumidor: `fornecedores.map((f) => f.id)`.
-- **Chips**: correm lado a lado e truncam com reticencias — nenhum chip estica o campo. Remover um chip
-  emite a lista sem ele.
+- **Chips**: correm lado a lado e truncam com reticencias (nome completo no tooltip) — nenhum chip estica
+  o campo. Clicar no chip abre a listagem ja marcada com a selecao atual; o `x` do chip so remove aquele item.
+- **Placeholder**: some assim que ha selecao (ele descreve o estado "sem filtro").
 - **Limpar tudo**: com `showClear` (padrao), um `x` aparece ao lado da lupa quando ha selecao, nos dois
   modos (simples e multiplo).
 - **`maxChips`**: em campo estreito (filtro de painel), mostra N chips e resume o resto num chip `+N`,

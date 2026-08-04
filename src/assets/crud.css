@@ -472,10 +472,16 @@
 }
 
 /* O campo de digitação divide a linha com os chips em vez de exigir a linha
-   toda (padrão do input é ~20 caracteres de largura mínima). */
+   toda (padrão do input é ~20 caracteres de largura mínima). Ele é o primeiro
+   a ceder espaço: com filtro selecionado, o que importa ver é o chip. */
 .w-autocompletefk .p-autocomplete-input-chip {
-  flex: 1 1 4rem;
-  min-width: 4rem;
+  flex: 1 1 2rem;
+  min-width: 2rem;
+}
+
+/* Chip é clicável: abre a listagem já marcada com a seleção atual. */
+.w-autocompletefk .w-autocompletefk-chip {
+  cursor: pointer;
 }
 
 /* Resumo `+N` dos chips escondidos por `maxChips`; o `li` do excedente sai do
@@ -488,12 +494,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Com vários chips o campo cresce em altura; os ícones acompanham a primeira
-   linha em vez de flutuar no meio da caixa. */
-.w-autocompletefk:has(.p-autocomplete-input-multiple) .w-autocompletefk-trigger,
-.w-autocompletefk:has(.p-autocomplete-input-multiple) .w-autocompletefk-clear {
-  align-items: flex-start;
-  padding-top: var(--p-autocomplete-padding-y, 0.5rem);
+/* O `+N` não é nome, é contador: ocupa o mínimo e não entra no piso de
+   legibilidade dos chips (senão empurra a digitação para outra linha). */
+.w-autocompletefk .p-autocomplete-chip-item:has(> .w-autocompletefk-chip-more) {
+  min-width: 0;
+  flex: 0 0 auto;
 }
 
 /* Limpar tudo — ícone só-ícone, à esquerda da lupa. O campo cede o espaço dos
