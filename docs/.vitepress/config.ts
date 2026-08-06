@@ -50,6 +50,7 @@ export default defineConfig({
               { text: 'WFileUpload', link: '/components/w-file-upload' },
               { text: 'WMoneyInput', link: '/components/w-money-input' },
               { text: 'WTransferList', link: '/components/w-transfer-list' },
+              { text: 'WTreeSelect', link: '/components/w-tree-select' },
             ],
           },
           {

@@ -8,6 +8,7 @@ import {
   WAutoCompleteFK,
   WMoneyInput,
   WTransferList,
+  WTreeSelect,
 } from './components'
 import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
 
@@ -44,6 +45,7 @@ export const WPrimeVuePlugin: Plugin = {
       app.component('WAutoCompleteFK', WAutoCompleteFK)
       app.component('WMoneyInput', WMoneyInput)
       app.component('WTransferList', WTransferList)
+      app.component('WTreeSelect', WTreeSelect)
     }
   },
 }

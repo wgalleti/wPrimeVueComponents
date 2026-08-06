@@ -1029,6 +1029,154 @@
       ],
       "slots": []
     },
+    "WTreeSelect": {
+      "file": "src/components/form/WTreeSelect.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "TreeSelectId[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Ids das folhas selecionadas (`v-model`). Nunca contém id de grupo."
+        },
+        {
+          "name": "options",
+          "type": "TreeSelectOption[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Lista PLANA de registros. O agrupamento é feito aqui, por `groupBy`."
+        },
+        {
+          "name": "optionValue",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": "Campo do id da folha (default: `id`)."
+        },
+        {
+          "name": "optionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"nome\"",
+          "description": "Campo do rótulo visível (default: `nome`)."
+        },
+        {
+          "name": "groupBy",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Campo que agrupa os registros. Sem ele, a lista sai rasa."
+        },
+        {
+          "name": "groupLabel",
+          "type": "((chave: string) => string) | undefined",
+          "required": false,
+          "default": null,
+          "description": "Rótulo do nó-pai a partir do valor bruto do agrupamento."
+        },
+        {
+          "name": "filter",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Campo de busca interno."
+        },
+        {
+          "name": "filterPlaceholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Buscar...\"",
+          "description": ""
+        },
+        {
+          "name": "filterFields",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Campos extras do registro considerados na busca (além do rótulo)."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum item dispon\\u00EDvel\"",
+          "description": "Texto quando não há nenhuma opção."
+        },
+        {
+          "name": "filterEmptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum item encontrado\"",
+          "description": "Texto quando a busca não encontrou nada."
+        },
+        {
+          "name": "showCount",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Contador `N de M selecionados` acima da árvore."
+        },
+        {
+          "name": "showToggleAll",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Atalhos \"Marcar todos\" / \"Limpar\"."
+        },
+        {
+          "name": "defaultExpanded",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Abre todos os grupos na montagem."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[ids: TreeSelectId[]]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "header",
+          "type": "{ selectedCount: number; total: number; }",
+          "description": ""
+        },
+        {
+          "name": "node",
+          "type": "{ node: TreeSelectNode; }",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{ filtering: boolean; }",
+          "description": ""
+        }
+      ]
+    },
     "WActionBar": {
       "file": "src/components/ui/WActionBar.vue",
       "props": [
