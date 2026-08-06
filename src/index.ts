@@ -15,6 +15,7 @@ export {
   WDateRange,
   WMoneyInput,
   WTransferList,
+  WTreeSelect,
   WStatusTag,
   WPageHeader,
   WDetailHeader,
@@ -90,3 +91,10 @@ export {
 } from './utils/fieldMapper'
 export type { ToCsvOptions } from './utils/csv'
 export { toCsv, downloadCsv } from './utils/csv'
+export type {
+  TreeSelectId,
+  TreeSelectOption,
+  TreeSelectNode,
+  TreeSelectionKeys,
+  TreeSelectionState,
+} from './utils/treeSelect'

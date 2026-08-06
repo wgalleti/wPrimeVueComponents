@@ -45,6 +45,13 @@ Autocomplete inline + modal de pesquisa (tabela paginada, CRUD embutido opcional
 
 - **WMoneyInput** — entrada de moeda preenchida da direita (estilo POS/calculadora). Também disponível via `FieldDef { type: 'currency', fillFromRight: true }`.
 - **WTransferList** — dupla lista (disponíveis ↔ selecionados). Via `FieldDef { type: 'transfer' }`.
+- **WTreeSelect** (0.10.0+) — árvore com checkbox a partir de **lista plana** + `groupBy`. `v-model` =
+  array de **ids de folha** (id de grupo nunca sai). Marcar o grupo alterna todas as folhas dele,
+  inclusive as escondidas pelo filtro. Use quando a escolha é m:n **agrupada** (telas por módulo,
+  permissões por área) e a lista pede busca; para m:n sem grupo, `WTransferList` continua melhor.
+  ⚠️ A seleção é derivada dentro do componente **de propósito** — `v-model:selectionKeys` do `Tree`
+  corrompe o `partialChecked` sob filtro
+  ([primevue#6928](https://github.com/primefaces/primevue/issues/6928), repo arquivado, sem correção).
 - **WDateRange** — intervalo de datas (`v-model` = `[início, fim]` como `Date[]`).
 
 ## UI (layout/apresentação)
