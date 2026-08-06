@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.6...v0.10.0) (2026-08-06)
+
+### Funcionalidades
+
+* **WTreeSelect:** seleção múltipla em árvore com checkbox a partir de lista plana ([c9025cb](https://github.com/wgalleti/wPrimeVueComponents/commit/c9025cb89a50087dfac574428808b4089d2c26b6)), references [primefaces/primevue#6928](https://github.com/wgalleti/wPrimeVueComponents/issues/6928)
 ## [0.9.6](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.5...v0.9.6) (2026-08-04)
 
 ### Funcionalidades
