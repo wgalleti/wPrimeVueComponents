@@ -78,12 +78,78 @@ interface FieldDef {
 
   // image
   accept?: string
+
+  // choice
+  choiceIcon?: string                 // '' desliga o icone do chip selecionado
+
+  // chips
+  chipsEmptyLabel?: string
+  chipsRemoveLabel?: string
 }
 
 type FieldType =
   | 'text' | 'email' | 'password' | 'number' | 'currency'
   | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk'
   | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image'
+  | 'cep' | 'transfer' | 'segmented' | 'choice' | 'chips'
+```
+
+## EditableColumnDef
+
+Coluna do [WEditableTable](/components/w-editable-table) — descreve tambem como se edita a celula
+e o rodape de totais.
+
+```ts
+interface EditableColumnDef {
+  field: string
+  header: string
+  width?: string | number
+  align?: 'left' | 'center' | 'right'
+  editor?: 'number' | 'text' | 'select' | 'none'
+  options?: SelectOption[] | Ref<SelectOption[]>
+  optionLabel?: string
+  optionValue?: string
+  format?: (value: unknown, row: EditableRow) => string
+  footer?: 'sum' | 'none' | ((rows: EditableRow[]) => string)
+  decimals?: number
+  suffix?: string
+  placeholder?: string
+  min?: number
+  max?: number
+  disabled?: boolean | ((row: EditableRow, index: number) => boolean)
+}
+
+type EditableRow = Record<string, unknown>
+```
+
+## CheckListItem
+
+Linha do [WCheckList](/components/w-check-list).
+
+```ts
+interface CheckListItem {
+  nivel: 'ok' | 'warn' | 'bad'
+  label: string
+}
+```
+
+## MapSelectFeature
+
+Item selecionavel do [WMapSelect](/components/w-map-select).
+
+```ts
+interface MapSelectFeature {
+  id: string | number
+  nome: string
+  subtitulo?: string        // entra na busca
+  area?: number             // somada no rodape
+  geometria?: MapSelectGeometry | null   // sem ela, o item so aparece na lista
+}
+
+interface MapSelectGeometry {
+  type: 'Polygon' | 'MultiPolygon'
+  coordinates: [number, number][][] | [number, number][][][]  // [lng, lat], WGS84
+}
 ```
 
 ## RowAction

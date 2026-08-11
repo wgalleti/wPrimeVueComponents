@@ -464,6 +464,28 @@
   min-width: 0;
 }
 
+/* Sugestão em duas linhas (`optionDescription`): o rótulo em cima e o dado que
+   decide a escolha embaixo, em texto de apoio. Só existe quando a prop é passada —
+   sem ela o slot nem é declarado e o render padrão continua o de sempre. */
+.w-fk-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.w-fk-option__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-fk-option__desc {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-muted, #64748b);
+  font-variant-numeric: tabular-nums;
+}
+
 .w-autocompletefk .p-autocomplete-chip .p-chip-label {
   min-width: 0;
   overflow: hidden;
@@ -1567,6 +1589,1314 @@
   }
 }
 
+/* ==========================================================
+   WInfoCard — variante `metric`
+   Linha por campo: rótulo à esquerda, número grande à direita.
+   ========================================================== */
+
+.w-info-card-metrics {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-info-card-metric {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.625rem);
+  padding: var(--space-3, 0.75rem) 0;
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-info-card-metric:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.w-info-card-metric:last-child {
+  padding-bottom: 0;
+}
+
+.w-info-card-metric-label {
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-regular, 400);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  min-width: 0;
+}
+
+.w-info-card-metric-value {
+  margin-left: auto;
+  font-size: var(--text-xl, 1.25rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: 1;
+  color: var(--fg, var(--p-text-color));
+  font-variant-numeric: tabular-nums;
+}
+
+.w-info-card-metric-suffix {
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* ==========================================================
+   WCheckList — .w-check-list
+   ========================================================== */
+
+.w-check-list {
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--surface, var(--p-content-background));
+  overflow: hidden;
+}
+
+.w-check-list__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.8125rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-check-list__title {
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-check-list__count {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  padding: 0 var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-check-list__items {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2, 0.5rem) 0;
+}
+
+.w-check-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2, 0.5625rem);
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+}
+
+.w-check-list__item i {
+  font-size: var(--text-sm, 0.8125rem);
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.w-check-list__icon--ok {
+  color: var(--success, var(--p-green-500, #22c55e));
+}
+
+.w-check-list__icon--warn {
+  color: var(--warning, var(--p-yellow-500, #eab308));
+}
+
+.w-check-list__icon--bad {
+  color: var(--danger, var(--p-red-500, #ef4444));
+}
+
+.w-check-list__label {
+  min-width: 0;
+  font-size: var(--text-sm, 0.8125rem);
+  line-height: 1.4;
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-check-list__empty {
+  padding: var(--space-4, 1rem);
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* ==========================================================
+   WStepFlow / WStepSection — .w-step-flow, .w-step-section
+   ========================================================== */
+
+/* Empilhado é a base das duas orientações: a horizontal só vira régua a partir
+   de 768px (ver o bloco da orientação horizontal, mais abaixo). */
+.w-step-flow,
+.w-step-flow--vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-step-section {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4, 1rem);
+  min-width: 0;
+}
+
+/* Coluna das badges: a linha conectora é o `flex: 1` embaixo da badge, então ela
+   cresce junto com a altura da etapa aberta. */
+.w-step-section__rail {
+  flex: none;
+  width: 1.875rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.w-step-section__badge {
+  display: grid;
+  place-items: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  flex: none;
+  border-radius: var(--radius-full, 999px);
+  border: 1px solid var(--border-strong, var(--p-content-border-color));
+  background: var(--surface, var(--p-content-background));
+  color: var(--fg-subtle, var(--p-text-muted-color));
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--fw-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-step-section__badge--on {
+  border-color: transparent;
+  background: var(--primary, var(--p-primary-color));
+  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
+}
+
+.w-step-section__line {
+  flex: 1;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--border, var(--p-content-border-color));
+}
+
+.w-step-section__body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: var(--space-5, 1.25rem);
+}
+
+/* A última etapa não liga em nada: sem linha conectora e sem folga embaixo. */
+.w-step-flow--vertical > .w-step-section:last-child .w-step-section__line {
+  display: none;
+}
+
+.w-step-flow--vertical > .w-step-section:last-child .w-step-section__body {
+  padding-bottom: 0;
+}
+
+.w-step-section__card {
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--surface, var(--p-content-background));
+  overflow: hidden;
+}
+
+.w-step-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.875rem) var(--card-pad, 1.25rem);
+}
+
+.w-step-section__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.625rem);
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.w-step-section__trigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-step-section__chevron {
+  flex: none;
+  font-size: var(--text-xs, 0.6875rem);
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+.w-step-section__title {
+  margin: 0;
+  font-size: var(--text-lg, 1.0625rem);
+  font-weight: var(--fw-medium, 600);
+  letter-spacing: -0.01em;
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-step-section__count {
+  display: inline-flex;
+  align-items: center;
+  height: 1.375rem;
+  flex: none;
+  padding: 0 var(--space-2, 0.5625rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-step-section__summary {
+  min-width: 0;
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-step-section__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  flex-shrink: 0;
+}
+
+.w-step-section__content {
+  padding: 0 var(--card-pad, 1.25rem) var(--space-3, 0.875rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+/* Conteúdo que se estende de borda a borda (tabela) anula o padding do corpo. */
+.w-step-section__content > .w-editable-table {
+  margin: 0 calc(-1 * var(--card-pad, 1.25rem));
+}
+
+.w-step-section__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.875rem) var(--card-pad, 1.25rem);
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+}
+
+@media (max-width: 640px) {
+  .w-step-section {
+    gap: var(--space-2, 0.5rem);
+  }
+}
+
+/* ----------------------------------------------------------
+   Orientação horizontal — régua de etapas no topo
+   ----------------------------------------------------------
+   Mobile-first: sem a régua, a etapa horizontal é o mesmo comportamento da
+   vertical (cabeçalho e, embaixo, o corpo da etapa aberta). A régua só entra
+   a partir de 768px — abaixo disso ela não caberia, e a queda é por CSS: o
+   markup é o mesmo nas duas larguras. */
+
+.w-step-flow--horizontal {
+  gap: var(--space-2, 0.5rem);
+}
+
+.w-step-section--horizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2, 0.5rem);
+}
+
+.w-step-section--horizontal .w-step-section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  min-width: 0;
+}
+
+/* A linha conectora é horizontal e vem ANTES da badge: ela liga a etapa
+   anterior a esta. Fora da régua não há o que ligar. */
+.w-step-section--horizontal .w-step-section__line {
+  display: none;
+}
+
+.w-step-section--horizontal .w-step-section__trigger {
+  padding: var(--space-2, 0.5rem);
+  border-radius: var(--radius-md, 0.5rem);
+}
+
+.w-step-section--horizontal .w-step-section__trigger:hover:not(:disabled) {
+  background: var(--surface-3, var(--p-content-hover-background));
+}
+
+.w-step-section--horizontal .w-step-section__title {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: var(--text-base, 0.9375rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* O resumo é o secundário da régua: encolhe (e trunca) bem antes do título —
+   fator alto de propósito, para o título só ceder quando o resumo já sumiu. */
+.w-step-section--horizontal .w-step-section__summary {
+  flex: 0 20 auto;
+}
+
+.w-step-section__badge--done {
+  border-color: transparent;
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-step-section__badge--done .pi {
+  font-size: var(--text-2xs, 0.6875rem);
+}
+
+.w-step-section__panel {
+  min-width: 0;
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--surface, var(--p-content-background));
+  overflow: hidden;
+}
+
+/* Sem cabeçalho dentro do painel, o corpo precisa do respiro de cima. */
+.w-step-section--horizontal .w-step-section__content {
+  padding-top: var(--space-4, 1rem);
+}
+
+@media (min-width: 768px) {
+  .w-step-flow--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--space-3, 0.75rem);
+    row-gap: var(--space-4, 1rem);
+  }
+
+  /* A etapa some como caixa: cabeçalho e painel viram itens do flow. O `order`
+     junta todos os cabeçalhos na primeira linha e joga o painel da etapa ativa
+     para a última, independentemente de qual etapa está aberta. */
+  .w-step-flow--horizontal > .w-step-section--horizontal {
+    display: contents;
+  }
+
+  /* `basis: 0` mantém a régua numa linha só (fatias iguais, encolhendo quando
+     precisa). Com base no conteúdo, um título longo empurraria a última etapa
+     para uma segunda linha — deixaria de ser régua. */
+  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__head {
+    order: 1;
+    flex: 1 1 0;
+  }
+
+  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__panel {
+    order: 2;
+    flex: 0 0 100%;
+  }
+
+  .w-step-flow--horizontal .w-step-section__line {
+    display: block;
+    flex: none;
+    width: var(--space-5, 1.25rem);
+    height: 2px;
+  }
+
+  /* A primeira etapa não vem de lugar nenhum. */
+  .w-step-flow--horizontal > .w-step-section:first-child .w-step-section__line {
+    display: none;
+  }
+
+  /* Trecho já percorrido da régua. */
+  .w-step-section__line--done {
+    background: var(--border-strong, var(--p-content-border-color));
+  }
+}
+
+/* Na régua o resumo só entra quando sobra espaço de verdade: entre 768px e
+   1280px cada etapa fica com um terço da linha, e ali o título é que importa.
+   Abaixo de 768px o resumo volta — lá cada etapa tem a linha inteira para si. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .w-step-section--horizontal .w-step-section__summary {
+    display: none;
+  }
+}
+
+/* ==========================================================
+   WEditableTable — .w-editable-table
+   ========================================================== */
+
+.w-editable-table {
+  min-width: 0;
+}
+
+.w-editable-table__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2, 0.5rem);
+  padding: 0 var(--card-pad, 1.25rem) var(--space-3, 0.875rem);
+}
+
+.w-editable-table__add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.4375rem);
+  height: var(--control-h-sm, 2rem);
+  padding: 0 var(--control-px, 0.75rem);
+  border: 1px solid var(--border-strong, var(--p-content-border-color));
+  border-radius: var(--radius, 0.5rem);
+  background: var(--surface, var(--p-content-background));
+  color: var(--fg, var(--p-text-color));
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+  cursor: pointer;
+  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-editable-table__add:hover:not(:disabled) {
+  background: var(--surface-3, var(--p-content-hover-background));
+}
+
+.w-editable-table__add:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.w-editable-table__add i {
+  font-size: var(--text-xs, 0.6875rem);
+}
+
+.w-editable-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.w-editable-table__table thead tr {
+  background: var(--surface-2, var(--p-content-hover-background));
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-editable-table__table th {
+  padding: var(--space-2, 0.5625rem) var(--space-2, 0.625rem);
+  text-align: left;
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  white-space: nowrap;
+}
+
+.w-editable-table__table td {
+  padding: var(--cell-py, 0.625rem) var(--space-2, 0.625rem);
+  font-size: var(--ui-font, 0.875rem);
+  color: var(--fg, var(--p-text-color));
+  vertical-align: middle;
+}
+
+.w-editable-table__row {
+  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-editable-table__cell--right {
+  text-align: right;
+}
+
+.w-editable-table__cell--center {
+  text-align: center;
+}
+
+.w-editable-table__cell--num,
+.w-editable-table__num {
+  font-variant-numeric: tabular-nums;
+}
+
+.w-editable-table__cell--num .p-inputtext,
+.w-editable-table__cell--right .p-inputtext {
+  text-align: right;
+}
+
+.w-editable-table__text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-editable-table__toggle-col {
+  width: 2.5rem;
+}
+
+.w-editable-table__action-col {
+  width: 2.75rem;
+  text-align: right;
+}
+
+.w-editable-table__toggle {
+  display: grid;
+  place-items: center;
+  width: 1.625rem;
+  height: 1.625rem;
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-sm, 0.375rem);
+  background: var(--surface, var(--p-content-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  cursor: pointer;
+  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-editable-table__toggle:hover {
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-editable-table__toggle i {
+  font-size: var(--text-2xs, 0.625rem);
+}
+
+/* Ícone só-ícone: sem moldura de botão (a moldura só aparece no hover). */
+.w-editable-table__remove {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-left: auto;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm, 0.375rem);
+  background: transparent;
+  color: var(--fg-subtle, var(--p-text-muted-color));
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast, 0.14s) var(--ease, ease),
+    color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-editable-table__remove:hover:not(:disabled) {
+  background: var(--danger-soft, color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent));
+  color: var(--danger, var(--p-red-500, #ef4444));
+}
+
+.w-editable-table__remove:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.w-editable-table__remove i {
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.w-editable-table__expansion > td {
+  padding: 0 var(--space-3, 0.875rem) var(--space-4, 1rem);
+  background: var(--surface-2, var(--p-content-hover-background));
+  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-editable-table__empty {
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem) !important;
+  text-align: center;
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* Régua azul do rodapé de totais — é o fecho da tabela, não uma linha a mais. */
+.w-editable-table__footer {
+  background: var(--surface-2, var(--p-content-hover-background));
+  border-top: 2px solid var(--primary, var(--p-primary-color));
+}
+
+.w-editable-table__footer td {
+  font-weight: var(--fw-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-editable-table__footer-label {
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 600);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* ==========================================================
+   WFormRenderer — segmented / choice / chips
+   ========================================================== */
+
+.w-segmented {
+  display: inline-flex;
+  gap: var(--space-1, 0.25rem);
+  padding: 3px;
+  height: var(--control-h, 2.375rem);
+  border-radius: var(--radius, 0.5rem);
+  background: var(--surface-3, var(--p-content-hover-background));
+}
+
+.w-segmented__option {
+  /* Cresce para dividir o espaço sobrando, mas NUNCA encolhe abaixo do próprio
+     texto: com `flex: 1` (basis 0) + `min-width: 0`, a opção de rótulo mais longo
+     ("Germinação") ficava menor que o conteúdo e o texto vazava do pill. */
+  flex: 1 0 auto;
+  padding: 0 var(--control-px, 0.75rem);
+  border: 0;
+  border-radius: var(--radius-sm, 0.375rem);
+  background: transparent;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-segmented__option:hover:not(:disabled) {
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-segmented__option--on {
+  background: var(--surface, var(--p-content-background));
+  color: var(--fg, var(--p-text-color));
+  font-weight: var(--fw-medium, 600);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(16, 30, 24, 0.06));
+}
+
+.w-segmented__option:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.w-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 0.3125rem);
+}
+
+.w-choice__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.375rem);
+  height: var(--control-h, 2.125rem);
+  padding: 0 var(--control-px, 0.75rem);
+  border: 1px solid var(--border-strong, var(--p-content-border-color));
+  border-radius: var(--radius, 0.5rem);
+  background: var(--surface, var(--p-content-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast, 0.14s) var(--ease, ease),
+    border-color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-choice__option:hover:not(:disabled):not(.w-choice__option--on) {
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-choice__option--on {
+  border-color: var(--primary, var(--p-primary-color));
+  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
+  color: var(--primary, var(--p-primary-color));
+  font-weight: var(--fw-medium, 600);
+}
+
+.w-choice__option:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.w-choice__option i {
+  font-size: var(--text-xs, 0.6875rem);
+}
+
+.w-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.375rem);
+  flex-wrap: wrap;
+  min-height: var(--control-h, 2.125rem);
+  padding: 3px var(--space-1, 0.375rem);
+  border: 1px solid var(--border-strong, var(--p-content-border-color));
+  border-radius: var(--radius, 0.5rem);
+  background: var(--surface, var(--p-content-background));
+}
+
+.w-chips__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  height: 1.5rem;
+  padding: 0 3px 0 var(--space-2, 0.5625rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
+  color: var(--primary, var(--p-primary-color));
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+  white-space: nowrap;
+}
+
+.w-chips__remove {
+  display: grid;
+  place-items: center;
+  width: 1.0625rem;
+  height: 1.0625rem;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+.w-chips__remove:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.w-chips__remove:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.w-chips__remove i {
+  font-size: 0.5625rem;
+}
+
+.w-chips__empty {
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-subtle, var(--p-text-muted-color));
+  padding-left: var(--space-1, 0.25rem);
+}
+
+.w-chips__summary {
+  margin-left: auto;
+  padding-right: var(--space-1, 0.25rem);
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  white-space: nowrap;
+}
+
+.w-chips__summary:empty {
+  display: none;
+}
+
+/* ==========================================================
+   WMapSelect — .w-map-select
+   ========================================================== */
+
+.w-map-select {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.w-map-select--disabled {
+  opacity: 0.7;
+}
+
+.w-map-select__body {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  min-width: 0;
+}
+
+.w-map-select__map {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-md, 0.625rem);
+  background: var(--surface-3, var(--p-content-hover-background));
+  overflow: hidden;
+}
+
+.w-map-select__canvas {
+  width: 100%;
+  height: var(--w-map-h, 460px);
+}
+
+.w-map-select__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-6, 1.5rem);
+  text-align: center;
+  background: var(--surface-2, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--text-sm, 0.8125rem);
+}
+
+.w-map-select__fallback i {
+  font-size: 1.25rem;
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+/* Selo "Satélite": vive SOBRE a imagem, então usa tinta própria (escura fixa),
+   não o token de superfície — que no tema claro sumiria no fundo do mapa. */
+.w-map-select__badge {
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  height: 1.75rem;
+  padding: 0 var(--space-2, 0.625rem);
+  border-radius: var(--radius-full, 999px);
+  background: rgba(15, 31, 48, 0.72);
+  color: #fff;
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+.w-map-select__badge i {
+  font-size: 0.6875rem;
+}
+
+.w-map-select__panel {
+  width: 300px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border, var(--p-content-border-color));
+  margin-left: var(--space-4, 1rem);
+  padding-left: var(--space-4, 1rem);
+}
+
+.w-map-select__panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.625rem);
+  padding-bottom: var(--space-3, 0.75rem);
+}
+
+.w-map-select__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.625rem);
+}
+
+.w-map-select__count {
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-variant-numeric: tabular-nums;
+}
+
+/* Atalho textual, não ação primária: sem moldura de botão. */
+.w-map-select__clear {
+  margin-left: auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--primary, var(--p-primary-color));
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+  cursor: pointer;
+}
+
+.w-map-select__clear:disabled {
+  color: var(--fg-subtle, var(--p-text-muted-color));
+  cursor: default;
+}
+
+.w-map-select__list {
+  flex: 1;
+  min-height: 0;
+  max-height: var(--w-map-list-h, 23.75rem);
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--space-3, 0.75rem);
+}
+
+.w-map-select__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.6875rem);
+  padding: var(--space-2, 0.5625rem) var(--space-2, 0.625rem);
+  border: 1px solid transparent;
+  border-radius: var(--radius, 0.5rem);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-map-select__item:hover:not(:disabled) {
+  background: var(--surface-3, var(--p-content-hover-background));
+}
+
+.w-map-select__item:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-map-select__box {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+  border: 1px solid var(--border-strong, var(--p-content-border-color));
+  border-radius: var(--radius-xs, 0.25rem);
+  background: var(--surface, var(--p-content-background));
+}
+
+.w-map-select__item--on .w-map-select__box {
+  border-color: transparent;
+  background: var(--primary, var(--p-primary-color));
+  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
+}
+
+.w-map-select__box i {
+  font-size: 0.5625rem;
+}
+
+.w-map-select__item-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.w-map-select__item-name {
+  display: block;
+  font-size: var(--ui-font, 0.875rem);
+  font-weight: var(--fw-medium, 600);
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-map-select__item-sub {
+  display: block;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.w-map-select__item-nogeo {
+  flex: none;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+.w-map-select__item-area {
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.w-map-select__empty {
+  padding: var(--space-4, 1rem) var(--space-2, 0.625rem);
+  text-align: center;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-map-select__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.875rem);
+  margin-top: var(--space-3, 0.875rem);
+  padding-top: var(--space-3, 0.875rem);
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-map-select__area {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-map-select__area strong {
+  font-size: var(--text-xl, 1.25rem);
+  font-weight: var(--fw-bold, 700);
+  line-height: 1;
+  color: var(--fg, var(--p-text-color));
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rótulo do polígono: texto puro sobre a imagem de satélite. Sem caixa, sem
+   borda — a legibilidade vem do contorno de sombra, não de um fundo opaco. */
+.leaflet-tooltip.w-map-select__tip {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-bold, 700);
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.92);
+}
+
+.leaflet-tooltip.w-map-select__tip::before {
+  display: none;
+}
+
+.leaflet-tooltip.w-map-select__tip--on {
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .w-map-select__body {
+    flex-direction: column;
+  }
+
+  .w-map-select__panel {
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid var(--border, var(--p-content-border-color));
+    margin-left: 0;
+    margin-top: var(--space-3, 0.875rem);
+    padding-left: 0;
+    padding-top: var(--space-3, 0.875rem);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * WMapSelect · layout="sobreposto"
+ *
+ * A MARCAÇÃO é a mesma do 'lado-a-lado' — só o posicionamento muda. O painel e
+ * o rodapé continuam irmãos do mapa (não filhos do container do Leaflet), então
+ * flutuam por cima sem que o Leaflet enxergue um evento sequer: nada de
+ * `L.DomEvent.disableClickPropagation`, e arrastar/dar zoom por baixo segue
+ * funcionando onde o vidro não cobre.
+ *
+ * Como as regras do sobreposto têm um nível a mais de especificidade
+ * (`.w-map-select--overlay .w-map-select__x`), elas ganham das regras-base e do
+ * @media 900px acima sem depender da ordem do arquivo.
+ *
+ * Escapes para o consumidor:
+ *   --w-map-panel-w  largura do painel flutuante
+ *   --w-map-inset    respiro entre os flutuantes e a borda do mapa
+ *   --w-map-foot-h   altura da barra de resumo — MEDIDA em runtime pelo
+ *                    componente (o valor aqui é só o antes-de-medir); é ela que
+ *                    reserva o espaço do painel e levanta a atribuição.
+ * ------------------------------------------------------------------------- */
+
+.w-map-select--overlay {
+  --w-map-panel-w: 20rem;
+  --w-map-inset: 0.75rem;
+  --w-map-foot-h: 3.25rem;
+  position: relative;
+}
+
+.w-map-select--overlay .w-map-select__body {
+  position: relative;
+  flex-direction: row;
+}
+
+/* O vidro. Legibilidade sobre satélite é o ponto crítico: o véu sozinho (92% do
+   surface do tema) já garante AA — a lavoura clara e a mata escura sangram só
+   ~8%. O blur é enfeite; o que não pode faltar é o véu. */
+.w-map-select--overlay .w-map-select__panel,
+.w-map-select--overlay .w-map-select__footer {
+  /* Sobre imagem os cinzas de apoio perdem contraste: sobem um degrau,
+     derivados do --fg do tema para continuarem certos no claro E no escuro. */
+  --fg-muted: color-mix(in srgb, var(--fg, var(--p-text-color)) 74%, transparent);
+  --fg-subtle: color-mix(in srgb, var(--fg, var(--p-text-color)) 56%, transparent);
+  position: absolute;
+  z-index: 900; /* acima dos controles do Leaflet, que param em 800 */
+  margin: 0;
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-md, 0.625rem);
+  box-shadow: var(--shadow-lg, 0 12px 32px rgba(15, 31, 48, 0.28));
+  color: var(--fg, var(--p-text-color));
+  /* 1ª declaração = fallback sólido para quem não tem color-mix; a 2ª só vale
+     onde ele existe (o navegador descarta a que não entende). */
+  background: var(--surface, var(--p-content-background));
+  background: color-mix(in srgb, var(--surface, var(--p-content-background)) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Sem backdrop-filter o véu vira sólido. Texto sobre imagem crua é o único
+   resultado inaceitável — antes opaco que ilegível. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .w-map-select--overlay .w-map-select__panel,
+  .w-map-select--overlay .w-map-select__footer {
+    background: var(--surface, var(--p-content-background));
+  }
+}
+
+.w-map-select--overlay .w-map-select__panel {
+  top: var(--w-map-inset);
+  right: var(--w-map-inset);
+  /* para acima da barra de resumo — os dois nunca se cruzam */
+  bottom: calc(var(--w-map-inset) * 2 + var(--w-map-foot-h));
+  width: var(--w-map-panel-w);
+  max-width: calc(100% - var(--w-map-inset) * 2);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem) var(--space-3, 0.75rem);
+}
+
+.w-map-select--overlay .w-map-select__footer {
+  left: var(--w-map-inset);
+  right: var(--w-map-inset);
+  bottom: var(--w-map-inset);
+  padding: var(--space-2, 0.625rem) var(--space-3, 0.875rem);
+}
+
+/* O painel tem altura definida (top + bottom): a lista rola dentro dele em vez
+   do teto fixo do lado-a-lado. */
+.w-map-select--overlay .w-map-select__list {
+  max-height: none;
+  padding-bottom: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+/* Recolher: ícone puro, sem moldura de botão (é gatilho, não ação). */
+.w-map-select__collapse {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.375rem);
+  height: 1.5rem;
+  min-width: 1.5rem;
+  justify-content: center;
+  margin-bottom: var(--space-1, 0.25rem);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: transparent;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-family: inherit;
+  cursor: pointer;
+  transition: color var(--motion-fast, 0.14s) var(--ease, ease);
+}
+
+.w-map-select__collapse:hover {
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-map-select__collapse:focus-visible {
+  outline: 2px solid var(--primary, var(--p-primary-color));
+  outline-offset: 2px;
+}
+
+.w-map-select__collapse i {
+  font-size: 0.8125rem;
+}
+
+/* Recolhido o painel É a pílula: busca e lista saem por display:none, então
+   saem junto da ordem de tabulação e da árvore de acessibilidade. */
+.w-map-select--collapsed .w-map-select__panel {
+  bottom: auto;
+  width: auto;
+  padding: 0;
+  border-radius: var(--radius-full, 999px);
+}
+
+.w-map-select--collapsed .w-map-select__panel-head,
+.w-map-select--collapsed .w-map-select__list {
+  display: none;
+}
+
+.w-map-select--collapsed .w-map-select__collapse {
+  height: 2.25rem;
+  margin: 0;
+  padding: 0 var(--space-3, 0.75rem);
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-map-select__collapse-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--space-1, 0.3125rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--primary, var(--p-primary-color));
+  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Expandido o contador já está escrito por extenso no painel. */
+.w-map-select--overlay:not(.w-map-select--collapsed) .w-map-select__collapse-count {
+  display: none;
+}
+
+/* O selo "Satélite" mora onde agora fica o painel: passa para a esquerda, ao
+   lado (não embaixo) do zoom do Leaflet. */
+.w-map-select--overlay .w-map-select__badge {
+  right: auto;
+  left: 3.5rem;
+}
+
+/* Controle nativo do Leaflet não pode ficar embaixo do flutuante. A atribuição
+   nasce no canto inferior DIREITO — bem embaixo do painel: ela sobe acima da
+   barra de resumo e troca para a esquerda, a única faixa que nada cobre.
+   (No celular, com a gaveta aberta, ela fica encoberta; ao recolher, reaparece
+   — é o compromisso normal de mapa em tela cheia.) */
+.w-map-select--overlay .leaflet-bottom {
+  margin-bottom: calc(var(--w-map-foot-h) + var(--w-map-inset) + 0.25rem);
+}
+
+.w-map-select--overlay .leaflet-bottom.leaflet-right {
+  right: auto;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  /* Celular em campo: a gaveta ocupa a largura toda embaixo, empilhada acima da
+     barra de resumo. O mapa continua inteiro e o polegar alcança a lista. */
+  .w-map-select--overlay {
+    --w-map-inset: 0.5rem;
+  }
+
+  .w-map-select--overlay .w-map-select__panel {
+    top: auto;
+    left: var(--w-map-inset);
+    right: var(--w-map-inset);
+    width: auto;
+    max-width: none;
+    max-height: 55%;
+  }
+
+  /* Recolhida, a gaveta volta a ser pílula encostada à direita. */
+  .w-map-select--overlay.w-map-select--collapsed .w-map-select__panel {
+    left: auto;
+  }
+}
+
 /* ---------------------------------------------------------------------------
  * WDatePicker
  * ------------------------------------------------------------------------- */
@@ -1606,4 +2936,33 @@
   gap: 0.5rem;
   border-top: 1px solid var(--p-content-border-color);
   padding-top: 0.5rem;
+}
+
+/* Sub-linhas do modal da FK (WAutoCompleteFK `subRows`): mini-grid por linha
+   expandida — o caso "lote + análises" da recomendação. */
+.w-fk-subrows {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm, 0.8125rem);
+}
+
+.w-fk-subrows th {
+  padding: 0.25rem 0.625rem;
+  text-align: right;
+  font-weight: var(--fw-medium, 500);
+  color: var(--fg-muted, var(--p-text-muted-color));
+  white-space: nowrap;
+}
+
+.w-fk-subrows th:first-child,
+.w-fk-subrows td:first-child {
+  text-align: left;
+}
+
+.w-fk-subrows td {
+  padding: 0.3rem 0.625rem;
+  text-align: right;
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }

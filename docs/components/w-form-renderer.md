@@ -54,6 +54,91 @@ Todos os tipos do `FieldDef` sao suportados:
 | `cpf_cnpj` | InputText + mask auto | Detecta CPF ou CNPJ |
 | `mask` | InputText + maska | Pattern customizado |
 | `image` | input file / slot | Upload com slot customizavel |
+| `transfer` | WTransferList | Dupla lista com busca |
+| `segmented` | markup próprio | Pílulas de escolha única num trilho |
+| `choice` | markup próprio | Chips de escolha única, N opções |
+| `chips` | markup próprio | Valor múltiplo removível + gatilho + resumo |
+
+### `segmented` — escolha única em trilho
+
+Duas ou três opções curtas dentro de um trilho `--surface-3` (a ativa ganha superfície e sombra).
+Lê a mesma tripla `options` / `optionLabel` / `optionValue` do `select`, então trocar um pelo outro
+não reescreve o `FieldDef`. Clicar na opção ativa **mantém** a escolha (não desmarca).
+
+```ts
+{
+  field: 'forma_calculo',
+  label: 'Forma de cálculo',
+  type: 'segmented',
+  options: [
+    { label: 'Germinação', value: 'GERMINACAO' },
+    { label: 'KG / ha', value: 'KG_HA' },
+  ],
+}
+```
+
+### `choice` — chips de escolha única
+
+Mesma API, N opções, quebrando linha. Selecionado = borda `--primary` + fundo `--primary-soft` +
+ícone (`choiceIcon`, default `pi pi-check-circle`; `''` desliga).
+
+```ts
+{
+  field: 'umidade_solo',
+  label: 'Umidade de solo',
+  type: 'choice',
+  options: [
+    { label: 'Pó', value: 'PO' },
+    { label: 'Baixa', value: 'BAIXA' },
+    { label: 'Adequada', value: 'ADEQUADA' },
+  ],
+}
+```
+
+### `chips` — valor múltiplo removível
+
+O valor é um **array**. Cada item pode ser o objeto inteiro (rótulo por `optionLabel`, default
+`nome`) ou só o id (o rótulo é procurado em `options` por `optionValue`, default `id`; sem match,
+mostra o próprio valor). O "x" do chip emite o array sem aquele item.
+
+Quem preenche o campo é outra coisa (um mapa, um modal). Por isso o renderer expõe **dois slots por
+campo** — mesmo padrão do `image-{field}`:
+
+| Slot | Onde entra |
+|---|---|
+| `chips-trigger-{field}` | Depois dos chips: o gatilho ("Selecionar no mapa") |
+| `chips-summary-{field}` | À direita, colado na borda: o resumo ("Área total 260 ha") |
+
+```vue
+<script setup lang="ts">
+const fields = [
+  {
+    field: 'talhoes',
+    label: 'Talhões',
+    type: 'chips',
+    optionValue: 'id',
+    optionLabel: 'nome',
+    options: talhoes,
+    chipsEmptyLabel: 'Nenhum talhão selecionado',
+    chipsRemoveLabel: 'Remover talhão',
+  },
+]
+</script>
+
+<template>
+  <WFormRenderer :fields="fields" :form-data="form" :is-editing="false" @update:field="set">
+    <template #chips-trigger-talhoes>
+      <button type="button" @click="abrirMapa"><i class="pi pi-map" />Selecionar no mapa</button>
+    </template>
+    <template #chips-summary-talhoes>
+      Área total <strong>{{ areaTotal }} ha</strong>
+    </template>
+  </WFormRenderer>
+</template>
+```
+
+Os três respeitam `disabled`, `visible`, `required` e `colSpan` como qualquer outro tipo, e nenhum
+deles é candidato a foco inicial (não têm campo de digitação).
 
 ## Uso Basico — Formulario em Card
 

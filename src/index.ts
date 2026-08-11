@@ -9,10 +9,15 @@ export {
   WCrudView,
   WCrudFormDialog,
   WCrudColumnRenderer,
+  WEditableTable,
   WAutoCompleteFK,
   WFormRenderer,
   WDatePicker,
   WDateRange,
+  // Estes dois existiam em `./components` mas faltavam neste barrel: quem
+  // importava da raiz (o caminho documentado no COMPONENTS.md) não os enxergava.
+  WFileUpload,
+  WImageCropper,
   WMoneyInput,
   WTransferList,
   WTreeSelect,
@@ -27,6 +32,10 @@ export {
   WFormSection,
   WActionBar,
   WProgressFlow,
+  WStepFlow,
+  WStepSection,
+  WCheckList,
+  WMapSelect,
 } from './components'
 
 // Composables
@@ -57,6 +66,16 @@ export type {
   FieldDef,
   FieldType,
   SelectOption,
+  EditableColumnDef,
+  EditableColumnEditor,
+  EditableRow,
+  CheckListItem,
+  CheckListLevel,
+  MapSelectFeature,
+  MapSelectGeometry,
+  MapSelectId,
+  MapSelectPolygonStyle,
+  MapSelectPosition,
   RowAction,
   CrudLabels,
   KpiItem,
@@ -73,6 +92,8 @@ export type {
 
 export type { StatusMapping } from './components/ui/WStatusTag.vue'
 export type { InfoField } from './components/ui/WInfoCard.vue'
+export type { StepFlowContext, StepFlowOrientation } from './utils/stepFlow'
+export { W_STEP_FLOW_KEY } from './utils/stepFlow'
 export type {
   CreateSupabaseDataProviderOptions,
   SupabaseDataProviderClient,

@@ -11,7 +11,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import { W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
-import type { FieldDef } from '@/types/field'
+import type { FieldDef, FieldSubRowsFetch } from '@/types/field'
 import type { ColumnDef } from '@/types/column'
 import type { ApiFieldMeta } from '@/utils/fieldMapper'
 import { mapApiFieldsToFieldDefs, mapApiFieldsToColumnDefs } from '@/utils/fieldMapper'
@@ -51,6 +51,10 @@ const props = withDefaults(
      *  (0 = mostrar todos). Útil em campo estreito, tipo filtro de painel. */
     maxChips?: number
     optionLabel?: string
+    /** Chave de uma segunda linha, em texto de apoio, dentro de cada sugestão — para
+     *  o dado que **decide** a escolha aparecer antes dela (ex.: saldo em estoque).
+     *  Vazia ou ausente na linha, a sugestão volta a ter uma linha só. */
+    optionDescription?: string
     optionValue?: string
     placeholder?: string
     /** Placeholder exibido enquanto uma cascata obrigatória não estiver preenchida. */
@@ -67,6 +71,10 @@ const props = withDefaults(
     canDelete?: boolean
     crudFields?: FieldDef[]
     crudColumns?: ColumnDef[]
+    /** Sub-linhas do grid do modal: recebe as linhas da página e devolve o mapa
+     *  `id → sub-linhas` + as colunas (dinâmicas) do mini-grid. Linha com entrada
+     *  no mapa abre expandida — ex.: lote (linha) com suas análises (sub-linhas). */
+    subRows?: FieldSubRowsFetch
     dialogWidth?: string
     /** Foca o campo ao montar. Marca o input com o atributo nativo `autofocus`
      *  para que o `focus()` do PrimeVue Dialog (em onAfterEnter) o encontre e
@@ -147,6 +155,13 @@ function emitSelection() {
 
 function labelOf(item: unknown): string {
   const v = (item as Record<string, unknown>)?.[props.optionLabel]
+  return v == null ? '' : String(v)
+}
+
+/** Texto de apoio da sugestão. Vazio quando a linha não trouxe o campo. */
+function descriptionOf(item: unknown): string {
+  if (!props.optionDescription) return ''
+  const v = (item as Record<string, unknown>)?.[props.optionDescription]
   return v == null ? '' : String(v)
 }
 
@@ -407,6 +422,36 @@ const modalSortField = ref<string | null>(null)
 const modalSortOrder = ref<1 | -1 | 0>(0)
 let modalSearchTimer: ReturnType<typeof setTimeout> | null = null
 
+// --- Sub-linhas (expansão automática por linha com dados) ---
+const subRowsMap = ref<Record<string, Record<string, unknown>[]>>({})
+const subRowsColumns = ref<ColumnDef[]>([])
+const expandedRows = ref<Record<string, boolean>>({})
+
+/** Busca as sub-linhas da página atual e abre as linhas que têm o que mostrar. */
+async function fetchSubRows() {
+  if (!props.subRows) return
+  try {
+    const { map, columns } = await props.subRows(modalData.value)
+    subRowsMap.value = map || {}
+    subRowsColumns.value = columns || []
+    const abertos: Record<string, boolean> = {}
+    for (const row of modalData.value) {
+      const id = String(row[props.optionValue])
+      if (subRowsMap.value[id]?.length) abertos[id] = true
+    }
+    expandedRows.value = abertos
+  } catch {
+    // Sub-linha é enriquecimento: falhou, o grid segue só com as linhas.
+    subRowsMap.value = {}
+    subRowsColumns.value = []
+    expandedRows.value = {}
+  }
+}
+
+function subRowsDe(row: Record<string, unknown>): Record<string, unknown>[] {
+  return subRowsMap.value[String(row[props.optionValue])] || []
+}
+
 // Metadata from extras.fields
 const apiFields = ref<ApiFieldMeta[]>([])
 const crudAvailable = computed(() => {
@@ -471,6 +516,7 @@ async function fetchModalData() {
     const response = await provider.list(props.endpoint, params)
     modalData.value = response.data
     modalTotalRecords.value = response.rows
+    void fetchSubRows()
 
     // Captura metadata de campos na primeira requisição
     if (response.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
@@ -796,6 +842,18 @@ function confirmDelete(item: Record<string, unknown>) {
       @clear="onClear"
       @keydown="onInputKeydown"
     >
+      <!-- Sugestão em duas linhas quando `optionDescription` aponta para algo
+           preenchido. Sem ela o slot não é declarado, e o AutoComplete volta ao
+           render padrão de uma linha — nada muda para quem não usa. -->
+      <template v-if="optionDescription" #option="{ option }">
+        <span class="w-fk-option">
+          <span class="w-fk-option__label">{{ labelOf(option) }}</span>
+          <span v-if="descriptionOf(option)" class="w-fk-option__desc">
+            {{ descriptionOf(option) }}
+          </span>
+        </span>
+      </template>
+
       <!-- Chip clicado abre a listagem já marcada com a seleção atual. Com
            `maxChips`, os excedentes viram um chip `+N` (somem do campo, mas
            continuam no tooltip) — chip nenhum pode esticar a caixa. -->
@@ -879,6 +937,7 @@ function confirmDelete(item: Record<string, unknown>) {
     <div ref="modalTableWrap" @keydown.capture="onModalGridKeydown">
       <DataTable
         v-model:selection="modalSelection"
+        v-model:expanded-rows="expandedRows"
         :meta-key-selection="false"
         :value="modalData"
         :loading="modalLoading"
@@ -945,6 +1004,24 @@ function confirmDelete(item: Record<string, unknown>) {
             </div>
           </template>
         </Column>
+
+        <!-- Sub-linhas: mini-grid por linha expandida (colunas vêm do `subRows`) -->
+        <template v-if="subRows" #expansion="{ data }">
+          <table class="w-fk-subrows">
+            <thead>
+              <tr>
+                <th v-for="col in subRowsColumns" :key="col.field">{{ col.header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(sub, i) in subRowsDe(data)" :key="i">
+                <td v-for="col in subRowsColumns" :key="col.field">
+                  {{ sub[col.field] ?? '—' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </template>
 
         <template #empty>
           <div class="w-autocompletefk-empty">Nenhum registro encontrado</div>

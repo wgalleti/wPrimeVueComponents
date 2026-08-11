@@ -39,6 +39,11 @@ export const router = createRouter({
       component: () => import('./views/KeyboardCrudView.vue'),
     },
     {
+      path: '/recomendacao',
+      name: 'recomendacao',
+      component: () => import('./views/RecomendacaoView.vue'),
+    },
+    {
       path: '/datepicker',
       name: 'datepicker',
       component: () => import('./views/DatePickerView.vue'),

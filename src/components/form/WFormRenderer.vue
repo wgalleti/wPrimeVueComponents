@@ -9,7 +9,7 @@ import AutoComplete from 'primevue/autocomplete'
 import ToggleSwitch from 'primevue/toggleswitch'
 import ColorPicker from 'primevue/colorpicker'
 import Password from 'primevue/password'
-import type { FieldDef } from '@/types/field'
+import type { FieldDef, FieldSubRowsFetch } from '@/types/field'
 import WAutoCompleteFK from '@/components/form/WAutoCompleteFK.vue'
 import WDatePicker from '@/components/form/WDatePicker.vue'
 import WMoneyInput from '@/components/form/WMoneyInput.vue'
@@ -105,6 +105,13 @@ function isFieldDisabled(field: FieldDef): boolean {
   return !!field.disabled
 }
 
+/** Indireção tipada do `subRows`: devolver a função direto no template fazia o
+ * vue-tsc entrar no ciclo WFormRenderer → WAutoCompleteFK → WCrudFormDialog e
+ * degradar tudo para `any`. */
+function subRowsFetchDe(field: FieldDef): FieldSubRowsFetch | undefined {
+  return field.subRows
+}
+
 /** Resolve `endpointParams` estático ou por função (contexto do pai). */
 function resolveEndpointParams(field: FieldDef) {
   const ep = field.endpointParams
@@ -144,8 +151,9 @@ const autofocusField = computed(() => {
   const explicit = props.fields.find((f) => f.autofocus === true || f.autofocus === mode)
   if (explicit) return explicit.field
   const first = visibleFields.value.find((f) => {
-    if (f.type === 'switch' || f.type === 'fk' || f.type === 'select' || f.type === 'image')
-      return false
+    // Tipos sem campo de digitação não são candidatos a foco inicial.
+    const semInput = ['switch', 'fk', 'select', 'image', 'segmented', 'choice', 'chips', 'transfer']
+    if (f.type && semInput.includes(f.type)) return false
     if (f.disabled === true) return false
     if (f.disabledOnEdit && props.isEditing) return false
     return true
@@ -217,6 +225,72 @@ function onAutocompleteSearch(field: FieldDef, event: { query: string }) {
 function onAutocompleteSelect(field: FieldDef, event: { value: Record<string, unknown> }) {
   const optionValue = field.optionValue || 'value'
   emit('update:field', field.field, event.value[optionValue])
+}
+
+// --- Options (segmented / choice / chips) ---
+// Os três tipos leem a MESMA tripla `options`/`optionLabel`/`optionValue` do
+// select — quem troca um Select por pílulas não reescreve o FieldDef.
+
+function fieldOptions(field: FieldDef): Record<string, unknown>[] {
+  return (unwrapRef(field.options) || []) as Record<string, unknown>[]
+}
+
+function optionLabelOf(field: FieldDef, option: Record<string, unknown>): string {
+  return String(option[field.optionLabel || 'label'] ?? '')
+}
+
+function optionValueOf(field: FieldDef, option: Record<string, unknown>): unknown {
+  return option[field.optionValue || 'value']
+}
+
+function isOptionSelected(field: FieldDef, option: Record<string, unknown>): boolean {
+  return props.formData[field.field] === optionValueOf(field, option)
+}
+
+/** Escolha única: clicar na opção ativa mantém a escolha (não desmarca). */
+function pickOption(field: FieldDef, option: Record<string, unknown>) {
+  if (isFieldDisabled(field)) return
+  emit('update:field', field.field, optionValueOf(field, option))
+}
+
+// --- Chips (valor múltiplo, removível) ---
+// O valor é um ARRAY. Cada item pode ser o objeto inteiro (usa `optionLabel`) ou
+// só o id (procura o rótulo em `options`; sem match, mostra o próprio valor).
+
+interface ChipEntry {
+  key: string
+  label: string
+}
+
+function chipEntries(field: FieldDef): ChipEntry[] {
+  const raw = props.formData[field.field]
+  if (!Array.isArray(raw)) return []
+  const labelKey = field.optionLabel || 'nome'
+  const valueKey = field.optionValue || 'id'
+  const options = fieldOptions(field)
+
+  return raw.map((item, index) => {
+    if (item !== null && typeof item === 'object') {
+      const obj = item as Record<string, unknown>
+      return { key: String(obj[valueKey] ?? index), label: String(obj[labelKey] ?? '') }
+    }
+    const match = options.find((o) => o[valueKey] === item)
+    return {
+      key: String(item ?? index),
+      label: match ? String(match[labelKey] ?? item) : String(item),
+    }
+  })
+}
+
+function removeChip(field: FieldDef, index: number) {
+  if (isFieldDisabled(field)) return
+  const raw = props.formData[field.field]
+  if (!Array.isArray(raw)) return
+  emit(
+    'update:field',
+    field.field,
+    raw.filter((_, i) => i !== index),
+  )
 }
 
 // --- Color ---
@@ -592,12 +666,15 @@ defineExpose({ validateAll, clearErrors })
                 :drilldown="resolveDrilldown(field)"
                 :blocked-placeholder="field.blockedPlaceholder"
                 :option-label="field.optionLabel || 'nome'"
+                :option-description="field.optionDescription"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :show-clear="field.showClear !== false"
                 :dialog-header="field.label"
                 :crud-fields="field.crudFields"
                 :crud-columns="field.crudColumns"
+                :sub-rows="subRowsFetchDe(field)"
+                :dialog-width="field.dialogWidth"
                 :can-create="field.canCreate"
                 :can-edit="field.canEdit"
                 :can-delete="field.canDelete"
@@ -680,6 +757,87 @@ defineExpose({ validateAll, clearErrors })
                 :disabled="isFieldDisabled(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
+
+              <!-- Segmented (escolha única, 2-3 opções curtas, num trilho) -->
+              <div v-else-if="field.type === 'segmented'" class="w-segmented">
+                <button
+                  v-for="option in fieldOptions(field)"
+                  :key="String(optionValueOf(field, option))"
+                  type="button"
+                  class="w-segmented__option"
+                  :class="{ 'w-segmented__option--on': isOptionSelected(field, option) }"
+                  :aria-pressed="isOptionSelected(field, option)"
+                  :disabled="isFieldDisabled(field)"
+                  @click="pickOption(field, option)"
+                >
+                  {{ optionLabelOf(field, option) }}
+                </button>
+              </div>
+
+              <!-- Choice (escolha única em chips, N opções) -->
+              <div v-else-if="field.type === 'choice'" class="w-choice">
+                <button
+                  v-for="option in fieldOptions(field)"
+                  :key="String(optionValueOf(field, option))"
+                  type="button"
+                  class="w-choice__option"
+                  :class="{ 'w-choice__option--on': isOptionSelected(field, option) }"
+                  :aria-pressed="isOptionSelected(field, option)"
+                  :disabled="isFieldDisabled(field)"
+                  @click="pickOption(field, option)"
+                >
+                  <i
+                    v-if="isOptionSelected(field, option) && field.choiceIcon !== ''"
+                    :class="field.choiceIcon || 'pi pi-check-circle'"
+                  />
+                  {{ optionLabelOf(field, option) }}
+                </button>
+              </div>
+
+              <!-- Chips (valor múltiplo removível + gatilho + resumo) -->
+              <div v-else-if="field.type === 'chips'" class="w-chips">
+                <span
+                  v-for="(chip, chipIndex) in chipEntries(field)"
+                  :key="chip.key"
+                  class="w-chips__chip"
+                >
+                  {{ chip.label }}
+                  <button
+                    type="button"
+                    class="w-chips__remove"
+                    :title="field.chipsRemoveLabel || 'Remover'"
+                    :aria-label="field.chipsRemoveLabel || 'Remover'"
+                    :disabled="isFieldDisabled(field)"
+                    @click="removeChip(field, chipIndex)"
+                  >
+                    <i class="pi pi-times" />
+                  </button>
+                </span>
+
+                <span
+                  v-if="!chipEntries(field).length && field.chipsEmptyLabel"
+                  class="w-chips__empty"
+                >
+                  {{ field.chipsEmptyLabel }}
+                </span>
+
+                <slot
+                  :name="`chips-trigger-${field.field}`"
+                  :field="field"
+                  :form-data="formData"
+                  :disabled="isFieldDisabled(field)"
+                  :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
+                />
+
+                <span class="w-chips__summary">
+                  <slot
+                    :name="`chips-summary-${field.field}`"
+                    :field="field"
+                    :form-data="formData"
+                    :items="chipEntries(field)"
+                  />
+                </span>
+              </div>
 
               <small v-if="cepError[field.field]" class="w-crud-form-cep-error">
                 {{ cepError[field.field] }}
