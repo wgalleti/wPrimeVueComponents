@@ -37,6 +37,7 @@ export default defineConfig({
               { text: 'WCrudView', link: '/components/w-crud-view' },
               { text: 'WCrudFormDialog', link: '/components/w-crud-form-dialog' },
               { text: 'WCrudColumnRenderer', link: '/components/w-crud-column-renderer' },
+              { text: 'WEditableTable', link: '/components/w-editable-table' },
             ],
           },
           {
@@ -65,12 +66,15 @@ export default defineConfig({
           {
             text: 'UI',
             items: [
+              { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WEmptyState', link: '/components/w-empty-state' },
               { text: 'WInfoCard', link: '/components/w-info-card' },
               { text: 'WKpiCard', link: '/components/w-kpi-card' },
               { text: 'WKpiGrid', link: '/components/w-kpi-grid' },
+              { text: 'WMapSelect', link: '/components/w-map-select' },
               { text: 'WProgressFlow', link: '/components/w-progress-flow' },
               { text: 'WStatusTag', link: '/components/w-status-tag' },
+              { text: 'WStepFlow / WStepSection', link: '/components/w-step-flow' },
             ],
           },
         ],

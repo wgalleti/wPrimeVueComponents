@@ -33,7 +33,11 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      external: ['vue', 'primevue', 'axios', 'dayjs', /^primevue\/.*/],
+      // `leaflet` é dependência (o consumidor a recebe pelo npm), mas não entra
+      // no bundle: o WMapSelect a carrega por import() dinâmico e quem nunca
+      // abre o mapa não paga por ela. O CSS (`leaflet/dist/leaflet.css`) NÃO é
+      // externo de propósito — vai junto no style.css da suite.
+      external: ['vue', 'primevue', 'axios', 'dayjs', 'leaflet', /^primevue\/.*/],
       output: {
         globals: {
           vue: 'Vue',

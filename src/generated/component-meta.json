@@ -392,6 +392,108 @@
         }
       ]
     },
+    "WEditableTable": {
+      "file": "src/components/crud/WEditableTable.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "EditableRow[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Linhas (`v-model`)."
+        },
+        {
+          "name": "columns",
+          "type": "EditableColumnDef[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": ""
+        },
+        {
+          "name": "expandable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Liga a coluna de expansão e o slot `#expansion`."
+        },
+        {
+          "name": "addLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Rótulo do botão de adicionar. Omitido = sem botão (só o slot `#toolbar`)."
+        },
+        {
+          "name": "removable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Liga a coluna da lixeira."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum item adicionado\"",
+          "description": ""
+        },
+        {
+          "name": "footerLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Total\"",
+          "description": "Rótulo da primeira célula do rodapé de totais."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Trava todos os editores (a tabela vira leitura)."
+        },
+        {
+          "name": "rowKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Campo usado como `key` das linhas. Sem ele, a chave é o índice."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[rows: EditableRow[]]",
+          "description": ""
+        },
+        {
+          "name": "add",
+          "type": "[]",
+          "description": ""
+        },
+        {
+          "name": "remove",
+          "type": "[row: EditableRow, index: number]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "toolbar",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "expansion",
+          "type": "{ row: EditableRow; index: number; }",
+          "description": ""
+        }
+      ]
+    },
     "WAutoCompleteFK": {
       "file": "src/components/form/WAutoCompleteFK.vue",
       "props": [
@@ -443,6 +545,13 @@
           "required": false,
           "default": "\"nome\"",
           "description": ""
+        },
+        {
+          "name": "optionDescription",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Chave de uma segunda linha, em texto de apoio, dentro de cada sugestão — para\no dado que **decide** a escolha aparecer antes dela (ex.: saldo em estoque).\nVazia ou ausente na linha, a sugestão volta a ter uma linha só."
         },
         {
           "name": "optionValue",
@@ -1219,6 +1328,47 @@
         }
       ]
     },
+    "WCheckList": {
+      "file": "src/components/ui/WCheckList.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "items",
+          "type": "CheckListItem[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": ""
+        },
+        {
+          "name": "showCount",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Esconde o contador `N/M` do cabeçalho."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhuma verifica\\u00E7\\u00E3o\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WDetailHeader": {
       "file": "src/components/ui/WDetailHeader.vue",
       "props": [
@@ -1384,6 +1534,13 @@
           "required": true,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "variant",
+          "type": "\"default\" | \"metric\" | undefined",
+          "required": false,
+          "default": "\"default\"",
+          "description": "`default`: grade de rótulo em cima e valor embaixo.\n`metric`: uma linha por campo — rótulo à esquerda, número grande à\ndireita, divisória entre as linhas (o aside \"Resumo\" de um documento)."
         }
       ],
       "events": [],
@@ -1501,6 +1658,189 @@
         {
           "name": "item",
           "type": "{ key: number; item: KpiItem; index: number; }",
+          "description": ""
+        }
+      ]
+    },
+    "WMapSelect": {
+      "file": "src/components/ui/WMapSelect.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "MapSelectId[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Ids selecionados (`v-model`)."
+        },
+        {
+          "name": "features",
+          "type": "MapSelectFeature[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Itens selecionáveis. Sem `geometria` o item some do mapa, não da lista."
+        },
+        {
+          "name": "scopeGeometry",
+          "type": "MapSelectGeometry | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Geometria do escopo (ex.: o setor) usada no `fitBounds` inicial.\nSem ela, o enquadramento é a união das geometrias das `features`."
+        },
+        {
+          "name": "tileUrl",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}\"",
+          "description": "Tiles. Default: satélite World_Imagery (ArcGIS/Esri)."
+        },
+        {
+          "name": "tileAttribution",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Imagery \\u00A9 Esri, Maxar, Earthstar Geographics\"",
+          "description": ""
+        },
+        {
+          "name": "maxZoom",
+          "type": "number | undefined",
+          "required": false,
+          "default": "19",
+          "description": "Zoom máximo do tile layer (o World_Imagery vai até 19)."
+        },
+        {
+          "name": "searchPlaceholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Buscar talh\\u00E3o ou setor\"",
+          "description": ""
+        },
+        {
+          "name": "areaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"\\u00C1rea selecionada\"",
+          "description": "Rótulo do rodapé, à esquerda da área somada."
+        },
+        {
+          "name": "areaSuffix",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"ha\"",
+          "description": "Unidade da área, no rodapé e no tooltip do polígono."
+        },
+        {
+          "name": "areaDecimals",
+          "type": "number | undefined",
+          "required": false,
+          "default": "0",
+          "description": "Casas decimais da área."
+        },
+        {
+          "name": "height",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"460px\"",
+          "description": "Altura do mapa (qualquer unidade CSS)."
+        },
+        {
+          "name": "layout",
+          "type": "\"lado-a-lado\" | \"sobreposto\" | undefined",
+          "required": false,
+          "default": "\"lado-a-lado\"",
+          "description": "Arranjo do componente.\n- `'lado-a-lado'`: mapa à esquerda, painel de 300 px à direita, rodapé embaixo.\n- `'sobreposto'`: o mapa ocupa tudo; painel e rodapé flutuam sobre ele em vidro."
+        },
+        {
+          "name": "selectionLabel",
+          "type": "((count: number) => string) | undefined",
+          "required": false,
+          "default": "count === 1 ? \"1 talh\\u00E3o selecionado\" : `${count} talhões selecionados`",
+          "description": "Texto do contador. Default em pt-BR: \"N talhões selecionados\"."
+        },
+        {
+          "name": "clearLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Limpar sele\\u00E7\\u00E3o\"",
+          "description": ""
+        },
+        {
+          "name": "collapseLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Recolher painel de sele\\u00E7\\u00E3o\"",
+          "description": "`layout=\"sobreposto\"`: rótulo acessível do botão que recolhe o painel."
+        },
+        {
+          "name": "expandLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Mostrar painel de sele\\u00E7\\u00E3o\"",
+          "description": "`layout=\"sobreposto\"`: rótulo acessível do botão que reabre o painel."
+        },
+        {
+          "name": "badgeLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Sat\\u00E9lite\"",
+          "description": "Selo sobre o mapa (canto superior direito). `''` esconde."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum talh\\u00E3o encontrado\"",
+          "description": ""
+        },
+        {
+          "name": "mapErrorMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"O mapa n\\u00E3o p\\u00F4de ser carregado. Selecione os talh\\u00F5es pela lista ao lado.\"",
+          "description": "Mensagem quando o Leaflet não carregou."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "polygonStyle",
+          "type": "MapSelectPolygonStyle | undefined",
+          "required": false,
+          "default": "{\n    color: \"#ffffff\",\n    weight: 2,\n    opacity: 0.85,\n    fillColor: \"#ffffff\",\n    fillOpacity: 0.06,\n}",
+          "description": "Estilo do polígono não selecionado."
+        },
+        {
+          "name": "polygonSelectedStyle",
+          "type": "MapSelectPolygonStyle | undefined",
+          "required": false,
+          "default": "{\n    color: \"#8fb6e4\",\n    weight: 3,\n    opacity: 1,\n    fillColor: \"#1f5092\",\n    fillOpacity: 0.48,\n}",
+          "description": "Estilo do polígono selecionado."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[ids: MapSelectId[]]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "item",
+          "type": "{ feature: MapSelectFeature; selected: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "footer",
+          "type": "{ area: number; features: MapSelectFeature[]; }",
           "description": ""
         }
       ]
@@ -1657,6 +1997,104 @@
       ],
       "events": [],
       "slots": []
+    },
+    "WStepFlow": {
+      "file": "src/components/ui/WStepFlow.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "number | undefined",
+          "required": false,
+          "default": "0",
+          "description": "Número da etapa aberta (`v-model`). `0` fecha todas."
+        },
+        {
+          "name": "orientation",
+          "type": "StepFlowOrientation | undefined",
+          "required": false,
+          "default": "\"vertical\"",
+          "description": "`vertical` empilha as etapas numa coluna (cada uma é um card).\n`horizontal` põe os cabeçalhos lado a lado numa régua e abre só o corpo da\netapa ativa embaixo, na largura inteira — abaixo de 768px cai sozinho\npara o empilhamento vertical (a régua não cabe)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Trava o clique no cabeçalho de todas as etapas."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[step: number]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WStepSection": {
+      "file": "src/components/ui/WStepSection.vue",
+      "props": [
+        {
+          "name": "step",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Número da etapa (1-based) — é o valor que o `v-model` do flow carrega."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "summary",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Texto à direita do título (o \"resumo\" da etapa fechada)."
+        },
+        {
+          "name": "count",
+          "type": "string | number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Badge de contagem entre o título e o resumo."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "actions",
+          "type": "{ open: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "footer",
+          "type": "{}",
+          "description": ""
+        }
+      ]
     }
   }
 }

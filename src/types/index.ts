@@ -10,6 +10,18 @@ export type { ColumnDef, ColumnType } from './column'
 
 export type { FieldDef, FieldType, SelectOption, FieldDependency } from './field'
 
+export type { EditableColumnDef, EditableColumnEditor, EditableRow } from './editableTable'
+
+export type { CheckListItem, CheckListLevel } from './checkList'
+
+export type {
+  MapSelectFeature,
+  MapSelectGeometry,
+  MapSelectId,
+  MapSelectPolygonStyle,
+  MapSelectPosition,
+} from './mapSelect'
+
 export type { RowAction } from './action'
 
 export type { CrudLabels } from './labels'

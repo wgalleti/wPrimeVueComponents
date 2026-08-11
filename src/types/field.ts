@@ -24,6 +24,9 @@ export type FieldType =
   | 'image'
   | 'cep'
   | 'transfer'
+  | 'segmented'
+  | 'choice'
+  | 'chips'
 
 export interface SelectOption {
   [key: string]: unknown
@@ -42,6 +45,17 @@ export interface FieldDependency {
    *  (cascata obrigatória). Default: true. */
   required?: boolean
 }
+
+/** Resultado do `subRows` da FK: mapa `id → sub-linhas` + colunas do mini-grid. */
+export interface FieldSubRowsResult {
+  map: Record<string, Record<string, unknown>[]>
+  columns: ColumnDef[]
+}
+
+/** Busca as sub-linhas de uma página do modal da FK. */
+export type FieldSubRowsFetch = (
+  rows: Record<string, unknown>[]
+) => Promise<FieldSubRowsResult>
 
 export interface FieldDef {
   field: string
@@ -70,9 +84,14 @@ export interface FieldDef {
    *  quando a FK já vem como id e não como objeto). */
   calculate?: (formData: Record<string, unknown>, isEditing: boolean) => unknown
 
-  // select / autocomplete / transfer
+  // select / autocomplete / transfer / segmented / choice / chips
   options?: SelectOption[] | Ref<SelectOption[]>
   optionLabel?: string
+  /** Segunda linha da opção, em texto de apoio — para o dado que **decide** a escolha
+   *  aparecer antes dela, não depois (ex.: o saldo em estoque de um lote).
+   *  É uma **chave** do registro; formate no backend, como já se faz com `{fk}_nome`.
+   *  Só afeta a lista de sugestões: escolhido o item, o campo mostra `optionLabel`. */
+  optionDescription?: string
   optionValue?: string
   showClear?: boolean
   /** For 'transfer' fields — option keys to match against when searching
@@ -96,6 +115,13 @@ export interface FieldDef {
   blockedPlaceholder?: string
   crudFields?: FieldDef[]
   crudColumns?: ColumnDef[]
+  /** Sub-linhas do grid do modal da FK: recebe as linhas da página e devolve o mapa
+   *  `id → sub-linhas` + as colunas (dinâmicas) do mini-grid. Linha com entrada no
+   *  mapa abre expandida — ex.: lote (linha) com as análises dele (sub-linhas). */
+  subRows?: FieldSubRowsFetch
+  /** Largura do modal de pesquisa da FK (default do componente: 480px). Útil quando
+   *  há sub-linhas/colunas dinâmicas que precisam de espaço. */
+  dialogWidth?: string
   /** Controla o CRUD inline da FK (criar/editar/excluir no modal de busca). Omitido =
    *  auto-detecta (há `crudFields` ou a API expõe `extras.fields`). Use `false` para
    *  forçar desligado (ex.: lote que não pode ser criado sem semear o produto irmão). */
@@ -130,6 +156,17 @@ export interface FieldDef {
 
   // textarea
   rows?: number
+
+  // choice
+  /** Ícone no chip selecionado do `type: 'choice'` (default `pi pi-check-circle`).
+   *  `''` desliga o ícone. */
+  choiceIcon?: string
+
+  // chips
+  /** `type: 'chips'` — mensagem no lugar dos chips quando o valor está vazio. */
+  chipsEmptyLabel?: string
+  /** `type: 'chips'` — `aria-label`/`title` do botão de remover do chip. */
+  chipsRemoveLabel?: string
 
   // switch
   switchLabel?: string

@@ -21,3 +21,24 @@ const fields = [
   <WInfoCard title="Financeiro" :fields="fields" />
 </template>
 ```
+
+## Variante `metric`
+
+Uma linha por número: rótulo à esquerda (`--fg-muted`, peso normal), valor grande à direita
+(`--text-xl`, bold, `tabular-nums`) e divisória de 1px entre as linhas. É o aside "Resumo" de um
+documento. O `suffix` do campo vira a unidade, colada ao número.
+
+```vue
+<script setup lang="ts">
+const resumo = [
+  { label: 'Área atendida', value: 260, format: 'number', decimals: 0, suffix: 'ha' },
+  { label: 'BAGs a tratar', value: 20, format: 'number', decimals: 0 },
+  { label: 'Volume total', value: 14000, format: 'number', decimals: 0, suffix: 'kg' },
+  { label: 'Calda total', value: 152, format: 'number', decimals: 1, suffix: 'L' },
+]
+</script>
+
+<template>
+  <WInfoCard title="Resumo da recomendação" variant="metric" :fields="resumo" />
+</template>
+```

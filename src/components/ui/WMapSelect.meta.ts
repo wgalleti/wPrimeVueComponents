@@ -1,0 +1,107 @@
+import { defineComponentMeta } from '@/types/componentMeta'
+import type { MapSelectFeature } from '@/types/mapSelect'
+
+/** Quadrilátero simples a partir de um canto — só para o exemplo ao vivo. */
+function quadra(lng: number, lat: number, w: number, h: number) {
+  return {
+    type: 'Polygon' as const,
+    coordinates: [
+      [
+        [lng, lat],
+        [lng + w, lat],
+        [lng + w, lat - h],
+        [lng, lat - h],
+        [lng, lat],
+      ] as [number, number][],
+    ],
+  }
+}
+
+const talhoes: MapSelectFeature[] = [
+  {
+    id: 'P41',
+    nome: 'P41',
+    subtitulo: 'Rotacionado',
+    area: 82,
+    geometria: quadra(-52.852, -27.856, 0.009, 0.007),
+  },
+  {
+    id: 'P42',
+    nome: 'P42',
+    subtitulo: 'Rotacionado',
+    area: 160,
+    geometria: quadra(-52.843, -27.856, 0.01, 0.007),
+  },
+  {
+    id: 'P43',
+    nome: 'P43',
+    subtitulo: 'Soja / Milho',
+    area: 74,
+    geometria: quadra(-52.833, -27.856, 0.009, 0.007),
+  },
+  {
+    id: 'P44',
+    nome: 'P44',
+    subtitulo: 'Rotacionado',
+    area: 100,
+    geometria: quadra(-52.852, -27.863, 0.009, 0.007),
+  },
+  {
+    id: 'P45',
+    nome: 'P45',
+    subtitulo: 'Soja / Milho',
+    area: 58,
+    geometria: quadra(-52.843, -27.863, 0.01, 0.007),
+  },
+  { id: 'P49', nome: 'P49', subtitulo: 'Sem contorno cadastrado', area: 31 },
+]
+
+export default defineComponentMeta({
+  category: 'UI',
+  icon: 'pi pi-map',
+  summary:
+    'Seleção múltipla de polígonos num mapa de satélite, com painel de busca, contador e área somada.',
+  controls: {
+    layout: { type: 'select', options: ['lado-a-lado', 'sobreposto'] },
+  },
+  examples: [
+    {
+      name: 'Talhões do setor',
+      description:
+        'Clique no polígono ou na lista — os dois leem o mesmo v-model. P49 não tem geometria: some do mapa, fica na lista.',
+      props: {
+        features: talhoes,
+        modelValue: ['P42', 'P44'],
+      },
+    },
+    {
+      name: 'Controles sobre o mapa',
+      description:
+        'O mapa ocupa tudo e os controles flutuam em vidro. O botão no topo do painel recolhe ' +
+        'para uma pílula (ícone + contador) e devolve o mapa inteiro.',
+      props: {
+        features: talhoes,
+        modelValue: ['P42', 'P44'],
+        layout: 'sobreposto',
+        height: '520px',
+      },
+    },
+    {
+      name: 'Mapa baixo',
+      description: 'A altura é do consumidor (o componente vive dentro de um Dialog).',
+      props: {
+        features: talhoes,
+        modelValue: [],
+        height: '300px',
+      },
+    },
+    {
+      name: 'Somente leitura',
+      props: {
+        features: talhoes,
+        modelValue: ['P41'],
+        disabled: true,
+      },
+    },
+  ],
+})
