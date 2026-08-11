@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.11.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.10.0...v0.11.0) (2026-08-11)
+
+### Funcionalidades
+
+* **WAutoCompleteFK:** sub-linhas com colunas dinâmicas no modal de pesquisa ([8d2712f](https://github.com/wgalleti/wPrimeVueComponents/commit/8d2712f734804cb1d9313d020cd73150ad0b1301))
 ## [0.10.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.9.6...v0.10.0) (2026-08-06)
 
 ### Funcionalidades
