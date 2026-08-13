@@ -53,9 +53,7 @@ export interface FieldSubRowsResult {
 }
 
 /** Busca as sub-linhas de uma página do modal da FK. */
-export type FieldSubRowsFetch = (
-  rows: Record<string, unknown>[]
-) => Promise<FieldSubRowsResult>
+export type FieldSubRowsFetch = (rows: Record<string, unknown>[]) => Promise<FieldSubRowsResult>
 
 export interface FieldDef {
   field: string

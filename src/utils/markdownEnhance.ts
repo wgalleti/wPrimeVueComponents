@@ -73,9 +73,7 @@ function aplicarAbas(raiz: HTMLElement): void {
   agruparAbasSoltas(raiz)
   raiz.querySelectorAll<HTMLElement>('[data-md-tabs]').forEach((grupo, indiceGrupo) => {
     if (grupo.dataset.mdPronto) return
-    const paineis = Array.from(
-      grupo.querySelectorAll<HTMLElement>(':scope > .md-tabs__panel'),
-    )
+    const paineis = Array.from(grupo.querySelectorAll<HTMLElement>(':scope > .md-tabs__panel'))
     if (!paineis.length) return
     grupo.dataset.mdPronto = '1'
 

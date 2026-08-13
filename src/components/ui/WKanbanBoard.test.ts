@@ -36,7 +36,16 @@ function medirCartoes(w: VueWrapper, colIndex: number) {
   const cards = lists[colIndex].element.querySelectorAll(':scope > .w-kanban-board__card')
   cards.forEach((el, i) => {
     ;(el as HTMLElement).getBoundingClientRect = () =>
-      ({ top: i * 100, height: 80, bottom: i * 100 + 80, left: 0, right: 200, width: 200, x: 0, y: i * 100 }) as DOMRect
+      ({
+        top: i * 100,
+        height: 80,
+        bottom: i * 100 + 80,
+        left: 0,
+        right: 200,
+        width: 200,
+        x: 0,
+        y: i * 100,
+      }) as DOMRect
   })
 }
 
@@ -75,7 +84,9 @@ describe('WKanbanBoard — render', () => {
   it('slot #card recebe item e column', () => {
     const w = mount(WKanbanBoard, {
       props: { columns: colunas() },
-      slots: { card: `<template #card="{ item, column }">{{ column.value }}:{{ item.nome }}</template>` },
+      slots: {
+        card: `<template #card="{ item, column }">{{ column.value }}:{{ item.nome }}</template>`,
+      },
     })
     expect(w.findAll('.w-kanban-board__card')[0].text()).toBe('todo:Tarefa 1')
   })
@@ -107,7 +118,12 @@ describe('WKanbanBoard — move', () => {
     const w = montar()
     medirCartoes(w, 1) // doing: card 3 (mid 40), card 4 (mid 140)
     await arrastar(w, 0, 1, 120) // Tarefa 1 → doing, entre os dois cards
-    expect(ultimoMove(w)).toEqual({ item: { id: 1, nome: 'Tarefa 1' }, from: 'todo', to: 'doing', index: 1 })
+    expect(ultimoMove(w)).toEqual({
+      item: { id: 1, nome: 'Tarefa 1' },
+      from: 'todo',
+      to: 'doing',
+      index: 1,
+    })
   })
 
   it('drop no fim da coluna emite index = items.length', async () => {
@@ -120,14 +136,24 @@ describe('WKanbanBoard — move', () => {
   it('drop em coluna vazia emite index 0', async () => {
     const w = montar()
     await arrastar(w, 0, 2, 50)
-    expect(ultimoMove(w)).toEqual({ item: { id: 1, nome: 'Tarefa 1' }, from: 'todo', to: 'done', index: 0 })
+    expect(ultimoMove(w)).toEqual({
+      item: { id: 1, nome: 'Tarefa 1' },
+      from: 'todo',
+      to: 'done',
+      index: 0,
+    })
   })
 
   it('reordenar na mesma coluna ajusta o índice final (from === to)', async () => {
     const w = montar()
     medirCartoes(w, 0) // todo: Tarefa 1 (mid 40), Tarefa 2 (mid 140)
     await arrastar(w, 0, 0, 999) // Tarefa 1 para depois da Tarefa 2: raw 2 → final 1
-    expect(ultimoMove(w)).toEqual({ item: { id: 1, nome: 'Tarefa 1' }, from: 'todo', to: 'todo', index: 1 })
+    expect(ultimoMove(w)).toEqual({
+      item: { id: 1, nome: 'Tarefa 1' },
+      from: 'todo',
+      to: 'todo',
+      index: 1,
+    })
   })
 
   it('soltar onde já estava não emite move', async () => {
@@ -139,7 +165,9 @@ describe('WKanbanBoard — move', () => {
 
   it('drop sem dragstart não emite nada', async () => {
     const w = montar()
-    await w.findAll('.w-kanban-board__list')[1].trigger('drop', { dataTransfer: dataTransfer(), clientY: 50 })
+    await w
+      .findAll('.w-kanban-board__list')[1]
+      .trigger('drop', { dataTransfer: dataTransfer(), clientY: 50 })
     expect(w.emitted('move')).toBeFalsy()
   })
 

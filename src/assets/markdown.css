@@ -230,8 +230,7 @@
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--fg, #000) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg, #000) 8%, transparent);
   font-size: var(--text-2xs, 0.6875rem);
   color: var(--fg-muted, var(--p-text-muted-color));
 }
@@ -398,8 +397,7 @@
 
 .w-markdown-view td {
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--border, #e2e8f0) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border, #e2e8f0) 60%, transparent);
   vertical-align: top;
 }
 

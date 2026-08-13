@@ -109,7 +109,11 @@ function ir(id: string): void {
   elemento.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-watch(() => props.headings, () => void nextTick(observar), { immediate: true })
+watch(
+  () => props.headings,
+  () => void nextTick(observar),
+  { immediate: true },
+)
 
 onBeforeUnmount(() => observador?.disconnect())
 </script>
@@ -120,7 +124,12 @@ onBeforeUnmount(() => observador?.disconnect())
 
     <div v-if="searchable" class="w-md-toc__busca">
       <i class="pi pi-search" aria-hidden="true" />
-      <input v-model="termo" type="search" placeholder="Filtrar seções" aria-label="Filtrar seções" />
+      <input
+        v-model="termo"
+        type="search"
+        placeholder="Filtrar seções"
+        aria-label="Filtrar seções"
+      />
     </div>
 
     <div class="w-md-toc__corpo" :style="{ maxHeight }">
