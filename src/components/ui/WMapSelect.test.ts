@@ -255,6 +255,42 @@ describe('WMapSelect — layout sobreposto', () => {
   })
 })
 
+// `readonly` é a via de EXIBIÇÃO: quem só mostra o desenho não tem o que buscar
+// (a tela já tem a própria busca) nem o que somar (não há seleção). O contrato é
+// "some o painel e o rodapé, e nada emite" — o `disabled`, por contraste, mantém
+// tudo à vista, só esmaecido.
+describe('WMapSelect — readonly', () => {
+  const somenteLeitura = (props: Record<string, unknown> = {}) =>
+    montar({ readonly: true, ...props })
+
+  it('marca o modificador e esconde painel e rodapé', () => {
+    const w = somenteLeitura()
+    expect(w.classes()).toContain('w-map-select--readonly')
+    expect(w.find('.w-map-select__panel').exists()).toBe(false)
+    expect(w.find('.w-map-select__footer').exists()).toBe(false)
+    expect(w.find('input[type="text"]').exists()).toBe(false)
+    expect(itens(w)).toHaveLength(0)
+  })
+
+  it('o mapa continua lá — é só ele que sobra', () => {
+    const w = somenteLeitura()
+    expect(w.find('.w-map-select__canvas').exists()).toBe(true)
+  })
+
+  it('vale também no sobreposto, e sem botão de recolher (não há painel)', () => {
+    const w = somenteLeitura({ layout: 'sobreposto' })
+    expect(w.classes()).toContain('w-map-select--overlay')
+    expect(w.find('.w-map-select__collapse').exists()).toBe(false)
+    expect(w.classes()).not.toContain('w-map-select--collapsed')
+  })
+
+  it('o modelValue segue valendo para destacar de fora, sem emitir de volta', async () => {
+    const w = somenteLeitura({ modelValue: ['P41'] })
+    await w.setProps({ modelValue: ['P42', 'P43'] })
+    expect(emitido(w)).toEqual([])
+  })
+})
+
 describe('WMapSelect — busca', () => {
   it('filtra por nome e por subtítulo, sem caixa e sem acento', async () => {
     const w = montar()

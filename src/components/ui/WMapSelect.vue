@@ -1,5 +1,16 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, readonly, ref, watch } from 'vue'
+// `readonly` do Vue entra com apelido: existe uma PROP chamada `readonly`, e no
+// template o binding do import ganharia dela — a função é sempre truthy, então
+// `v-if="!readonly"` nunca renderizaria painel nem rodapé.
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  readonly as somenteLeitura,
+  ref,
+  watch,
+} from 'vue'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
@@ -13,6 +24,11 @@ import type {
   MapSelectId,
   MapSelectPolygonStyle,
 } from '@/types/mapSelect'
+
+/** Aviso de Leaflet fora do ar. Extraído porque o `readonly` precisa reconhecê-lo:
+ *  ali não existe lista ao lado para onde mandar o usuário. */
+const ERRO_MAPA_PADRAO = 'O mapa não pôde ser carregado. Selecione os talhões pela lista ao lado.'
+const ERRO_MAPA_READONLY = 'O mapa não pôde ser carregado.'
 
 /**
  * Seleção múltipla de polígonos num mapa de satélite, com painel lateral de busca.
@@ -32,6 +48,9 @@ import type {
  * vidro. Eles continuam FORA do container do Leaflet (irmãos, não filhos), então
  * o mapa nunca vê os cliques do painel e o painel nunca precisa de
  * `L.DomEvent.disableClickPropagation` — arrastar/zoom por baixo segue intacto.
+ *
+ * `readonly` é a via de EXIBIÇÃO: sem painel e sem rodapé, sobra o mapa. Diferente
+ * de `disabled`, que mantém os controles à vista, só travados.
  */
 const props = withDefaults(
   defineProps<{
@@ -73,6 +92,12 @@ const props = withDefaults(
     /** Mensagem quando o Leaflet não carregou. */
     mapErrorMessage?: string
     disabled?: boolean
+    /** Só o desenho: esconde o painel de busca e a barra de área, e nenhum clique
+     *  seleciona. Para **exibir** geometrias (uma listagem, a conferência de um
+     *  cadastro) — quando o mapa não é o controle de escolha, o painel de busca
+     *  duplica a busca da própria tela e a área somada não tem o que somar.
+     *  `modelValue` continua valendo: dá para destacar um polígono de fora. */
+    readonly?: boolean
     /** Estilo do polígono não selecionado. */
     polygonStyle?: MapSelectPolygonStyle
     /** Estilo do polígono selecionado. */
@@ -99,8 +124,9 @@ const props = withDefaults(
     expandLabel: 'Mostrar painel de seleção',
     badgeLabel: 'Satélite',
     emptyMessage: 'Nenhum talhão encontrado',
-    mapErrorMessage: 'O mapa não pôde ser carregado. Selecione os talhões pela lista ao lado.',
+    mapErrorMessage: ERRO_MAPA_PADRAO,
     disabled: false,
+    readonly: false,
     // Tinta de mapa, não cor de UI: estes valores são lidos sobre a imagem de
     // satélite, onde os tokens do tema (claro/escuro) não valem. São props para
     // quem tiver outro fundo poder trocar.
@@ -129,6 +155,13 @@ const { formatNumber } = useFormatters()
 
 const isOverlay = computed(() => props.layout === 'sobreposto')
 
+/** Texto customizado sempre vence; só o default é trocado no `readonly`. */
+const mapErrorText = computed(() =>
+  props.readonly && props.mapErrorMessage === ERRO_MAPA_PADRAO
+    ? ERRO_MAPA_READONLY
+    : props.mapErrorMessage,
+)
+
 /** Estado do painel flutuante — interno de propósito: recolher é gesto de
  *  visualização ("quero ver o mapa"), não dado do formulário. */
 const collapsed = ref(false)
@@ -156,13 +189,13 @@ function isSelected(id: MapSelectId): boolean {
 }
 
 function toggle(id: MapSelectId) {
-  if (props.disabled) return
+  if (props.disabled || props.readonly) return
   const next = isSelected(id) ? props.modelValue.filter((x) => x !== id) : [...props.modelValue, id]
   emit('update:modelValue', next)
 }
 
 function clear() {
-  if (props.disabled || !props.modelValue.length) return
+  if (props.disabled || props.readonly || !props.modelValue.length) return
   emit('update:modelValue', [])
 }
 
@@ -367,7 +400,7 @@ watch([collapsed, isOverlay], () => {
 defineExpose({
   refreshSize,
   /** Painel flutuante recolhido? (só faz sentido no `layout="sobreposto"`.) */
-  collapsed: readonly(collapsed),
+  collapsed: somenteLeitura(collapsed),
   setCollapsed,
 })
 </script>
@@ -378,8 +411,9 @@ defineExpose({
     class="w-map-select"
     :class="{
       'w-map-select--disabled': disabled,
+      'w-map-select--readonly': readonly,
       'w-map-select--overlay': isOverlay,
-      'w-map-select--collapsed': isOverlay && collapsed,
+      'w-map-select--collapsed': isOverlay && collapsed && !readonly,
     }"
   >
     <div class="w-map-select__body">
@@ -387,14 +421,14 @@ defineExpose({
         <div ref="container" class="w-map-select__canvas" />
         <div v-if="mapError" class="w-map-select__fallback">
           <i class="pi pi-map" />
-          <span>{{ mapErrorMessage }}</span>
+          <span>{{ mapErrorText }}</span>
         </div>
         <span v-else-if="badgeLabel" class="w-map-select__badge">
           <i class="pi pi-globe" />{{ badgeLabel }}
         </span>
       </div>
 
-      <div class="w-map-select__panel">
+      <div v-if="!readonly" class="w-map-select__panel">
         <button
           v-if="isOverlay"
           type="button"
@@ -472,7 +506,7 @@ defineExpose({
       </div>
     </div>
 
-    <div ref="footer" class="w-map-select__footer">
+    <div v-if="!readonly" ref="footer" class="w-map-select__footer">
       <slot name="footer" :area="selectedArea" :features="selectedFeatures">
         <span class="w-map-select__area">
           {{ areaLabel }}
