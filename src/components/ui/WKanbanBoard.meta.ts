@@ -13,10 +13,30 @@ export default defineComponentMeta({
       name: 'Fluxo de projetos',
       props: {
         columns: [
-          { value: 'backlog', label: 'Backlog', accent: 'var(--fg-subtle)', items: items(['Importar geometria', 'Novo relatório']) },
-          { value: 'doing', label: 'Em andamento', accent: 'var(--info)', items: items(['Rastreio de sementes'], 10) },
-          { value: 'review', label: 'Revisão', accent: 'var(--warning)', items: items(['Dashboard fertilizantes'], 20) },
-          { value: 'done', label: 'Concluído', accent: 'var(--success)', items: items(['Login SSO', 'Auditoria'], 30) },
+          {
+            value: 'backlog',
+            label: 'Backlog',
+            accent: 'var(--fg-subtle)',
+            items: items(['Importar geometria', 'Novo relatório']),
+          },
+          {
+            value: 'doing',
+            label: 'Em andamento',
+            accent: 'var(--info)',
+            items: items(['Rastreio de sementes'], 10),
+          },
+          {
+            value: 'review',
+            label: 'Revisão',
+            accent: 'var(--warning)',
+            items: items(['Dashboard fertilizantes'], 20),
+          },
+          {
+            value: 'done',
+            label: 'Concluído',
+            accent: 'var(--success)',
+            items: items(['Login SSO', 'Auditoria'], 30),
+          },
         ],
       },
     },

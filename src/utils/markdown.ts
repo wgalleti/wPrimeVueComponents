@@ -374,7 +374,8 @@ function aplicarTarefas(md: MarkdownIt): void {
     for (let i = 2; i < tokens.length; i += 1) {
       const inline = tokens[i]
       if (inline.type !== 'inline' || !inline.children?.length) continue
-      if (tokens[i - 1].type !== 'paragraph_open' || tokens[i - 2].type !== 'list_item_open') continue
+      if (tokens[i - 1].type !== 'paragraph_open' || tokens[i - 2].type !== 'list_item_open')
+        continue
       const primeiro = inline.children[0]
       if (primeiro.type !== 'text') continue
       const marcado = /^\[([ xX])\]\s+/.exec(primeiro.content)
@@ -409,9 +410,7 @@ function aplicarCodigo(md: MarkdownIt): void {
     }
 
     const realcado =
-      realce && CARREGADORES[linguagem]
-        ? realce(token.content, linguagem)
-        : escapar(token.content)
+      realce && CARREGADORES[linguagem] ? realce(token.content, linguagem) : escapar(token.content)
 
     const barra =
       titulo || primeira
@@ -448,7 +447,9 @@ function aplicarLinks(md: MarkdownIt): void {
       tokens[idx].attrSet('rel', 'noopener noreferrer')
       tokens[idx].attrJoin('class', 'md-link-externo')
     }
-    return original ? original(tokens, idx, options, env, self) : self.renderToken(tokens, idx, options)
+    return original
+      ? original(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options)
   }
 }
 
