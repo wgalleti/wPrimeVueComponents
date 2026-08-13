@@ -14,6 +14,12 @@ export type { EditableColumnDef, EditableColumnEditor, EditableRow } from './edi
 
 export type { CheckListItem, CheckListLevel } from './checkList'
 
+export type { KanbanColumn, KanbanMoveEvent } from './kanban'
+
+export type { MarkdownHeading, MarkdownRenderResult } from './markdown'
+
+export type { TabItem } from './tabs'
+
 export type {
   MapSelectFeature,
   MapSelectGeometry,

@@ -652,6 +652,13 @@
           "description": ""
         },
         {
+          "name": "subRows",
+          "type": "FieldSubRowsFetch | undefined",
+          "required": false,
+          "default": null,
+          "description": "Sub-linhas do grid do modal: recebe as linhas da página e devolve o mapa\n`id → sub-linhas` + as colunas (dinâmicas) do mini-grid. Linha com entrada\nno mapa abre expandida — ex.: lote (linha) com suas análises (sub-linhas)."
+        },
+        {
           "name": "dialogWidth",
           "type": "string | undefined",
           "required": false,
@@ -1006,6 +1013,61 @@
           "description": ""
         }
       ]
+    },
+    "WMarkdownEditor": {
+      "file": "src/components/form/WMarkdownEditor.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": "Markdown cru (v-model)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "minHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"320px\"",
+          "description": "Altura mínima da área de edição/preview."
+        },
+        {
+          "name": "maxHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"none\"",
+          "description": "Altura máxima da área de edição/preview. Com valor, o editor vira moldura\nfixa e cada painel rola por dentro — as ações do formulário seguem\nvisíveis por mais longo que fique o documento."
+        },
+        {
+          "name": "previewMode",
+          "type": "\"split\" | \"tab\" | undefined",
+          "required": false,
+          "default": "\"tab\"",
+          "description": "'tab' alterna escrever/visualizar; 'split' mostra lado a lado."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: string]",
+          "description": ""
+        }
+      ],
+      "slots": []
     },
     "WMoneyInput": {
       "file": "src/components/form/WMoneyInput.vue",
@@ -1546,6 +1608,87 @@
       "events": [],
       "slots": []
     },
+    "WKanbanBoard": {
+      "file": "src/components/ui/WKanbanBoard.vue",
+      "props": [
+        {
+          "name": "columns",
+          "type": "KanbanColumn<Record<string, unknown>>[]",
+          "required": true,
+          "default": null,
+          "description": "Colunas na ordem de exibição. Itens pertencem ao consumidor."
+        },
+        {
+          "name": "itemKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": "Campo usado como key estável dos cards."
+        },
+        {
+          "name": "canDrag",
+          "type": "((item: Item) => boolean) | undefined",
+          "required": false,
+          "default": null,
+          "description": "Permite bloquear o arrasto de itens específicos."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "maxHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"32rem\"",
+          "description": "Altura máxima da lista de cards (a coluna rola por dentro)."
+        },
+        {
+          "name": "minHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"6rem\"",
+          "description": "Altura mínima da lista — dá área de drop mesmo com a coluna vazia."
+        }
+      ],
+      "events": [
+        {
+          "name": "move",
+          "type": "[event: KanbanMoveEvent<Record<string, unknown>>]",
+          "description": ""
+        },
+        {
+          "name": "item-click",
+          "type": "[item: Item]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "card",
+          "type": "{ item: Item; column: KanbanColumn<Record<string, unknown>>; }",
+          "description": "Conteúdo do card. Fallback: item.nome ?? item[itemKey]."
+        },
+        {
+          "name": "column-header",
+          "type": "{ column: KanbanColumn<Record<string, unknown>>; }",
+          "description": "Cabeçalho da coluna. Fallback: label + contador."
+        },
+        {
+          "name": "column-action",
+          "type": "{ column: KanbanColumn<Record<string, unknown>>; }",
+          "description": "Ação à direita do cabeçalho (ex.: criar nesta coluna)."
+        },
+        {
+          "name": "empty-column",
+          "type": "{ column: KanbanColumn<Record<string, unknown>>; }",
+          "description": "Coluna sem itens."
+        }
+      ]
+    },
     "WKpiCard": {
       "file": "src/components/ui/WKpiCard.vue",
       "props": [
@@ -1845,6 +1988,75 @@
         }
       ]
     },
+    "WMarkdownToc": {
+      "file": "src/components/ui/WMarkdownToc.vue",
+      "props": [
+        {
+          "name": "headings",
+          "type": "MarkdownHeading[]",
+          "required": true,
+          "default": null,
+          "description": "Títulos do documento (evento `headings` do WMarkdownView)."
+        },
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nesta p\\u00E1gina\"",
+          "description": ""
+        },
+        {
+          "name": "minHeadings",
+          "type": "number | undefined",
+          "required": false,
+          "default": "2",
+          "description": "Abaixo disso o índice não aparece (documento curto não precisa)."
+        },
+        {
+          "name": "searchable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Mostra o campo que filtra os títulos."
+        },
+        {
+          "name": "maxHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"calc(100vh - 14rem)\"",
+          "description": "Teto da lista — o índice se ajusta à altura disponível."
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
+    "WMarkdownView": {
+      "file": "src/components/ui/WMarkdownView.vue",
+      "props": [
+        {
+          "name": "source",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": "Markdown cru a renderizar."
+        },
+        {
+          "name": "emptyText",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Sem conte\\u00FAdo\"",
+          "description": "Mensagem exibida quando `source` está vazio."
+        }
+      ],
+      "events": [
+        {
+          "name": "headings",
+          "type": "[MarkdownHeading[]]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
     "WPageHeader": {
       "file": "src/components/ui/WPageHeader.vue",
       "props": [
@@ -2095,6 +2307,40 @@
           "description": ""
         }
       ]
+    },
+    "WTabBar": {
+      "file": "src/components/ui/WTabBar.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": "`value` da aba ativa."
+        },
+        {
+          "name": "items",
+          "type": "TabItem[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Rótulo do grupo para leitores de tela."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: string]",
+          "description": ""
+        }
+      ],
+      "slots": []
     }
   }
 }

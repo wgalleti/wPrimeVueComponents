@@ -37,7 +37,25 @@ export default defineConfig({
       // no bundle: o WMapSelect a carrega por import() dinâmico e quem nunca
       // abre o mapa não paga por ela. O CSS (`leaflet/dist/leaflet.css`) NÃO é
       // externo de propósito — vai junto no style.css da suite.
-      external: ['vue', 'primevue', 'axios', 'dayjs', 'leaflet', /^primevue\/.*/],
+      // `markdown-it` e `dompurify` seguem a mesma lógica: são dependencies
+      // (o consumidor as recebe pelo npm), mas ficam fora do bundle — quem não
+      // usa WMarkdownView/WMarkdownEditor não paga por elas (tree-shaking).
+      // Os plugins do markdown seguem `markdown-it`; `highlight.js` e `mermaid`
+      // entram por import() dinâmico — só o documento que tem código ou
+      // diagrama paga por eles, e em chunk separado.
+      external: [
+        'vue',
+        'primevue',
+        'axios',
+        'dayjs',
+        'leaflet',
+        'markdown-it',
+        'dompurify',
+        'mermaid',
+        /^markdown-it-.*/,
+        /^highlight\.js.*/,
+        /^primevue\/.*/,
+      ],
       output: {
         globals: {
           vue: 'Vue',
