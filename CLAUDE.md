@@ -106,6 +106,19 @@ yarn build
 yarn type-check
 ```
 
+## Checklist de componente novo (OBRIGATÓRIO antes do commit)
+
+Todo componente novo (ou mudança de props/events/slots) só está PRONTO quando TODOS os itens abaixo existirem. Nenhum `feat:` de componente pode ser commitado com item faltando:
+
+1. **Sidecar** `NomeDoComponente.meta.ts` ao lado do SFC (`defineComponentMeta`: category, icon, summary, examples)
+2. **Manifest regenerado**: `yarn meta` (o CI valida com `meta:check`)
+3. **Teste** `NomeDoComponente.test.ts` cobrindo render + eventos principais
+4. **Página VitePress** `docs/components/nome-do-componente.md` (nome hifenizado) usando `<ApiTable name="NomeDoComponente" />` — nunca tabela de props escrita à mão
+5. **Entrada no sidebar** em `docs/.vitepress/config.ts`, na categoria correta, em ordem alfabética
+6. **Export** no barrel (`src/components/index.ts` + `src/index.ts`) e types em `src/types/`
+
+Lembrete: o deploy das docs roda a cada push na main — componente sem doc = buraco imediato no site publicado. No 0.12.0 isso aconteceu (5 componentes sem doc/sidebar); não repetir.
+
 ## Do NOT
 - Criar instância axios interna — sempre usar a injetada
 - Usar PrimeVue `useStyle()` — styling é responsabilidade do projeto consumidor
