@@ -117,6 +117,8 @@ Todo componente novo (ou mudança de props/events/slots) só está PRONTO quando
 5. **Entrada no sidebar** em `docs/.vitepress/config.ts`, na categoria correta, em ordem alfabética
 6. **Export** no barrel (`src/components/index.ts` + `src/index.ts`) e types em `src/types/`
 
+Rode `yarn docs:check` antes do commit — o gate (também no CI) valida sidecar, `<ApiTable>`, sidebar, export e páginas órfãs; teste ainda sai como aviso enquanto houver débito histórico.
+
 Lembrete: o deploy das docs roda a cada push na main — componente sem doc = buraco imediato no site publicado. No 0.12.0 isso aconteceu (5 componentes sem doc/sidebar); não repetir.
 
 ## Do NOT

@@ -26,6 +26,9 @@ jobs:
       - name: Metadata manifest up to date
         run: yarn meta:check
 
+      - name: Docs checklist (sidecar, ApiTable, sidebar, export)
+        run: yarn docs:check
+
       - name: Lint
         run: yarn lint
 
