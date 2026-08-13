@@ -55,6 +55,27 @@ O painel e o rodapé flutuam por cima, mas continuam **irmãos** do mapa — nun
 do Leaflet. Por isso o clique no painel jamais vira clique no mapa, e arrastar/dar zoom por baixo
 segue funcionando onde o vidro não cobre. Nada de `L.DomEvent.disableClickPropagation`.
 
+## Só exibir o desenho (`readonly`)
+
+Nem todo mapa é um controle de escolha. Numa **listagem** que já tem a própria busca, ou na
+**conferência** do contorno dentro de um cadastro, o painel duplica a busca da tela e a barra de
+"área selecionada" não tem o que somar. `readonly` some com os dois: sobra o mapa.
+
+```vue
+<WMapSelect :features="talhoes" readonly layout="sobreposto" height="380px" />
+```
+
+| | `disabled` | `readonly` |
+|---|---|---|
+| Painel de busca e lista | à vista, esmaecidos | **não renderiza** |
+| Barra de área somada | à vista | **não renderiza** |
+| Clique seleciona | não | não |
+| Para quê | o controle existe mas está travado agora (form bloqueado, sem permissão) | o mapa nunca foi controle — é exibição |
+
+O `modelValue` **continua valendo**: dá para destacar um polígono de fora (a linha em foco na
+tabela, por exemplo) sem que o componente emita nada de volta. Os polígonos também deixam de
+mostrar o cursor de mão — no `readonly` o clique não faz nada, e prometer seleção seria mentira.
+
 ## Leaflet
 
 O `leaflet` é dependência da suite (instalado junto), mas **não entra no bundle**: o componente o

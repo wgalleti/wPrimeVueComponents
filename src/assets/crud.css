@@ -2409,6 +2409,13 @@
   opacity: 0.7;
 }
 
+/* Só-leitura: sem painel e sem barra de resumo, o mapa é o componente inteiro.
+   O polígono deixa de anunciar clique — no readonly ele não faz nada, e o cursor
+   de mão prometia uma seleção que não existe. */
+.w-map-select--readonly .leaflet-interactive {
+  cursor: inherit;
+}
+
 .w-map-select__body {
   display: flex;
   align-items: stretch;
@@ -2719,6 +2726,13 @@
 .w-map-select--overlay .w-map-select__body {
   position: relative;
   flex-direction: row;
+}
+
+/* Sem barra de resumo não há o que reservar: o `measureFooter` não roda (o
+   elemento não existe) e o valor ficaria no chute inicial, levantando a
+   atribuição do Leaflet sobre nada. */
+.w-map-select--overlay.w-map-select--readonly {
+  --w-map-foot-h: 0rem;
 }
 
 /* O vidro. Legibilidade sobre satélite é o ponto crítico: o véu sozinho (92% do

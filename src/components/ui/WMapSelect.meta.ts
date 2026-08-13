@@ -96,11 +96,26 @@ export default defineComponentMeta({
       },
     },
     {
-      name: 'Somente leitura',
+      name: 'Desabilitado',
+      description: 'Os controles continuam à vista, esmaecidos — nada seleciona.',
       props: {
         features: talhoes,
         modelValue: ['P41'],
         disabled: true,
+      },
+    },
+    {
+      name: 'Só o desenho',
+      description:
+        'Sem painel de busca e sem barra de área: o mapa vira exibição. Para a listagem que já ' +
+        'tem a própria busca, ou para conferir o contorno num cadastro. O `modelValue` continua ' +
+        'destacando de fora.',
+      props: {
+        features: talhoes,
+        modelValue: ['P41'],
+        readonly: true,
+        layout: 'sobreposto',
+        height: '320px',
       },
     },
   ],
