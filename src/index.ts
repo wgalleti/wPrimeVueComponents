@@ -1,5 +1,6 @@
 // Styles — importar no app: import '@wgalleti/primevue-components/style.css'
 import './assets/crud.css'
+import './assets/markdown.css'
 
 // Plugin
 export { WPrimeVuePlugin } from './plugin'
@@ -36,6 +37,11 @@ export {
   WStepSection,
   WCheckList,
   WMapSelect,
+  WMarkdownView,
+  WMarkdownEditor,
+  WMarkdownToc,
+  WTabBar,
+  WKanbanBoard,
 } from './components'
 
 // Composables
@@ -71,6 +77,8 @@ export type {
   EditableRow,
   CheckListItem,
   CheckListLevel,
+  KanbanColumn,
+  KanbanMoveEvent,
   MapSelectFeature,
   MapSelectGeometry,
   MapSelectId,

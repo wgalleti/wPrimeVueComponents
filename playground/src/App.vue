@@ -17,6 +17,7 @@ const links = [
   { label: 'Teclado', to: '/keyboard', icon: 'pi pi-bolt' },
   { label: 'DatePicker', to: '/datepicker', icon: 'pi pi-calendar' },
   { label: 'Recomendação (novos)', to: '/recomendacao', icon: 'pi pi-map' },
+  { label: 'Markdown & Kanban', to: '/markdown-kanban', icon: 'pi pi-objects-column' },
 ]
 
 const isDark = ref(document.documentElement.classList.contains('dark'))

@@ -48,5 +48,10 @@ export const router = createRouter({
       name: 'datepicker',
       component: () => import('./views/DatePickerView.vue'),
     },
+    {
+      path: '/markdown-kanban',
+      name: 'markdown-kanban',
+      component: () => import('./views/MarkdownKanbanView.vue'),
+    },
   ],
 })

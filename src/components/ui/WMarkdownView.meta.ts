@@ -1,0 +1,72 @@
+import { defineComponentMeta } from '@/types/componentMeta'
+
+const documento = [
+  '## Plano de aplicação',
+  '',
+  'Aplicar o tratamento em **duas etapas**, priorizando os talhões com maior área.',
+  '',
+  '> [!DICA]',
+  '> Confira o saldo do lote antes de agendar a máquina — o sistema bloqueia a saída sem saldo.',
+  '',
+  '::: passos',
+  '1. Conferir o saldo de sementes do lote',
+  '2. Agendar a máquina para o talhão',
+  '3. Registrar a aplicação no portal',
+  ':::',
+  '',
+  '::: atencao Janela de plantio',
+  'Depois de **10/11** a janela fecha e a recomendação precisa ser refeita.',
+  ':::',
+  '',
+  '| Talhão | Área |',
+  '| --- | --- |',
+  '| T-01 | 120 ha |',
+  '| T-02 | 140 ha |',
+  '',
+  '### Checklist',
+  '',
+  '- [x] Conferir saldo de sementes',
+  '- [ ] Agendar máquina',
+  '',
+  '```python title="services/aplicacao.py"',
+  'def aplicar(lote, talhao):',
+  '    """Baixa o saldo e registra a aplicação."""',
+  '    return MovimentoService.saida(lote, talhao)',
+  '```',
+].join('\n')
+
+const diagrama = [
+  '## Fluxo do lote',
+  '',
+  '```mermaid',
+  'graph LR',
+  '  A[Nota fiscal] --> B[Lote]',
+  '  B --> C{Análise}',
+  '  C -->|Aprovado| D[Disponível]',
+  '  C -->|Reprovado| E[Bloqueado]',
+  '```',
+  '',
+  '::: abas',
+  '::: aba Portal',
+  'O usuário fecha a nota e o lote nasce com saldo.',
+  ':::',
+  '::: aba API',
+  '`POST /api/v1/notas/{id}/fechar/` gera a entrada de estoque.',
+  ':::',
+  ':::',
+].join('\n')
+
+export default defineComponentMeta({
+  category: 'UI',
+  icon: 'pi pi-align-left',
+  summary:
+    'Leitor de markdown rico (markdown-it + DOMPurify): alertas `> [!DICA]`/`::: dica`, passos, cards, abas, blocos colapsáveis, código com realce e cópia, diagramas mermaid e emissão do índice de títulos (`headings`).',
+  examples: [
+    { name: 'Documento', props: { source: documento } },
+    { name: 'Diagrama e abas', props: { source: diagrama } },
+    { name: 'Vazio', props: { source: '', emptyText: 'Nenhuma anotação ainda' } },
+  ],
+  controls: {
+    source: { type: 'textarea' },
+  },
+})
