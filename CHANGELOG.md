@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.12.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.11.0...v0.12.0) (2026-08-13)
+
+### Funcionalidades
+
+* leitor de markdown rico, board kanban e barra de abas ([0d06eeb](https://github.com/wgalleti/wPrimeVueComponents/commit/0d06eebb69b9fb1779f906136fcc9348028ae8cb))
 ## [0.11.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.10.0...v0.11.0) (2026-08-11)
 
 ### Funcionalidades
