@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.13.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.12.0...v0.13.0) (2026-08-13)
+
+### Funcionalidades
+
+* **WMapSelect:** prop readonly para exibir geometrias sem seleção ([3abdb47](https://github.com/wgalleti/wPrimeVueComponents/commit/3abdb479fffa222bf1d28fdc5a77495f9aee85c3))
+
+### Documentação
+
+* página do WDatePicker e gate de checklist no CI ([a135ca5](https://github.com/wgalleti/wPrimeVueComponents/commit/a135ca59d3b5f68d4e2fd29215ba0542196a9fa9))
+* páginas VitePress dos 5 componentes do 0.12.0 ([ed53237](https://github.com/wgalleti/wPrimeVueComponents/commit/ed53237a53f323e737f67833272a83768c264c1d))
 ## [0.12.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.11.0...v0.12.0) (2026-08-13)
 
 ### Funcionalidades
