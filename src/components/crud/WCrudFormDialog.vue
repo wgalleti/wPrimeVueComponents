@@ -105,6 +105,11 @@ watch(
         </template>
       </WFormRenderer>
 
+      <!-- Depois dos campos, antes do rodapé: prévia do que vai ser gravado, saldo do
+           que foi escolhido, aviso dependente do preenchimento. É conteúdo do form
+           (reage ao que está digitado), não ação — por isso não vive no `#footer`. -->
+      <slot name="after-fields" :form-data="formData" :is-editing="isEditing" />
+
       <!-- Footer -->
       <div class="w-crud-form-footer">
         <slot name="footer" :saving="saving" :disabled="disabled">

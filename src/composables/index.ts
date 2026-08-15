@@ -1,4 +1,5 @@
 export { useCrudManager } from './useCrudManager'
+export { useSubviewCrud } from './useSubviewCrud'
 export { defineCrudConfig } from './defineCrudConfig'
 export { useFormKeyboardNav } from './useFormKeyboardNav'
 export { useDateInput } from './useDateInput'
