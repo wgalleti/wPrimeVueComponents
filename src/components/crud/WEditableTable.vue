@@ -28,12 +28,14 @@ const props = withDefaults(
     expandable?: boolean
     /** Rótulo do botão de adicionar. Omitido = sem botão (só o slot `#toolbar`). */
     addLabel?: string
-    /** Liga a coluna da lixeira. */
+    /** Liga a coluna da lixeira. **Manda sozinha** na remoção: `disabled` trava as
+     *  células, não a linha (tabela de leitura de onde ainda se remove é caso real —
+     *  itens cujo CRUD acontece em dialog). Para travar tudo, `:removable="false"`. */
     removable?: boolean
     emptyMessage?: string
     /** Rótulo da primeira célula do rodapé de totais. */
     footerLabel?: string
-    /** Trava todos os editores (a tabela vira leitura). */
+    /** Trava todos os editores (a tabela vira leitura) e o botão de adicionar. */
     disabled?: boolean
     /** Campo usado como `key` das linhas. Sem ele, a chave é o índice. */
     rowKey?: string
@@ -135,7 +137,6 @@ function setCell(index: number, field: string, value: unknown) {
 }
 
 function removeRow(row: EditableRow, index: number) {
-  if (props.disabled) return
   // Emite os dois: o array já sem a linha (para o v-model continuar sendo a
   // fonte da verdade) e o evento com a linha removida (para quem precisa dela).
   emit(
@@ -218,7 +219,13 @@ const columnCount = computed(
       </tbody>
 
       <tbody v-for="(row, index) in modelValue" :key="rowKeyOf(row, index)">
-        <tr class="w-editable-table__row">
+        <!-- Zebra pelo índice, não por `:nth-child`: cada linha é um `<tbody>` próprio
+             (por causa da expansão), então a contagem do CSS não enxergaria a
+             alternância. -->
+        <tr
+          class="w-editable-table__row"
+          :class="{ 'w-editable-table__row--alt': index % 2 === 1 }"
+        >
           <td v-if="expandable" class="w-editable-table__toggle-col">
             <button
               type="button"
@@ -289,7 +296,6 @@ const columnCount = computed(
             <button
               type="button"
               class="w-editable-table__remove"
-              :disabled="disabled"
               aria-label="Remover linha"
               @click="removeRow(row, index)"
             >
