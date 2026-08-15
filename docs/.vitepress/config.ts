@@ -37,6 +37,7 @@ export default defineConfig({
               { text: 'WCrudView', link: '/components/w-crud-view' },
               { text: 'WCrudFormDialog', link: '/components/w-crud-form-dialog' },
               { text: 'WCrudColumnRenderer', link: '/components/w-crud-column-renderer' },
+              { text: 'WCrudSubview', link: '/components/w-crud-subview' },
               { text: 'WEditableTable', link: '/components/w-editable-table' },
             ],
           },

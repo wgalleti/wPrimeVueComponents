@@ -122,7 +122,129 @@
       ],
       "slots": [
         {
+          "name": "after-fields",
+          "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
+          "description": ""
+        },
+        {
           "name": "footer",
+          "type": "{ saving: boolean; disabled: boolean; }",
+          "description": ""
+        }
+      ]
+    },
+    "WCrudSubview": {
+      "file": "src/components/crud/WCrudSubview.vue",
+      "props": [
+        {
+          "name": "crud",
+          "type": "SubviewCrudReturn<any>",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "columns",
+          "type": "EditableColumnDef[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "addLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Adicionar\"",
+          "description": "Rótulo do botão de adicionar (default: `Adicionar`)."
+        },
+        {
+          "name": "expandable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Liga a coluna de expansão e o slot `#expansion`."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Documento travado (emitido, aprovado): sem adicionar, editar nem excluir."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "dialogWidth",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"520px\"",
+          "description": ""
+        },
+        {
+          "name": "formColumns",
+          "type": "number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Nº de colunas do grid do form dialog (default: o do manager, senão 2)."
+        },
+        {
+          "name": "footerLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Rótulo da primeira célula do rodapé de totais."
+        },
+        {
+          "name": "rowKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "toolbar-actions",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "expansion",
+          "type": "{ row: EditableRow; index: number; }",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "after-fields",
+          "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "form-footer",
           "type": "{ saving: boolean; disabled: boolean; }",
           "description": ""
         }
@@ -428,7 +550,7 @@
           "type": "boolean | undefined",
           "required": false,
           "default": "false",
-          "description": "Liga a coluna da lixeira."
+          "description": "Liga a coluna da lixeira. **Manda sozinha** na remoção: `disabled` trava as\ncélulas, não a linha (tabela de leitura de onde ainda se remove é caso real —\nitens cujo CRUD acontece em dialog). Para travar tudo, `:removable=\"false\"`."
         },
         {
           "name": "emptyMessage",
@@ -449,7 +571,7 @@
           "type": "boolean | undefined",
           "required": false,
           "default": "false",
-          "description": "Trava todos os editores (a tabela vira leitura)."
+          "description": "Trava todos os editores (a tabela vira leitura) e o botão de adicionar."
         },
         {
           "name": "rowKey",

@@ -11,6 +11,7 @@ export {
   WCrudFormDialog,
   WCrudColumnRenderer,
   WEditableTable,
+  WCrudSubview,
   WAutoCompleteFK,
   WFormRenderer,
   WDatePicker,
@@ -47,6 +48,7 @@ export {
 // Composables
 export {
   useCrudManager,
+  useSubviewCrud,
   useApi,
   useAppToast,
   useAppConfirm,
@@ -89,6 +91,8 @@ export type {
   KpiItem,
   CrudManagerConfig,
   CrudManagerReturn,
+  SubviewCrudConfig,
+  SubviewCrudReturn,
   WPluginOptions,
   WPluginConfig,
   DataProvider,
