@@ -10,7 +10,12 @@ import { useAppToast } from './useAppToast'
 import { useAppConfirm } from './useAppConfirm'
 import { extractApiError } from './useApiError'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
-import { stripMask } from '@/utils/masks'
+import {
+  convertFormRecord,
+  getFieldDefaults,
+  loadItemIntoRecord,
+  validateFormRecord,
+} from '@/utils/formRecord'
 
 /** Shallow diff: returns only the keys whose value changed between two records. */
 function diffRecord(
@@ -98,16 +103,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // ---------------------------------------------------------------------------
 
   function getDefaults(): Record<string, unknown> {
-    const defaults: Record<string, unknown> = {}
-    for (const f of formFields) {
-      defaults[f.field] =
-        f.defaultValue !== undefined
-          ? typeof f.defaultValue === 'function'
-            ? (f.defaultValue as () => unknown)()
-            : f.defaultValue
-          : null
-    }
-    return defaults
+    return getFieldDefaults(formFields)
   }
 
   // Initialize
@@ -307,16 +303,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   }
 
   function loadItemIntoForm(item: T): void {
-    const snapshot: Record<string, unknown> = {}
-    for (const f of formFields) {
-      let value = item[f.field] !== undefined ? item[f.field] : null
-      if (value && (f.type === 'date' || f.type === 'datetime') && typeof value === 'string') {
-        value = parseDate(value)
-      }
-      formData[f.field] = value
-      snapshot[f.field] = value
-    }
-    editingOriginal = snapshot
+    editingOriginal = loadItemIntoRecord(item, formFields, formData)
   }
 
   function openEditDialog(item: T): void {
@@ -365,48 +352,14 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // Apply automatic conversions (dates, FK objects, masks) to a record,
   // returning a fresh plain object suitable for the API payload.
   function convertRecord(record: Record<string, unknown>): Record<string, unknown> {
-    const out: Record<string, unknown> = { ...record }
-    for (const f of formFields) {
-      const val = out[f.field]
-
-      // Datas
-      if (f.type === 'date' && val instanceof Date) {
-        out[f.field] = toDateString(val)
-      } else if (f.type === 'datetime' && val instanceof Date) {
-        out[f.field] = toDateTimeString(val)
-      }
-
-      // FK — extrair o ID do objeto selecionado
-      if (f.type === 'fk' && val !== null && typeof val === 'object') {
-        const key = f.optionValue || 'id'
-        out[f.field] = (val as Record<string, unknown>)[key] ?? val
-      }
-
-      // Máscaras — strip para enviar só dígitos
-      if ((f.type === 'mask' || f.type === 'cpf_cnpj') && typeof val === 'string') {
-        out[f.field] = stripMask(val)
-      }
-    }
-    return out
+    return convertFormRecord(record, formFields)
   }
 
   async function save(): Promise<T | null> {
-    // Validação
-    for (const f of formFields) {
-      if (f.validate) {
-        const result = f.validate(formData[f.field])
-        if (result) {
-          toast.error(result)
-          return null
-        }
-      }
-      if (f.required) {
-        const val = formData[f.field]
-        if (val === null || val === undefined || val === '') {
-          toast.error(`${f.label} é obrigatório`)
-          return null
-        }
-      }
+    const erro = validateFormRecord(formFields, formData)
+    if (erro) {
+      toast.error(erro)
+      return null
     }
 
     saving.value = true
