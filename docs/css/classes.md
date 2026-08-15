@@ -2,6 +2,36 @@
 
 Todas as classes usam o prefixo `w-` e variaveis CSS do PrimeVue (`--p-*`). Sobrescreva qualquer classe no CSS do seu app para customizar a aparencia.
 
+## Tokens da biblioteca
+
+| Token | Padrão | Para quê |
+|---|---|---|
+| `--w-zebra` | 7% do `--primary` sobre transparente | Faixa alternada das linhas — **toda** tabela da suite usa |
+| `--w-row-hover` | 14% do `--primary` sobre transparente | Realce da linha sob o cursor |
+
+Duas decisões neles:
+
+1. **Saem do `--primary` do app**, não de um cinza: a faixa pertence à paleta do produto (no
+   tema claro, um azul claríssimo) em vez de ser uma sujeira neutra. Como o app troca o valor de
+   `--primary` entre os temas, a mesma fórmula serve os dois — não há variante `dark`.
+2. **São `color-mix` com transparente**, não um tom sólido: a mesma tabela aparece sobre fundos
+   diferentes — no card e dentro da expansão de outra tabela. Tom sólido acerta um contexto e
+   some no outro (foi o que aconteceu com a subtabela, cuja faixa era exatamente a cor do fundo
+   em que ela vivia).
+
+Para ajustar no seu app, sobrescreva depois de importar o CSS da suite:
+
+```css
+:root {
+  --w-zebra: color-mix(in srgb, var(--primary) 5%, transparent); /* mais discreto */
+  --w-zebra: color-mix(in srgb, var(--fg) 6%, transparent);      /* ou neutro */
+}
+```
+
+O zebrado é **padrão**, não opt-in: `WCrudView` (via `striped-rows` do DataTable, que marca a
+linha pelo índice do dado e por isso não se perde com linha de expansão) e `WEditableTable` /
+`WCrudSubview` (via classe por índice, já que ali cada linha é um `<tbody>` próprio).
+
 ## WCrudView — `w-crud-*`
 
 ### Estrutura
