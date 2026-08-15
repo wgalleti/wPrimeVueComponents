@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.14.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.13.0...v0.14.0) (2026-08-15)
+
+### ⚠ BREAKING CHANGES
+
+* **WEditableTable:** passing `disabled` no longer disables the remove button.
+
+### Funcionalidades
+
+* **tables:** striped rows and row hover as suite defaults ([61d6f34](https://github.com/wgalleti/wPrimeVueComponents/commit/61d6f34751c31c74e1a72ca60d453bdb876a80d9))
+* **WCrudSubview:** CRUD for draft child collections ([6e99e4b](https://github.com/wgalleti/wPrimeVueComponents/commit/6e99e4b0bf1fb8f13208c1f298bba5219cc1be21))
+
+### Correções
+
+* **WEditableTable:** disabled no longer blocks row removal ([cac39f8](https://github.com/wgalleti/wPrimeVueComponents/commit/cac39f8bee0ec6e57d5353e102b7e4c01e952592))
+
+### Refatorações
+
+* **useCrudManager:** extract form rules into utils/formRecord ([366219b](https://github.com/wgalleti/wPrimeVueComponents/commit/366219bdbd650f7354441a8656dab58752940559))
 ## [0.13.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.12.0...v0.13.0) (2026-08-13)
 
 ### Funcionalidades
