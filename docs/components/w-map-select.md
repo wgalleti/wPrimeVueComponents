@@ -74,7 +74,50 @@ Nem todo mapa é um controle de escolha. Numa **listagem** que já tem a própri
 
 O `modelValue` **continua valendo**: dá para destacar um polígono de fora (a linha em foco na
 tabela, por exemplo) sem que o componente emita nada de volta. Os polígonos também deixam de
-mostrar o cursor de mão — no `readonly` o clique não faz nada, e prometer seleção seria mentira.
+mostrar o cursor de mão — no `readonly` sem `selectionMode` o clique não faz nada, e prometer
+seleção seria mentira. Com `selectionMode` explícito o clique volta a valer (veja abaixo).
+
+## Modo de seleção (`selectionMode`)
+
+Sem valor, o default preserva o comportamento de sempre: interativo → `'multiple'`,
+`readonly` → `'none'`. Definido explicitamente, ele manda — **inclusive com `readonly`**,
+que segue escondendo painel e rodapé, mas o clique no polígono emite `update:modelValue`.
+
+| Valor | Clique no polígono/lista |
+|---|---|
+| `'multiple'` | Alterna o id no array (comportamento de sempre) |
+| `'single'` | Substitui a seleção (`[id]`); clicar no já selecionado desmarca (`[]`) |
+| `'none'` | Nada seleciona (e o cursor de mão some) |
+
+```vue
+<!-- Painel do cadastro: só o mapa, mas o clique escolhe UM talhão -->
+<WMapSelect
+  :model-value="talhaoEmFoco ? [talhaoEmFoco] : []"
+  :features="talhoes"
+  readonly
+  selection-mode="single"
+  tooltips="hover"
+  @update:model-value="(ids) => (talhaoEmFoco = ids[0] ?? null)"
+/>
+```
+
+## Tooltips e mapas densos (`tooltips`)
+
+`tooltips="permanent"` (default) mantém o rótulo de cada polígono sempre visível — ótimo para
+uma dúzia de talhões, mas com 100+ é um nó DOM por talhão reposicionado a cada pan/zoom.
+`tooltips="hover"` mostra o rótulo só sob o cursor (`sticky`), com a mesma classe e estilo.
+
+O mapa também é criado com `preferCanvas: true`: os polígonos são pintados num único canvas em
+vez de uma árvore SVG — outra economia que aparece justamente no mapa denso.
+
+### `features` incremental
+
+`features` pode ser alimentado por páginas (ex.: levas de ~40 chegando em sequência): o redesenho
+é um **diff por `id`** — remove as layers dos ids que saíram, cria só as novas e recria a que
+trocou de `geometria` (a comparação é por **referência**: contorno novo = objeto novo). O
+enquadramento automático acontece **uma vez** (na primeira leva, ou quando a `scopeGeometry`
+chegar); páginas seguintes não refazem o `fitBounds` — o mapa não pula na frente do usuário.
+Para reenquadrar sob demanda, use os métodos expostos `fitToScope()` / `fitToFeature(id)`.
 
 ## Leaflet
 
@@ -102,6 +145,8 @@ selecionando normalmente.
 | `refreshSize()` | `() => void` | Força o `invalidateSize()` do Leaflet (o componente já chama sozinho ao aparecer, ao recolher e ao trocar de `layout`) |
 | `collapsed` | `boolean` (leitura) | Painel flutuante recolhido? Só faz sentido no `'sobreposto'` |
 | `setCollapsed(v)` | `(v: boolean) => void` | Recolhe/expande o painel de fora (ex.: recolher ao entrar no modo desenho) |
+| `fitToScope()` | `() => void` | Reenquadra no escopo (ou na união das features). O fit automático só acontece uma vez — páginas novas de `features` não movem o mapa |
+| `fitToFeature(id, options?)` | `(id: MapSelectId, options?: { padding?: [number, number]; maxZoom?: number }) => void` | Enquadra o polígono de um id (padding default `[20, 20]`); `maxZoom` limita a aproximação ao enquadrar um talhão só. No-op se o id não tem layer |
 
 ## Exemplo
 
@@ -145,6 +190,8 @@ const talhoes: MapSelectFeature[] = [
   Leaflet chega a pintar um quadro com o tile cortado. Se precisar forçar, use o método exposto
   `refreshSize()` via `ref`.
 - **Enquadramento**: `scopeGeometry` manda no `fitBounds` inicial; sem ela, o mapa enquadra a união
-  das geometrias das features.
+  das geometrias das features. O fit automático acontece **uma vez** — se a `scopeGeometry` chegar
+  depois da primeira leva de features (duas requests em paralelo), ela ainda vale um único
+  reenquadramento; daí em diante, só `fitToScope()`/`fitToFeature(id)` movem o mapa.
 - **Estilo dos polígonos**: `polygonStyle` / `polygonSelectedStyle` são tinta de mapa (lida sobre a
   imagem de satélite), não tokens de tema — por isso são props com valores literais.

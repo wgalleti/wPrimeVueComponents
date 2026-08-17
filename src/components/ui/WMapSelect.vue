@@ -23,6 +23,8 @@ import type {
   MapSelectGeometry,
   MapSelectId,
   MapSelectPolygonStyle,
+  MapSelectSelectionMode,
+  MapSelectTooltips,
 } from '@/types/mapSelect'
 
 /** Aviso de Leaflet fora do ar. Extraído porque o `readonly` precisa reconhecê-lo:
@@ -98,6 +100,17 @@ const props = withDefaults(
      *  duplica a busca da própria tela e a área somada não tem o que somar.
      *  `modelValue` continua valendo: dá para destacar um polígono de fora. */
     readonly?: boolean
+    /** Tooltip dos polígonos. `'permanent'` (default) mantém o rótulo sempre
+     *  visível; `'hover'` só o mostra sob o cursor — com muitos polígonos
+     *  (100+), o permanente vira um nó DOM por talhão reposicionado a cada
+     *  pan/zoom, e o `'hover'` devolve a fluidez. */
+    tooltips?: MapSelectTooltips
+    /** Modo de seleção por clique. Sem valor, o default preserva o comportamento
+     *  de sempre: interativo → `'multiple'`, `readonly` → `'none'`. Definido
+     *  explicitamente, vale MESMO com `readonly` (que segue escondendo painel e
+     *  rodapé): o clique no polígono emite `update:modelValue`. Em `'single'` o
+     *  clique substitui a seleção (`[id]`) e clicar no selecionado desmarca. */
+    selectionMode?: MapSelectSelectionMode
     /** Estilo do polígono não selecionado. */
     polygonStyle?: MapSelectPolygonStyle
     /** Estilo do polígono selecionado. */
@@ -127,6 +140,8 @@ const props = withDefaults(
     mapErrorMessage: ERRO_MAPA_PADRAO,
     disabled: false,
     readonly: false,
+    tooltips: 'permanent',
+    selectionMode: undefined,
     // Tinta de mapa, não cor de UI: estes valores são lidos sobre a imagem de
     // satélite, onde os tokens do tema (claro/escuro) não valem. São props para
     // quem tiver outro fundo poder trocar.
@@ -184,18 +199,34 @@ const collapseTitle = computed(() => (collapsed.value ? props.expandLabel : prop
 
 const selected = computed(() => new Set(props.modelValue))
 
+/** `selectionMode` explícito manda — inclusive com `readonly` (que só esconde
+ *  painel/rodapé). Sem ele, o default de sempre: interativo → múltipla,
+ *  `readonly` → nada seleciona. */
+const effectiveSelectionMode = computed<MapSelectSelectionMode>(
+  () => props.selectionMode ?? (props.readonly ? 'none' : 'multiple'),
+)
+
 function isSelected(id: MapSelectId): boolean {
   return selected.value.has(id)
 }
 
 function toggle(id: MapSelectId) {
-  if (props.disabled || props.readonly) return
-  const next = isSelected(id) ? props.modelValue.filter((x) => x !== id) : [...props.modelValue, id]
+  if (props.disabled) return
+  const mode = effectiveSelectionMode.value
+  if (mode === 'none') return
+  const next =
+    mode === 'single'
+      ? isSelected(id)
+        ? []
+        : [id]
+      : isSelected(id)
+        ? props.modelValue.filter((x) => x !== id)
+        : [...props.modelValue, id]
   emit('update:modelValue', next)
 }
 
 function clear() {
-  if (props.disabled || props.readonly || !props.modelValue.length) return
+  if (props.disabled || effectiveSelectionMode.value === 'none' || !props.modelValue.length) return
   emit('update:modelValue', [])
 }
 
@@ -245,6 +276,18 @@ let map: LeafletMap | null = null
 let observer: ResizeObserver | null = null
 let footerObserver: ResizeObserver | null = null
 const layers = new Map<MapSelectId, LeafletGeoJSON>()
+/** Geometria com que cada layer foi desenhada — a comparação é por REFERÊNCIA:
+ *  consumidor que trocar o contorno manda um objeto novo. */
+const layerGeoms = new Map<MapSelectId, MapSelectGeometry>()
+
+/** O enquadramento acontece UMA vez — na primeira leva de features (ou quando a
+ *  `scopeGeometry` chegar). `features` alimentado por páginas não pode refazer o
+ *  `fitBounds` a cada leva: o mapa pularia na frente do usuário. Reenquadrar de
+ *  novo é gesto explícito, pelo `fitToScope()` exposto. */
+let fitted = false
+/** O primeiro fit pode ter sido só pela união das features; quando a
+ *  `scopeGeometry` chegar depois, ela ainda vale UM reenquadramento. */
+let fittedToScope = false
 
 function styleFor(id: MapSelectId): MapSelectPolygonStyle {
   return isSelected(id) ? props.polygonSelectedStyle : props.polygonStyle
@@ -255,30 +298,81 @@ function tooltipText(feature: MapSelectFeature): string {
   return area ? `${feature.nome} · ${area}` : feature.nome
 }
 
-/** Redesenha todos os polígonos a partir de `features`. */
+function bindTip(layer: LeafletGeoJSON, feature: MapSelectFeature) {
+  layer.bindTooltip(
+    tooltipText(feature),
+    props.tooltips === 'hover'
+      ? {
+          permanent: false,
+          sticky: true,
+          direction: 'center',
+          className: 'w-map-select__tip',
+          opacity: 1,
+        }
+      : { permanent: true, direction: 'center', className: 'w-map-select__tip', opacity: 1 },
+  )
+}
+
+/** `interactive: false` tira o polígono do hit-test do Leaflet (e o cursor de
+ *  mão junto). Com tooltip `'hover'` a layer precisa continuar interativa mesmo
+ *  sem seleção — o cursor é suprimido via CSS (`--unselectable`). */
+const layersInteractive = computed(
+  () => effectiveSelectionMode.value !== 'none' || props.tooltips === 'hover',
+)
+
+function createLayer(feature: MapSelectFeature) {
+  if (!leaflet || !map || !feature.geometria) return
+  const layer = leaflet.geoJSON(feature.geometria as unknown as Geometry, {
+    style: () => styleFor(feature.id),
+    interactive: layersInteractive.value,
+  })
+  layer.on('click', () => toggle(feature.id))
+  bindTip(layer, feature)
+  layer.addTo(map)
+  layers.set(feature.id, layer)
+  layerGeoms.set(feature.id, feature.geometria)
+}
+
+/** Sincroniza as layers com `features` por DIFF de `id`: remove as que saíram,
+ *  cria só as novas e recria a que trocou de `geometria` (referência). Páginas
+ *  chegando incrementalmente não destroem o que já está desenhado. */
 function drawFeatures() {
   if (!leaflet || !map) return
-  layers.forEach((layer) => layer.remove())
-  layers.clear()
 
+  const current = new Map<MapSelectId, MapSelectFeature>()
   for (const feature of props.features) {
-    if (!feature.geometria) continue
-    const layer = leaflet.geoJSON(feature.geometria as unknown as Geometry, {
-      style: () => styleFor(feature.id),
-    })
-    layer.on('click', () => toggle(feature.id))
-    layer.bindTooltip(tooltipText(feature), {
-      permanent: true,
-      direction: 'center',
-      className: 'w-map-select__tip',
-      opacity: 1,
-    })
-    layer.addTo(map)
-    layers.set(feature.id, layer)
+    if (feature.geometria) current.set(feature.id, feature)
   }
 
+  layers.forEach((layer, id) => {
+    if (current.has(id)) return
+    layer.remove()
+    layers.delete(id)
+    layerGeoms.delete(id)
+  })
+
+  current.forEach((feature, id) => {
+    const existing = layers.get(id)
+    if (existing && layerGeoms.get(id) === feature.geometria) {
+      // Mesma geometria: só o texto do tooltip pode ter mudado (nome/área).
+      existing.getTooltip()?.setContent(tooltipText(feature))
+      return
+    }
+    if (existing) {
+      existing.remove()
+      layers.delete(id)
+      layerGeoms.delete(id)
+    }
+    createLayer(feature)
+  })
+
   syncStyles()
-  fitToScope()
+
+  if (!fitted && (layers.size || props.scopeGeometry)) {
+    fitToScope()
+    fitted = true
+    fittedToScope = Boolean(props.scopeGeometry)
+  }
 }
 
 /** Reaplica o estilo (e a classe do tooltip) conforme a seleção atual. */
@@ -309,6 +403,28 @@ function fitToScope() {
 
   if (corners.length) map.fitBounds(leaflet.latLngBounds(corners), { padding: [20, 20] })
   else map.setView([0, 0], 2)
+}
+
+/** Enquadra a layer de um id, com o mesmo padding do escopo. No-op se o id não
+ *  tem layer (sem geometria, ainda não chegou, mapa fora do ar). */
+function fitToFeature(id: MapSelectId, options?: { padding?: [number, number]; maxZoom?: number }) {
+  if (!map) return
+  const layer = layers.get(id)
+  if (!layer) return
+  const bounds = layer.getBounds()
+  // `maxZoom` limita a aproximação: enquadrar UM talhão sem teto cola a câmera
+  // nele e o usuário perde a vizinhança — quem chama escolhe o quão perto.
+  if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20], ...options })
+}
+
+/** Recria todas as layers (opções de criação — tooltip/interatividade —
+ *  mudaram). Não mexe no enquadramento. */
+function rebuildLayers() {
+  if (!leaflet || !map) return
+  layers.forEach((layer) => layer.remove())
+  layers.clear()
+  layerGeoms.clear()
+  drawFeatures()
 }
 
 /** O mapa costuma nascer escondido (dentro de um Dialog): sem isto o Leaflet
@@ -346,7 +462,13 @@ async function setupMap() {
   if (!container.value) return
 
   try {
-    map = leaflet.map(container.value, { zoomControl: true, attributionControl: true })
+    // `preferCanvas`: com 100+ polígonos o renderer SVG vira uma árvore DOM
+    // pesada; no canvas os paths são pintados num único elemento.
+    map = leaflet.map(container.value, {
+      zoomControl: true,
+      attributionControl: true,
+      preferCanvas: true,
+    })
     leaflet
       .tileLayer(props.tileUrl, {
         maxZoom: props.maxZoom,
@@ -354,6 +476,9 @@ async function setupMap() {
       })
       .addTo(map)
     drawFeatures()
+    // Sem feature e sem escopo ainda não houve fit: o mapa precisa de UMA view
+    // inicial (o Leaflet não opera sem centro/zoom definidos).
+    if (!fitted) map.setView([0, 0], 2)
     refreshSize()
 
     if (typeof ResizeObserver !== 'undefined') {
@@ -380,12 +505,28 @@ onBeforeUnmount(() => {
   footerObserver?.disconnect()
   footerObserver = null
   layers.clear()
+  layerGeoms.clear()
   map?.remove()
   map = null
 })
 
 watch(() => props.features, drawFeatures)
 watch(() => props.modelValue, syncStyles, { deep: true })
+
+// A `scopeGeometry` pode chegar DEPOIS da primeira página de features (duas
+// requests em paralelo): ela ainda vale um único reenquadramento.
+watch(
+  () => props.scopeGeometry,
+  (geo) => {
+    if (!map || !geo || fittedToScope) return
+    fitToScope()
+    fitted = true
+    fittedToScope = true
+  },
+)
+
+// Tooltip e interatividade são opções de CRIAÇÃO da layer: mudou, recria tudo.
+watch([() => props.tooltips, layersInteractive], () => rebuildLayers())
 
 // Recolher/expandir e trocar de arranjo mexem na caixa do mapa. O
 // ResizeObserver do canvas já pegaria, mas ele dispara no frame seguinte: sem o
@@ -402,6 +543,11 @@ defineExpose({
   /** Painel flutuante recolhido? (só faz sentido no `layout="sobreposto"`.) */
   collapsed: somenteLeitura(collapsed),
   setCollapsed,
+  /** Reenquadra no escopo (ou na união das features) — o fit automático só
+   *  acontece uma vez; páginas novas de `features` não movem o mapa. */
+  fitToScope,
+  /** Enquadra o polígono de um id (padding igual ao do escopo). No-op sem layer. */
+  fitToFeature,
 })
 </script>
 
@@ -412,6 +558,7 @@ defineExpose({
     :class="{
       'w-map-select--disabled': disabled,
       'w-map-select--readonly': readonly,
+      'w-map-select--unselectable': effectiveSelectionMode === 'none',
       'w-map-select--overlay': isOverlay,
       'w-map-select--collapsed': isOverlay && collapsed && !readonly,
     }"

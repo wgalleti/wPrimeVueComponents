@@ -26,6 +26,8 @@ export type {
   MapSelectId,
   MapSelectPolygonStyle,
   MapSelectPosition,
+  MapSelectSelectionMode,
+  MapSelectTooltips,
 } from './mapSelect'
 
 export type { RowAction } from './action'
