@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.14.0...v0.15.0) (2026-08-17)
+
+### Funcionalidades
+
+* **crud:** fetchDetailOnEdit option and row selection surface on WCrudView ([7b73b66](https://github.com/wgalleti/wPrimeVueComponents/commit/7b73b66bde42455bbc9b1a55532f9ee6be0ce4db))
+* **WMapSelect:** canvas renderer, incremental diff, readonly selection and fit controls ([416fa0e](https://github.com/wgalleti/wPrimeVueComponents/commit/416fa0e13ef504bdf7fb62e7d6aae4cb8d5fd7d9))
 ## [0.14.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.13.0...v0.14.0) (2026-08-15)
 
 ### ⚠ BREAKING CHANGES
