@@ -233,3 +233,55 @@ describe('useCrudManager — exclusão', () => {
     expect(onAfterDelete).toHaveBeenCalledWith({ id: 1 })
   })
 })
+
+describe('useCrudManager — fetchDetailOnEdit', () => {
+  it('sem a opção, openEditDialog é síncrono e usa a linha da lista', () => {
+    const get = vi.fn()
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [{ field: 'nome', label: 'Nome' }] },
+      { get },
+    )
+    crud.openEditDialog({ id: 1, nome: 'A' })
+    expect(get).not.toHaveBeenCalled()
+    expect(crud.formData.nome).toBe('A')
+    expect(crud.dialogVisible.value).toBe(true)
+  })
+
+  it('com a opção, o edit busca o detail e o diff do PATCH usa o valor completo', async () => {
+    // Cenário real: a list omite um campo pesado (geometria). Sem o detail, o form
+    // abriria vazio e um save gravaria essa ausência por cima do valor do banco.
+    const get = vi.fn().mockResolvedValue({ data: { id: 1, nome: 'A', geometria: { tipo: 'x' } } })
+    const update = vi.fn().mockResolvedValue({ data: { id: 1, nome: 'B' } })
+    const crud = setup(
+      {
+        endpoint: '/p',
+        columns: [],
+        form: [
+          { field: 'nome', label: 'Nome' },
+          { field: 'geometria', label: 'Contorno', defaultValue: null },
+        ],
+        fetchDetailOnEdit: true,
+        refetchOnSave: false,
+      },
+      { get, update },
+    )
+    await crud.openEditDialog({ id: 1, nome: 'A' }) // linha SEM geometria
+    expect(get).toHaveBeenCalledWith('/p', 1)
+    expect(crud.formData.geometria).toEqual({ tipo: 'x' })
+
+    crud.setFormField('nome', 'B')
+    await crud.save()
+    // O PATCH leva só o que mudou — a geometria intocada não entra no payload.
+    expect(update).toHaveBeenCalledWith('/p', 1, { nome: 'B' }, undefined)
+  })
+
+  it('erro na busca do detail não abre o diálogo', async () => {
+    const get = vi.fn().mockRejectedValue(new Error('boom'))
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [], fetchDetailOnEdit: true },
+      { get },
+    )
+    await crud.openEditDialog({ id: 1 })
+    expect(crud.dialogVisible.value).toBe(false)
+  })
+})

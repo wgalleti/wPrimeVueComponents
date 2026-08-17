@@ -318,10 +318,39 @@ const canCreate = computed(() => props.crud.config.canCreate !== false)
 
 // --- Selection (drives action rail + context menu) ---
 
-const selectedRow = ref<Record<string, unknown> | null>(null)
+// Exposta como `v-model:selectedRow` para o consumidor sincronizar a seleção de
+// linha com outra visão do mesmo dado (ex.: mapa, gráfico). Sem o binding, o
+// defineModel age como ref local e nada muda para quem já usa o componente.
+const selectedRow = defineModel<Record<string, unknown> | null>('selectedRow', {
+  default: null,
+})
 
 // Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
 const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
+
+// O tipo do PrimeVue não expõe `$el`; só precisamos do elemento raiz para o scroll.
+const tableRef = ref<{ $el?: HTMLElement } | null>(null)
+
+/**
+ * Rola a tabela até a linha cujo pk é `value` — o par do `v-model:selectedRow`
+ * para o sentido "de fora para dentro" (selecionou no mapa/gráfico, a linha
+ * aparece). Só alcança a página atual: linha em outra página não é buscada — é
+ * do consumidor decidir o que fazer nesse caso (a lista é lazy). Com linhas de
+ * expansão abertas o índice DOM diverge do índice do item; aí não rola.
+ */
+function scrollToRow(value: unknown): void {
+  const pk = props.crud.config.pk || 'id'
+  const index = props.crud.items.value.findIndex(
+    (row: Record<string, unknown>) => row[pk] === value,
+  )
+  if (index < 0) return
+  const root = tableRef.value?.$el as HTMLElement | undefined
+  const rows = root?.querySelectorAll<HTMLElement>('tbody > tr')
+  if (!rows || rows.length !== props.crud.items.value.length) return
+  rows[index]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+}
+
+defineExpose({ scrollToRow })
 
 // Edição inline por célula — opt-in via config.editMode: 'cell'.
 const isCellEdit = computed(() => props.crud.config.editMode === 'cell')
@@ -591,6 +620,7 @@ onMounted(() => {
             />
           </div>
           <DataTable
+            ref="tableRef"
             v-model:expanded-rows="expandedRows"
             :value="crud.items.value"
             :loading="crud.loading.value"

@@ -30,6 +30,35 @@ const crud = useCrudManager({
 
 <ApiTable name="WCrudView" />
 
+## Selecao de linha (`v-model:selectedRow`)
+
+A linha selecionada (a mesma que guia o action rail e o menu de contexto) pode ser
+sincronizada com o consumidor via `v-model:selectedRow` — util para espelhar a
+selecao em outra visao do mesmo dado (mapa, grafico, painel). Sem o binding, nada
+muda: a selecao continua interna.
+
+O componente tambem expoe `scrollToRow(pk)` (via template ref) para o sentido
+inverso: selecionou fora (ex.: clique num poligono do mapa), a tabela rola ate a
+linha. So alcanca a **pagina atual** — linha em outra pagina nao e buscada; e do
+consumidor decidir o que fazer nesse caso.
+
+```vue
+<script setup lang="ts">
+const crudView = ref()
+const linhaSelecionada = ref(null)
+
+function aoSelecionarNoMapa(id) {
+  const linha = crud.items.value.find((t) => t.id === id) ?? null
+  linhaSelecionada.value = linha
+  if (linha) crudView.value?.scrollToRow(id)
+}
+</script>
+
+<template>
+  <WCrudView ref="crudView" :crud="crud" title="Talhoes" v-model:selected-row="linhaSelecionada" />
+</template>
+```
+
 ## Slots
 
 ### `header-actions`

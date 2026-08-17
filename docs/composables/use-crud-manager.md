@@ -37,6 +37,7 @@ const crud = useCrudManager({
 | `canDelete` | `boolean` | `true` | Permite exclusao |
 | `rowActions` | `RowAction[]` | auto | Acoes customizadas por linha |
 | `filterParams` | `() => Record` | — | Parametros extras para a query |
+| `fetchDetailOnEdit` | `boolean` | `false` | Antes de abrir editar/visualizar/duplicar, busca o registro completo (`GET /:pk/`) em vez de usar a linha da lista. Use quando o serializer de list e enxuto (omite campos pesados, ex.: geometria) — sem isso o form abriria com o campo vazio e um save poderia gravar essa ausencia por cima do valor real |
 | `transformItems` | `(rawItems) => Items[]` | — | Pre-processa os dados carregados antes de virarem `items` (agrupar, enriquecer, reestruturar) |
 | `transformPayload` | `(payload, isEditing) => Record` | — | Transforma o payload antes de enviar |
 | `onAfterSave` | `(data, isEditing) => void` | — | Callback apos salvar |
@@ -80,7 +81,7 @@ const crud = useCrudManager({
 | `onPage(event)` | Handler para mudanca de pagina |
 | `onSort(event)` | Handler para mudanca de ordenacao |
 | `openCreateDialog()` | Abre dialog para novo registro |
-| `openEditDialog(item)` | Abre dialog para editar item |
+| `openEditDialog(item)` | Abre dialog para editar item (com `fetchDetailOnEdit`, devolve a Promise da busca do detail) |
 | `save()` | Salva o registro (cria ou atualiza) |
 | `confirmDelete(item)` | Abre confirmacao e exclui |
 | `setFormField(field, value)` | Altera um campo do formulario |

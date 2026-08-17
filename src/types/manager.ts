@@ -27,6 +27,12 @@ export interface CrudManagerConfig<T> {
    *  search or filter position. Defaults to `true`. Set `false` to keep the
    *  optimistic in-place update instead. */
   refetchOnSave?: boolean
+  /** Antes de abrir o form de editar/visualizar/duplicar, busca o registro
+   *  completo (`GET /:pk/`) em vez de usar a linha da lista. Necessário quando o
+   *  serializer de list é enxuto (omite campos pesados — ex.: geometria): sem
+   *  isso o form abriria com o campo vazio e um save poderia gravar essa
+   *  ausência por cima do valor real. Defaults to `false`. */
+  fetchDetailOnEdit?: boolean
   /** Modo de edição: 'dialog' (default — abre o form dialog) ou 'cell' (edição
    *  inline por célula, com PATCH só do campo alterado). */
   editMode?: 'cell' | 'dialog'
@@ -96,9 +102,11 @@ export interface CrudManagerReturn<T> {
   onPage(event: { page: number; rows: number }): void
   onSort(event: { sortField?: string | null; sortOrder?: 1 | -1 | 0 | null }): void
   openCreateDialog(): void
-  openEditDialog(item: T): void
-  openViewDialog(item: T): void
-  openDuplicateDialog(item: T): void
+  /** Abrem o form dialog. Síncronos no caminho comum; com `fetchDetailOnEdit`
+   *  devolvem a Promise da busca do detail. */
+  openEditDialog(item: T): void | Promise<void>
+  openViewDialog(item: T): void | Promise<void>
+  openDuplicateDialog(item: T): void | Promise<void>
   save(): Promise<T | null>
   /** Salva um único campo de um item (edição inline por célula) via PATCH. */
   updateField(item: T, field: string, value: unknown): Promise<void>
