@@ -41,6 +41,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     searchDebounce = 300,
     partialUpdate = true,
     refetchOnSave = true,
+    fetchDetailOnEdit = false,
     filterParams = undefined,
     createDefaults = undefined,
     transformItems = undefined,
@@ -306,21 +307,57 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     editingOriginal = loadItemIntoRecord(item, formFields, formData)
   }
 
-  function openEditDialog(item: T): void {
-    viewMode.value = false
-    editingItem.value = item
-    loadItemIntoForm(item)
-    dialogVisible.value = true
+  /**
+   * Busca o registro completo na API (`fetchDetailOnEdit`). Existe porque a list
+   * pode ser um serializer enxuto (campos pesados omitidos — ex.: geometria):
+   * montar o form pela linha mostraria o campo vazio e, pior, um save poderia
+   * gravar essa ausência por cima do valor real.
+   */
+  async function fetchDetail(item: T): Promise<T | null> {
+    try {
+      const response = await provider.get<T>(endpoint, item[pk as keyof T] as string | number)
+      return response.data
+    } catch (err) {
+      toast.error(extractApiError(err, 'Erro ao carregar registro'))
+      return null
+    }
   }
 
-  function openViewDialog(item: T): void {
-    viewMode.value = true
-    editingItem.value = item
-    loadItemIntoForm(item)
-    dialogVisible.value = true
+  /**
+   * Abre o diálogo com o item resolvido: síncrono no caminho comum (a linha da
+   * lista já basta) e assíncrono só com `fetchDetailOnEdit` — quem chama sem a
+   * opção pode seguir mexendo no formData logo após o open, como sempre pôde.
+   */
+  function openWithItem(item: T, open: (full: T) => void): void | Promise<void> {
+    if (!fetchDetailOnEdit) return open(item)
+    return fetchDetail(item).then((full) => {
+      if (full) open(full)
+    })
   }
 
-  function openDuplicateDialog(item: T): void {
+  function openEditDialog(item: T): void | Promise<void> {
+    return openWithItem(item, (full) => {
+      viewMode.value = false
+      editingItem.value = full
+      loadItemIntoForm(full)
+      dialogVisible.value = true
+    })
+  }
+
+  function openViewDialog(item: T): void | Promise<void> {
+    return openWithItem(item, (full) => {
+      viewMode.value = true
+      editingItem.value = full
+      loadItemIntoForm(full)
+      dialogVisible.value = true
+    })
+  }
+
+  function openDuplicateDialog(rawItem: T): void | Promise<void> {
+    return openWithItem(rawItem, (item) => duplicateFrom(item))
+  }
+
+  function duplicateFrom(item: T): void {
     // Abre o diálogo em modo criação, pré-preenchido com os dados do registro
     // (exceto a chave primária).
     viewMode.value = false
