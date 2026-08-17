@@ -63,6 +63,8 @@ export default defineComponentMeta({
     'Seleção múltipla de polígonos num mapa de satélite, com painel de busca, contador e área somada.',
   controls: {
     layout: { type: 'select', options: ['lado-a-lado', 'sobreposto'] },
+    tooltips: { type: 'select', options: ['permanent', 'hover'] },
+    selectionMode: { type: 'select', options: ['multiple', 'single', 'none'] },
   },
   examples: [
     {
@@ -115,6 +117,21 @@ export default defineComponentMeta({
         modelValue: ['P41'],
         readonly: true,
         layout: 'sobreposto',
+        height: '320px',
+      },
+    },
+    {
+      name: 'Muitos polígonos: hover + escolha única',
+      description:
+        'Para o mapa denso (100+ talhões): `tooltips="hover"` tira os rótulos permanentes ' +
+        '(um nó DOM por talhão) e `selectionMode="single"` faz o clique escolher UM talhão ' +
+        'mesmo no readonly — o painel some, mas o v-model continua saindo.',
+      props: {
+        features: talhoes,
+        modelValue: [],
+        readonly: true,
+        selectionMode: 'single',
+        tooltips: 'hover',
         height: '320px',
       },
     },

@@ -427,9 +427,21 @@
           "required": false,
           "default": null,
           "description": "Chave de persistência do estado de coluna (visibilidade) em localStorage.\nOpt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado."
+        },
+        {
+          "name": "selectedRow",
+          "type": "Record<string, unknown> | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": ""
         }
       ],
       "events": [
+        {
+          "name": "update:selectedRow",
+          "type": "[value: Record<string, unknown> | null]",
+          "description": ""
+        },
         {
           "name": "row-expand",
           "type": "[data: unknown]",
@@ -2076,6 +2088,20 @@
           "required": false,
           "default": "false",
           "description": "Só o desenho: esconde o painel de busca e a barra de área, e nenhum clique\nseleciona. Para **exibir** geometrias (uma listagem, a conferência de um\ncadastro) — quando o mapa não é o controle de escolha, o painel de busca\nduplica a busca da própria tela e a área somada não tem o que somar.\n`modelValue` continua valendo: dá para destacar um polígono de fora."
+        },
+        {
+          "name": "tooltips",
+          "type": "MapSelectTooltips | undefined",
+          "required": false,
+          "default": "\"permanent\"",
+          "description": "Tooltip dos polígonos. `'permanent'` (default) mantém o rótulo sempre\nvisível; `'hover'` só o mostra sob o cursor — com muitos polígonos\n(100+), o permanente vira um nó DOM por talhão reposicionado a cada\npan/zoom, e o `'hover'` devolve a fluidez."
+        },
+        {
+          "name": "selectionMode",
+          "type": "MapSelectSelectionMode | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Modo de seleção por clique. Sem valor, o default preserva o comportamento\nde sempre: interativo → `'multiple'`, `readonly` → `'none'`. Definido\nexplicitamente, vale MESMO com `readonly` (que segue escondendo painel e\nrodapé): o clique no polígono emite `update:modelValue`. Em `'single'` o\nclique substitui a seleção (`[id]`) e clicar no selecionado desmarca."
         },
         {
           "name": "polygonStyle",

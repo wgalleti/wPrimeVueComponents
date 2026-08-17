@@ -1,14 +1,135 @@
 // @vitest-environment jsdom
 //
-// O que se testa aqui é a SELEÇÃO — a parte do componente que não depende do
-// Leaflet ter subido. O mapa entra por import() dinâmico e no jsdom não há
-// layout: o painel lateral (busca, lista, contador, área) é o que precisa
-// funcionar sozinho, porque é ele que segura a tela quando o mapa falha.
-import { describe, it, expect } from 'vitest'
-import { mount, type VueWrapper } from '@vue/test-utils'
+// Duas frentes aqui: a SELEÇÃO pelo painel (que nunca depende do Leaflet ter
+// subido) e o comportamento do MAPA — para este, o Leaflet é MOCKADO: o
+// import() dinâmico do componente cai no fake abaixo, que registra mapas e
+// layers criados para os testes de diff incremental, tooltip e fit.
+import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { toRaw } from 'vue'
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import WMapSelect from './WMapSelect.vue'
 import type { MapSelectFeature, MapSelectId } from '@/types/mapSelect'
+
+// --- Mock do Leaflet --------------------------------------------------------
+
+interface FakeTooltip {
+  content: string
+  options: Record<string, unknown>
+}
+
+interface FakeLayer {
+  geometria: unknown
+  opcoes: Record<string, unknown>
+  removida: boolean
+  mapa: FakeMap | null
+  tooltip: FakeTooltip | null
+  estilo: unknown
+  fire: (evento: string) => void
+  on: (evento: string, fn: () => void) => FakeLayer
+  getBounds: () => { isValid: () => boolean }
+}
+
+interface FakeMap {
+  opcoes: Record<string, unknown>
+  fitBoundsCalls: { bounds: unknown; options: unknown }[]
+  setViewCalls: unknown[]
+}
+
+const registro = vi.hoisted(() => ({
+  mapas: [] as unknown[],
+  camadas: [] as unknown[],
+}))
+
+vi.mock('leaflet', () => {
+  const bounds = () => ({
+    isValid: () => true,
+    getSouthWest: () => ({ lat: -1, lng: -1 }),
+    getNorthEast: () => ({ lat: 1, lng: 1 }),
+  })
+
+  function fakeMap(_el: unknown, opcoes: Record<string, unknown>) {
+    const mapa = {
+      opcoes,
+      fitBoundsCalls: [] as { bounds: unknown; options: unknown }[],
+      setViewCalls: [] as unknown[],
+      fitBounds(b: unknown, o: unknown) {
+        mapa.fitBoundsCalls.push({ bounds: b, options: o })
+      },
+      setView(...args: unknown[]) {
+        mapa.setViewCalls.push(args)
+      },
+      invalidateSize() {},
+      remove() {},
+    }
+    registro.mapas.push(mapa)
+    return mapa
+  }
+
+  function fakeGeoJSON(geometria: unknown, opcoes: Record<string, unknown> = {}) {
+    const eventos: Record<string, (() => void)[]> = {}
+    const tooltipEl = document.createElement('div')
+    const camada = {
+      geometria,
+      opcoes,
+      removida: false,
+      mapa: null as unknown,
+      tooltip: null as FakeTooltip | null,
+      estilo: null as unknown,
+      on(evento: string, fn: () => void) {
+        ;(eventos[evento] ??= []).push(fn)
+        return camada
+      },
+      fire(evento: string) {
+        for (const fn of eventos[evento] ?? []) fn()
+      },
+      setStyle(estilo: unknown) {
+        camada.estilo = estilo
+        return camada
+      },
+      bindTooltip(content: string, options: Record<string, unknown>) {
+        camada.tooltip = { content, options }
+        return camada
+      },
+      unbindTooltip() {
+        camada.tooltip = null
+        return camada
+      },
+      getTooltip() {
+        if (!camada.tooltip) return undefined
+        return {
+          getElement: () => tooltipEl,
+          setContent: (content: string) => {
+            if (camada.tooltip) camada.tooltip.content = content
+          },
+        }
+      },
+      addTo(mapa: unknown) {
+        camada.mapa = mapa
+        return camada
+      },
+      remove() {
+        camada.removida = true
+        camada.mapa = null
+        return camada
+      },
+      getBounds: bounds,
+    }
+    registro.camadas.push(camada)
+    return camada
+  }
+
+  const api = {
+    map: fakeMap,
+    tileLayer: () => ({ addTo: () => ({}) }),
+    geoJSON: fakeGeoJSON,
+    latLngBounds: () => bounds(),
+  }
+  return { ...api, default: api }
+})
+
+vi.mock('leaflet/dist/leaflet.css', () => ({}))
+
+import WMapSelect from './WMapSelect.vue'
 
 function quadra(lng: number, lat: number) {
   return {
@@ -315,5 +436,199 @@ describe('WMapSelect — busca', () => {
     expect(w.find('.w-map-select__empty').text()).toBe('Nada por aqui')
     expect(w.find('.w-map-select__area strong').text()).toBe('82')
     expect(emitido(w)).toEqual([])
+  })
+})
+
+// --- Comportamento do mapa (Leaflet mockado) --------------------------------
+
+describe('WMapSelect — mapa', () => {
+  beforeEach(() => {
+    registro.mapas.length = 0
+    registro.camadas.length = 0
+  })
+
+  /** Monta e espera o import() dinâmico do Leaflet (mockado) resolver. */
+  async function montarMapa(props: Record<string, unknown> = {}) {
+    const w = montar(props)
+    await flushPromises()
+    return w
+  }
+
+  const mapa = () => registro.mapas[registro.mapas.length - 1] as FakeMap
+
+  /** Layers vivas no mapa (o fitToScope também cria layers, mas nunca as adiciona). */
+  const ativas = () => (registro.camadas as FakeLayer[]).filter((c) => !c.removida && c.mapa)
+
+  // O componente recebe as features via props REATIVAS: a geometria que chega ao
+  // Leaflet é o proxy do Vue — toRaw() devolve o objeto original da fixture.
+  const camadaDe = (feature: MapSelectFeature) =>
+    ativas().find((c) => toRaw(c.geometria) === feature.geometria)
+
+  it('cria o mapa com preferCanvas', async () => {
+    await montarMapa()
+    expect(mapa().opcoes.preferCanvas).toBe(true)
+  })
+
+  it('desenha uma layer por feature com geometria', async () => {
+    await montarMapa()
+    expect(ativas()).toHaveLength(3) // P49 não tem geometria
+  })
+
+  describe('tooltips', () => {
+    it('default permanent: tooltip sempre visível, mesma classe', async () => {
+      await montarMapa()
+      const tip = camadaDe(talhoes[0])?.tooltip
+      expect(tip?.options.permanent).toBe(true)
+      expect(tip?.options.sticky).toBeUndefined()
+      expect(tip?.options.className).toBe('w-map-select__tip')
+      expect(tip?.content).toBe('P41 · 82 ha')
+    })
+
+    it('hover: não permanente, sticky, mesma classe', async () => {
+      await montarMapa({ tooltips: 'hover' })
+      const tip = camadaDe(talhoes[0])?.tooltip
+      expect(tip?.options.permanent).toBe(false)
+      expect(tip?.options.sticky).toBe(true)
+      expect(tip?.options.className).toBe('w-map-select__tip')
+    })
+  })
+
+  describe('diff incremental de features', () => {
+    it('anexar uma página preserva as layers já desenhadas e só cria as novas', async () => {
+      const pagina1 = talhoes.slice(0, 2)
+      const w = await montarMapa({ features: pagina1 })
+      const antes = ativas()
+      expect(antes).toHaveLength(2)
+
+      const extra: MapSelectFeature = {
+        id: 'P50',
+        nome: 'P50',
+        area: 40,
+        geometria: quadra(-52.82, -27.85),
+      }
+      await w.setProps({ features: [...pagina1, extra] })
+
+      // As duas primeiras são as MESMAS instâncias — nada foi destruído.
+      expect(camadaDe(pagina1[0])).toBe(antes[0])
+      expect(camadaDe(pagina1[1])).toBe(antes[1])
+      expect(ativas()).toHaveLength(3)
+    })
+
+    it('o fitBounds acontece só na primeira leva — página nova não move o mapa', async () => {
+      const pagina1 = talhoes.slice(0, 2)
+      const w = await montarMapa({ features: pagina1 })
+      expect(mapa().fitBoundsCalls).toHaveLength(1)
+
+      await w.setProps({
+        features: [...pagina1, { id: 'P50', nome: 'P50', geometria: quadra(-52.82, -27.85) }],
+      })
+      expect(mapa().fitBoundsCalls).toHaveLength(1)
+    })
+
+    it('id que saiu tem a layer removida', async () => {
+      const w = await montarMapa()
+      const removivel = camadaDe(talhoes[0])
+      await w.setProps({ features: talhoes.slice(1) })
+      expect(removivel?.removida).toBe(true)
+      expect(ativas()).toHaveLength(2)
+    })
+
+    it('geometria trocada (referência nova) recria a layer do id', async () => {
+      const w = await montarMapa()
+      const original = camadaDe(talhoes[1])
+      const novaGeometria = quadra(-52.99, -27.99)
+      const trocadas = talhoes.map((f) => (f.id === 'P42' ? { ...f, geometria: novaGeometria } : f))
+      await w.setProps({ features: trocadas })
+
+      expect(original?.removida).toBe(true)
+      const recriada = ativas().find((c) => toRaw(c.geometria) === novaGeometria)
+      expect(recriada).toBeTruthy()
+      // As demais seguem intactas.
+      expect(camadaDe(talhoes[0])?.removida).toBe(false)
+    })
+  })
+
+  describe('selectionMode', () => {
+    it('default interativo é multiple: o clique no polígono acumula ids', async () => {
+      const w = await montarMapa({ modelValue: ['P42'] })
+      camadaDe(talhoes[0])?.fire('click')
+      expect(ultimo(w)).toEqual(['P42', 'P41'])
+    })
+
+    it('readonly sem selectionMode: nada emite (modo none) e marca --unselectable', async () => {
+      const w = await montarMapa({ readonly: true })
+      expect(w.classes()).toContain('w-map-select--unselectable')
+      camadaDe(talhoes[0])?.fire('click')
+      expect(emitido(w)).toEqual([])
+    })
+
+    it('none explícito: nem o modo interativo emite', async () => {
+      const w = await montarMapa({ selectionMode: 'none' })
+      expect(w.classes()).toContain('w-map-select--unselectable')
+      camadaDe(talhoes[0])?.fire('click')
+      expect(emitido(w)).toEqual([])
+    })
+
+    it('single: o clique substitui a seleção; clicar no selecionado desmarca', async () => {
+      const w = await montarMapa({ selectionMode: 'single', modelValue: ['P42'] })
+      camadaDe(talhoes[0])?.fire('click')
+      expect(ultimo(w)).toEqual(['P41'])
+
+      await w.setProps({ modelValue: ['P41'] })
+      camadaDe(talhoes[0])?.fire('click')
+      expect(ultimo(w)).toEqual([])
+    })
+
+    it('selectionMode explícito vale MESMO com readonly (painel segue escondido)', async () => {
+      const w = await montarMapa({ readonly: true, selectionMode: 'single' })
+      expect(w.find('.w-map-select__panel').exists()).toBe(false)
+      expect(w.find('.w-map-select__footer').exists()).toBe(false)
+      expect(w.classes()).not.toContain('w-map-select--unselectable')
+
+      camadaDe(talhoes[1])?.fire('click')
+      expect(ultimo(w)).toEqual(['P42'])
+    })
+
+    it('single vale também para o clique na lista', async () => {
+      const w = await montarMapa({ selectionMode: 'single', modelValue: ['P42'] })
+      await clicar(w, 'P41')
+      expect(ultimo(w)).toEqual(['P41'])
+    })
+
+    it('disabled continua mudo em qualquer modo', async () => {
+      const w = await montarMapa({ selectionMode: 'single', disabled: true })
+      camadaDe(talhoes[0])?.fire('click')
+      expect(emitido(w)).toEqual([])
+    })
+  })
+
+  describe('métodos expostos', () => {
+    interface ApiExposta {
+      fitToScope: () => void
+      fitToFeature: (id: MapSelectId) => void
+    }
+
+    it('fitToFeature enquadra a layer do id com padding', async () => {
+      const w = await montarMapa()
+      const antes = mapa().fitBoundsCalls.length
+      ;(w.vm as unknown as ApiExposta).fitToFeature('P41')
+      expect(mapa().fitBoundsCalls).toHaveLength(antes + 1)
+      expect(mapa().fitBoundsCalls[antes].options).toEqual({ padding: [20, 20] })
+    })
+
+    it('fitToFeature de id sem layer é no-op', async () => {
+      const w = await montarMapa()
+      const antes = mapa().fitBoundsCalls.length
+      ;(w.vm as unknown as ApiExposta).fitToFeature('P49') // sem geometria
+      ;(w.vm as unknown as ApiExposta).fitToFeature('inexistente')
+      expect(mapa().fitBoundsCalls).toHaveLength(antes)
+    })
+
+    it('fitToScope exposto reenquadra sob demanda', async () => {
+      const w = await montarMapa()
+      const antes = mapa().fitBoundsCalls.length
+      ;(w.vm as unknown as ApiExposta).fitToScope()
+      expect(mapa().fitBoundsCalls).toHaveLength(antes + 1)
+    })
   })
 })

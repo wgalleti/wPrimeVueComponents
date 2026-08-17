@@ -25,6 +25,19 @@ export interface MapSelectFeature {
   geometria?: MapSelectGeometry | null
 }
 
+/** Modo do tooltip dos polígonos.
+ *  - `'permanent'`: rótulo sempre visível no centro do polígono (default).
+ *  - `'hover'`: o rótulo só aparece sob o cursor (`sticky`) — recomendado quando
+ *    há muitos polígonos, porque tooltip permanente é um nó DOM por talhão
+ *    reposicionado a cada pan/zoom. */
+export type MapSelectTooltips = 'permanent' | 'hover'
+
+/** Modo de seleção por clique no polígono (e na lista).
+ *  - `'multiple'`: cada clique alterna o id no array (default do modo interativo).
+ *  - `'single'`: o clique substitui a seleção (`[id]`); clicar no já selecionado desmarca (`[]`).
+ *  - `'none'`: nenhum clique seleciona (default do `readonly`). */
+export type MapSelectSelectionMode = 'multiple' | 'single' | 'none'
+
 /** Estilo de um polígono no mapa (subconjunto do `L.PathOptions`). */
 export interface MapSelectPolygonStyle {
   color?: string

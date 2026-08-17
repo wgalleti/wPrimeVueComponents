@@ -2546,10 +2546,10 @@
   opacity: 0.7;
 }
 
-/* Só-leitura: sem painel e sem barra de resumo, o mapa é o componente inteiro.
-   O polígono deixa de anunciar clique — no readonly ele não faz nada, e o cursor
-   de mão prometia uma seleção que não existe. */
-.w-map-select--readonly .leaflet-interactive {
+/* Nada seleciona (selectionMode efetivo 'none' — o default do readonly): o
+   polígono deixa de anunciar clique. O cursor de mão prometia uma seleção que
+   não existe; com `selectionMode` explícito, mesmo no readonly, ele volta. */
+.w-map-select--unselectable .leaflet-interactive {
   cursor: inherit;
 }
 
