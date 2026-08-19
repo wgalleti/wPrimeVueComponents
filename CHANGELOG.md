@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.16.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.15.0...v0.16.0) (2026-08-19)
+
+### Funcionalidades
+
+* **dialogs:** anchor suite dialogs to the tab pane via useTabHost ([7e2ea13](https://github.com/wgalleti/wPrimeVueComponents/commit/7e2ea132b76bd4e778bbc31e4f37e3d8b00dd5b8))
+* **tabs:** route tab navigation (useRouteTabs, WTabNav, WTabViewport) ([2fa1152](https://github.com/wgalleti/wPrimeVueComponents/commit/2fa115277507365aaf54f2a3e8ad3ed815ce19a4))
 ## [0.15.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.14.0...v0.15.0) (2026-08-17)
 
 ### Funcionalidades
