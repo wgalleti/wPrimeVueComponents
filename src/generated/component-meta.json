@@ -2496,6 +2496,68 @@
         }
       ],
       "slots": []
+    },
+    "WTabNav": {
+      "file": "src/components/ui/WTabNav.vue",
+      "props": [
+        {
+          "name": "tabs",
+          "type": "RouteTabsApi",
+          "required": true,
+          "default": null,
+          "description": "Instância retornada por `useRouteTabs` — o dono do estado."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "activate",
+          "type": "[tab: RouteTab]",
+          "description": ""
+        },
+        {
+          "name": "close",
+          "type": "[tab: RouteTab]",
+          "description": ""
+        },
+        {
+          "name": "reload",
+          "type": "[tab: RouteTab]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "tab",
+          "type": "{ tab: RouteTab; active: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WTabViewport": {
+      "file": "src/components/ui/WTabViewport.vue",
+      "props": [
+        {
+          "name": "tabs",
+          "type": "RouteTabsApi",
+          "required": true,
+          "default": null,
+          "description": "Instância retornada por `useRouteTabs` — o dono do estado."
+        }
+      ],
+      "events": [],
+      "slots": []
     }
   }
 }

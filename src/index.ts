@@ -42,6 +42,8 @@ export {
   WMarkdownEditor,
   WMarkdownToc,
   WTabBar,
+  WTabNav,
+  WTabViewport,
   WKanbanBoard,
 } from './components'
 
@@ -56,6 +58,7 @@ export {
   extractApiError,
   useFormatters,
   useDateInput,
+  useRouteTabs,
 } from './composables'
 export type { DateValueFormat } from './composables'
 
@@ -79,6 +82,14 @@ export type {
   EditableRow,
   CheckListItem,
   CheckListLevel,
+  // TabItem faltava aqui — a doc do WTabBar ensina importar da raiz.
+  TabItem,
+  RouteTab,
+  RouteTabMeta,
+  RouteTabRuntime,
+  RouteTabsApi,
+  TabHostContext,
+  UseRouteTabsOptions,
   KanbanColumn,
   KanbanMoveEvent,
   MapSelectFeature,
@@ -112,7 +123,14 @@ export type {
   SupabaseResourceConfig,
 } from './data-providers'
 
-export { DEFAULT_CRUD_LABELS, W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from './types'
+export {
+  DEFAULT_CRUD_LABELS,
+  W_AXIOS_KEY,
+  W_CONFIG_KEY,
+  W_DATA_PROVIDER_KEY,
+  W_TAB_HOST_KEY,
+  useTabHost,
+} from './types'
 
 // Utils
 export type { ApiFieldMeta } from './utils/fieldMapper'

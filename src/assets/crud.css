@@ -3403,3 +3403,156 @@
   background: var(--primary-soft, var(--p-highlight-background));
   color: var(--primary, var(--p-primary-color));
 }
+
+/* ==========================================================
+   WTabNav — .w-tab-nav
+   ==========================================================
+   Barra da navegação por abas de ROTA (par do WTabViewport) — não confundir
+   com o .w-tab-bar (abas de seção dentro de uma tela). Aqui o overflow ROLA
+   na horizontal de propósito: aba de rota não pode quebrar linha, a barra é
+   parte do shell e tem altura fixa. A scrollbar fica invisível — quem traz a
+   aba à vista é o scrollIntoView da ativa. */
+
+.w-tab-nav {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2, 0.5rem);
+  height: var(--w-tabnav-h, 2.5rem);
+  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-tab-nav__list {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.w-tab-nav__list::-webkit-scrollbar {
+  display: none;
+}
+
+.w-tab-nav__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: 0 var(--space-3, 0.75rem);
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--ui-font, 0.875rem);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    color var(--motion-fast, 140ms) var(--ease, ease),
+    border-color var(--motion-fast, 140ms) var(--ease, ease);
+}
+
+.w-tab-nav__item:hover {
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-tab-nav__item:focus-visible {
+  outline: 2px solid var(--primary, var(--p-primary-color));
+  outline-offset: -2px;
+  border-radius: var(--radius-sm, 0.375rem);
+}
+
+/* A ativa é um cartão: tint primário suave, cantos superiores arredondados e
+   o fio embaixo — destaque imediato mesmo com muitas abas abertas. */
+.w-tab-nav__item--ativa {
+  color: var(--primary, var(--p-primary-color));
+  font-weight: var(--fw-medium, 500);
+  background: var(--primary-soft, var(--p-highlight-background));
+  border-radius: var(--radius-sm, 0.375rem) var(--radius-sm, 0.375rem) 0 0;
+  border-bottom-color: var(--primary, var(--p-primary-color));
+}
+
+/* Rótulo do grupo (módulo) antes do bloco de abas dele — eco da sidebar. */
+.w-tab-nav__group {
+  align-self: center;
+  padding: 0 var(--space-2, 0.5rem) 0 var(--space-3, 0.75rem);
+  color: var(--fg-subtle, var(--p-text-muted-color));
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-medium, 500);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* O primeiro rótulo não precisa do respiro de separação. */
+.w-tab-nav__list > .w-tab-nav__group:first-child {
+  padding-left: 0;
+}
+
+.w-tab-nav__item i {
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.w-tab-nav__title {
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* O X só se anuncia no hover/ativa — barra cheia de X é ruído. */
+.w-tab-nav__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 0;
+  border-radius: var(--radius-full, 999px);
+  background: none;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--motion-fast, 140ms) var(--ease, ease),
+    background var(--motion-fast, 140ms) var(--ease, ease);
+}
+
+.w-tab-nav__close i {
+  font-size: var(--text-2xs, 0.6875rem);
+}
+
+.w-tab-nav__item:hover .w-tab-nav__close,
+.w-tab-nav__item--ativa .w-tab-nav__close,
+.w-tab-nav__close:focus-visible {
+  opacity: 1;
+}
+
+.w-tab-nav__close:hover {
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-tab-nav__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+/* ==========================================================
+   WTabViewport — .w-tab-viewport
+   ==========================================================
+   Cada pane fica montado (v-show) e é o contexto dos seus dialogs: precisa
+   de position para a mask do Dialog com appendTo local cobrir SÓ a aba, e de
+   scroll próprio para cada aba guardar sua posição. */
+
+.w-tab-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.w-tab-viewport__pane {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+}

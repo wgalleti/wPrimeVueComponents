@@ -61,3 +61,31 @@ Autocomplete inline + modal de pesquisa (tabela paginada, CRUD embutido opcional
 ## Composables úteis
 
 `useCrudManager`, `useFormatters` (moeda/data/CPF/CNPJ/tel BR), `useDateInput` (parse/format/máscara de data, sem watchers), `useAppToast`, `useAppConfirm`, `useApiError`/`extractApiError`, `useApi`.
+
+## WTabNav + WTabViewport — navegação por abas de rota (estilo ERP)
+
+Cada rota vira uma aba viva (estado preservado, fechar/recarregar). O estado mora no
+`useRouteTabs` (fábrica — uma instância por app, guardada num módulo seu):
+
+```ts
+// composable/useAppTabs.ts
+export const tabsApi = useRouteTabs({
+  router,
+  isTabRoute: (r) => r.meta?.requiresAuth !== false,
+  resolveTabMeta: (r) => ({ title: tituloDaRota(r), icon: iconeDaRota(r) }),
+  storageKey: () => `app-tabs:${userId() ?? 'anon'}`,
+  maxTabs: 12,
+})
+```
+
+```vue
+<!-- no layout, no lugar do RouterView -->
+<WTabNav :tabs="tabsApi" />
+<WTabViewport :tabs="tabsApi" />
+```
+
+Dentro de uma tela, `useTabHost()` (null fora de abas) dá: `setTitle('NF 000123')`,
+`hostEl` (alvo de `:append-to` p/ Dialog viver NA aba), `registerCloseGuard` (veto de
+fechar com alterações não salvas) e `onTabActivated`/`onTabDeactivated`.
+Identidade da aba = `route.path` (mudar só a query atualiza a aba, não abre outra).
+Não confundir com `WTabBar` (abas de seção dentro de uma tela).

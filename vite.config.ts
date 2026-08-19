@@ -45,6 +45,9 @@ export default defineConfig({
       // diagrama paga por eles, e em chunk separado.
       external: [
         'vue',
+        // peer opcional: entra no bundle do consumidor, nunca no da suite —
+        // duplicar o router quebraria o inject das chaves dele (useRoute).
+        'vue-router',
         'primevue',
         'axios',
         'dayjs',
