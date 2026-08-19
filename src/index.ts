@@ -41,6 +41,7 @@ export {
   WMarkdownView,
   WMarkdownEditor,
   WMarkdownToc,
+  WDialog,
   WTabBar,
   WTabNav,
   WTabViewport,

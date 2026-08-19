@@ -1037,6 +1037,9 @@ onMounted(() => {
     <!-- /.w-crud-content -->
 
     <!-- Context menu -->
+    <!-- Transiente (fecha no clique fora): fica no body — o absolutePosition
+         do PrimeVue calcula contra o documento e um container posicionado o
+         desloca. Só dialog/confirm ancoram no pane. -->
     <ContextMenu v-if="contextMenu" ref="cm" :model="contextMenuItems" />
 
     <!-- Form Dialog -->
