@@ -13,6 +13,7 @@ import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
+import { useTabHost } from '@/types/routeTabs'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
@@ -24,6 +25,10 @@ import type { MenuItem } from 'primevue/menuitem'
 import type { Slots } from 'vue'
 import { useFormatters } from '@/composables/useFormatters'
 import { toCsv, downloadCsv } from '@/utils/csv'
+
+// Dentro da navegação por abas, o dialog pendura no pane da própria aba
+// (some e volta com ela, intacto); fora de abas, o body de sempre.
+const tabHost = useTabHost()
 
 const props = withDefaults(
   defineProps<{
@@ -1071,6 +1076,7 @@ onMounted(() => {
     <Dialog
       v-if="$slots['delete-message']"
       v-model:visible="deleteDialogVisible"
+      :append-to="tabHost?.hostEl.value ?? 'body'"
       header="Confirmar Exclusão"
       modal
       :draggable="false"
