@@ -20,6 +20,7 @@ import 'leaflet/dist/leaflet.css'
 import { useFormatters } from '@/composables/useFormatters'
 import type {
   MapSelectFeature,
+  MapSelectFeatureStyle,
   MapSelectGeometry,
   MapSelectId,
   MapSelectPolygonStyle,
@@ -115,6 +116,11 @@ const props = withDefaults(
     polygonStyle?: MapSelectPolygonStyle
     /** Estilo do polígono selecionado. */
     polygonSelectedStyle?: MapSelectPolygonStyle
+    /** Destaque por feature: recebe a feature (e se está selecionada) e devolve
+     *  só o que muda, mesclado sobre o estilo base. Para o mapa mostrar um dado
+     *  do domínio — ex.: contorno verde no talhão que a recomendação prevê —
+     *  sem o consumidor ter que reescrever os dois estilos inteiros. */
+    featureStyle?: MapSelectFeatureStyle
   }>(),
   {
     modelValue: () => [],
@@ -159,6 +165,7 @@ const props = withDefaults(
       fillColor: '#1f5092',
       fillOpacity: 0.48,
     }),
+    featureStyle: undefined,
   },
 )
 
@@ -289,8 +296,22 @@ let fitted = false
  *  `scopeGeometry` chegar depois, ela ainda vale UM reenquadramento. */
 let fittedToScope = false
 
+/** Índice `id → feature` para o `featureStyle`: o restyle percorre as LAYERS
+ *  (que só conhecem o id), então sem este mapa o destaque por dado não teria
+ *  como olhar a feature. */
+const featuresById = computed(() => {
+  const indice = new Map<MapSelectId, MapSelectFeature>()
+  for (const feature of props.features) indice.set(feature.id, feature)
+  return indice
+})
+
 function styleFor(id: MapSelectId): MapSelectPolygonStyle {
-  return isSelected(id) ? props.polygonSelectedStyle : props.polygonStyle
+  const on = isSelected(id)
+  const base = on ? props.polygonSelectedStyle : props.polygonStyle
+  if (!props.featureStyle) return base
+  const feature = featuresById.value.get(id)
+  const ajuste = feature ? props.featureStyle(feature, on) : null
+  return ajuste ? { ...base, ...ajuste } : base
 }
 
 function tooltipText(feature: MapSelectFeature): string {
@@ -512,6 +533,9 @@ onBeforeUnmount(() => {
 
 watch(() => props.features, drawFeatures)
 watch(() => props.modelValue, syncStyles, { deep: true })
+// Trocar a regra de destaque repinta o que já está desenhado — sem isto o mapa
+// só mostraria a regra nova nas features que chegassem depois.
+watch(() => props.featureStyle, syncStyles)
 
 // A `scopeGeometry` pode chegar DEPOIS da primeira página de features (duas
 // requests em paralelo): ela ainda vale um único reenquadramento.

@@ -119,6 +119,30 @@ enquadramento automático acontece **uma vez** (na primeira leva, ou quando a `s
 chegar); páginas seguintes não refazem o `fitBounds` — o mapa não pula na frente do usuário.
 Para reenquadrar sob demanda, use os métodos expostos `fitToScope()` / `fitToFeature(id)`.
 
+## Destaque por dado (`featureStyle`)
+
+`polygonStyle` e `polygonSelectedStyle` valem para o mapa inteiro: dizem como é um polígono
+comum e como é um selecionado. Quando o **dado** da feature é que precisa aparecer — o talhão
+que a recomendação prevê, a área já colhida, o lote vencido — use `featureStyle`.
+
+Ela recebe a feature e se ela está selecionada, e devolve **só o que muda**. O resultado é
+mesclado sobre o estilo base, então o destaque e o estado de seleção convivem: o contorno sai
+verde, o preenchimento continua sendo o de "selecionado".
+
+```vue
+<WMapSelect
+  v-model="selecionados"
+  :features="talhoes"
+  :feature-style="(talhao) => (talhao.recomendado ? { color: '#3ddc84', weight: 4 } : null)"
+/>
+```
+
+Devolver `null` (ou `undefined`) deixa a feature no estilo padrão. Trocar a função repinta o que
+já está desenhado — a regra não vale só para as features que chegarem depois.
+
+Como o restyle percorre as layers do mapa, a feature precisa continuar em `features` para ser
+encontrada; item que saiu da lista some do mapa junto.
+
 ## Leaflet
 
 O `leaflet` é dependência da suite (instalado junto), mas **não entra no bundle**: o componente o
@@ -194,4 +218,5 @@ const talhoes: MapSelectFeature[] = [
   depois da primeira leva de features (duas requests em paralelo), ela ainda vale um único
   reenquadramento; daí em diante, só `fitToScope()`/`fitToFeature(id)` movem o mapa.
 - **Estilo dos polígonos**: `polygonStyle` / `polygonSelectedStyle` são tinta de mapa (lida sobre a
-  imagem de satélite), não tokens de tema — por isso são props com valores literais.
+  imagem de satélite), não tokens de tema — por isso são props com valores literais. O mesmo vale
+  para o que o `featureStyle` devolve.

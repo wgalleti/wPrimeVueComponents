@@ -2116,6 +2116,13 @@
           "required": false,
           "default": "{\n    color: \"#8fb6e4\",\n    weight: 3,\n    opacity: 1,\n    fillColor: \"#1f5092\",\n    fillOpacity: 0.48,\n}",
           "description": "Estilo do polígono selecionado."
+        },
+        {
+          "name": "featureStyle",
+          "type": "MapSelectFeatureStyle | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Destaque por feature: recebe a feature (e se está selecionada) e devolve\nsó o que muda, mesclado sobre o estilo base. Para o mapa mostrar um dado\ndo domínio — ex.: contorno verde no talhão que a recomendação prevê —\nsem o consumidor ter que reescrever os dois estilos inteiros."
         }
       ],
       "events": [
