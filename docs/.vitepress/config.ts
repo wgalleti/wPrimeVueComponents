@@ -70,6 +70,7 @@ export default defineConfig({
             text: 'UI',
             items: [
               { text: 'WCheckList', link: '/components/w-check-list' },
+              { text: 'WDialog', link: '/components/w-dialog' },
               { text: 'WEmptyState', link: '/components/w-empty-state' },
               { text: 'WInfoCard', link: '/components/w-info-card' },
               { text: 'WKanbanBoard', link: '/components/w-kanban-board' },

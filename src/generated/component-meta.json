@@ -1627,6 +1627,12 @@
         }
       ]
     },
+    "WDialog": {
+      "file": "src/components/ui/WDialog.vue",
+      "props": [],
+      "events": [],
+      "slots": []
+    },
     "WEmptyState": {
       "file": "src/components/ui/WEmptyState.vue",
       "props": [
