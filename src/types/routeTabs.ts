@@ -65,8 +65,21 @@ export interface RouteTabRuntime {
 
 export interface UseRouteTabsOptions {
   router: Router
-  /** Identidade da aba. Default: `route.path` (params contam, query não). */
-  tabKey?: (route: RouteLocationNormalizedLoaded) => string
+  /**
+   * Modo de uso — o parâmetro que define o que é "uma aba":
+   * - `'screen'` (default): cada tela é uma aba. Identidade = `route.path`
+   *   (params contam, query não): NF 123 e NF 456 são abas distintas.
+   * - `'module'`: uma aba por entrada de menu. Identidade = `moduleRoot(route)`;
+   *   navegar entre telas do mesmo módulo acontece DENTRO da aba (a view
+   *   remonta, título/ícone voltam aos da rota nova e os close guards valem
+   *   também nessa troca).
+   */
+  mode?: 'screen' | 'module'
+  /**
+   * Raiz do módulo da rota (ex.: path da listagem) — identidade da aba no modo
+   * `'module'`. Obrigatório nesse modo; retornar falsy cai em `route.path`.
+   */
+  moduleRoot?: (route: RouteLocationNormalizedLoaded) => string | null | undefined
   /** Título/ícone/closable da aba. O que faltar cai em defaults sensatos. */
   resolveTabMeta?: (route: RouteLocationNormalizedLoaded) => Partial<RouteTabMeta>
   /** Quais rotas viram aba. Default: todas. */
