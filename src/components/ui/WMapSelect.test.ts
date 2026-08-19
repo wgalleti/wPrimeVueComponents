@@ -632,3 +632,77 @@ describe('WMapSelect — mapa', () => {
     })
   })
 })
+
+// --- Destaque por feature ---------------------------------------------------
+//
+// O `featureStyle` existe para o mapa mostrar um DADO do domínio (o talhão que a
+// recomendação prevê, a área já colhida) sem obrigar o consumidor a reescrever
+// os dois estilos base. Por isso o que ele devolve é MESCLADO, não substituído.
+describe('WMapSelect — destaque por feature', () => {
+  beforeEach(() => {
+    registro.mapas.length = 0
+    registro.camadas.length = 0
+  })
+
+  async function montarMapa(props: Record<string, unknown> = {}) {
+    const w = montar(props)
+    await flushPromises()
+    return w
+  }
+
+  const ativas = () => (registro.camadas as FakeLayer[]).filter((c) => !c.removida && c.mapa)
+
+  const camadaDe = (feature: MapSelectFeature) =>
+    ativas().find((c) => toRaw(c.geometria) === feature.geometria)
+
+  const verde = (feature: MapSelectFeature) =>
+    feature.id === 'P42' ? { color: '#3ddc84', weight: 4 } : null
+
+  it('mescla o ajuste sobre o estilo base e deixa o resto intacto', async () => {
+    await montarMapa({ featureStyle: verde })
+    const destacada = camadaDe(talhoes[1])?.estilo as Record<string, unknown>
+    expect(destacada.color).toBe('#3ddc84')
+    expect(destacada.weight).toBe(4)
+    // O que o ajuste não citou continua vindo do polygonStyle.
+    expect(destacada.fillOpacity).toBe(0.06)
+  })
+
+  it('feature fora da regra segue no estilo padrão', async () => {
+    await montarMapa({ featureStyle: verde })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).color).toBe('#ffffff')
+  })
+
+  it('o destaque sobrevive à seleção: mescla sobre o estilo de selecionado', async () => {
+    const w = await montarMapa({ featureStyle: verde })
+    await w.setProps({ modelValue: ['P42'] })
+    const estilo = camadaDe(talhoes[1])?.estilo as Record<string, unknown>
+    expect(estilo.color).toBe('#3ddc84')
+    // Preenchimento é do estado selecionado — o destaque não o desfaz.
+    expect(estilo.fillColor).toBe('#1f5092')
+  })
+
+  it('a regra recebe o estado de seleção da feature', async () => {
+    const vistos: boolean[] = []
+    const w = await montarMapa({
+      featureStyle: (feature: MapSelectFeature, selecionada: boolean) => {
+        if (feature.id === 'P42') vistos.push(selecionada)
+        return null
+      },
+    })
+    await w.setProps({ modelValue: ['P42'] })
+    expect(vistos).toContain(false)
+    expect(vistos).toContain(true)
+  })
+
+  it('trocar a regra repinta o que já estava desenhado', async () => {
+    const w = await montarMapa()
+    expect((camadaDe(talhoes[1])?.estilo as Record<string, unknown>).color).toBe('#ffffff')
+    await w.setProps({ featureStyle: verde })
+    expect((camadaDe(talhoes[1])?.estilo as Record<string, unknown>).color).toBe('#3ddc84')
+  })
+
+  it('sem a prop, nada muda', async () => {
+    await montarMapa()
+    expect((camadaDe(talhoes[1])?.estilo as Record<string, unknown>).color).toBe('#ffffff')
+  })
+})

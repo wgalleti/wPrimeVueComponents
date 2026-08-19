@@ -46,3 +46,17 @@ export interface MapSelectPolygonStyle {
   fillColor?: string
   fillOpacity?: number
 }
+
+/**
+ * Ajuste de estilo de UM polígono, decidido pelo dado da feature.
+ *
+ * Recebe a feature e se ela está selecionada, e devolve só o que muda — o
+ * resultado é mesclado SOBRE o estilo base (`polygonStyle` ou
+ * `polygonSelectedStyle`, conforme a seleção). `null` deixa a feature no estilo
+ * padrão. É o gancho para destaque semântico: o talhão que a recomendação
+ * prevê, o lote vencido, a área já colhida.
+ */
+export type MapSelectFeatureStyle = (
+  feature: MapSelectFeature,
+  selected: boolean,
+) => Partial<MapSelectPolygonStyle> | null | undefined

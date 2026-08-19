@@ -89,6 +89,21 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Destaque por dado',
+      description:
+        'O `featureStyle` pinta o contorno a partir da própria feature — aqui os talhões que a ' +
+        'recomendação prevê saem em verde, selecionados ou não. O ajuste é mesclado sobre o ' +
+        'estilo base, então o preenchimento de "selecionado" continua valendo.',
+      props: {
+        features: talhoes,
+        modelValue: ['P44'],
+        layout: 'sobreposto',
+        height: '460px',
+        featureStyle: (feature: MapSelectFeature) =>
+          ['P44', 'P45'].includes(String(feature.id)) ? { color: '#3ddc84', weight: 4 } : null,
+      },
+    },
+    {
       name: 'Mapa baixo',
       description: 'A altura é do consumidor (o componente vive dentro de um Dialog).',
       props: {

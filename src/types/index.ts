@@ -22,6 +22,7 @@ export type { TabItem } from './tabs'
 
 export type {
   MapSelectFeature,
+  MapSelectFeatureStyle,
   MapSelectGeometry,
   MapSelectId,
   MapSelectPolygonStyle,
