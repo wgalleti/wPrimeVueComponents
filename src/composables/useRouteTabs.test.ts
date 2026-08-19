@@ -107,6 +107,124 @@ describe('useRouteTabs — abertura e identidade', () => {
   })
 })
 
+describe("useRouteTabs — mode: 'module' (lista + detalhe na mesma aba)", () => {
+  /** Detalhe de nota compartilha a aba da listagem de clientes (módulo único). */
+  const porModulo = () =>
+    montar({
+      mode: 'module',
+      moduleRoot: (r) => (r.name === 'nota-editor' ? '/clientes' : r.path),
+    })
+
+  it("mode 'module' sem moduleRoot é erro de configuração", () => {
+    expect(() => montar({ mode: 'module' })).toThrowError(/moduleRoot/)
+  })
+
+  it('lista → detalhe reusa a aba, remonta a view e atualiza o fullPath', async () => {
+    porModulo()
+    await router.push('/clientes')
+    await router.push('/notas/1')
+    expect(api.tabs.value).toHaveLength(1)
+    expect(api.tabs.value[0].fullPath).toBe('/notas/1')
+    expect(api.tabs.value[0].remount).toBe(1)
+    expect(api.tabs.value[0].title).toBe('nota-editor')
+  })
+
+  it('detalhe → outro detalhe remonta de novo (id novo = tela nova)', async () => {
+    porModulo()
+    await router.push('/notas/1')
+    await router.push('/notas/2')
+    expect(api.tabs.value).toHaveLength(1)
+    expect(api.tabs.value[0].remount).toBe(1)
+    expect(api.runtime('/clientes')?.props).toEqual({ id: '2' })
+  })
+
+  it('título dinâmico do detalhe não gruda: voltar à lista restaura o default', async () => {
+    porModulo()
+    await router.push('/clientes')
+    await router.push('/notas/1')
+    api.setTitle('/clientes', 'NF 46032')
+    await router.push('/clientes')
+    expect(api.tabs.value[0].title).toBe('clientes')
+  })
+
+  it('mudança só de query não remonta nem mexe no título', async () => {
+    porModulo()
+    await router.push('/clientes')
+    api.setTitle('/clientes', 'Filtrada')
+    await router.push('/clientes?busca=x')
+    expect(api.tabs.value[0].remount).toBe(0)
+    expect(api.tabs.value[0].title).toBe('Filtrada')
+  })
+
+  it('close guard veta a troca de tela dentro da mesma aba', async () => {
+    porModulo()
+    await router.push('/notas/1')
+    api.runtime('/clientes')!.closeGuards.push(() => false)
+    await router.push('/clientes').catch(() => undefined)
+    expect(router.currentRoute.value.fullPath).toBe('/notas/1')
+    expect(api.tabs.value[0].remount).toBe(0)
+  })
+
+  it('shell restaurada hidratada em OUTRA tela re-resolve o título', async () => {
+    const persistido = JSON.stringify({
+      v: 1,
+      activeKey: null,
+      tabs: [
+        {
+          key: '/clientes',
+          fullPath: '/notas/1',
+          title: 'NF 46032',
+          closable: true,
+        },
+      ],
+    })
+    montar({
+      mode: 'module',
+      moduleRoot: (r) => (r.name === 'nota-editor' ? '/clientes' : r.path),
+    })
+    dados['w-route-tabs'] = persistido
+    // hidratou na listagem — o título do detalhe persistido não pode grudar
+    await router.push('/clientes')
+    expect(api.tabs.value).toHaveLength(1)
+    expect(api.tabs.value[0].title).toBe('clientes')
+  })
+
+  it('shell restaurada hidratada no MESMO path mantém o título persistido', async () => {
+    const persistido = JSON.stringify({
+      v: 1,
+      activeKey: null,
+      tabs: [
+        {
+          key: '/clientes',
+          fullPath: '/notas/1',
+          title: 'NF 46032',
+          closable: true,
+        },
+      ],
+    })
+    montar({
+      mode: 'module',
+      moduleRoot: (r) => (r.name === 'nota-editor' ? '/clientes' : r.path),
+    })
+    dados['w-route-tabs'] = persistido
+    await router.push('/notas/1')
+    expect(api.tabs.value[0].title).toBe('NF 46032')
+  })
+
+  it('close guard não roda ao trocar para OUTRA aba (pane segue vivo)', async () => {
+    porModulo()
+    await router.push('/notas/1')
+    let chamado = false
+    api.runtime('/clientes')!.closeGuards.push(() => {
+      chamado = true
+      return false
+    })
+    await router.push('/livre')
+    expect(router.currentRoute.value.fullPath).toBe('/livre')
+    expect(chamado).toBe(false)
+  })
+})
+
 describe('useRouteTabs — fechar', () => {
   it('fechar aba ativa ativa a vizinha da esquerda', async () => {
     await router.push('/clientes')

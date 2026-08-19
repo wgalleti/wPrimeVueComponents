@@ -5,10 +5,18 @@ Estado da navegação por abas de rota — o dono da lista que
 vez no boot, guarde a instância num módulo do app e passe-a por prop (regra da suite:
 nenhum estado global dentro de componente).
 
-Instala um `router.afterEach`: rota aceita por `isTabRoute` vira aba, identificada por
-`tabKey` (default `route.path` — params contam, **query não**: mudar só a query atualiza a
-aba em vez de abrir outra). A lista persiste no `storage` e volta após um reload como
-"shells" que só montam quando ativados; a URL do reload sempre ganha a aba ativa.
+Instala um `router.afterEach`: rota aceita por `isTabRoute` vira aba. O que é "uma aba"
+é o parâmetro **`mode`**:
+
+- **`'screen'`** (default) — cada tela é uma aba. Identidade = `route.path` (params
+  contam, **query não**: mudar só a query atualiza a aba em vez de abrir outra).
+- **`'module'`** — uma aba por entrada de menu. Identidade = `moduleRoot(route)`
+  (ex.: o path da listagem do módulo); navegar entre telas do mesmo módulo acontece
+  **dentro** da aba: a view remonta, título/ícone voltam aos da rota nova e os close
+  guards valem também nessa troca (sair de um editor sujo pede confirmação).
+
+A lista persiste no `storage` e volta após um reload como "shells" que só montam quando
+ativados; a URL do reload sempre ganha a aba ativa.
 
 ## Uso
 
@@ -19,6 +27,8 @@ import router from '@/router'
 
 export const tabsApi = useRouteTabs({
   router,
+  mode: 'module', // uma aba por item de menu; omita para uma aba por tela
+  moduleRoot: (r) => pathDaListagem(r.name, r.path),
   storageKey: () => `app-tabs:${userId() ?? 'anon'}`,
   homePath: '/',
   isTabRoute: (r) => r.meta?.requiresAuth !== false && !r.meta?.print,
@@ -32,7 +42,8 @@ export const tabsApi = useRouteTabs({
 | Opção | Default | Para quê |
 | --- | --- | --- |
 | `router` | — | O `Router` do app (obrigatório). |
-| `tabKey` | `route.path` | Identidade da aba. |
+| `mode` | `'screen'` | O que é "uma aba": `'screen'` (uma por tela) ou `'module'` (uma por entrada de menu, com navegação interna). |
+| `moduleRoot` | — | Raiz do módulo da rota (identidade da aba no modo `'module'`). Obrigatório nesse modo; retornar falsy cai em `route.path`. |
 | `resolveTabMeta` | `{}` | Título/ícone/`closable`/`group` por rota; o que faltar cai em defaults. `group` agrupa as abas na barra (ex.: o módulo do menu) — aba nova entra colada no fim do próprio grupo. |
 | `isTabRoute` | `true` | Quais rotas viram aba (login/impressão ficam fora). |
 | `storage` | `localStorage` | Onde persistir; `null` desliga. |

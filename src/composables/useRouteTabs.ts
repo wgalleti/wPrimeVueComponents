@@ -15,9 +15,11 @@ import type {
  *
  * O composable instala um `router.afterEach`: rota que `isTabRoute` aceita
  * vira aba (ou reativa a existente — mudança só de query atualiza a aba, não
- * abre outra). A lista sobrevive a reload via storage; as abas voltam como
- * "shells" (`hydrated: false`) e só montam quando ativadas — a URL do reload
- * sempre ganha a disputa pela aba ativa.
+ * abre outra). O que é "uma aba" vem do parâmetro `mode`: `'screen'` (default,
+ * uma aba por tela) ou `'module'` (uma aba por entrada de menu, com navegação
+ * interna — ver `UseRouteTabsOptions`). A lista sobrevive a reload via
+ * storage; as abas voltam como "shells" (`hydrated: false`) e só montam
+ * quando ativadas — a URL do reload sempre ganha a disputa pela aba ativa.
  */
 
 interface PersistedTab {
@@ -71,7 +73,8 @@ function resolveViewComponent(to: RouteLocationNormalizedLoaded): Component | nu
 export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
   const {
     router,
-    tabKey = (route) => route.path,
+    mode = 'screen',
+    moduleRoot,
     resolveTabMeta = (): Partial<RouteTabMeta> => ({}),
     isTabRoute = () => true,
     storage = typeof localStorage === 'undefined' ? null : localStorage,
@@ -79,6 +82,14 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     homePath = '/',
     maxTabs,
   } = options
+
+  if (mode === 'module' && !moduleRoot) {
+    throw new Error('[useRouteTabs] mode "module" exige a opção moduleRoot(route).')
+  }
+
+  /** Identidade da aba, derivada do modo de uso (ver `UseRouteTabsOptions.mode`). */
+  const tabKey = (route: RouteLocationNormalizedLoaded): string =>
+    (mode === 'module' && moduleRoot?.(route)) || route.path
 
   const tabs = ref<RouteTab[]>([])
   const activeKey = ref<string | null>(null)
@@ -164,7 +175,29 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
   /** Liga (ou religa) o runtime da aba à rota recém-navegada. */
   function hydrate(tab: RouteTab, to: RouteLocationNormalizedLoaded): void {
     let runtime = runtimes.get(tab.key)
+    // Modo 'module', trocou de PATH dentro da mesma aba = tela nova: o pane
+    // remonta inteiro (chave inclui `remount`) com um runtime NOVO — a
+    // instância que está saindo fica com o snapshot dela intacto até
+    // desmontar (mutar a rota sob uma tela viva quebra o patch do Vue), e
+    // título/ícone voltam aos da rota nova. Query-only continua no else.
+    if (runtime && mode === 'module' && (runtime.route as { path: string }).path !== to.path) {
+      runtimes.delete(tab.key)
+      runtime = undefined
+      tab.remount += 1
+      const meta = resolveTabMeta(to)
+      tab.title = meta.title ?? defaultTitleFor(to)
+      if (meta.icon) tab.icon = meta.icon
+    }
     if (!runtime) {
+      // Shell restaurada do storage pode hidratar numa TELA diferente da
+      // persistida (ex.: o menu levou à listagem e a shell guardava o
+      // detalhe): título/ícone voltam aos da rota real. Hidratar no MESMO
+      // path mantém o título persistido ("NF 46032") até a tela repor.
+      if (tab.fullPath.split(/[?#]/)[0] !== to.path) {
+        const meta = resolveTabMeta(to)
+        tab.title = meta.title ?? defaultTitleFor(to)
+        if (meta.icon) tab.icon = meta.icon
+      }
       runtime = {
         component: resolveViewComponent(to),
         props: resolveViewProps(to),
@@ -179,6 +212,8 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
       runtimes.set(tab.key, runtime)
     } else {
       // Só a aba ativa recebe a rota nova — panes ocultos ficam congelados.
+      // Aqui é sempre a MESMA tela (query/hash); path novo já virou runtime
+      // novo acima.
       runtime.component = resolveViewComponent(to)
       runtime.props = resolveViewProps(to)
       Object.assign(runtime.route, snapshotRoute(to))
@@ -193,7 +228,25 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     if (victim) void close(victim.key)
   }
 
-  router.afterEach((to) => {
+  // Modo 'module': trocar de tela DENTRO da aba ativa descarta a instância
+  // atual (remount no hydrate) — então os close guards da tela valem aqui
+  // também: sair de um editor sujo para a listagem da mesma aba passa pela
+  // confirmação, igual ao fechar. Troca de aba não passa por aqui: o pane
+  // antigo segue vivo.
+  if (mode === 'module') {
+    router.beforeEach(async (to, from) => {
+      if (!restored) return true
+      if (!isTabRoute(to) || !isTabRoute(from)) return true
+      const key = tabKey(to)
+      if (key !== activeKey.value || key !== tabKey(from)) return true
+      if (from.path === to.path) return true
+      return await runCloseGuards(key)
+    })
+  }
+
+  router.afterEach((to, _from, failure) => {
+    // Navegação abortada (guard vetou, redirect, duplicada) não mexe nas abas.
+    if (failure) return
     if (!restored || (storage && resolveStorageKey() !== restoredKey)) restore()
     if (!isTabRoute(to)) {
       activeKey.value = null

@@ -3554,5 +3554,20 @@
 .w-tab-viewport__pane {
   position: relative;
   height: 100%;
+  overflow: hidden;
+}
+
+/* O scroll mora num wrapper INTERNO: o pane fica parado como âncora dos
+   overlays teleportados (mask cobre a área visível da aba, não o conteúdo
+   rolado). Cada aba segue guardando sua posição de rolagem. */
+.w-tab-viewport__scroll {
+  height: 100%;
   overflow-y: auto;
+}
+
+/* Mask de dialog ancorado no pane cobre SÓ a aba — a barra de abas, o menu e
+   a topbar continuam clicáveis (dá para trocar de aba com o modal aberto).
+   O PrimeVue define `position: fixed` INLINE na mask, daí o !important. */
+.w-tab-viewport__pane > .p-dialog-mask {
+  position: absolute !important;
 }
