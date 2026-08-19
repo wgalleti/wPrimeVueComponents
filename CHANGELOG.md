@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.17.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.16.0...v0.17.0) (2026-08-19)
+
+### Funcionalidades
+
+* **dialogs:** WDialog and pane-anchored confirmations ([77ba9fc](https://github.com/wgalleti/wPrimeVueComponents/commit/77ba9fcb79865dc60d8d5c6921021e3678d490ac))
+* **tabs:** mode 'module' — one tab per menu entry with in-tab navigation ([0453b9f](https://github.com/wgalleti/wPrimeVueComponents/commit/0453b9ff92427d19d21a7549ac14da2a3cfb155f))
+* **WMapSelect:** featureStyle to highlight polygons by their own data ([a46e15c](https://github.com/wgalleti/wPrimeVueComponents/commit/a46e15c7fe31df853de29f4530e30d9852bd22f6))
 ## [0.16.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.15.0...v0.16.0) (2026-08-19)
 
 ### Funcionalidades
