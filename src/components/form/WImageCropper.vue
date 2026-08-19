@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onBeforeUnmount } from 'vue'
 import Dialog from 'primevue/dialog'
+import { useTabHost } from '@/types/routeTabs'
 import Button from 'primevue/button'
 import Slider from 'primevue/slider'
+
+// Dentro da navegação por abas, o dialog pendura no pane da própria aba
+// (some e volta com ela, intacto); fora de abas, o body de sempre.
+const tabHost = useTabHost()
 
 /**
  * Upload de imagem com preview e crop (pan + zoom) integrado.
@@ -288,6 +293,7 @@ function confirmCrop() {
 
     <Dialog
       v-model:visible="cropOpen"
+      :append-to="tabHost?.hostEl.value ?? 'body'"
       modal
       header="Ajustar imagem"
       :dismissable-mask="false"

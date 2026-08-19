@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
+import { useTabHost } from '@/types/routeTabs'
 import Button from 'primevue/button'
 import type { FieldDef } from '@/types/field'
 import WFormRenderer from '@/components/form/WFormRenderer.vue'
 import { useFormKeyboardNav } from '@/composables/useFormKeyboardNav'
+
+// Dentro da navegação por abas, o dialog pendura no pane da própria aba
+// (some e volta com ela, intacto); fora de abas, o body de sempre.
+const tabHost = useTabHost()
 
 const props = withDefaults(
   defineProps<{
@@ -68,6 +73,7 @@ watch(
 
 <template>
   <Dialog
+    :append-to="tabHost?.hostEl.value ?? 'body'"
     :visible="visible"
     :header="title"
     :style="{ width }"

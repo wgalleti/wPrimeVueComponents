@@ -3,6 +3,7 @@ import { ref, watch, computed, inject, reactive, nextTick, onMounted } from 'vue
 import AutoComplete from 'primevue/autocomplete'
 import Chip from 'primevue/chip'
 import Dialog from 'primevue/dialog'
+import { useTabHost } from '@/types/routeTabs'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -20,6 +21,10 @@ import { useAppConfirm } from '@/composables/useAppConfirm'
 import { extractApiError } from '@/composables/useApiError'
 import WCrudFormDialog from '@/components/crud/WCrudFormDialog.vue'
 import WCrudColumnRenderer from '@/components/crud/WCrudColumnRenderer.vue'
+
+// Dentro da navegação por abas, o dialog pendura no pane da própria aba
+// (some e volta com ela, intacto); fora de abas, o body de sempre.
+const tabHost = useTabHost()
 
 interface ColumnMeta {
   field: string
@@ -904,6 +909,7 @@ function confirmDelete(item: Record<string, unknown>) {
   <!-- Modal de Pesquisa + CRUD -->
   <Dialog
     v-model:visible="modalVisible"
+    :append-to="tabHost?.hostEl.value ?? 'body'"
     :header="dialogHeader || 'Pesquisar'"
     :style="{ width: '80vw' }"
     modal
