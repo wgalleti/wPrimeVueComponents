@@ -51,3 +51,13 @@ export type {
   DataProviderRequestConfig,
   DataProviderResponse,
 } from './dataProvider'
+
+export type {
+  RouteTab,
+  RouteTabMeta,
+  RouteTabRuntime,
+  RouteTabsApi,
+  TabHostContext,
+  UseRouteTabsOptions,
+} from './routeTabs'
+export { W_TAB_HOST_KEY, useTabHost } from './routeTabs'

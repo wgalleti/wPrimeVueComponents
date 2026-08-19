@@ -82,6 +82,7 @@ export default defineConfig({
               { text: 'WStatusTag', link: '/components/w-status-tag' },
               { text: 'WStepFlow / WStepSection', link: '/components/w-step-flow' },
               { text: 'WTabBar', link: '/components/w-tab-bar' },
+              { text: 'WTabNav / WTabViewport', link: '/components/w-tab-nav' },
             ],
           },
         ],
@@ -95,6 +96,7 @@ export default defineConfig({
           { text: 'useAppConfirm', link: '/composables/use-app-confirm' },
           { text: 'useApiError', link: '/composables/use-api-error' },
           { text: 'useFormatters', link: '/composables/use-formatters' },
+          { text: 'useRouteTabs', link: '/composables/use-route-tabs' },
         ],
       },
       {
