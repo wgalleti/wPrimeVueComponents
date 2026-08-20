@@ -2110,6 +2110,13 @@
           "description": "Modo de seleção por clique. Sem valor, o default preserva o comportamento\nde sempre: interativo → `'multiple'`, `readonly` → `'none'`. Definido\nexplicitamente, vale MESMO com `readonly` (que segue escondendo painel e\nrodapé): o clique no polígono emite `update:modelValue`. Em `'single'` o\nclique substitui a seleção (`[id]`) e clicar no selecionado desmarca."
         },
         {
+          "name": "highlightFeature",
+          "type": "MapSelectId | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Feature destacada de fora, por cima de tudo (recebe o estilo de\nselecionado mesclado sobre o estado atual). É o feedback do arrasto:\nenquanto o dedo passeia com um item \"na mão\", quem chama liga o\n`hitTest` no `pointermove` e publica o id aqui — o polígono sob o dedo\nacende sem mexer na seleção. `null` desliga."
+        },
+        {
           "name": "polygonStyle",
           "type": "MapSelectPolygonStyle | undefined",
           "required": false,

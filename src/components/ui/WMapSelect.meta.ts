@@ -104,6 +104,20 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Destaque de arrasto (highlightFeature)',
+      description:
+        'O `highlightFeature` acende um polígono por cima de tudo (estilo de selecionado), sem ' +
+        'tocar na seleção — é o feedback do arrasto: quem chama liga o `hitTest(clientX, ' +
+        'clientY)` no `pointermove` e publica aqui o id sob o dedo.',
+      props: {
+        features: talhoes,
+        modelValue: ['P44'],
+        highlightFeature: 'P42',
+        layout: 'sobreposto',
+        height: '380px',
+      },
+    },
+    {
       name: 'Mapa baixo',
       description: 'A altura é do consumidor (o componente vive dentro de um Dialog).',
       props: {
