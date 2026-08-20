@@ -24,6 +24,7 @@ import type {
   MapSelectGeometry,
   MapSelectId,
   MapSelectPolygonStyle,
+  MapSelectPosition,
   MapSelectSelectionMode,
   MapSelectTooltips,
 } from '@/types/mapSelect'
@@ -112,6 +113,12 @@ const props = withDefaults(
      *  rodapé): o clique no polígono emite `update:modelValue`. Em `'single'` o
      *  clique substitui a seleção (`[id]`) e clicar no selecionado desmarca. */
     selectionMode?: MapSelectSelectionMode
+    /** Feature destacada de fora, por cima de tudo (recebe o estilo de
+     *  selecionado mesclado sobre o estado atual). É o feedback do arrasto:
+     *  enquanto o dedo passeia com um item "na mão", quem chama liga o
+     *  `hitTest` no `pointermove` e publica o id aqui — o polígono sob o dedo
+     *  acende sem mexer na seleção. `null` desliga. */
+    highlightFeature?: MapSelectId | null
     /** Estilo do polígono não selecionado. */
     polygonStyle?: MapSelectPolygonStyle
     /** Estilo do polígono selecionado. */
@@ -148,6 +155,7 @@ const props = withDefaults(
     readonly: false,
     tooltips: 'permanent',
     selectionMode: undefined,
+    highlightFeature: null,
     // Tinta de mapa, não cor de UI: estes valores são lidos sobre a imagem de
     // satélite, onde os tokens do tema (claro/escuro) não valem. São props para
     // quem tiver outro fundo poder trocar.
@@ -308,10 +316,17 @@ const featuresById = computed(() => {
 function styleFor(id: MapSelectId): MapSelectPolygonStyle {
   const on = isSelected(id)
   const base = on ? props.polygonSelectedStyle : props.polygonStyle
-  if (!props.featureStyle) return base
-  const feature = featuresById.value.get(id)
-  const ajuste = feature ? props.featureStyle(feature, on) : null
-  return ajuste ? { ...base, ...ajuste } : base
+  let estilo = base
+  if (props.featureStyle) {
+    const feature = featuresById.value.get(id)
+    const ajuste = feature ? props.featureStyle(feature, on) : null
+    if (ajuste) estilo = { ...estilo, ...ajuste }
+  }
+  // O destaque de arrasto vence tudo: é feedback transitório do gesto, não dado.
+  if (props.highlightFeature != null && props.highlightFeature === id) {
+    estilo = { ...estilo, ...props.polygonSelectedStyle }
+  }
+  return estilo
 }
 
 function tooltipText(feature: MapSelectFeature): string {
@@ -438,6 +453,58 @@ function fitToFeature(id: MapSelectId, options?: { padding?: [number, number]; m
   if (bounds.isValid()) map.fitBounds(bounds, { padding: [20, 20], ...options })
 }
 
+// --- Hit-test por coordenada ------------------------------------------------
+//
+// O renderer canvas pinta todos os polígonos num único elemento — não existe
+// "elemento sob o dedo" para um arrasto consultar. O teste é geométrico:
+// ray casting sobre as coordenadas GeoJSON das próprias features, independente
+// de renderer e de layer.
+
+function pontoNoAnel(lng: number, lat: number, anel: MapSelectPosition[]): boolean {
+  let dentro = false
+  for (let i = 0, j = anel.length - 1; i < anel.length; j = i++) {
+    const [xi, yi] = anel[i]
+    const [xj, yj] = anel[j]
+    const cruza = yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi
+    if (cruza) dentro = !dentro
+  }
+  return dentro
+}
+
+function pontoNaGeometria(lng: number, lat: number, geometria: MapSelectGeometry): boolean {
+  const poligonos = (
+    geometria.type === 'Polygon' ? [geometria.coordinates] : geometria.coordinates
+  ) as MapSelectPosition[][][]
+  for (const aneis of poligonos) {
+    if (!aneis.length || !pontoNoAnel(lng, lat, aneis[0])) continue
+    // Dentro do contorno externo: só não conta se caiu num buraco.
+    const noBuraco = aneis.slice(1).some((anel) => pontoNoAnel(lng, lat, anel))
+    if (!noBuraco) return true
+  }
+  return false
+}
+
+/** Feature sob um ponto da TELA (`clientX/clientY` de um PointerEvent) — o
+ *  gancho do arrasto: soltar/passar um item por cima do mapa e descobrir qual
+ *  polígono está sob o dedo. `null` fora do mapa, fora de qualquer polígono ou
+ *  com o Leaflet fora do ar. */
+function hitTest(clientX: number, clientY: number): MapSelectId | null {
+  if (!map || !container.value) return null
+  const rect = container.value.getBoundingClientRect()
+  const x = clientX - rect.left
+  const y = clientY - rect.top
+  // Com o container medido, ponto fora dele não é candidato. (Em ambiente sem
+  // layout — testes — o rect é 0×0 e a checagem não se aplica.)
+  if (rect.width > 0 && rect.height > 0 && (x < 0 || y < 0 || x > rect.width || y > rect.height))
+    return null
+  const latlng = map.containerPointToLatLng([x, y])
+  for (const feature of props.features) {
+    if (feature.geometria && pontoNaGeometria(latlng.lng, latlng.lat, feature.geometria))
+      return feature.id
+  }
+  return null
+}
+
 /** Recria todas as layers (opções de criação — tooltip/interatividade —
  *  mudaram). Não mexe no enquadramento. */
 function rebuildLayers() {
@@ -536,6 +603,8 @@ watch(() => props.modelValue, syncStyles, { deep: true })
 // Trocar a regra de destaque repinta o que já está desenhado — sem isto o mapa
 // só mostraria a regra nova nas features que chegassem depois.
 watch(() => props.featureStyle, syncStyles)
+// O destaque de arrasto muda a cada pointermove — repinta só estilos.
+watch(() => props.highlightFeature, syncStyles)
 
 // A `scopeGeometry` pode chegar DEPOIS da primeira página de features (duas
 // requests em paralelo): ela ainda vale um único reenquadramento.
@@ -572,6 +641,8 @@ defineExpose({
   fitToScope,
   /** Enquadra o polígono de um id (padding igual ao do escopo). No-op sem layer. */
   fitToFeature,
+  /** Feature sob um ponto da tela (arrasto por cima do mapa). `null` fora. */
+  hitTest,
 })
 </script>
 

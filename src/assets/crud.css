@@ -2536,10 +2536,18 @@
    WMapSelect — .w-map-select
    ========================================================== */
 
+/* Contexto de empilhamento próprio: o Leaflet trabalha com z-index alto por
+   conta própria (panes 400–700, controles 800) e o painel de vidro sobe para
+   900. Sem isolar, esses números competem com a moldura do app (topbar,
+   popovers, máscaras) e o mapa aparece na frente do menu. Com `isolation`, o
+   maior z-index de dentro nunca ultrapassa o `z-index: 0` do próprio mapa. */
 .w-map-select {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
 
 .w-map-select--disabled {

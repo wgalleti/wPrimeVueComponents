@@ -60,6 +60,10 @@ vi.mock('leaflet', () => {
       },
       invalidateSize() {},
       remove() {},
+      // Conversão linear de mentira: containerPoint [x, y] → { lng: x, lat: y }.
+      containerPointToLatLng(point: [number, number]) {
+        return { lng: point[0], lat: point[1] }
+      },
     }
     registro.mapas.push(mapa)
     return mapa
@@ -704,5 +708,92 @@ describe('WMapSelect — destaque por feature', () => {
   it('sem a prop, nada muda', async () => {
     await montarMapa()
     expect((camadaDe(talhoes[1])?.estilo as Record<string, unknown>).color).toBe('#ffffff')
+  })
+})
+
+// --- hitTest e highlightFeature ---------------------------------------------
+//
+// O arrasto (bag → talhão) não tem "elemento sob o dedo" no renderer canvas: o
+// hitTest é geométrico (ray casting sobre o GeoJSON) e o highlightFeature é o
+// feedback transitório do gesto — acende o polígono sob o dedo sem tocar na
+// seleção. O mock converte containerPoint [x, y] direto em { lng: x, lat: y },
+// então o "clientX/clientY" dos testes é a própria coordenada geográfica.
+describe('WMapSelect — hitTest e highlightFeature', () => {
+  beforeEach(() => {
+    registro.mapas.length = 0
+    registro.camadas.length = 0
+  })
+
+  async function montarMapa(props: Record<string, unknown> = {}) {
+    const w = montar(props)
+    await flushPromises()
+    return w
+  }
+
+  const ativas = () => (registro.camadas as FakeLayer[]).filter((c) => !c.removida && c.mapa)
+
+  const camadaDe = (feature: MapSelectFeature) =>
+    ativas().find((c) => toRaw(c.geometria) === feature.geometria)
+
+  interface ApiExposta {
+    hitTest: (x: number, y: number) => MapSelectId | null
+  }
+
+  it('devolve o id do polígono que contém o ponto', async () => {
+    const w = await montarMapa()
+    // Dentro de P41: quadra(-52.85, -27.85) cobre lng −52,85..−52,84, lat −27,86..−27,85.
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.845, -27.855)).toBe('P41')
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.835, -27.855)).toBe('P42')
+  })
+
+  it('fora de qualquer polígono devolve null', async () => {
+    const w = await montarMapa()
+    expect((w.vm as unknown as ApiExposta).hitTest(-40, -20)).toBeNull()
+  })
+
+  it('feature sem geometria nunca é acertada', async () => {
+    const w = await montarMapa({ features: [{ id: 'P49', nome: 'P49' }] })
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.845, -27.855)).toBeNull()
+  })
+
+  it('MultiPolygon: acerta qualquer um dos polígonos', async () => {
+    const multi: MapSelectFeature = {
+      id: 'M1',
+      nome: 'M1',
+      geometria: {
+        type: 'MultiPolygon',
+        coordinates: [
+          quadra(-52.85, -27.85).coordinates,
+          quadra(-52.7, -27.7).coordinates,
+        ],
+      },
+    }
+    const w = await montarMapa({ features: [multi] })
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.845, -27.855)).toBe('M1')
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.695, -27.705)).toBe('M1')
+    expect((w.vm as unknown as ApiExposta).hitTest(-52.5, -27.5)).toBeNull()
+  })
+
+  it('highlightFeature aplica o estilo de selecionado sem mexer na seleção', async () => {
+    const w = await montarMapa({ modelValue: [] })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#ffffff')
+
+    await w.setProps({ highlightFeature: 'P41' })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#1f5092')
+    // Nada foi emitido: destaque é feedback, não seleção.
+    expect(emitido(w)).toEqual([])
+
+    await w.setProps({ highlightFeature: null })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#ffffff')
+  })
+
+  it('o destaque vence o featureStyle enquanto durar', async () => {
+    const verde = (feature: MapSelectFeature) =>
+      feature.id === 'P41' ? { fillColor: '#3ddc84' } : null
+    const w = await montarMapa({ featureStyle: verde })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#3ddc84')
+
+    await w.setProps({ highlightFeature: 'P41' })
+    expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#1f5092')
   })
 })
