@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.18.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.17.0...v0.18.0) (2026-08-20)
+
+### Funcionalidades
+
+* **tabs:** page-enter animation on WTabViewport panes ([c73cb16](https://github.com/wgalleti/wPrimeVueComponents/commit/c73cb1689487088955b3ec1174a347e3474aea15))
 ## [0.17.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.16.0...v0.17.0) (2026-08-19)
 
 ### Funcionalidades
