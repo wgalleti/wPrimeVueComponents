@@ -18,6 +18,19 @@ O par funciona junto e todo o estado vem do composable
   um snapshot **congelado** da rota — `useRoute()` da tela oculta não reage à navegação
   global — e fornece o contexto `useTabHost()` (título dinâmico, `appendTo`, close guards).
 
+### Animação de entrada da página
+
+Cada pane entra com fade + leve deslocamento (o `v-show` alterna `display`, e a animação
+CSS reinicia sempre que o pane volta a ser renderizado — cobre a primeira abertura **e** a
+troca entre abas). Calibragem via CSS vars do app consumidor, com fallbacks locais:
+
+| Var | Default | Papel |
+|---|---|---|
+| `--w-tab-enter-duration` | `var(--motion-slow, 380ms)` | duração; `0s` desliga |
+| `--w-tab-enter-ease` | `var(--ease-spring, cubic-bezier(0.34, 1.4, 0.64, 1))` | curva da entrada |
+
+`prefers-reduced-motion: reduce` desativa a animação automaticamente.
+
 ## API — WTabNav
 
 <ApiTable name="WTabNav" />
