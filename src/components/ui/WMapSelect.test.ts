@@ -24,7 +24,7 @@ interface FakeLayer {
   mapa: FakeMap | null
   tooltip: FakeTooltip | null
   estilo: unknown
-  fire: (evento: string) => void
+  fire: (evento: string, payload?: unknown) => void
   on: (evento: string, fn: () => void) => FakeLayer
   getBounds: () => { isValid: () => boolean }
 }
@@ -70,7 +70,7 @@ vi.mock('leaflet', () => {
   }
 
   function fakeGeoJSON(geometria: unknown, opcoes: Record<string, unknown> = {}) {
-    const eventos: Record<string, (() => void)[]> = {}
+    const eventos: Record<string, ((payload?: unknown) => void)[]> = {}
     const tooltipEl = document.createElement('div')
     const camada = {
       geometria,
@@ -79,12 +79,12 @@ vi.mock('leaflet', () => {
       mapa: null as unknown,
       tooltip: null as FakeTooltip | null,
       estilo: null as unknown,
-      on(evento: string, fn: () => void) {
+      on(evento: string, fn: (payload?: unknown) => void) {
         ;(eventos[evento] ??= []).push(fn)
         return camada
       },
-      fire(evento: string) {
-        for (const fn of eventos[evento] ?? []) fn()
+      fire(evento: string, payload?: unknown) {
+        for (const fn of eventos[evento] ?? []) fn(payload)
       },
       setStyle(estilo: unknown) {
         camada.estilo = estilo
@@ -795,5 +795,188 @@ describe('WMapSelect — hitTest e highlightFeature', () => {
 
     await w.setProps({ highlightFeature: 'P41' })
     expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#1f5092')
+  })
+})
+
+
+// --- Rótulo e cartão de detalhe ---------------------------------------------
+//
+// A divisão que estes testes protegem: o componente decide QUANDO abrir e ONDE
+// posicionar o cartão; o CONTEÚDO é do slot. É o que permite a tela evoluir o
+// cartão sem tocar na suite.
+describe('WMapSelect — rótulo e cartão de detalhe', () => {
+  beforeEach(() => {
+    registro.mapas.length = 0
+    registro.camadas.length = 0
+  })
+
+  async function montarMapa(props: Record<string, unknown> = {}, slots?: Record<string, string>) {
+    const w = mount(WMapSelect, {
+      props: { features: talhoes, modelValue: [], ...props },
+      slots,
+      global: { plugins: [PrimeVue] },
+    })
+    await flushPromises()
+    return w
+  }
+
+  const ativas = () => (registro.camadas as FakeLayer[]).filter((c) => !c.removida && c.mapa)
+
+  const camadaDe = (feature: MapSelectFeature) =>
+    ativas().find((c) => toRaw(c.geometria) === feature.geometria)
+
+  const cartao = (w: VueWrapper) => w.find('.w-map-select__detail')
+
+  const ponto = (x: number, y: number) => ({ containerPoint: { x, y } })
+
+  describe('featureLabel', () => {
+    it('sem a prop, o rótulo segue "nome · área"', async () => {
+      await montarMapa()
+      expect(camadaDe(talhoes[0])?.tooltip?.content).toBe('P41 · 82 ha')
+    })
+
+    it('a função manda no texto do rótulo', async () => {
+      await montarMapa({ featureLabel: (f: MapSelectFeature) => `T-${f.nome}` })
+      expect(camadaDe(talhoes[0])?.tooltip?.content).toBe('T-P41')
+    })
+
+    it('texto vazio não vira tooltip fantasma', async () => {
+      await montarMapa({ featureLabel: () => '' })
+      expect(camadaDe(talhoes[0])?.tooltip).toBeNull()
+    })
+  })
+
+  describe('featureDetail', () => {
+    it('default é none: nenhum cartão, nem no hover', async () => {
+      const w = await montarMapa()
+      camadaDe(talhoes[0])?.fire('mouseover')
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+      expect(w.emitted('feature-enter')).toBeUndefined()
+    })
+
+    it('hover abre com o conteúdo do slot e fecha ao sair', async () => {
+      const w = await montarMapa(
+        { featureDetail: 'hover' },
+        { 'feature-detail': '<b class="alvo">{{ params.feature.nome }}</b>' },
+      )
+
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(120, 300))
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(true)
+      expect(w.find('.alvo').text()).toBe('P41')
+      expect(w.emitted('feature-enter')?.length).toBe(1)
+
+      camadaDe(talhoes[0])?.fire('mouseout')
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+      expect(w.emitted('feature-leave')?.length).toBe(1)
+    })
+
+    it('passear pelo mesmo polígono não reemite feature-enter', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(10, 300))
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(20, 300))
+      await flushPromises()
+      expect(w.emitted('feature-enter')?.length).toBe(1)
+    })
+
+    it('sem slot, o cartão mostra nome e subtítulo da feature', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(50, 300))
+      await flushPromises()
+      expect(cartao(w).text()).toContain('P41')
+      expect(cartao(w).text()).toContain('Rotacionado')
+    })
+
+    it('no hover o cartão não recebe o ponteiro (senão piscaria)', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(50, 300))
+      await flushPromises()
+      expect(cartao(w).classes()).toContain('w-map-select__detail--hover')
+    })
+
+    it('click abre e o clique no mesmo polígono fecha', async () => {
+      const w = await montarMapa({ featureDetail: 'click' })
+
+      camadaDe(talhoes[0])?.fire('click', ponto(80, 300))
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(true)
+
+      camadaDe(talhoes[0])?.fire('click', ponto(80, 300))
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+    })
+
+    it('Esc fecha o cartão', async () => {
+      const w = await montarMapa({ featureDetail: 'click' })
+      camadaDe(talhoes[0])?.fire('click', ponto(80, 300))
+      await flushPromises()
+
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+    })
+
+    it('o ponto apontado vira a posição do cartão', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(140, 260))
+      await flushPromises()
+      expect(cartao(w).attributes('style')).toContain('left: 140px')
+      expect(cartao(w).attributes('style')).toContain('top: 260px')
+    })
+
+    it('perto do topo o cartão vira para baixo', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(140, 40))
+      await flushPromises()
+      expect(cartao(w).classes()).toContain('w-map-select__detail--abaixo')
+    })
+
+    it('no canto o cartão não é posicionado pelo cursor', async () => {
+      const w = await montarMapa({ featureDetail: 'hover', detailPlacement: 'canto' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(140, 260))
+      await flushPromises()
+      expect(cartao(w).classes()).toContain('w-map-select__detail--canto')
+      expect(cartao(w).attributes('style')).toBeUndefined()
+    })
+
+    it('trocar o modo fecha o cartão aberto', async () => {
+      const w = await montarMapa({ featureDetail: 'hover' })
+      camadaDe(talhoes[0])?.fire('mouseover', ponto(50, 300))
+      await flushPromises()
+
+      await w.setProps({ featureDetail: 'click' })
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+    })
+
+    it('fecharDetalhe() fecha de fora', async () => {
+      const w = await montarMapa({ featureDetail: 'click' })
+      camadaDe(talhoes[0])?.fire('click', ponto(50, 300))
+      await flushPromises()
+
+      ;(w.vm as unknown as { fecharDetalhe: () => void }).fecharDetalhe()
+      await flushPromises()
+      expect(cartao(w).exists()).toBe(false)
+    })
+  })
+
+  describe('feature-click', () => {
+    it('sai a cada clique, com a feature inteira', async () => {
+      const w = await montarMapa()
+      camadaDe(talhoes[1])?.fire('click')
+      await flushPromises()
+      const [[feature]] = w.emitted('feature-click') as [MapSelectFeature][]
+      expect(feature.id).toBe('P42')
+    })
+
+    it('sai também no mapa de leitura, onde nada seleciona', async () => {
+      const w = await montarMapa({ readonly: true, selectionMode: 'none' })
+      camadaDe(talhoes[1])?.fire('click')
+      await flushPromises()
+      expect(w.emitted('feature-click')?.length).toBe(1)
+      expect(w.emitted('update:modelValue')).toBeUndefined()
+    })
   })
 })

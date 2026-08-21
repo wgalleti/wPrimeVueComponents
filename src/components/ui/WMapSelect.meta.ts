@@ -65,6 +65,8 @@ export default defineComponentMeta({
     layout: { type: 'select', options: ['lado-a-lado', 'sobreposto'] },
     tooltips: { type: 'select', options: ['permanent', 'hover'] },
     selectionMode: { type: 'select', options: ['multiple', 'single', 'none'] },
+    featureDetail: { type: 'select', options: ['none', 'hover', 'click'] },
+    detailPlacement: { type: 'select', options: ['cursor', 'canto'] },
   },
   examples: [
     {
@@ -115,6 +117,26 @@ export default defineComponentMeta({
         highlightFeature: 'P42',
         layout: 'sobreposto',
         height: '380px',
+      },
+    },
+    {
+      name: 'Mapa temático com cartão de detalhe',
+      description:
+        'O mapa como leitura: `featureStyle` pinta a situação, `featureLabel` deixa só o número ' +
+        'do talhão e `featureDetail="hover"` abre o cartão do slot `#feature-detail` sob o ' +
+        'cursor. Sem slot (como aqui), o cartão mostra nome e subtítulo.',
+      props: {
+        features: talhoes,
+        modelValue: [],
+        readonly: true,
+        layout: 'sobreposto',
+        height: '420px',
+        featureDetail: 'hover',
+        featureLabel: (feature: MapSelectFeature) => feature.nome,
+        featureStyle: (feature: MapSelectFeature) =>
+          ['P44', 'P45'].includes(String(feature.id))
+            ? { color: '#3ddc84', fillColor: '#3ddc84', fillOpacity: 0.4 }
+            : { color: '#ff6b6b', fillColor: '#ff6b6b', fillOpacity: 0.35 },
       },
     },
     {

@@ -2800,6 +2800,55 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Cartão de detalhe: vive SOBRE a imagem de satélite, então usa superfície
+   opaca própria (o vidro do painel some contra um talhão claro). O conteúdo é
+   do slot — aqui só a caixa, o recorte e a posição. */
+.w-map-select__detail {
+  position: absolute;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+  max-width: min(22rem, calc(100% - 1.5rem));
+  max-height: calc(100% - 1.5rem);
+  overflow: auto;
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-md, 0.625rem);
+  background: var(--surface-1, var(--p-content-background));
+  color: var(--fg, var(--p-text-color));
+  font-size: var(--text-sm, 0.8125rem);
+  box-shadow: 0 10px 30px rgba(15, 31, 48, 0.28);
+  /* Ancorado no ponto: sobe acima do cursor com uma folga para a seta do mouse. */
+  transform: translate(-50%, calc(-100% - 14px));
+}
+
+/* No hover o cartão não pode receber o ponteiro: ele nasce embaixo do cursor e
+   roubaria o `mouseout` do polígono — o cartão piscaria sem parar. */
+.w-map-select__detail--hover {
+  pointer-events: none;
+}
+
+.w-map-select__detail--abaixo {
+  transform: translate(-50%, 14px);
+}
+
+.w-map-select__detail--canto {
+  left: 0.75rem;
+  bottom: 0.75rem;
+  top: auto;
+  transform: none;
+}
+
+.w-map-select__detail-nome {
+  font-weight: var(--fw-semibold, 600);
+}
+
+.w-map-select__detail-sub {
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--text-xs, 0.75rem);
+}
+
 /* Rótulo do polígono: texto puro sobre a imagem de satélite. Sem caixa, sem
    borda — a legibilidade vem do contorno de sombra, não de um fundo opaco. */
 .leaflet-tooltip.w-map-select__tip {

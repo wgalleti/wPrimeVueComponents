@@ -143,6 +143,67 @@ já está desenhado — a regra não vale só para as features que chegarem depo
 Como o restyle percorre as layers do mapa, a feature precisa continuar em `features` para ser
 encontrada; item que saiu da lista some do mapa junto.
 
+## Cartão de detalhe (`featureDetail` + slot `#feature-detail`)
+
+O tooltip do polígono é uma linha de texto — dá para o nome e a área, não para "quais documentos
+existem neste talhão e desde quando". Quando o mapa precisa **contar uma história** sobre a
+feature, ligue `featureDetail` e escreva o conteúdo no slot.
+
+A divisão é essa, e é ela que evita uma publicação da suite a cada ideia nova: o componente decide
+**quando** abrir e **onde** posicionar; o **conteúdo é seu**, com os componentes que quiser dentro.
+
+```vue
+<WMapSelect
+  :features="talhoes"
+  readonly
+  feature-detail="hover"
+  :feature-style="corPorSituacao"
+  @feature-click="abrirDocumento"
+>
+  <template #feature-detail="{ feature }">
+    <strong>{{ feature.nome }}</strong>
+    <WStatusTag :value="feature.dados.situacao" :map="situacaoMap" />
+    <p v-for="doc in feature.dados.recomendacoes" :key="doc.id">
+      {{ doc.codigo }} · {{ formatDate(doc.data) }}
+    </p>
+  </template>
+</WMapSelect>
+```
+
+| Valor | Comportamento |
+|---|---|
+| `'none'` (default) | Nada muda — sem cartão e sem custo. |
+| `'hover'` | Abre enquanto o cursor está sobre o polígono. O cartão **não recebe o ponteiro** (ele nasce sob o cursor e roubaria o `mouseout`, fazendo piscar): use para leitura, nunca para botão ou link. |
+| `'click'` | Abre no clique e fica. Fecha ao clicar no mesmo polígono, ao clicar no mapa, com `Esc` ou pelo `close` do slot. É o modo para conteúdo com ação dentro. |
+
+`detailPlacement` diz onde: `'cursor'` (default) ancora no ponto apontado — preso à caixa do mapa,
+virando para baixo quando não há espaço acima — e `'canto'` fixa no canto inferior esquerdo, que é
+o melhor para conteúdo alto ou leitura demorada.
+
+Sem slot, o cartão mostra o `nome` e o `subtitulo` da feature.
+
+### Onde o dado do domínio viaja: `feature.dados`
+
+`MapSelectFeature.dados` é uma carga livre que o componente **ignora** e devolve inteira — no
+`featureStyle`, nos eventos e no slot. É por ali que situação, datas, códigos e o que mais a tela
+precisar chegam ao cartão, sem que o componente ganhe um prop por dado novo.
+
+### Clique: `@feature-click`
+
+O clique num polígono emite `feature-click` **sempre**, inclusive com `selectionMode="none"` (o
+mapa de leitura). É o gancho para a tela abrir um dialog, navegar para o documento ou o que
+precisar — a decisão fica onde ela é de domínio, não dentro do componente.
+
+## Rótulo do polígono (`featureLabel`)
+
+Por padrão o rótulo é `"<nome> · <área>"`. `featureLabel` recebe a feature e devolve a linha a
+mostrar; devolver `''` esconde o rótulo daquele polígono.
+
+```vue
+<!-- Mapa temático: o número do talhão basta, a área conversa no cartão. -->
+<WMapSelect :features="talhoes" :feature-label="(t) => t.nome" />
+```
+
 ## Leaflet
 
 O `leaflet` é dependência da suite (instalado junto), mas **não entra no bundle**: o componente o
@@ -161,6 +222,7 @@ selecionando normalmente.
 | `item` | `feature`, `selected` | Substitui a linha da lista |
 | `empty` | — | Mensagem quando a busca não acha nada |
 | `footer` | `area`, `features` | Substitui o resumo "Área selecionada X ha" |
+| `feature-detail` | `feature`, `selected`, `close` | Conteúdo do cartão de detalhe (só com `featureDetail` ligado) |
 
 ### Métodos expostos
 
@@ -170,6 +232,8 @@ selecionando normalmente.
 | `collapsed` | `boolean` (leitura) | Painel flutuante recolhido? Só faz sentido no `'sobreposto'` |
 | `setCollapsed(v)` | `(v: boolean) => void` | Recolhe/expande o painel de fora (ex.: recolher ao entrar no modo desenho) |
 | `fitToScope()` | `() => void` | Reenquadra no escopo (ou na união das features). O fit automático só acontece uma vez — páginas novas de `features` não movem o mapa |
+| `detalhe` | `MapSelectFeature \| null` (leitura) | Feature do cartão de detalhe aberto |
+| `fecharDetalhe()` | `() => void` | Fecha o cartão de fora (navegou, salvou, trocou de filtro) |
 | `fitToFeature(id, options?)` | `(id: MapSelectId, options?: { padding?: [number, number]; maxZoom?: number }) => void` | Enquadra o polígono de um id (padding default `[20, 20]`); `maxZoom` limita a aproximação ao enquadrar um talhão só. No-op se o id não tem layer |
 
 ## Exemplo
