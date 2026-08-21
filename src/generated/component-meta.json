@@ -2136,6 +2136,27 @@
           "required": false,
           "default": "undefined",
           "description": "Destaque por feature: recebe a feature (e se está selecionada) e devolve\nsó o que muda, mesclado sobre o estilo base. Para o mapa mostrar um dado\ndo domínio — ex.: contorno verde no talhão que a recomendação prevê —\nsem o consumidor ter que reescrever os dois estilos inteiros."
+        },
+        {
+          "name": "featureLabel",
+          "type": "MapSelectFeatureLabel | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Texto do rótulo do polígono. Default: `\"<nome> · <área>\"`. Devolver `''`\nesconde o rótulo daquele polígono — útil quando o mapa é temático e o\nnúmero do talhão já basta."
+        },
+        {
+          "name": "featureDetail",
+          "type": "MapSelectFeatureDetail | undefined",
+          "required": false,
+          "default": "\"none\"",
+          "description": "Abre o cartão do slot `#feature-detail` no hover ou no clique. `'none'`\n(default) não muda nada: sem slot e sem custo. O conteúdo do cartão é\ninteiro de quem chama — o componente só cuida de QUANDO e ONDE mostrar."
+        },
+        {
+          "name": "detailPlacement",
+          "type": "MapSelectDetailPlacement | undefined",
+          "required": false,
+          "default": "\"cursor\"",
+          "description": "Onde o cartão de detalhe aparece: junto do cursor ou fixo no canto."
         }
       ],
       "events": [
@@ -2143,9 +2164,29 @@
           "name": "update:modelValue",
           "type": "[ids: MapSelectId[]]",
           "description": ""
+        },
+        {
+          "name": "feature-click",
+          "type": "[feature: MapSelectFeature]",
+          "description": ""
+        },
+        {
+          "name": "feature-enter",
+          "type": "[feature: MapSelectFeature]",
+          "description": ""
+        },
+        {
+          "name": "feature-leave",
+          "type": "[]",
+          "description": ""
         }
       ],
       "slots": [
+        {
+          "name": "feature-detail",
+          "type": "{ feature: { id: MapSelectId; nome: string; subtitulo?: string | undefined; area?: number | undefined; geometria?: { type: \"Polygon\" | \"MultiPolygon\"; coordinates: [number, number][][] | [...][][][]; } | null | undefined; dados?: Record<...> | undefined; }; selected: boolean; close: () => void; }",
+          "description": ""
+        },
         {
           "name": "item",
           "type": "{ feature: MapSelectFeature; selected: boolean; }",

@@ -19,7 +19,10 @@ import type { GeoJSON as LeafletGeoJSON, LatLng, Map as LeafletMap } from 'leafl
 import 'leaflet/dist/leaflet.css'
 import { useFormatters } from '@/composables/useFormatters'
 import type {
+  MapSelectDetailPlacement,
   MapSelectFeature,
+  MapSelectFeatureDetail,
+  MapSelectFeatureLabel,
   MapSelectFeatureStyle,
   MapSelectGeometry,
   MapSelectId,
@@ -128,6 +131,16 @@ const props = withDefaults(
      *  do domínio — ex.: contorno verde no talhão que a recomendação prevê —
      *  sem o consumidor ter que reescrever os dois estilos inteiros. */
     featureStyle?: MapSelectFeatureStyle
+    /** Texto do rótulo do polígono. Default: `"<nome> · <área>"`. Devolver `''`
+     *  esconde o rótulo daquele polígono — útil quando o mapa é temático e o
+     *  número do talhão já basta. */
+    featureLabel?: MapSelectFeatureLabel
+    /** Abre o cartão do slot `#feature-detail` no hover ou no clique. `'none'`
+     *  (default) não muda nada: sem slot e sem custo. O conteúdo do cartão é
+     *  inteiro de quem chama — o componente só cuida de QUANDO e ONDE mostrar. */
+    featureDetail?: MapSelectFeatureDetail
+    /** Onde o cartão de detalhe aparece: junto do cursor ou fixo no canto. */
+    detailPlacement?: MapSelectDetailPlacement
   }>(),
   {
     modelValue: () => [],
@@ -174,10 +187,23 @@ const props = withDefaults(
       fillOpacity: 0.48,
     }),
     featureStyle: undefined,
+    featureLabel: undefined,
+    featureDetail: 'none',
+    detailPlacement: 'cursor',
   },
 )
 
-const emit = defineEmits<{ 'update:modelValue': [ids: MapSelectId[]] }>()
+const emit = defineEmits<{
+  'update:modelValue': [ids: MapSelectId[]]
+  /** Clique num polígono — SEMPRE, inclusive com `selectionMode="none"`. É o
+   *  gancho para o mapa de leitura abrir um dialog, navegar para o documento ou
+   *  o que a tela precisar, sem que isso vire regra dentro do componente. */
+  'feature-click': [feature: MapSelectFeature]
+  /** O cursor entrou num polígono (só com `featureDetail="hover"`). */
+  'feature-enter': [feature: MapSelectFeature]
+  /** O cursor saiu do polígono / o cartão fechou. */
+  'feature-leave': []
+}>()
 
 const { formatNumber } = useFormatters()
 
@@ -329,14 +355,92 @@ function styleFor(id: MapSelectId): MapSelectPolygonStyle {
   return estilo
 }
 
+// --- Cartão de detalhe (slot `#feature-detail`) -----------------------------
+//
+// O componente decide QUANDO abrir e ONDE posicionar; o CONTEÚDO é do slot. É a
+// divisão que faz o mapa servir a qualquer domínio: a tela evolui o cartão (mais
+// um dado, um botão, outro arranjo) sem que a suite precise de um prop novo.
+
+const detalhe = ref<MapSelectFeature | null>(null)
+const detalhePos = ref<{ x: number; y: number }>({ x: 0, y: 0 })
+
+/** O pedaço do MouseEvent do Leaflet que interessa aqui: só o ponto em pixels
+ *  dentro do container. Evento de layer nem sempre é de mouse (o tipo do
+ *  Leaflet é o genérico), daí o estreitamento em `comoPonto`. */
+type PontoDoMapa = { containerPoint?: { x: number; y: number } }
+
+function comoPonto(evento: unknown): PontoDoMapa | undefined {
+  return (evento ?? undefined) as PontoDoMapa | undefined
+}
+
+/** Guarda o ponto já preso à caixa do mapa: perto da borda, o cartão encosta em
+ *  vez de vazar para fora do componente. */
+function posicionarDetalhe(evento?: PontoDoMapa) {
+  const ponto = evento?.containerPoint
+  if (!ponto) return
+  const largura = container.value?.clientWidth ?? 0
+  const altura = container.value?.clientHeight ?? 0
+  detalhePos.value = {
+    x: largura ? Math.min(Math.max(ponto.x, 12), largura - 12) : ponto.x,
+    y: altura ? Math.min(Math.max(ponto.y, 12), altura - 12) : ponto.y,
+  }
+}
+
+function abrirDetalhe(feature: MapSelectFeature, evento?: PontoDoMapa) {
+  posicionarDetalhe(evento)
+  // `mouseover` repete enquanto o cursor passeia pelo mesmo polígono: reemitir
+  // `feature-enter` faria a tela recarregar dado a cada tremida do mouse.
+  if (detalhe.value?.id === feature.id) return
+  detalhe.value = feature
+  emit('feature-enter', feature)
+}
+
+function moverDetalhe(evento?: PontoDoMapa) {
+  if (detalhe.value) posicionarDetalhe(evento)
+}
+
+function fecharDetalhe() {
+  if (!detalhe.value) return
+  detalhe.value = null
+  emit('feature-leave')
+}
+
+/** Clique no mesmo polígono fecha — é como o usuário desfaz o que abriu. */
+function alternarDetalhe(feature: MapSelectFeature, evento?: PontoDoMapa) {
+  if (detalhe.value?.id === feature.id) {
+    fecharDetalhe()
+    return
+  }
+  detalhe.value = null
+  abrirDetalhe(feature, evento)
+}
+
+/** Perto do topo o cartão vira para baixo: acima não haveria espaço. */
+const detalheAbaixo = computed(() => detalhePos.value.y < 150)
+
+const detalheStyle = computed(() =>
+  props.detailPlacement === 'canto'
+    ? undefined
+    : { left: `${detalhePos.value.x}px`, top: `${detalhePos.value.y}px` },
+)
+
+function onEsc(evento: KeyboardEvent) {
+  if (evento.key === 'Escape') fecharDetalhe()
+}
+
 function tooltipText(feature: MapSelectFeature): string {
+  if (props.featureLabel) return props.featureLabel(feature)
   const area = areaText(feature)
   return area ? `${feature.nome} · ${area}` : feature.nome
 }
 
 function bindTip(layer: LeafletGeoJSON, feature: MapSelectFeature) {
+  const texto = tooltipText(feature)
+  // Rótulo vazio é escolha de quem chama ("este polígono não tem legenda"), e
+  // um tooltip vazio ainda pintaria uma sombra de texto sobre o satélite.
+  if (!texto) return
   layer.bindTooltip(
-    tooltipText(feature),
+    texto,
     props.tooltips === 'hover'
       ? {
           permanent: false,
@@ -350,10 +454,14 @@ function bindTip(layer: LeafletGeoJSON, feature: MapSelectFeature) {
 }
 
 /** `interactive: false` tira o polígono do hit-test do Leaflet (e o cursor de
- *  mão junto). Com tooltip `'hover'` a layer precisa continuar interativa mesmo
- *  sem seleção — o cursor é suprimido via CSS (`--unselectable`). */
+ *  mão junto). Com tooltip `'hover'`, com cartão de detalhe ou com alguém
+ *  ouvindo `feature-click`, a layer precisa continuar interativa mesmo sem
+ *  seleção — o cursor é suprimido via CSS (`--unselectable`). */
 const layersInteractive = computed(
-  () => effectiveSelectionMode.value !== 'none' || props.tooltips === 'hover',
+  () =>
+    effectiveSelectionMode.value !== 'none' ||
+    props.tooltips === 'hover' ||
+    props.featureDetail !== 'none',
 )
 
 function createLayer(feature: MapSelectFeature) {
@@ -362,7 +470,18 @@ function createLayer(feature: MapSelectFeature) {
     style: () => styleFor(feature.id),
     interactive: layersInteractive.value,
   })
-  layer.on('click', () => toggle(feature.id))
+  layer.on('click', (evento) => {
+    toggle(feature.id)
+    // Clique SEMPRE avisa quem chama — inclusive no mapa de leitura, onde
+    // `toggle` não faz nada. Abrir dialog é decisão da tela, não do componente.
+    emit('feature-click', feature)
+    if (props.featureDetail === 'click') alternarDetalhe(feature, comoPonto(evento))
+  })
+  if (props.featureDetail === 'hover') {
+    layer.on('mouseover', (evento) => abrirDetalhe(feature, comoPonto(evento)))
+    layer.on('mousemove', (evento) => moverDetalhe(comoPonto(evento)))
+    layer.on('mouseout', () => fecharDetalhe())
+  }
   bindTip(layer, feature)
   layer.addTo(map)
   layers.set(feature.id, layer)
@@ -390,8 +509,12 @@ function drawFeatures() {
   current.forEach((feature, id) => {
     const existing = layers.get(id)
     if (existing && layerGeoms.get(id) === feature.geometria) {
-      // Mesma geometria: só o texto do tooltip pode ter mudado (nome/área).
-      existing.getTooltip()?.setContent(tooltipText(feature))
+      // Mesma geometria: só o texto do rótulo pode ter mudado (nome/área/label).
+      const texto = tooltipText(feature)
+      const tooltip = existing.getTooltip()
+      if (!texto) existing.unbindTooltip()
+      else if (tooltip) tooltip.setContent(texto)
+      else bindTip(existing, feature)
       return
     }
     if (existing) {
@@ -579,6 +702,8 @@ async function setupMap() {
 }
 
 onMounted(() => {
+  // `Esc` fecha o cartão — o mesmo gesto de qualquer overlay do sistema.
+  if (typeof window !== 'undefined') window.addEventListener('keydown', onEsc)
   void setupMap()
   measureFooter()
   if (typeof ResizeObserver !== 'undefined' && footer.value) {
@@ -588,6 +713,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  if (typeof window !== 'undefined') window.removeEventListener('keydown', onEsc)
   observer?.disconnect()
   observer = null
   footerObserver?.disconnect()
@@ -599,6 +725,12 @@ onBeforeUnmount(() => {
 })
 
 watch(() => props.features, drawFeatures)
+// Trocar quando/como o cartão abre recria as layers (os handlers são de
+// criação) e fecha o que estiver aberto — o modo antigo não vale mais.
+watch([() => props.featureDetail, () => props.detailPlacement], () => {
+  fecharDetalhe()
+  rebuildLayers()
+})
 watch(() => props.modelValue, syncStyles, { deep: true })
 // Trocar a regra de destaque repinta o que já está desenhado — sem isto o mapa
 // só mostraria a regra nova nas features que chegassem depois.
@@ -643,6 +775,10 @@ defineExpose({
   fitToFeature,
   /** Feature sob um ponto da tela (arrasto por cima do mapa). `null` fora. */
   hitTest,
+  /** Feature do cartão de detalhe aberto (`null` fechado). */
+  detalhe: somenteLeitura(detalhe),
+  /** Fecha o cartão de detalhe — para a tela fechar de fora (navegou, salvou). */
+  fecharDetalhe,
 })
 </script>
 
@@ -668,6 +804,31 @@ defineExpose({
         <span v-else-if="badgeLabel" class="w-map-select__badge">
           <i class="pi pi-globe" />{{ badgeLabel }}
         </span>
+
+        <!-- Cartão de detalhe: o componente posiciona, o slot preenche. -->
+        <div
+          v-if="detalhe && featureDetail !== 'none'"
+          class="w-map-select__detail"
+          :class="{
+            'w-map-select__detail--canto': detailPlacement === 'canto',
+            'w-map-select__detail--abaixo': detailPlacement !== 'canto' && detalheAbaixo,
+            'w-map-select__detail--hover': featureDetail === 'hover',
+          }"
+          :style="detalheStyle"
+          role="tooltip"
+        >
+          <slot
+            name="feature-detail"
+            :feature="detalhe"
+            :selected="isSelected(detalhe.id)"
+            :close="fecharDetalhe"
+          >
+            <span class="w-map-select__detail-nome">{{ detalhe.nome }}</span>
+            <span v-if="detalhe.subtitulo" class="w-map-select__detail-sub">
+              {{ detalhe.subtitulo }}
+            </span>
+          </slot>
+        </div>
       </div>
 
       <div v-if="!readonly" class="w-map-select__panel">
