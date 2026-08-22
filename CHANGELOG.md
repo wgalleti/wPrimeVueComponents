@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.20.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.19.0...v0.20.0) (2026-08-22)
+
+### Funcionalidades
+
+* **map-select:** slot-driven detail card, feature-click and featureLabel ([ca6dd18](https://github.com/wgalleti/wPrimeVueComponents/commit/ca6dd18b53278d1030c753964ef5d1bef4c4503b))
 ## [0.18.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.17.0...v0.18.0) (2026-08-20)
 
 ### Funcionalidades
