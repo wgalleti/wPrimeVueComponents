@@ -177,6 +177,23 @@ const footerLabelField = computed(() => {
 const columnCount = computed(
   () => props.columns.length + (props.expandable ? 1 : 0) + (props.removable ? 1 : 0),
 )
+
+// --- Grupos de cabeçalho ---------------------------------------------------
+// Colunas vizinhas com o mesmo `group` viram um rótulo único numa linha acima
+// do cabeçalho normal; as demais ficam com a célula de cima vazia.
+
+const hasHeaderGroups = computed(() => props.columns.some((c) => c.group))
+
+const headerGroupCells = computed(() => {
+  const cells: { label: string; span: number; key: string }[] = []
+  for (const column of props.columns) {
+    const label = column.group ?? ''
+    const last = cells[cells.length - 1]
+    if (last && label && last.label === label) last.span += 1
+    else cells.push({ label, span: 1, key: column.field })
+  }
+  return cells
+})
 </script>
 
 <template>
@@ -196,6 +213,19 @@ const columnCount = computed(
 
     <table class="w-editable-table__table">
       <thead>
+        <tr v-if="hasHeaderGroups" class="w-editable-table__group-row">
+          <th v-if="expandable" class="w-editable-table__toggle-col" />
+          <th
+            v-for="cell in headerGroupCells"
+            :key="cell.key"
+            :colspan="cell.span"
+            class="w-editable-table__group"
+            :class="{ 'w-editable-table__group--label': cell.label }"
+          >
+            {{ cell.label }}
+          </th>
+          <th v-if="removable" class="w-editable-table__action-col" />
+        </tr>
         <tr>
           <th v-if="expandable" class="w-editable-table__toggle-col" />
           <th

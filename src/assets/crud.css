@@ -2215,6 +2215,24 @@
   border-bottom: 1px solid var(--border, var(--p-content-border-color));
 }
 
+/* Linha de grupos do cabeçalho: rótulo único sobre colunas vizinhas com o
+   mesmo `group`. A célula sem rótulo é invisível — só quem agrupa ganha tinta
+   e a régua que "abraça" as colunas do grupo. */
+.w-editable-table__table thead tr.w-editable-table__group-row {
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+  border-bottom: 0;
+}
+
+.w-editable-table__table th.w-editable-table__group {
+  padding-block: var(--space-1, 0.25rem);
+  text-align: center;
+}
+
+.w-editable-table__table th.w-editable-table__group--label {
+  border-bottom: 1px solid var(--border-strong, var(--p-content-border-color));
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
 .w-editable-table__table th {
   padding: var(--space-2, 0.5625rem) var(--space-2, 0.625rem);
   text-align: left;
