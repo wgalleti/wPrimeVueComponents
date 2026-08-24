@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.21.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.20.0...v0.21.0) (2026-08-24)
+
+### Funcionalidades
+
+* **editable-table:** header column groups via ColumnDef.group ([94ebf47](https://github.com/wgalleti/wPrimeVueComponents/commit/94ebf47af2455e4738145273a4de3bf3f9257065))
 ## [0.20.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.19.0...v0.20.0) (2026-08-22)
 
 ### Funcionalidades
