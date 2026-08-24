@@ -39,4 +39,8 @@ export interface EditableColumnDef {
   max?: number
   /** Trava a célula (a coluna inteira ou linha a linha). */
   disabled?: boolean | ((row: EditableRow, index: number) => boolean)
+  /** Grupo do cabeçalho: colunas VIZINHAS com o mesmo `group` ganham um rótulo
+   *  único numa linha acima delas (ex.: "Bags" sobre Sugestão e A tratar).
+   *  Colunas sem grupo ficam com a célula de cima vazia. */
+  group?: string
 }

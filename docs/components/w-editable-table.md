@@ -22,6 +22,7 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 | `footer` | `'sum' \| 'none' \| (rows) => string` | Rodapé de totais da coluna |
 | `decimals` / `suffix` | `number` / `string` | Exibição e soma, em pt-BR |
 | `disabled` | `boolean \| (row, index) => boolean` | Trava a coluna ou só algumas linhas |
+| `group` | `string` | Rótulo de grupo no cabeçalho: colunas **vizinhas** com o mesmo `group` ganham um título único (colspan) numa linha acima delas |
 
 ### Slots
 

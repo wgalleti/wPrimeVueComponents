@@ -242,3 +242,29 @@ describe('WEditableTable — expansão', () => {
     expect(w.findAll('.detalhe')).toHaveLength(1)
   })
 })
+
+describe('grupos de cabeçalho', () => {
+  const colunasComGrupo: EditableColumnDef[] = [
+    { field: 'produto', header: 'Produto' },
+    { field: 'sugestao', header: 'Sugestão', group: 'Bags' },
+    { field: 'volume', header: 'A tratar', group: 'Bags' },
+    { field: 'volume_kg', header: 'Volume (kg)' },
+  ]
+
+  it('sem `group` em nenhuma coluna, não renderiza a linha de grupos', () => {
+    const wrapper = montar()
+    expect(wrapper.find('.w-editable-table__group-row').exists()).toBe(false)
+  })
+
+  it('funde colunas vizinhas do mesmo grupo num rótulo com colspan', () => {
+    const wrapper = montar({ columns: colunasComGrupo })
+    const row = wrapper.find('.w-editable-table__group-row')
+    expect(row.exists()).toBe(true)
+    const label = row.find('.w-editable-table__group--label')
+    expect(label.text()).toBe('Bags')
+    expect(label.attributes('colspan')).toBe('2')
+    // As colunas sem grupo ficam com a célula de cima vazia (uma por coluna).
+    const celulas = row.findAll('th.w-editable-table__group')
+    expect(celulas).toHaveLength(3)
+  })
+})
