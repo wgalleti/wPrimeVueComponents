@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.22.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.21.0...v0.22.0) (2026-08-25)
+
+### Funcionalidades
+
+* **chart:** WChart wrapper for Apache ECharts ([f7e2657](https://github.com/wgalleti/wPrimeVueComponents/commit/f7e265777cbcbd27f01b3c7a0d0a5d881ec54d5a))
 ## [0.21.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.20.0...v0.21.0) (2026-08-24)
 
 ### Funcionalidades
