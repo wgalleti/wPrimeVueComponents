@@ -1,6 +1,73 @@
 {
   "$generatedBy": "scripts/gen-component-meta.mjs",
   "components": {
+    "WChart": {
+      "file": "src/components/charts/WChart.vue",
+      "props": [
+        {
+          "name": "option",
+          "type": "WChartOption",
+          "required": true,
+          "default": null,
+          "description": "Option do ECharts — série, eixos, tooltip etc."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Mostra o overlay de carregamento do ECharts (cores do DS)."
+        },
+        {
+          "name": "empty",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "true quando a consulta voltou vazia — mostra o estado vazio no lugar do gráfico."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Sem dados para exibir\"",
+          "description": ""
+        },
+        {
+          "name": "renderer",
+          "type": "\"canvas\" | \"svg\" | undefined",
+          "required": false,
+          "default": "\"canvas\"",
+          "description": "svg para impressão/PDF; canvas no dia a dia."
+        },
+        {
+          "name": "print",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Modo impressão: tema monocromático + SVG + sem animação (PDF Gotenberg)."
+        },
+        {
+          "name": "height",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"\"",
+          "description": "Altura CSS do gráfico (default: token `--chart-h`, senão 18rem)."
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "unavailable",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WCrudColumnRenderer": {
       "file": "src/components/crud/WCrudColumnRenderer.vue",
       "props": [
@@ -438,6 +505,11 @@
       ],
       "events": [
         {
+          "name": "print",
+          "type": "[data: Record<string, unknown>]",
+          "description": ""
+        },
+        {
           "name": "update:selectedRow",
           "type": "[value: Record<string, unknown> | null]",
           "description": ""
@@ -450,11 +522,6 @@
         {
           "name": "row-collapse",
           "type": "[data: unknown]",
-          "description": ""
-        },
-        {
-          "name": "print",
-          "type": "[data: Record<string, unknown>]",
           "description": ""
         }
       ],

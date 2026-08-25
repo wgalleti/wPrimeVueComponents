@@ -69,6 +69,7 @@ export default defineConfig({
           {
             text: 'UI',
             items: [
+              { text: 'WChart', link: '/components/w-chart' },
               { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WDialog', link: '/components/w-dialog' },
               { text: 'WEmptyState', link: '/components/w-empty-state' },
