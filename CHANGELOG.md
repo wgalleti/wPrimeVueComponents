@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.22.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.0...v0.22.1) (2026-08-25)
+
+### Correções
+
+* **tab-nav:** contain in-tab overlays below out-of-tab chrome ([5a0ebe9](https://github.com/wgalleti/wPrimeVueComponents/commit/5a0ebe99b5beb3fa5bb1b142bef927d3a1379d83))
 ## [0.22.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.21.0...v0.22.0) (2026-08-25)
 
 ### Funcionalidades
