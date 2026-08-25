@@ -3630,6 +3630,13 @@
   position: relative;
   height: 100%;
   overflow: hidden;
+  /* Stacking context próprio (z-index 0 + isolate): os overlays teleportados
+     para dentro do pane (WDialog, menus) recebem o z-index global do PrimeVue
+     (~1100+), mas ele só vale AQUI dentro — nada da aba passa por cima do
+     chrome de fora (topbar, popovers, command palette), que vence com
+     qualquer z-index ≥ 1. */
+  z-index: 0;
+  isolation: isolate;
   /* Entrada da página: o v-show alterna display e a animação reinicia sempre
      que o pane volta a ser renderizado — cobre a primeira abertura E a troca
      entre abas. Calibrável pelos tokens do app consumidor (fallbacks locais);
