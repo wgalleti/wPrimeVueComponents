@@ -52,6 +52,10 @@ export default defineConfig({
         'axios',
         'dayjs',
         'leaflet',
+        // `echarts` segue a lógica do leaflet: dependência entregue pelo npm,
+        // carregada por import() dinâmico no WChart — fora do bundle da suite.
+        'echarts',
+        /^echarts\/.*/,
         'markdown-it',
         'dompurify',
         'mermaid',
