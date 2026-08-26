@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.22.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.1...v0.22.2) (2026-08-26)
+
+### Correções
+
+* widen vue-router peer range to accept v5 ([afd0605](https://github.com/wgalleti/wPrimeVueComponents/commit/afd0605a1ba642ded2b1fcbcf7e5b3eeb84ecfb3))
 ## [0.22.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.0...v0.22.1) (2026-08-25)
 
 ### Correções
