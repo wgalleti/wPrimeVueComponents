@@ -987,7 +987,7 @@
           "name": "placeholder",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Selecione o per\\u00EDodo\"",
+          "default": "\"Selecione o período\"",
           "description": ""
         },
         {
@@ -1359,7 +1359,7 @@
         {
           "name": "selected",
           "type": "Id[]",
-          "required": false,
+          "required": true,
           "default": "[]",
           "description": "Currently selected ids (v-model:selected)."
         },
@@ -1485,7 +1485,7 @@
           "name": "emptyMessage",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Nenhum item dispon\\u00EDvel\"",
+          "default": "\"Nenhum item disponível\"",
           "description": "Texto quando não há nenhuma opção."
         },
         {
@@ -1619,7 +1619,7 @@
           "name": "emptyMessage",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Nenhuma verifica\\u00E7\\u00E3o\"",
+          "default": "\"Nenhuma verificação\"",
           "description": ""
         }
       ],
@@ -2047,7 +2047,7 @@
           "name": "tileAttribution",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Imagery \\u00A9 Esri, Maxar, Earthstar Geographics\"",
+          "default": "\"Imagery © Esri, Maxar, Earthstar Geographics\"",
           "description": ""
         },
         {
@@ -2061,14 +2061,14 @@
           "name": "searchPlaceholder",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Buscar talh\\u00E3o ou setor\"",
+          "default": "\"Buscar talhão ou setor\"",
           "description": ""
         },
         {
           "name": "areaLabel",
           "type": "string | undefined",
           "required": false,
-          "default": "\"\\u00C1rea selecionada\"",
+          "default": "\"Área selecionada\"",
           "description": "Rótulo do rodapé, à esquerda da área somada."
         },
         {
@@ -2103,42 +2103,42 @@
           "name": "selectionLabel",
           "type": "((count: number) => string) | undefined",
           "required": false,
-          "default": "count === 1 ? \"1 talh\\u00E3o selecionado\" : `${count} talhões selecionados`",
+          "default": "count === 1 ? \"1 talhão selecionado\" : `${count} talhões selecionados`",
           "description": "Texto do contador. Default em pt-BR: \"N talhões selecionados\"."
         },
         {
           "name": "clearLabel",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Limpar sele\\u00E7\\u00E3o\"",
+          "default": "\"Limpar seleção\"",
           "description": ""
         },
         {
           "name": "collapseLabel",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Recolher painel de sele\\u00E7\\u00E3o\"",
+          "default": "\"Recolher painel de seleção\"",
           "description": "`layout=\"sobreposto\"`: rótulo acessível do botão que recolhe o painel."
         },
         {
           "name": "expandLabel",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Mostrar painel de sele\\u00E7\\u00E3o\"",
+          "default": "\"Mostrar painel de seleção\"",
           "description": "`layout=\"sobreposto\"`: rótulo acessível do botão que reabre o painel."
         },
         {
           "name": "badgeLabel",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Sat\\u00E9lite\"",
+          "default": "\"Satélite\"",
           "description": "Selo sobre o mapa (canto superior direito). `''` esconde."
         },
         {
           "name": "emptyMessage",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Nenhum talh\\u00E3o encontrado\"",
+          "default": "\"Nenhum talhão encontrado\"",
           "description": ""
         },
         {
@@ -2251,7 +2251,7 @@
       "slots": [
         {
           "name": "feature-detail",
-          "type": "{ feature: { id: MapSelectId; nome: string; subtitulo?: string | undefined; area?: number | undefined; geometria?: { type: \"Polygon\" | \"MultiPolygon\"; coordinates: [number, number][][] | [...][][][]; } | null | undefined; dados?: Record<...> | undefined; }; selected: boolean; close: () => void; }",
+          "type": "{ feature: { id: MapSelectId; nome: string; subtitulo?: string | undefined; area?: number | undefined; geometria?: { type: \"Polygon\" | \"MultiPolygon\"; coordinates: [number, number][][] | [number, number][][][]; } | null | undefined; dados?: Record<string, unknown> | undefined; }; selected: boolean; close: () => void; }",
           "description": ""
         },
         {
@@ -2285,7 +2285,7 @@
           "name": "title",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Nesta p\\u00E1gina\"",
+          "default": "\"Nesta página\"",
           "description": ""
         },
         {
@@ -2327,7 +2327,7 @@
           "name": "emptyText",
           "type": "string | undefined",
           "required": false,
-          "default": "\"Sem conte\\u00FAdo\"",
+          "default": "\"Sem conteúdo\"",
           "description": "Mensagem exibida quando `source` está vazio."
         }
       ],
