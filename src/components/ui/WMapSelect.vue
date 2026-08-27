@@ -18,6 +18,7 @@ import type { Geometry } from 'geojson'
 import type { GeoJSON as LeafletGeoJSON, LatLng, Map as LeafletMap } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useFormatters } from '@/composables/useFormatters'
+import { escolherNivelRotulo, FOLGA_ROTULO_PADRAO, type MedidaRotulo } from '@/utils/mapLabels'
 import type {
   MapSelectDetailPlacement,
   MapSelectFeature,
@@ -70,6 +71,9 @@ const props = withDefaults(
     scopeGeometry?: MapSelectGeometry | null
     /** Tiles. Default: satélite World_Imagery (ArcGIS/Esri). */
     tileUrl?: string
+    /** Atribuição do provedor dos tiles, no canto do mapa. `''` remove a caixa
+     *  inteira — o mapa fica limpo, e a obrigação de creditar a imagem passa a
+     *  ser de quem chama (os termos de uso do provedor continuam valendo). */
     tileAttribution?: string
     /** Zoom máximo do tile layer (o World_Imagery vai até 19). */
     maxZoom?: number
@@ -106,9 +110,11 @@ const props = withDefaults(
      *  `modelValue` continua valendo: dá para destacar um polígono de fora. */
     readonly?: boolean
     /** Tooltip dos polígonos. `'permanent'` (default) mantém o rótulo sempre
-     *  visível; `'hover'` só o mostra sob o cursor — com muitos polígonos
-     *  (100+), o permanente vira um nó DOM por talhão reposicionado a cada
-     *  pan/zoom, e o `'hover'` devolve a fluidez. */
+     *  visível; `'auto'` é o permanente que se ajusta ao zoom — texto completo
+     *  quando cabe no polígono, `featureLabelShort` quando só ele cabe, nada
+     *  quando nem isso (afastado, o desenho fica limpo); `'hover'` só mostra sob
+     *  o cursor — com muitos polígonos (100+), o permanente vira um nó DOM por
+     *  talhão reposicionado a cada pan/zoom, e o `'hover'` devolve a fluidez. */
     tooltips?: MapSelectTooltips
     /** Modo de seleção por clique. Sem valor, o default preserva o comportamento
      *  de sempre: interativo → `'multiple'`, `readonly` → `'none'`. Definido
@@ -135,6 +141,21 @@ const props = withDefaults(
      *  esconde o rótulo daquele polígono — útil quando o mapa é temático e o
      *  número do talhão já basta. */
     featureLabel?: MapSelectFeatureLabel
+    /** Só com `tooltips="auto"`: o texto de recuo, usado quando o rótulo
+     *  completo não cabe no polígono. Default: o `nome` da feature. Devolver o
+     *  mesmo texto do `featureLabel` tira o degrau do meio (ou cabe inteiro, ou
+     *  some). */
+    featureLabelShort?: MapSelectFeatureLabel
+    /** Só com `tooltips="auto"`: fração da caixa do polígono que o rótulo pode
+     *  ocupar (default `0.85`). Polígono não é retângulo — a caixa envolvente
+     *  promete mais espaço do que o desenho tem no meio. Menor = mais rigoroso. */
+    labelFitScale?: number
+    /** Só com `tooltips="auto"`: a partir deste zoom TODOS os rótulos aparecem
+     *  inteiros, caibam ou não (default `13`). De perto o mapa já está espaçado
+     *  — o texto que vaza a borda do talhão não cobre o vizinho, e esconder o
+     *  nome de quem o usuário foi ver de propósito é pior do que deixá-lo vazar.
+     *  `null` desliga o piso: só a medida decide, em qualquer zoom. */
+    labelFullFromZoom?: number | null
     /** Abre o cartão do slot `#feature-detail` no hover ou no clique. `'none'`
      *  (default) não muda nada: sem slot e sem custo. O conteúdo do cartão é
      *  inteiro de quem chama — o componente só cuida de QUANDO e ONDE mostrar. */
@@ -188,6 +209,9 @@ const props = withDefaults(
     }),
     featureStyle: undefined,
     featureLabel: undefined,
+    featureLabelShort: undefined,
+    labelFitScale: FOLGA_ROTULO_PADRAO,
+    labelFullFromZoom: 13,
     featureDetail: 'none',
     detailPlacement: 'cursor',
   },
@@ -320,6 +344,10 @@ const layers = new Map<MapSelectId, LeafletGeoJSON>()
 /** Geometria com que cada layer foi desenhada — a comparação é por REFERÊNCIA:
  *  consumidor que trocar o contorno manda um objeto novo. */
 const layerGeoms = new Map<MapSelectId, MapSelectGeometry>()
+/** Caixa envolvente de cada layer, guardada na criação. O ajuste de rótulo roda
+ *  a cada zoom e percorre TODAS as layers; `getBounds()` do Leaflet recalcula
+ *  varrendo os anéis, e a geometria não muda sem a layer ser recriada. */
+const layerBounds = new Map<MapSelectId, ReturnType<LeafletGeoJSON['getBounds']>>()
 
 /** O enquadramento acontece UMA vez — na primeira leva de features (ou quando a
  *  `scopeGeometry` chegar). `features` alimentado por páginas não pode refazer o
@@ -434,6 +462,14 @@ function tooltipText(feature: MapSelectFeature): string {
   return area ? `${feature.nome} · ${area}` : feature.nome
 }
 
+/** Texto de recuo do `tooltips="auto"`: o que sobra quando o rótulo completo
+ *  não cabe no polígono. Default: o nome — o número do talhão é o que orienta. */
+function tooltipTextShort(feature: MapSelectFeature): string {
+  return props.featureLabelShort ? props.featureLabelShort(feature) : feature.nome
+}
+
+const rotuloAuto = computed(() => props.tooltips === 'auto')
+
 function bindTip(layer: LeafletGeoJSON, feature: MapSelectFeature) {
   const texto = tooltipText(feature)
   // Rótulo vazio é escolha de quem chama ("este polígono não tem legenda"), e
@@ -486,6 +522,7 @@ function createLayer(feature: MapSelectFeature) {
   layer.addTo(map)
   layers.set(feature.id, layer)
   layerGeoms.set(feature.id, feature.geometria)
+  layerBounds.set(feature.id, layer.getBounds())
 }
 
 /** Sincroniza as layers com `features` por DIFF de `id`: remove as que saíram,
@@ -504,6 +541,7 @@ function drawFeatures() {
     layer.remove()
     layers.delete(id)
     layerGeoms.delete(id)
+    layerBounds.delete(id)
   })
 
   current.forEach((feature, id) => {
@@ -521,6 +559,7 @@ function drawFeatures() {
       existing.remove()
       layers.delete(id)
       layerGeoms.delete(id)
+      layerBounds.delete(id)
     }
     createLayer(feature)
   })
@@ -532,6 +571,93 @@ function drawFeatures() {
     fitted = true
     fittedToScope = Boolean(props.scopeGeometry)
   }
+
+  // Depois do fit: antes dele o mapa pode ainda não ter view, e sem view não há
+  // pixel para medir. O `fitBounds` que acabou de rodar dispara `zoomend` e
+  // ajustaria de novo — esta chamada cobre a leva que chega com o mapa parado.
+  ajustarRotulos()
+}
+
+// --- Rótulo que se ajusta ao zoom (`tooltips="auto"`) ----------------------
+//
+// A régua é o próprio polígono: se o texto não cabe dentro dele na escala atual,
+// ele não é legenda, é sujeira sobre o desenho. Nada aqui recria layer nem
+// refaz tooltip — a cada zoom só há conta de pixel, `setContent` e uma classe.
+
+/** Nó escondido que empresta o CSS do rótulo para medir texto. Um só, para
+ *  todas as features: o que importa é o TEXTO, e textos se repetem. */
+let medidor: HTMLDivElement | null = null
+/** Medida por texto (a fonte é fixa — não muda com o zoom). */
+const medidas = new Map<string, MedidaRotulo>()
+
+function medirRotulo(texto: string): MedidaRotulo | null {
+  if (!texto) return null
+  const cache = medidas.get(texto)
+  if (cache) return cache
+  if (typeof document === 'undefined' || !root.value) return null
+  if (!medidor) {
+    medidor = document.createElement('div')
+    medidor.className = 'leaflet-tooltip w-map-select__tip w-map-select__tip--medida'
+    medidor.setAttribute('aria-hidden', 'true')
+    root.value.appendChild(medidor)
+  }
+  medidor.textContent = texto
+  const medida: MedidaRotulo = { largura: medidor.offsetWidth, altura: medidor.offsetHeight }
+  // Antes do primeiro layout (ou sem layout nenhum, nos testes) a medida é
+  // 0 × 0: é um "não sei", e não vale guardar para sempre.
+  if (medida.largura > 0 && medida.altura > 0) medidas.set(texto, medida)
+  return medida
+}
+
+/** Caixa do polígono em pixels de tela, no zoom atual. */
+function caixaDaLayer(id: MapSelectId): MedidaRotulo {
+  const bounds = layerBounds.get(id)
+  if (!map || !bounds?.isValid()) return { largura: 0, altura: 0 }
+  const sw = map.latLngToContainerPoint(bounds.getSouthWest())
+  const ne = map.latLngToContainerPoint(bounds.getNorthEast())
+  return { largura: Math.abs(ne.x - sw.x), altura: Math.abs(sw.y - ne.y) }
+}
+
+/** O Leaflet só projeta lat/lng depois de ter centro e zoom — antes disso
+ *  qualquer conversão para pixel LANÇA ("Set map center and zoom first"). E o
+ *  primeiro `drawFeatures()` acontece justamente antes do fit inicial. */
+function mapaProjeta(): boolean {
+  if (!map) return false
+  try {
+    map.getCenter()
+    return true
+  } catch {
+    return false
+  }
+}
+
+/** Escolhe o nível de cada rótulo para o zoom atual. No-op fora do `'auto'`. */
+function ajustarRotulos() {
+  if (!rotuloAuto.value || !mapaProjeta()) return
+  // Piso de zoom: de perto, mostra tudo sem medir. Aproximar é o gesto de quem
+  // quer LER o mapa — e nessa escala os talhões estão longe uns dos outros.
+  const piso = props.labelFullFromZoom
+  const tudoAVista = piso != null && (map?.getZoom() ?? 0) >= piso
+  layers.forEach((layer, id) => {
+    const tooltip = layer.getTooltip()
+    const feature = featuresById.value.get(id)
+    if (!tooltip || !feature) return
+    const completo = tooltipText(feature)
+    if (!completo) return
+    const curto = tooltipTextShort(feature)
+    const nivel = tudoAVista
+      ? 'completo'
+      : escolherNivelRotulo(
+          caixaDaLayer(id),
+          medirRotulo(completo),
+          curto && curto !== completo ? medirRotulo(curto) : null,
+          props.labelFitScale,
+        )
+    // Oculto não mexe no texto: ninguém lê o que está em `display:none`, e
+    // reescrever à toa só custaria layout.
+    if (nivel !== 'oculto') tooltip.setContent(nivel === 'curto' ? curto : completo)
+    tooltip.getElement()?.classList.toggle('w-map-select__tip--fora', nivel === 'oculto')
+  })
 }
 
 /** Reaplica o estilo (e a classe do tooltip) conforme a seleção atual. */
@@ -635,6 +761,7 @@ function rebuildLayers() {
   layers.forEach((layer) => layer.remove())
   layers.clear()
   layerGeoms.clear()
+  layerBounds.clear()
   drawFeatures()
 }
 
@@ -677,15 +804,23 @@ async function setupMap() {
     // pesada; no canvas os paths são pintados num único elemento.
     map = leaflet.map(container.value, {
       zoomControl: true,
-      attributionControl: true,
+      // Sem texto de atribuição não há caixa: o controle vazio ainda pintaria
+      // um retângulo claro sobre a imagem.
+      attributionControl: Boolean(props.tileAttribution),
       preferCanvas: true,
     })
+    // A atribuição que a licença exige é a do PROVEDOR da imagem; o "Leaflet"
+    // do prefixo é propaganda da biblioteca e só rouba espaço do mapa.
+    map.attributionControl?.setPrefix(false)
     leaflet
       .tileLayer(props.tileUrl, {
         maxZoom: props.maxZoom,
         attribution: props.tileAttribution,
       })
       .addTo(map)
+    // O rótulo do `'auto'` depende da escala: cada zoom refaz a conta de quem
+    // cabe. `zoomend` basta — pan move os rótulos, não muda o tamanho deles.
+    map.on('zoomend', ajustarRotulos)
     drawFeatures()
     // Sem feature e sem escopo ainda não houve fit: o mapa precisa de UMA view
     // inicial (o Leaflet não opera sem centro/zoom definidos).
@@ -720,6 +855,10 @@ onBeforeUnmount(() => {
   footerObserver = null
   layers.clear()
   layerGeoms.clear()
+  layerBounds.clear()
+  medidas.clear()
+  medidor?.remove()
+  medidor = null
   map?.remove()
   map = null
 })
@@ -752,6 +891,12 @@ watch(
 
 // Tooltip e interatividade são opções de CRIAÇÃO da layer: mudou, recria tudo.
 watch([() => props.tooltips, layersInteractive], () => rebuildLayers())
+
+// Trocar o texto do rótulo (ou o rigor do encaixe) refaz só a decisão de quem
+// cabe — sem recriar layer: o desenho é o mesmo, muda o que está escrito nele.
+watch([() => props.featureLabel, () => props.featureLabelShort, () => props.labelFitScale], () =>
+  ajustarRotulos(),
+)
 
 // Recolher/expandir e trocar de arranjo mexem na caixa do mapa. O
 // ResizeObserver do canvas já pegaria, mas ele dispara no frame seguinte: sem o
