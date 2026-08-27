@@ -36,10 +36,15 @@ export interface MapSelectFeature {
 
 /** Modo do tooltip dos polígonos.
  *  - `'permanent'`: rótulo sempre visível no centro do polígono (default).
+ *  - `'auto'`: rótulo permanente que se ajusta ao zoom — mostra o texto completo
+ *    quando ele cabe dentro do polígono, cai para o texto curto
+ *    (`featureLabelShort`, default o nome) quando só ele cabe, e some quando nem
+ *    isso. É o modo para mapas de muitos talhões: afastado, o desenho fica
+ *    limpo; aproximado, os rótulos voltam sozinhos.
  *  - `'hover'`: o rótulo só aparece sob o cursor (`sticky`) — recomendado quando
  *    há muitos polígonos, porque tooltip permanente é um nó DOM por talhão
  *    reposicionado a cada pan/zoom. */
-export type MapSelectTooltips = 'permanent' | 'hover'
+export type MapSelectTooltips = 'permanent' | 'auto' | 'hover'
 
 /** Modo de seleção por clique no polígono (e na lista).
  *  - `'multiple'`: cada clique alterna o id no array (default do modo interativo).

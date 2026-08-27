@@ -63,7 +63,7 @@ export default defineComponentMeta({
     'Seleção múltipla de polígonos num mapa de satélite, com painel de busca, contador e área somada.',
   controls: {
     layout: { type: 'select', options: ['lado-a-lado', 'sobreposto'] },
-    tooltips: { type: 'select', options: ['permanent', 'hover'] },
+    tooltips: { type: 'select', options: ['permanent', 'auto', 'hover'] },
     selectionMode: { type: 'select', options: ['multiple', 'single', 'none'] },
     featureDetail: { type: 'select', options: ['none', 'hover', 'click'] },
     detailPlacement: { type: 'select', options: ['cursor', 'canto'] },
@@ -169,6 +169,22 @@ export default defineComponentMeta({
         readonly: true,
         layout: 'sobreposto',
         height: '320px',
+      },
+    },
+    {
+      name: 'Rótulo que se ajusta ao zoom',
+      description:
+        'Com `tooltips="auto"` o rótulo respeita o tamanho do polígono na tela: afaste o zoom e ' +
+        'o texto cai para o número do talhão e depois some, deixando o desenho limpo; aproxime e ' +
+        'ele volta inteiro. O texto de recuo é o `featureLabelShort` (default: o nome), e a partir ' +
+        'do `labelFullFromZoom` (default 13) todos voltam inteiros, caibam ou não.',
+      props: {
+        features: talhoes,
+        modelValue: [],
+        readonly: true,
+        tooltips: 'auto',
+        layout: 'sobreposto',
+        height: '420px',
       },
     },
     {

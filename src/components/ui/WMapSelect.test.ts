@@ -4,7 +4,7 @@
 // subido) e o comportamento do MAPA — para este, o Leaflet é MOCKADO: o
 // import() dinâmico do componente cai no fake abaixo, que registra mapas e
 // layers criados para os testes de diff incremental, tooltip e fit.
-import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
 import { toRaw } from 'vue'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
@@ -23,6 +23,8 @@ interface FakeLayer {
   removida: boolean
   mapa: FakeMap | null
   tooltip: FakeTooltip | null
+  /** O nó do tooltip — é nele que o componente liga/desliga as classes. */
+  elementoTooltip: HTMLElement
   estilo: unknown
   fire: (evento: string, payload?: unknown) => void
   on: (evento: string, fn: () => void) => FakeLayer
@@ -33,11 +35,19 @@ interface FakeMap {
   opcoes: Record<string, unknown>
   fitBoundsCalls: { bounds: unknown; options: unknown }[]
   setViewCalls: unknown[]
+  fire: (evento: string, payload?: unknown) => void
 }
 
 const registro = vi.hoisted(() => ({
   mapas: [] as unknown[],
   camadas: [] as unknown[],
+  /** Pixels por grau do mapa falso — é o "zoom" que os testes de rótulo mexem. */
+  escala: 100,
+  /** Mapa ainda sem centro/zoom: o Leaflet real lança em qualquer projeção. */
+  semView: false,
+  /** Zoom do mapa falso — independente da escala, como no Leaflet real.
+   *  Abaixo do `labelFullFromZoom` default (13), para a MEDIDA decidir. */
+  zoom: 10,
 }))
 
 vi.mock('leaflet', () => {
@@ -48,8 +58,21 @@ vi.mock('leaflet', () => {
   })
 
   function fakeMap(_el: unknown, opcoes: Record<string, unknown>) {
+    const ouvintes: Record<string, ((payload?: unknown) => void)[]> = {}
     const mapa = {
       opcoes,
+      on(evento: string, fn: (payload?: unknown) => void) {
+        ;(ouvintes[evento] ??= []).push(fn)
+        return mapa
+      },
+      fire(evento: string, payload?: unknown) {
+        for (const fn of ouvintes[evento] ?? []) fn(payload)
+      },
+      // Projeção linear de mentira: `registro.escala` pixels por grau.
+      latLngToContainerPoint(latlng: { lat: number; lng: number }) {
+        if (registro.semView) throw new Error('Set map center and zoom first.')
+        return { x: latlng.lng * registro.escala, y: -latlng.lat * registro.escala }
+      },
       fitBoundsCalls: [] as { bounds: unknown; options: unknown }[],
       setViewCalls: [] as unknown[],
       fitBounds(b: unknown, o: unknown) {
@@ -60,6 +83,14 @@ vi.mock('leaflet', () => {
       },
       invalidateSize() {},
       remove() {},
+      getZoom() {
+        return registro.zoom
+      },
+      // O Leaflet real lança aqui até ter centro/zoom.
+      getCenter() {
+        if (registro.semView) throw new Error('Set map center and zoom first.')
+        return { lat: 0, lng: 0 }
+      },
       // Conversão linear de mentira: containerPoint [x, y] → { lng: x, lat: y }.
       containerPointToLatLng(point: [number, number]) {
         return { lng: point[0], lat: point[1] }
@@ -78,6 +109,7 @@ vi.mock('leaflet', () => {
       removida: false,
       mapa: null as unknown,
       tooltip: null as FakeTooltip | null,
+      elementoTooltip: tooltipEl,
       estilo: null as unknown,
       on(evento: string, fn: (payload?: unknown) => void) {
         ;(eventos[evento] ??= []).push(fn)
@@ -449,6 +481,9 @@ describe('WMapSelect — mapa', () => {
   beforeEach(() => {
     registro.mapas.length = 0
     registro.camadas.length = 0
+    registro.escala = 100
+    registro.semView = false
+    registro.zoom = 10
   })
 
   /** Monta e espera o import() dinâmico do Leaflet (mockado) resolver. */
@@ -494,6 +529,137 @@ describe('WMapSelect — mapa', () => {
       expect(tip?.options.permanent).toBe(false)
       expect(tip?.options.sticky).toBe(true)
       expect(tip?.options.className).toBe('w-map-select__tip')
+    })
+  })
+
+  // O jsdom não faz layout: `offsetWidth`/`offsetHeight` são sempre 0, e o
+  // componente trata medida 0 como "não sei" (mostra tudo). Aqui a régua é
+  // fingida — 8 px por caractere, 16 px de altura — para que a DECISÃO do
+  // encaixe possa ser exercitada de ponta a ponta.
+  describe('tooltips="auto" (rótulo relativo ao zoom)', () => {
+    const original = {
+      largura: Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth'),
+      altura: Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight'),
+    }
+
+    beforeEach(() => {
+      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+        configurable: true,
+        get(this: HTMLElement) {
+          return (this.textContent ?? '').length * 8
+        },
+      })
+      Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+        configurable: true,
+        get(this: HTMLElement) {
+          return this.textContent ? 16 : 0
+        },
+      })
+    })
+
+    afterEach(() => {
+      if (original.largura)
+        Object.defineProperty(HTMLElement.prototype, 'offsetWidth', original.largura)
+      if (original.altura)
+        Object.defineProperty(HTMLElement.prototype, 'offsetHeight', original.altura)
+    })
+
+    /** A caixa da layer no mapa falso: bounds (-1,-1)–(1,1) × escala. O `zoom`
+     *  do Leaflet é separado (o piso do `labelFullFromZoom` lê só ele). */
+    const comZoom = async (escala: number, props: Record<string, unknown> = {}) => {
+      registro.escala = escala
+      const w = await montarMapa({ tooltips: 'auto', ...props })
+      mapa().fire('zoomend')
+      return w
+    }
+
+    const tipDe = (feature: MapSelectFeature) => camadaDe(feature)!
+    const oculto = (feature: MapSelectFeature) =>
+      tipDe(feature).elementoTooltip.classList.contains('w-map-select__tip--fora')
+
+    it('bind é permanente, como no modo permanent', async () => {
+      await comZoom(100)
+      const tip = camadaDe(talhoes[0])?.tooltip
+      expect(tip?.options.permanent).toBe(true)
+      expect(tip?.options.className).toBe('w-map-select__tip')
+    })
+
+    it('polígono grande: texto completo', async () => {
+      await comZoom(100) // caixa 200 × 200 px
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41 · 82 ha')
+      expect(oculto(talhoes[0])).toBe(false)
+    })
+
+    it('polígono médio: cai para o texto curto', async () => {
+      await comZoom(20) // caixa 40 × 40 px — cabe "P41" (24), não "P41 · 82 ha" (88)
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41')
+      expect(oculto(talhoes[0])).toBe(false)
+    })
+
+    it('polígono pequeno: rótulo some e o desenho fica limpo', async () => {
+      await comZoom(5) // caixa 10 × 10 px — nem o curto cabe
+      expect(oculto(talhoes[0])).toBe(true)
+    })
+
+    it('voltar a aproximar devolve o rótulo', async () => {
+      await comZoom(5)
+      expect(oculto(talhoes[0])).toBe(true)
+      registro.escala = 100
+      mapa().fire('zoomend')
+      expect(oculto(talhoes[0])).toBe(false)
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41 · 82 ha')
+    })
+
+    it('featureLabelShort manda no texto de recuo', async () => {
+      await comZoom(20, { featureLabelShort: (f: MapSelectFeature) => `#${f.id}` })
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('#P41')
+    })
+
+    it('labelFitScale aperta o critério', async () => {
+      await comZoom(20, { labelFitScale: 0.5 }) // 40 × 0,5 = 20 px — nem "P41" (24)
+      expect(oculto(talhoes[0])).toBe(true)
+    })
+
+    // Regressão: o primeiro `drawFeatures()` roda ANTES do fit inicial, com o
+    // mapa ainda sem centro/zoom — projetar ali lançava e derrubava o watcher.
+    it('mapa ainda sem view: não tenta projetar (e não quebra)', async () => {
+      registro.semView = true
+      const w = await montarMapa({ tooltips: 'auto' })
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41 · 82 ha')
+      expect(oculto(talhoes[0])).toBe(false)
+      // Com a view pronta, o próximo zoom volta a decidir normalmente.
+      registro.semView = false
+      registro.escala = 5
+      mapa().fire('zoomend')
+      expect(oculto(talhoes[0])).toBe(true)
+      w.unmount()
+    })
+
+    it('a partir do labelFullFromZoom mostra tudo, caiba ou não', async () => {
+      registro.zoom = 13
+      await comZoom(5) // caixa 10 × 10 px: sem o piso, sumiria
+      expect(oculto(talhoes[0])).toBe(false)
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41 · 82 ha')
+    })
+
+    it('abaixo do piso a medida volta a mandar', async () => {
+      registro.zoom = 12
+      await comZoom(5)
+      expect(oculto(talhoes[0])).toBe(true)
+    })
+
+    it('labelFullFromZoom null desliga o piso', async () => {
+      registro.zoom = 19
+      await comZoom(5, { labelFullFromZoom: null })
+      expect(oculto(talhoes[0])).toBe(true)
+    })
+
+    it('permanent não esconde nada, por menor que seja o polígono', async () => {
+      registro.escala = 1
+      await montarMapa({ tooltips: 'permanent' })
+      mapa().fire('zoomend')
+      expect(oculto(talhoes[0])).toBe(false)
+      expect(tipDe(talhoes[0]).tooltip?.content).toBe('P41 · 82 ha')
     })
   })
 
@@ -762,10 +928,7 @@ describe('WMapSelect — hitTest e highlightFeature', () => {
       nome: 'M1',
       geometria: {
         type: 'MultiPolygon',
-        coordinates: [
-          quadra(-52.85, -27.85).coordinates,
-          quadra(-52.7, -27.7).coordinates,
-        ],
+        coordinates: [quadra(-52.85, -27.85).coordinates, quadra(-52.7, -27.7).coordinates],
       },
     }
     const w = await montarMapa({ features: [multi] })
@@ -797,7 +960,6 @@ describe('WMapSelect — hitTest e highlightFeature', () => {
     expect((camadaDe(talhoes[0])?.estilo as Record<string, unknown>).fillColor).toBe('#1f5092')
   })
 })
-
 
 // --- Rótulo e cartão de detalhe ---------------------------------------------
 //

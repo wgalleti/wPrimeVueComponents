@@ -107,6 +107,44 @@ que segue escondendo painel e rodapé, mas o clique no polígono emite `update:m
 uma dúzia de talhões, mas com 100+ é um nó DOM por talhão reposicionado a cada pan/zoom.
 `tooltips="hover"` mostra o rótulo só sob o cursor (`sticky`), com a mesma classe e estilo.
 
+### `tooltips="auto"`: o rótulo que respeita o zoom
+
+Rótulo permanente é útil de perto e vira sujeira de longe — afastado, o texto de talhões vizinhos
+se sobrepõe e cobre justamente o desenho que o usuário quer ver. Com `tooltips="auto"` a régua
+passa a ser o **próprio polígono**: se o texto não cabe dentro dele na escala atual, ele não é
+legenda.
+
+| Espaço no polígono | O que aparece |
+|---|---|
+| Cabe o texto inteiro | `featureLabel` completo (default `"P41 · 172 ha"`) |
+| Cabe só a identificação | `featureLabelShort` (default: o `nome` — `"P41"`) |
+| Não cabe nem isso | Nada — o rótulo sai de cena e o desenho fica limpo |
+| Zoom ≥ `labelFullFromZoom` | Texto inteiro em todos, sem medir |
+
+```vue
+<WMapSelect
+  v-model="selecionados"
+  :features="talhoes"
+  tooltips="auto"
+  :feature-label-short="(talhao) => talhao.nome"
+/>
+```
+
+A conta roda a cada `zoomend` e é só aritmética de pixel + `setContent`: nenhuma layer é recriada,
+nenhum tooltip é refeito. O texto é medido **uma vez por texto** (a fonte é fixa) e a caixa de cada
+polígono fica em cache desde a criação da layer.
+
+A partir de um certo zoom a medida deixa de valer: `labelFullFromZoom` (default `13`) é o **piso**
+acima do qual todos os rótulos aparecem inteiros, caibam ou não. De perto o mapa já está espaçado
+— o texto que vaza a borda do talhão não cobre o vizinho, e esconder justamente o nome que o
+usuário aproximou para ler seria o pior dos dois mundos. `null` desliga o piso: só a medida decide,
+em qualquer zoom.
+
+`labelFitScale` (default `0.85`) é o rigor do encaixe: polígono não é retângulo, e a caixa
+envolvente promete mais espaço do que o desenho tem no meio. Valor menor esconde mais cedo.
+
+Devolver o mesmo texto no `featureLabelShort` tira o degrau do meio — ou cabe inteiro, ou some.
+
 O mapa também é criado com `preferCanvas: true`: os polígonos são pintados num único canvas em
 vez de uma árvore SVG — outra economia que aparece justamente no mapa denso.
 

@@ -2891,6 +2891,24 @@
   color: #fff;
 }
 
+/* `tooltips="auto"`: o rótulo que não cabe no polígono sai de cena. `display`
+   em vez de `opacity` — o Leaflet segue reposicionando o nó, mas ele não pinta
+   nem custa layout. */
+.leaflet-tooltip.w-map-select__tip--fora {
+  display: none;
+}
+
+/* Régua de medição do rótulo: mesmo CSS do tooltip, fora do fluxo e invisível.
+   `visibility` (não `display`) porque um nó sem caixa não tem o que medir. */
+.leaflet-tooltip.w-map-select__tip--medida {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+}
+
 @media (max-width: 900px) {
   .w-map-select__body {
     flex-direction: column;

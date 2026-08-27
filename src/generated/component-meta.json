@@ -2048,7 +2048,7 @@
           "type": "string | undefined",
           "required": false,
           "default": "\"Imagery © Esri, Maxar, Earthstar Geographics\"",
-          "description": ""
+          "description": "Atribuição do provedor dos tiles, no canto do mapa. `''` remove a caixa\ninteira — o mapa fica limpo, e a obrigação de creditar a imagem passa a\nser de quem chama (os termos de uso do provedor continuam valendo)."
         },
         {
           "name": "maxZoom",
@@ -2167,7 +2167,7 @@
           "type": "MapSelectTooltips | undefined",
           "required": false,
           "default": "\"permanent\"",
-          "description": "Tooltip dos polígonos. `'permanent'` (default) mantém o rótulo sempre\nvisível; `'hover'` só o mostra sob o cursor — com muitos polígonos\n(100+), o permanente vira um nó DOM por talhão reposicionado a cada\npan/zoom, e o `'hover'` devolve a fluidez."
+          "description": "Tooltip dos polígonos. `'permanent'` (default) mantém o rótulo sempre\nvisível; `'auto'` é o permanente que se ajusta ao zoom — texto completo\nquando cabe no polígono, `featureLabelShort` quando só ele cabe, nada\nquando nem isso (afastado, o desenho fica limpo); `'hover'` só mostra sob\no cursor — com muitos polígonos (100+), o permanente vira um nó DOM por\ntalhão reposicionado a cada pan/zoom, e o `'hover'` devolve a fluidez."
         },
         {
           "name": "selectionMode",
@@ -2210,6 +2210,27 @@
           "required": false,
           "default": "undefined",
           "description": "Texto do rótulo do polígono. Default: `\"<nome> · <área>\"`. Devolver `''`\nesconde o rótulo daquele polígono — útil quando o mapa é temático e o\nnúmero do talhão já basta."
+        },
+        {
+          "name": "featureLabelShort",
+          "type": "MapSelectFeatureLabel | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Só com `tooltips=\"auto\"`: o texto de recuo, usado quando o rótulo\ncompleto não cabe no polígono. Default: o `nome` da feature. Devolver o\nmesmo texto do `featureLabel` tira o degrau do meio (ou cabe inteiro, ou\nsome)."
+        },
+        {
+          "name": "labelFitScale",
+          "type": "number | undefined",
+          "required": false,
+          "default": "FOLGA_ROTULO_PADRAO",
+          "description": "Só com `tooltips=\"auto\"`: fração da caixa do polígono que o rótulo pode\nocupar (default `0.85`). Polígono não é retângulo — a caixa envolvente\npromete mais espaço do que o desenho tem no meio. Menor = mais rigoroso."
+        },
+        {
+          "name": "labelFullFromZoom",
+          "type": "number | null | undefined",
+          "required": false,
+          "default": "13",
+          "description": "Só com `tooltips=\"auto\"`: a partir deste zoom TODOS os rótulos aparecem\ninteiros, caibam ou não (default `13`). De perto o mapa já está espaçado\n— o texto que vaza a borda do talhão não cobre o vizinho, e esconder o\nnome de quem o usuário foi ver de propósito é pior do que deixá-lo vazar.\n`null` desliga o piso: só a medida decide, em qualquer zoom."
         },
         {
           "name": "featureDetail",
