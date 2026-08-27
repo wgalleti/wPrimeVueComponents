@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.23.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.3...v0.23.0) (2026-08-27)
+
+### Funcionalidades
+
+* **map-select:** add zoom-aware polygon labels (tooltips="auto") ([2f130be](https://github.com/wgalleti/wPrimeVueComponents/commit/2f130bef696e89c1e518aef9d136c60aed6e86aa))
 ## [0.22.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.2...v0.22.3) (2026-08-26)
 ## [0.22.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.1...v0.22.2) (2026-08-26)
 
