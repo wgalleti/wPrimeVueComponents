@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, isRef, watch } from 'vue'
 import { vMaska } from 'maska/vue'
+import { isFieldVisible } from '@/utils/formRecord'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
@@ -89,11 +90,7 @@ function onCepInput(field: FieldDef, event: Event) {
 // --- Visibility & Disabled ---
 
 const visibleFields = computed(() =>
-  props.fields.filter((f) => {
-    if (f.visible === undefined || f.visible === true) return true
-    if (typeof f.visible === 'function') return f.visible(props.formData, props.isEditing)
-    return f.visible
-  }),
+  props.fields.filter((f) => isFieldVisible(f, props.formData, props.isEditing)),
 )
 
 function isFieldDisabled(field: FieldDef): boolean {
@@ -327,9 +324,18 @@ function validateField(field: FieldDef) {
   }
 }
 
+/**
+ * Só campos visíveis: um `validate` de campo oculto barraria o save sem ter onde
+ * mostrar o erro (o campo não está na tela). O erro de campo que ficou oculto é
+ * limpo para não reaparecer se ele voltar.
+ */
 function validateAll(): string[] {
   const errors: string[] = []
   for (const field of props.fields) {
+    if (!isFieldVisible(field, props.formData, props.isEditing)) {
+      fieldErrors[field.field] = null
+      continue
+    }
     if (typeof field.validate === 'function') {
       const error = field.validate(props.formData[field.field])
       fieldErrors[field.field] = error || null

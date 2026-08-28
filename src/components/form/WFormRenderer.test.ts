@@ -143,3 +143,28 @@ describe('FieldDef type: chips', () => {
     expect(emitido(w)).toEqual([])
   })
 })
+
+describe('validateAll', () => {
+  const campos: FieldDef[] = [
+    { field: 'nome', label: 'Nome', validate: (v) => (v ? null : 'Nome obrigatório') },
+    {
+      field: 'preco',
+      label: 'Preço',
+      type: 'number',
+      visible: (f) => !f.bonificacao,
+      validate: (v) => (Number(v) > 0 ? null : 'Preço deve ser maior que zero'),
+    },
+  ]
+
+  it('valida campo visível', () => {
+    const w = montar(campos, { nome: 'x', preco: 0, bonificacao: false })
+    expect((w.vm as { validateAll: () => string[] }).validateAll()).toEqual([
+      'Preço deve ser maior que zero',
+    ])
+  })
+
+  it('campo oculto não barra o save (e o erro dele é limpo)', () => {
+    const w = montar(campos, { nome: 'x', preco: null, bonificacao: true })
+    expect((w.vm as { validateAll: () => string[] }).validateAll()).toEqual([])
+  })
+})

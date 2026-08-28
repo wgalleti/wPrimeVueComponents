@@ -120,7 +120,7 @@ export function useSubviewCrud<T extends Record<string, unknown> = Record<string
   }
 
   function save(): T | null {
-    const erro = validateFormRecord(formFields, formData)
+    const erro = validateFormRecord(formFields, formData, isEditing.value)
     if (erro) {
       toast.error(erro)
       return null
