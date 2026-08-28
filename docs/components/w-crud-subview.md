@@ -57,6 +57,7 @@ e `resetForm` — os mesmos nomes do `useCrudManager`, sem nada assíncrono.
 | `cell-{field}` | `row`, `index`, `value`, `column` | Substitui a célula (repassado à tabela) |
 | `expansion` | `row`, `index` | Conteúdo da linha expandida (`expandable`) |
 | `toolbar-actions` | — | Ações ao lado do título |
+| `toolbar-extra` | — | Ação irmã do botão de adicionar, na barra da tabela |
 | `empty` | — | Substitui a mensagem de lista vazia |
 | `field-{field}` | do `WFormRenderer` | Substitui um campo do dialog |
 | `after-fields` | `formData`, `isEditing` | Depois dos campos, antes do rodapé: prévia do que vai ser gravado, saldo, aviso |

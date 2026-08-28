@@ -117,6 +117,12 @@ function onLinhas(linhas: EditableRow[]): void {
       @update:model-value="onLinhas"
       @add="crud.openCreateDialog()"
     >
+      <!-- Ação irmã do "adicionar", na mesma barra da tabela (o `toolbar-actions`
+           fica no cabeçalho do bloco, longe da mão de quem está preenchendo). -->
+      <template v-if="$slots['toolbar-extra']" #toolbar-extra>
+        <slot name="toolbar-extra" />
+      </template>
+
       <!-- Ações da linha: editar abre o form, excluir passa pelo confirm do manager. -->
       <template #[`cell-${COLUNA_ACOES}`]="{ row, index }">
         <div class="w-crud-subview__row-actions">

@@ -32,6 +32,7 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 | `footer-{field}` | `rows`, `column` | Substitui a célula do rodapé |
 | `expansion` | `row`, `index` | Conteúdo da linha expandida (`expandable`) |
 | `toolbar` | — | Substitui o botão de adicionar |
+| `toolbar-extra` | — | Ação irmã, à direita do botão de adicionar (use `.w-editable-table__add .w-editable-table__add--accent` para a mesma moldura em tinta da marca) |
 | `empty` | — | Substitui a mensagem de lista vazia |
 
 ## Exemplo

@@ -113,6 +113,32 @@ describe('WCrudSubview', () => {
     expect(crud.isEditing.value).toBe(false)
   })
 
+  it('toolbar-extra chega à barra da tabela, ao lado do adicionar', () => {
+    const linhas = ref<Record<string, unknown>[]>([{ produto: 'STARFIX', dose: 4 }])
+    const Host = defineComponent({
+      setup() {
+        const crud = useSubviewCrud({
+          rows: () => linhas.value,
+          onChange: (novas) => {
+            linhas.value = novas
+          },
+          form,
+        })
+        return () =>
+          h(
+            WCrudSubview,
+            { crud, columns: colunas, title: 'Insumos', addLabel: 'Novo insumo' },
+            { 'toolbar-extra': () => h('button', { class: 'extra' }, 'Aplicar receita') },
+          )
+      },
+    })
+    const wrapper = mount(Host, { global: { plugins: [PrimeVue] } })
+
+    const barra = wrapper.find('.w-editable-table__toolbar')
+    expect(barra.find('.w-editable-table__add').exists()).toBe(true)
+    expect(barra.find('.extra').exists()).toBe(true)
+  })
+
   it('mantém o rodapé de totais da tabela editável', () => {
     const { wrapper } = montar({}, [
       { produto: 'STARFIX', dose: 4 },

@@ -162,6 +162,23 @@ function shouldAutofocus(field: FieldDef): boolean {
   return field.field === autofocusField.value
 }
 
+/**
+ * Marca o input nativo do campo de foco com o atributo `autofocus`.
+ *
+ * Existe porque o `focus()` do Dialog do PrimeVue procura `[autofocus]` dentro do
+ * conteúdo e, não achando, foca o botão de fechar. Componentes como o InputNumber
+ * não declaram a prop `autofocus` — o atributo cairia no `<span>` da raiz, que não
+ * é focável — e o form abria com o foco no "X". O atributo é posto DEPOIS da
+ * inserção no DOM (em `mounted`), então não dispara foco nativo por conta própria:
+ * ele só deixa o rastro que o Dialog procura.
+ */
+const vFocusMarker = {
+  mounted(el: HTMLElement, binding: { value?: boolean }): void {
+    if (!binding.value) return
+    el.querySelector('input, textarea')?.setAttribute('autofocus', '')
+  },
+}
+
 // --- Mask format conversion (PrimeVue InputMask -> maska) ---
 
 function convertMask(mask?: string): string | undefined {
@@ -532,7 +549,12 @@ defineExpose({ validateAll, clearErrors })
             </div>
 
             <!-- All other types -->
-            <div v-else :class="fieldSpanClass(field, group)" :style="fieldSpanStyle(field, group)">
+            <div
+              v-else
+              v-focus-marker="shouldAutofocus(field)"
+              :class="fieldSpanClass(field, group)"
+              :style="fieldSpanStyle(field, group)"
+            >
               <label class="w-crud-form-label">
                 {{ field.label }}
                 <span v-if="field.required" class="w-crud-form-required">*</span>

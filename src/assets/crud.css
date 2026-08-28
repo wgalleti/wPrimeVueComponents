@@ -2203,6 +2203,19 @@
   font-size: var(--text-xs, 0.6875rem);
 }
 
+/* Ação irmã do adicionar (slot `toolbar-extra`): mesma moldura, tinta da marca —
+   diferente o bastante para não ser confundida com "novo", parecida o bastante
+   para não virar um botão estranho na barra. */
+.w-editable-table__add--accent {
+  border-color: var(--primary, var(--p-primary-color));
+  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
+  color: var(--primary, var(--p-primary-color));
+}
+
+.w-editable-table__add--accent:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary, var(--p-primary-color)) 18%, transparent);
+}
+
 .w-editable-table__table {
   width: 100%;
   border-collapse: collapse;

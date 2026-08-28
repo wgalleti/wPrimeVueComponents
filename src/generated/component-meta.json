@@ -296,6 +296,11 @@
           "description": ""
         },
         {
+          "name": "toolbar-extra",
+          "type": "{}",
+          "description": ""
+        },
+        {
           "name": "expansion",
           "type": "{ row: EditableRow; index: number; }",
           "description": ""
@@ -622,7 +627,7 @@
           "type": "string | undefined",
           "required": false,
           "default": null,
-          "description": "Rótulo do botão de adicionar. Omitido = sem botão (só o slot `#toolbar`)."
+          "description": "Rótulo do botão de adicionar. Omitido = sem botão (só os slots `#toolbar`\ne `#toolbar-extra`)."
         },
         {
           "name": "removable",
@@ -680,6 +685,11 @@
       "slots": [
         {
           "name": "toolbar",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "toolbar-extra",
           "type": "{}",
           "description": ""
         },
