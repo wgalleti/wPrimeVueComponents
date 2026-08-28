@@ -2079,7 +2079,7 @@
           "type": "string | undefined",
           "required": false,
           "default": "\"Área selecionada\"",
-          "description": "Rótulo do rodapé, à esquerda da área somada."
+          "description": "Rótulo do rodapé, à esquerda da área somada. `''` esconde o rodapé inteiro\n— mapa de escolha única, onde somar área não diz nada, não precisa da barra.\nUm `#footer` próprio continua valendo, com ou sem rótulo."
         },
         {
           "name": "areaSuffix",
@@ -2136,6 +2136,13 @@
           "required": false,
           "default": "\"Mostrar painel de seleção\"",
           "description": "`layout=\"sobreposto\"`: rótulo acessível do botão que reabre o painel."
+        },
+        {
+          "name": "collapsed",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Painel recolhido (`v-model:collapsed`). Omitido, o estado é interno — o\npadrão. Passe quando a tela precisar decidir por contexto (ex.: uma camada\nem que a lista atrapalha mais do que ajuda); o botão continua funcionando\ne devolve a troca pelo `update:collapsed`."
         },
         {
           "name": "badgeLabel",
@@ -2276,6 +2283,11 @@
         {
           "name": "feature-leave",
           "type": "[]",
+          "description": ""
+        },
+        {
+          "name": "update:collapsed",
+          "type": "[collapsed: boolean]",
           "description": ""
         }
       ],

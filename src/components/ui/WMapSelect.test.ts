@@ -202,9 +202,10 @@ const talhoes: MapSelectFeature[] = [
   { id: 'P49', nome: 'P49', subtitulo: 'Pastagem', area: 31 },
 ]
 
-function montar(props: Record<string, unknown> = {}) {
+function montar(props: Record<string, unknown> = {}, slots: Record<string, string> = {}) {
   return mount(WMapSelect, {
     props: { features: talhoes, modelValue: [], ...props },
+    slots,
     global: { plugins: [PrimeVue] },
   })
 }
@@ -311,6 +312,17 @@ describe('WMapSelect — contador e área', () => {
     const w = montar({ selectionLabel: (n: number) => `${n} área(s)` })
     expect(w.find('.w-map-select__count').text()).toBe('0 área(s)')
   })
+
+  it('areaLabel vazio esconde o rodapé — somar área não diz nada na escolha única', () => {
+    const w = montar({ areaLabel: '' })
+    expect(w.find('.w-map-select__footer').exists()).toBe(false)
+  })
+
+  it('um #footer próprio sobrevive ao areaLabel vazio', () => {
+    const w = montar({ areaLabel: '' }, { footer: '<b class="meu">total</b>' })
+    expect(w.find('.w-map-select__footer').exists()).toBe(true)
+    expect(w.find('.meu').text()).toBe('total')
+  })
 })
 
 describe('WMapSelect — layout sobreposto', () => {
@@ -342,6 +354,18 @@ describe('WMapSelect — layout sobreposto', () => {
     const canvas = w.find('.w-map-select__canvas').element
     expect(canvas.contains(w.find('.w-map-select__panel').element)).toBe(false)
     expect(canvas.contains(w.find('.w-map-select__footer').element)).toBe(false)
+  })
+
+  it('collapsed controla o painel de fora e a troca volta pelo evento', async () => {
+    const w = sobreposto({ collapsed: true })
+    expect(w.classes()).toContain('w-map-select--collapsed')
+
+    await recolher(w).trigger('click')
+    expect(w.emitted('update:collapsed')?.[0]).toEqual([false])
+
+    // Controlado: quem manda é a prop — sem ela mudar, o painel volta ao estado.
+    await w.setProps({ collapsed: true })
+    expect(w.classes()).toContain('w-map-select--collapsed')
   })
 
   it('recolher e expandir alternam o modificador e o aria-expanded', async () => {
