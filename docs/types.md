@@ -113,7 +113,7 @@ interface FieldDef {
     | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk'
     | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image'
 
-  /** Campo obrigatorio. Default: false */
+  /** Campo obrigatorio. Default: false. Campo oculto (`visible` falso) não é validado. */
   required?: boolean
 
   /** Largura no grid: 1 = full width, 0.5 = metade. Default: 1 */

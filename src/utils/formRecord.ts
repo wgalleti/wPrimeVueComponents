@@ -81,8 +81,22 @@ export function convertFormRecord(
   return out
 }
 
+/** Resolve `visible` do campo (boolean ou função) para o estado atual do form. */
+export function isFieldVisible(
+  field: FieldDef,
+  formData: Record<string, unknown>,
+  isEditing = false,
+): boolean {
+  if (field.visible === undefined || field.visible === true) return true
+  if (typeof field.visible === 'function') return field.visible(formData, isEditing)
+  return field.visible
+}
+
 /**
  * Primeira mensagem de erro do form, ou `null` se está tudo certo.
+ *
+ * Campo oculto (`visible` falso para o form atual) não é validado: o usuário não
+ * tem como preenchê-lo, então `required`/`validate` dele não podem barrar o save.
  *
  * A ordem importa: o `validate` do campo vence a obrigatoriedade, para a mensagem
  * específica ("CNPJ inválido") aparecer no lugar da genérica.
@@ -90,8 +104,10 @@ export function convertFormRecord(
 export function validateFormRecord(
   fields: FieldDef[],
   formData: Record<string, unknown>,
+  isEditing = false,
 ): string | null {
   for (const f of fields) {
+    if (!isFieldVisible(f, formData, isEditing)) continue
     if (f.validate) {
       const result = f.validate(formData[f.field])
       if (result) return result

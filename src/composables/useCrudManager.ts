@@ -393,7 +393,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   }
 
   async function save(): Promise<T | null> {
-    const erro = validateFormRecord(formFields, formData)
+    const erro = validateFormRecord(formFields, formData, isEditing.value)
     if (erro) {
       toast.error(erro)
       return null
