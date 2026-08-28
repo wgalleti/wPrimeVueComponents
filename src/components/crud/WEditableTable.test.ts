@@ -208,6 +208,31 @@ describe('WEditableTable — adicionar / remover', () => {
     expect(w.find('.w-editable-table__toolbar').exists()).toBe(false)
   })
 
+  it('toolbar-extra entra depois do botão de adicionar, sem substituí-lo', () => {
+    const w = mount(WEditableTable, {
+      props: { modelValue: lotes, columns: colunas, addLabel: 'Adicionar lote' },
+      slots: { 'toolbar-extra': '<button class="extra">Aplicar receita</button>' },
+      global: { plugins: [PrimeVue] },
+    })
+    const barra = w.find('.w-editable-table__toolbar')
+    expect(barra.find('.w-editable-table__add').exists()).toBe(true)
+    expect(barra.find('.extra').exists()).toBe(true)
+    // A ordem é o contrato: o atalho fica à direita do "adicionar".
+    const filhos = Array.from(barra.element.children).map((el) => el.className)
+    expect(filhos[0]).toContain('w-editable-table__add')
+    expect(filhos[1]).toContain('extra')
+  })
+
+  it('toolbar-extra sozinho já monta a barra', () => {
+    const w = mount(WEditableTable, {
+      props: { modelValue: lotes, columns: colunas },
+      slots: { 'toolbar-extra': '<button class="extra">Aplicar receita</button>' },
+      global: { plugins: [PrimeVue] },
+    })
+    expect(w.find('.w-editable-table__toolbar').exists()).toBe(true)
+    expect(w.find('.w-editable-table__add').exists()).toBe(false)
+  })
+
   it('remover emite o evento com a linha e o array já sem ela', async () => {
     const w = montar({ removable: true })
     await w.findAll('.w-editable-table__remove')[0].trigger('click')

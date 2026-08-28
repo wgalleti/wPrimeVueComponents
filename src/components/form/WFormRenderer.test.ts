@@ -168,3 +168,33 @@ describe('validateAll', () => {
     expect((w.vm as { validateAll: () => string[] }).validateAll()).toEqual([])
   })
 })
+
+describe('WFormRenderer — marca do foco inicial', () => {
+  it('campo numérico ganha o atributo `autofocus` no input nativo', () => {
+    const w = montar(
+      [
+        { field: 'plantas_metro', label: 'Plantas finais por metro', type: 'number' },
+        { field: 'germinacao', label: 'Germinação (%)', type: 'number' },
+      ],
+      { plantas_metro: null, germinacao: null },
+    )
+    const inputs = w.findAll('input')
+    // O Dialog do PrimeVue procura `[autofocus]` no conteúdo; sem a marca ele foca
+    // o botão de fechar, e o form abria com o foco no "X".
+    expect(inputs[0].attributes('autofocus')).toBeDefined()
+    expect(inputs[1].attributes('autofocus')).toBeUndefined()
+  })
+
+  it('`autofocus` explícito manda mesmo estando depois na lista', () => {
+    const w = montar(
+      [
+        { field: 'plantas_metro', label: 'Plantas', type: 'number' },
+        { field: 'germinacao', label: 'Germinação', type: 'number', autofocus: true },
+      ],
+      { plantas_metro: null, germinacao: null },
+    )
+    const inputs = w.findAll('input')
+    expect(inputs[0].attributes('autofocus')).toBeUndefined()
+    expect(inputs[1].attributes('autofocus')).toBeDefined()
+  })
+})

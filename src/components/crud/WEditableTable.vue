@@ -26,7 +26,8 @@ const props = withDefaults(
     columns?: EditableColumnDef[]
     /** Liga a coluna de expansão e o slot `#expansion`. */
     expandable?: boolean
-    /** Rótulo do botão de adicionar. Omitido = sem botão (só o slot `#toolbar`). */
+    /** Rótulo do botão de adicionar. Omitido = sem botão (só os slots `#toolbar`
+     *  e `#toolbar-extra`). */
     addLabel?: string
     /** Liga a coluna da lixeira. **Manda sozinha** na remoção: `disabled` trava as
      *  células, não a linha (tabela de leitura de onde ainda se remove é caso real —
@@ -198,9 +199,13 @@ const headerGroupCells = computed(() => {
 
 <template>
   <div class="w-editable-table">
-    <div v-if="$slots.toolbar || addLabel" class="w-editable-table__toolbar">
+    <div
+      v-if="$slots.toolbar || $slots['toolbar-extra'] || addLabel"
+      class="w-editable-table__toolbar"
+    >
       <slot name="toolbar">
         <button
+          v-if="addLabel"
           type="button"
           class="w-editable-table__add"
           :disabled="disabled"
@@ -209,6 +214,9 @@ const headerGroupCells = computed(() => {
           <i class="pi pi-plus" />{{ addLabel }}
         </button>
       </slot>
+      <!-- Ação irmã do "adicionar": entra à direita dele, na mesma barra, para o
+           atalho (aplicar um molde, importar uma lista) ficar onde a mão já está. -->
+      <slot name="toolbar-extra" />
     </div>
 
     <table class="w-editable-table__table">
