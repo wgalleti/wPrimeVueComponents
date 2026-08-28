@@ -3564,9 +3564,36 @@
   border-bottom-color: var(--primary, var(--p-primary-color));
 }
 
+/* Cor por grupo: só acentos (ícone, fio da ativa, ponto do rótulo). O texto
+   segue neutro para não brigar com o contraste — a cor identifica, não fala. */
+.w-tab-nav__item--grupo i {
+  color: var(--w-tab-group-color);
+}
+
+/* Fio contínuo embaixo, na cor do grupo, do rótulo até a última aba do bloco:
+   é a "linha" que liga o agrupamento (sobrepõe a borda da barra, como o fio
+   da ativa). A ativa se distingue pelo tint. */
+.w-tab-nav__item--grupo {
+  border-bottom-color: var(--w-tab-group-color);
+}
+
+.w-tab-nav__group {
+  margin-bottom: -1px;
+  border-bottom: 2px solid var(--w-tab-group-color, transparent);
+}
+
+.w-tab-nav__item--grupo.w-tab-nav__item--ativa {
+  color: var(--fg, var(--p-text-color));
+  background: color-mix(in srgb, var(--w-tab-group-color) 9%, transparent);
+  border-bottom-color: var(--w-tab-group-color);
+}
+
 /* Rótulo do grupo (módulo) antes do bloco de abas dele — eco da sidebar. */
 .w-tab-nav__group {
-  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  align-self: stretch;
   padding: 0 var(--space-2, 0.5rem) 0 var(--space-3, 0.75rem);
   color: var(--fg-subtle, var(--p-text-muted-color));
   font-size: var(--text-2xs, 0.6875rem);
@@ -3575,6 +3602,15 @@
   text-transform: uppercase;
   white-space: nowrap;
   user-select: none;
+}
+
+/* Ponto na cor do grupo — a mesma que acende a aba ativa do bloco. */
+.w-tab-nav__group::before {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--w-tab-group-color, var(--fg-subtle, var(--p-text-muted-color)));
 }
 
 /* O primeiro rótulo não precisa do respiro de separação. */
@@ -3592,7 +3628,8 @@
   text-overflow: ellipsis;
 }
 
-/* O X só se anuncia no hover/ativa — barra cheia de X é ruído. */
+/* X e ⋮ só se anunciam no hover/ativa — barra cheia de ícones é ruído. */
+.w-tab-nav__menu,
 .w-tab-nav__close {
   display: inline-flex;
   align-items: center;
@@ -3610,16 +3647,26 @@
     background var(--motion-fast, 140ms) var(--ease, ease);
 }
 
+.w-tab-nav__menu i,
 .w-tab-nav__close i {
   font-size: var(--text-2xs, 0.6875rem);
 }
 
+/* Os dois botões colados: o ⋮ perde o respiro para o X ao lado. */
+.w-tab-nav__menu + .w-tab-nav__close {
+  margin-left: calc(var(--space-2, 0.5rem) * -1);
+}
+
+.w-tab-nav__item:hover .w-tab-nav__menu,
+.w-tab-nav__item--ativa .w-tab-nav__menu,
+.w-tab-nav__menu:focus-visible,
 .w-tab-nav__item:hover .w-tab-nav__close,
 .w-tab-nav__item--ativa .w-tab-nav__close,
 .w-tab-nav__close:focus-visible {
   opacity: 1;
 }
 
+.w-tab-nav__menu:hover,
 .w-tab-nav__close:hover {
   background: var(--surface-3, var(--p-content-hover-background));
   color: var(--fg, var(--p-text-color));

@@ -20,6 +20,11 @@ export interface RouteTabMeta {
    * mesmo grupo ficam juntas na barra, com o rótulo do grupo antes do bloco.
    */
   group?: string
+  /**
+   * Cor do grupo (qualquer cor CSS). Sem ela, o WTabNav deriva uma cor estável
+   * do nome do grupo — informe só para fixar a cor de um módulo.
+   */
+  color?: string
 }
 
 /** Uma aba aberta. `key` identifica (path com params); `fullPath` navega. */
@@ -32,6 +37,8 @@ export interface RouteTab {
   closable: boolean
   /** Grupo (módulo) da aba — abas do mesmo grupo ficam contíguas na barra. */
   group?: string
+  /** Cor do grupo fixada pela rota (`RouteTabMeta.color`); ausente = derivada. */
+  color?: string
   /**
    * `false` = aba restaurada do storage, ainda sem componente montado.
    * Hidrata na primeira ativação (o router resolve o lazy no caminho).

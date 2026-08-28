@@ -99,6 +99,55 @@ describe('WTabNav — render', () => {
     expect(grupos[0].text()).toBe('Sementes')
   })
 
+  it('aba com grupo recebe a cor derivada (estável) e o rótulo ganha a mesma cor', async () => {
+    router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/', name: 'home', component: Tela },
+        { path: '/a', name: 'a', component: Tela },
+        { path: '/b', name: 'b', component: Tela },
+      ],
+    })
+    api = useRouteTabs({
+      router,
+      storage: null,
+      isTabRoute: (r) => r.path !== '/',
+      resolveTabMeta: (r) =>
+        r.path === '/a'
+          ? { title: 'a', group: 'Sementes' }
+          : { title: 'b', group: 'Estoque', color: 'rebeccapurple' },
+    })
+    const w = mount(WTabNav, {
+      props: { tabs: api },
+      global: { plugins: [router, PrimeVue] },
+      attachTo: document.body,
+    })
+    await router.push('/a')
+    await router.push('/b')
+    await flushPromises()
+    const abas = w.findAll('[role="tab"]')
+    const grupos = w.findAll('.w-tab-nav__group')
+    const corA = (abas[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')
+    expect(abas[0].classes()).toContain('w-tab-nav__item--grupo')
+    expect(corA).toMatch(/^oklch\(/)
+    expect((grupos[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe(
+      corA,
+    )
+    // Cor explícita na rota vence a derivada
+    expect((abas[1].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe(
+      'rebeccapurple',
+    )
+  })
+
+  it('aba sem grupo não recebe cor', async () => {
+    const w = montar()
+    await router.push('/a')
+    await flushPromises()
+    const aba = w.find('[role="tab"]')
+    expect(aba.classes()).not.toContain('w-tab-nav__item--grupo')
+    expect((aba.element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe('')
+  })
+
   it('aba closable: false não mostra o X', async () => {
     const w = montar()
     await router.push('/a')
@@ -164,5 +213,20 @@ describe('WTabNav — ações', () => {
       (el) => el.textContent,
     )
     expect(rotulos).toEqual(['Recarregar', 'Fechar', 'Fechar outras', 'Fechar todas'])
+  })
+
+  it('botão ⋮ abre o mesmo menu sem ativar a aba', async () => {
+    const w = montar()
+    await router.push('/b')
+    await router.push('/a')
+    await flushPromises()
+    await w.findAll('[role="tab"]')[0].find('.w-tab-nav__menu').trigger('click')
+    await flushPromises()
+    const rotulos = Array.from(document.querySelectorAll('[data-pc-section="itemlabel"]')).map(
+      (el) => el.textContent,
+    )
+    expect(rotulos).toEqual(['Recarregar', 'Fechar', 'Fechar outras', 'Fechar todas'])
+    expect(router.currentRoute.value.path).toBe('/a')
+    expect(w.emitted('activate')).toBeUndefined()
   })
 })

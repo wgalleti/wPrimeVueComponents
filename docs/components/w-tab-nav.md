@@ -2,7 +2,8 @@
 
 Navegação por abas de **rota** (estilo browser/ERP): cada rota aberta vira uma aba viva —
 trocar de aba preserva o estado da tela, e cada aba fecha (X, botão do meio) e recarrega
-pelo menu de contexto (com "fechar outras" e "fechar todas"). Não confundir com o
+pelo menu (com "fechar outras" e "fechar todas"), aberto pelo botão direito ou pelo `⋮`
+que aparece na aba no hover/ativa. Não confundir com o
 [WTabBar](/components/w-tab-bar), que é abas de seção *dentro* de uma tela.
 
 O par funciona junto e todo o estado vem do composable
@@ -11,12 +12,27 @@ O par funciona junto e todo o estado vem do composable
 - **WTabNav** — a barra: lista as abas, ativa, fecha, menu de contexto, overflow com
   rolagem horizontal (a aba ativa se mantém à vista) e teclado ←/→ (padrão ARIA de tablist).
   Abas com `group` (via `resolveTabMeta`) ficam contíguas, com o rótulo do grupo antes do
-  bloco — o eco dos módulos do menu (Sementes, Estoque…).
+  bloco — o eco dos módulos do menu (Sementes, Estoque…) — e ganham uma **cor por grupo**.
 - **WTabViewport** — os painéis: substitui o `<RouterView>` do layout. Cada aba hidratada
   fica **montada** num wrapper `v-show` (não `KeepAlive`): o DOM não sai da árvore, então
   um Dialog com `appendTo` no container da aba sobrevive intacto à troca. Cada pane recebe
   um snapshot **congelado** da rota — `useRoute()` da tela oculta não reage à navegação
   global — e fornece o contexto `useTabHost()` (título dinâmico, `appendTo`, close guards).
+
+### Cor por grupo
+
+Cada grupo tem uma cor, usada **só em acentos** para o texto seguir neutro e legível: o
+ponto antes do rótulo do grupo, o ícone das abas do bloco e o fio + tint da aba ativa. Sem
+configuração a cor é derivada do nome do grupo (paleta OKLCH de 8 matizes, escolha
+estável por hash — o mesmo módulo tem sempre a mesma cor). Para fixar a cor de um módulo,
+devolva `color` no `resolveTabMeta`:
+
+```ts
+resolveTabMeta: (r) => ({ title: ..., group: 'Sementes', color: 'oklch(64% 0.13 150)' })
+```
+
+A cor chega ao CSS como `--w-tab-group-color` no item e no rótulo — dá para estender os
+acentos no app sem tocar na suite.
 
 ### Animação de entrada da página
 

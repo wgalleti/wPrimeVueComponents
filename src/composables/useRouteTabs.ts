@@ -29,6 +29,7 @@ interface PersistedTab {
   icon?: string
   closable: boolean
   group?: string
+  color?: string
 }
 
 interface PersistedState {
@@ -109,13 +110,14 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     const state: PersistedState = {
       v: 1,
       activeKey: activeKey.value,
-      tabs: tabs.value.map(({ key, fullPath, title, icon, closable, group }) => ({
+      tabs: tabs.value.map(({ key, fullPath, title, icon, closable, group, color }) => ({
         key,
         fullPath,
         title,
         icon,
         closable,
         group,
+        color,
       })),
     }
     try {
@@ -263,6 +265,7 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
         icon: meta.icon,
         closable: meta.closable ?? true,
         group: meta.group,
+        color: meta.color,
         hydrated: false,
         remount: 0,
       }
