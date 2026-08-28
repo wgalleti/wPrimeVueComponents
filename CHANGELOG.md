@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.24.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.23.0...v0.24.0) (2026-08-28)
+
+### Funcionalidades
+
+* **tab-nav:** group colors and per-tab options button ([ed7379b](https://github.com/wgalleti/wPrimeVueComponents/commit/ed7379b7f874b0e9edfab0360fed4bd7519ae248))
+
+### Correções
+
+* **form:** skip hidden fields in validation ([a817c5b](https://github.com/wgalleti/wPrimeVueComponents/commit/a817c5bc0a4bc451bda43ad0b5618c2332a36802))
 ## [0.23.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.22.3...v0.23.0) (2026-08-27)
 
 ### Funcionalidades
