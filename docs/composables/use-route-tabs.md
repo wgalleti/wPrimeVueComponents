@@ -44,7 +44,7 @@ export const tabsApi = useRouteTabs({
 | `router` | — | O `Router` do app (obrigatório). |
 | `mode` | `'screen'` | O que é "uma aba": `'screen'` (uma por tela) ou `'module'` (uma por entrada de menu, com navegação interna). |
 | `moduleRoot` | — | Raiz do módulo da rota (identidade da aba no modo `'module'`). Obrigatório nesse modo; retornar falsy cai em `route.path`. |
-| `resolveTabMeta` | `{}` | Título/ícone/`closable`/`group` por rota; o que faltar cai em defaults. `group` agrupa as abas na barra (ex.: o módulo do menu) — aba nova entra colada no fim do próprio grupo. |
+| `resolveTabMeta` | `{}` | Título/ícone/`closable`/`group` por rota; o que faltar cai em defaults. `group` agrupa as abas na barra (ex.: o módulo do menu) — aba nova entra colada no fim do próprio grupo; `color` fixa a cor do grupo (sem ela o WTabNav deriva uma do nome). |
 | `isTabRoute` | `true` | Quais rotas viram aba (login/impressão ficam fora). |
 | `storage` | `localStorage` | Onde persistir; `null` desliga. |
 | `storageKey` | `'w-route-tabs'` | Chave; função permite chave por usuário avaliada tarde. |
