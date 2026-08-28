@@ -9,6 +9,7 @@ import {
   onMounted,
   readonly as somenteLeitura,
   ref,
+  useSlots,
   watch,
 } from 'vue'
 import IconField from 'primevue/iconfield'
@@ -78,7 +79,9 @@ const props = withDefaults(
     /** Zoom máximo do tile layer (o World_Imagery vai até 19). */
     maxZoom?: number
     searchPlaceholder?: string
-    /** Rótulo do rodapé, à esquerda da área somada. */
+    /** Rótulo do rodapé, à esquerda da área somada. `''` esconde o rodapé inteiro
+     *  — mapa de escolha única, onde somar área não diz nada, não precisa da barra.
+     *  Um `#footer` próprio continua valendo, com ou sem rótulo. */
     areaLabel?: string
     /** Unidade da área, no rodapé e no tooltip do polígono. */
     areaSuffix?: string
@@ -97,6 +100,11 @@ const props = withDefaults(
     collapseLabel?: string
     /** `layout="sobreposto"`: rótulo acessível do botão que reabre o painel. */
     expandLabel?: string
+    /** Painel recolhido (`v-model:collapsed`). Omitido, o estado é interno — o
+     *  padrão. Passe quando a tela precisar decidir por contexto (ex.: uma camada
+     *  em que a lista atrapalha mais do que ajuda); o botão continua funcionando
+     *  e devolve a troca pelo `update:collapsed`. */
+    collapsed?: boolean
     /** Selo sobre o mapa (canto superior direito). `''` esconde. */
     badgeLabel?: string
     emptyMessage?: string
@@ -189,6 +197,9 @@ const props = withDefaults(
     readonly: false,
     tooltips: 'permanent',
     selectionMode: undefined,
+    // `undefined` explícito: sem isso o Vue converte o booleano ausente em
+    // `false`, e o componente nasceria "controlado" por engano.
+    collapsed: undefined,
     highlightFeature: null,
     // Tinta de mapa, não cor de UI: estes valores são lidos sobre a imagem de
     // satélite, onde os tokens do tema (claro/escuro) não valem. São props para
@@ -227,13 +238,20 @@ const emit = defineEmits<{
   'feature-enter': [feature: MapSelectFeature]
   /** O cursor saiu do polígono / o cartão fechou. */
   'feature-leave': []
+  /** O painel foi recolhido/reaberto — o outro lado do `v-model:collapsed`. */
+  'update:collapsed': [collapsed: boolean]
 }>()
+
+const slots = useSlots()
 
 const { formatNumber } = useFormatters()
 
 // --- Arranjo e painel flutuante --------------------------------------------
 
 const isOverlay = computed(() => props.layout === 'sobreposto')
+
+/** O rodapé existe quando há o que pôr nele: o rótulo de área ou um slot próprio. */
+const temRodape = computed(() => !props.readonly && (!!slots.footer || props.areaLabel !== ''))
 
 /** Texto customizado sempre vence; só o default é trocado no `readonly`. */
 const mapErrorText = computed(() =>
@@ -242,13 +260,22 @@ const mapErrorText = computed(() =>
     : props.mapErrorMessage,
 )
 
-/** Estado do painel flutuante — interno de propósito: recolher é gesto de
- *  visualização ("quero ver o mapa"), não dado do formulário. */
-const collapsed = ref(false)
+/** Estado do painel flutuante — interno por padrão: recolher é gesto de
+ *  visualização ("quero ver o mapa"), não dado do formulário.
+ *
+ *  Com a prop `collapsed` presente o componente vira CONTROLADO: quem manda é a
+ *  tela, e o botão só avisa a troca. Guardar uma cópia interna nesse caso faria o
+ *  painel divergir da prop no primeiro clique que o pai decidisse não acatar. */
+const collapsedInterno = ref(false)
+const collapsedControlado = computed(() => props.collapsed != null)
+const collapsed = computed(() =>
+  collapsedControlado.value ? !!props.collapsed : collapsedInterno.value,
+)
 
 function setCollapsed(value: boolean) {
   if (collapsed.value === value) return
-  collapsed.value = value
+  if (!collapsedControlado.value) collapsedInterno.value = value
+  emit('update:collapsed', value)
 }
 
 /** Recolher devolve o mapa inteiro: o próprio painel vira a pílula (ícone +
@@ -777,7 +804,11 @@ function refreshSize() {
  *  consumidor põe no `#footer`, ela é MEDIDA e publicada em `--w-map-foot-h` —
  *  chutar um valor fixo quebraria com dois botões empilhados. */
 function measureFooter() {
-  if (!root.value || !footer.value) return
+  if (!root.value) return
+  if (!footer.value) {
+    root.value.style.setProperty('--w-map-foot-h', '0px')
+    return
+  }
   if (!isOverlay.value) {
     root.value.style.removeProperty('--w-map-foot-h')
     return
@@ -1054,7 +1085,7 @@ defineExpose({
       </div>
     </div>
 
-    <div v-if="!readonly" ref="footer" class="w-map-select__footer">
+    <div v-if="temRodape" ref="footer" class="w-map-select__footer">
       <slot name="footer" :area="selectedArea" :features="selectedFeatures">
         <span class="w-map-select__area">
           {{ areaLabel }}

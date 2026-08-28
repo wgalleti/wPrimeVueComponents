@@ -249,6 +249,30 @@ carrega por `import()` dinâmico na montagem. O CSS do Leaflet já vem embutido 
 suite. Se o import falhar (offline, CSP), o mapa é trocado por um aviso e o painel lateral continua
 selecionando normalmente.
 
+## Painel recolhido por contexto (`v-model:collapsed`)
+
+Por padrão recolher é gesto do usuário e o estado é interno. Quando a própria tela
+sabe que a lista atrapalha — uma camada com quatro talhões, onde o mapa já diz tudo —
+passe `v-model:collapsed`: o componente vira controlado, o botão continua no lugar e
+devolve a troca pelo evento.
+
+```vue
+<WMapSelect
+  v-model:collapsed="painelRecolhido"
+  layout="sobreposto"
+  :features="features"
+/>
+```
+
+Diferente do `setCollapsed()` exposto, a prop também vale para o estado **inicial** —
+o método só existe depois que o componente monta.
+
+## Rodapé de área (`areaLabel`)
+
+O rodapé soma a área das features selecionadas. Em mapa de escolha única esse total
+não diz nada: `areaLabel=""` esconde a barra inteira. Um `#footer` próprio continua
+sendo renderizado, com rótulo ou sem.
+
 ## API
 
 <ApiTable name="WMapSelect" />
@@ -267,7 +291,7 @@ selecionando normalmente.
 | Nome | Tipo | Para quê |
 |---|---|---|
 | `refreshSize()` | `() => void` | Força o `invalidateSize()` do Leaflet (o componente já chama sozinho ao aparecer, ao recolher e ao trocar de `layout`) |
-| `collapsed` | `boolean` (leitura) | Painel flutuante recolhido? Só faz sentido no `'sobreposto'` |
+| `collapsed` | `boolean` (leitura) | Painel flutuante recolhido? Só faz sentido no `'sobreposto'`. Para dirigir de fora, prefira `v-model:collapsed` |
 | `setCollapsed(v)` | `(v: boolean) => void` | Recolhe/expande o painel de fora (ex.: recolher ao entrar no modo desenho) |
 | `fitToScope()` | `() => void` | Reenquadra no escopo (ou na união das features). O fit automático só acontece uma vez — páginas novas de `features` não movem o mapa |
 | `detalhe` | `MapSelectFeature \| null` (leitura) | Feature do cartão de detalhe aberto |
