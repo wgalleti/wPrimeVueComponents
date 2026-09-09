@@ -61,6 +61,8 @@ export {
   useFormatters,
   useDateInput,
   useRouteTabs,
+  useBreakpoint,
+  BREAKPOINTS,
 } from './composables'
 export type { DateValueFormat } from './composables'
 
