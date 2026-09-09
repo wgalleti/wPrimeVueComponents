@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.27.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.26.0...v0.27.0) (2026-09-09)
+
+### Funcionalidades
+
+* **tablet:** régua de faixas, densidade de toque e cards em retrato ([60db2d9](https://github.com/wgalleti/wPrimeVueComponents/commit/60db2d93af6bf3a2f6fdcdf5a06627348d166f2b))
 ## [0.24.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.23.0...v0.24.0) (2026-08-28)
 
 ### Funcionalidades
