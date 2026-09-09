@@ -14,6 +14,7 @@ import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
 import { useTabHost } from '@/types/routeTabs'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
@@ -121,8 +122,19 @@ function loadView(): 'table' | 'cards' {
   return props.defaultView
 }
 const displayMode = ref<'table' | 'cards'>(loadView())
+
+// Tablet em pé (< 840px): tabela não se lê. Cada linha vira card — título em
+// destaque, o resto como rótulo/valor — e o alternador some, porque nessa
+// largura não existe escolha a fazer. A preferência guardada NÃO é sobrescrita:
+// ela volta intacta quando a janela cresce de novo.
+const { isRetrato } = useBreakpoint()
+const effectiveView = computed<'table' | 'cards'>(() =>
+  isRetrato.value ? 'cards' : displayMode.value,
+)
+const canToggleView = computed(() => props.viewToggle && !isRetrato.value)
+
 function isView(mode: 'table' | 'cards'): boolean {
-  return displayMode.value === mode
+  return effectiveView.value === mode
 }
 function setView(mode: 'table' | 'cards'): void {
   displayMode.value = mode
@@ -584,7 +596,7 @@ onMounted(() => {
         </div>
 
         <!-- Table -->
-        <div v-if="displayMode === 'table'" class="w-crud-table">
+        <div v-if="isView('table')" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->
           <div
             v-if="isMultiSelect && crud.selectedItems.value.length"
@@ -733,7 +745,7 @@ onMounted(() => {
                     :loading="exporting"
                     @click="doExportCsv"
                   />
-                  <div v-if="viewToggle" class="w-crud-view-toggle">
+                  <div v-if="canToggleView" class="w-crud-view-toggle">
                     <Button
                       icon="pi pi-table"
                       size="small"
@@ -879,7 +891,7 @@ onMounted(() => {
                 :loading="exporting"
                 @click="doExportCsv"
               />
-              <div v-if="viewToggle" class="w-crud-view-toggle">
+              <div v-if="canToggleView" class="w-crud-view-toggle">
                 <Button
                   icon="pi pi-table"
                   size="small"

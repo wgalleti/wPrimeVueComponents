@@ -182,6 +182,20 @@ Renderizacao customizada de um campo do formulario:
 </template>
 ```
 
+## Tabela e cards
+
+A visão alterna entre `table` (linha) e `cards` pelo botão da toolbar; `defaultView` decide a
+inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFields` (default
+`4`) diz quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
+`rótulo: valor`. Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
+
+**Abaixo de 840px a visão é forçada em `cards`** e o alternador some: nessa largura a tabela
+não se lê, e não há escolha a oferecer. A preferência guardada **não** é sobrescrita — ela
+volta intacta quando a janela cresce. O corte é o `isRetrato` do
+[`useBreakpoint`](/composables/use-breakpoint).
+
+Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
+
 ## KPIs
 
 ```vue

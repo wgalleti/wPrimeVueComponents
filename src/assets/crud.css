@@ -661,36 +661,42 @@
    WPageHeader — .w-page-header
    ========================================================== */
 
+/* O cabeçalho quebra: sem `wrap`, um documento com meia dúzia de transições
+   espreme o título até ele sair uma letra por linha em tela estreita. O bloco
+   de título tem base própria para nunca ser o que encolhe. */
 .w-page-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-6, 1.5rem);
 }
 
 .w-page-header-content {
+  flex: 1 1 16rem;
   min-width: 0;
 }
 
 .w-page-header-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--text-xl, 1.25rem);
+  font-weight: var(--fw-semibold, 600);
   letter-spacing: -0.015em;
-  color: var(--p-text-color);
-  line-height: 1.3;
+  color: var(--fg, var(--p-text-color));
+  line-height: var(--leading-tight, 1.3);
 }
 
 .w-page-header-subtitle {
   margin-top: 0.125rem;
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
 }
 
 .w-page-header-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2, 0.5rem);
   flex-shrink: 0;
 }
 
@@ -786,24 +792,28 @@
    ========================================================== */
 
 .w-info-card {
-  padding: 1.25rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
-  margin-bottom: 1rem;
+  padding: var(--card-pad, 1.25rem);
+  border-radius: var(--radius-lg, 0.75rem);
+  border: 1px solid var(--border, var(--p-content-border-color));
+  background: var(--surface, var(--p-content-background));
+  margin-bottom: var(--space-4, 1rem);
 }
 
 .w-info-card-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-  margin-bottom: 0.75rem;
+  font-size: var(--text-md, 0.9375rem);
+  font-weight: var(--fw-semibold, 600);
+  color: var(--fg, var(--p-text-color));
+  margin-bottom: var(--space-3, 0.75rem);
 }
 
+/* Fluido, não duas colunas fixas: com poucos campos a grade fecha em duas ou
+   três e usa a largura; em tela estreita ela mesma cai para uma, sem media
+   query. Fixo em `repeat(2, 1fr)` o card virava uma tira alta ao lado de meia
+   tela vazia. */
 .w-info-card-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3, 0.75rem) var(--space-6, 1.5rem);
 }
 
 .w-info-card-field {
@@ -813,17 +823,17 @@
 }
 
 .w-info-card-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: var(--p-text-muted-color);
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-medium, 500);
+  color: var(--fg-muted, var(--p-text-muted-color));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .w-info-card-value {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--p-text-color);
+  font-size: var(--text-base, 0.875rem);
+  font-weight: var(--fw-medium, 500);
+  color: var(--fg, var(--p-text-color));
 }
 
 /* ==========================================================
@@ -944,10 +954,13 @@
   gap: 1rem;
 }
 
+/* A barra externa quebra junto: um documento com seis transições não cabe numa
+   linha em tela de tablet, e sem `wrap` os botões saem pela direita. */
 .w-action-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3, 0.75rem);
 }
 
 .w-action-bar--between {
@@ -1597,7 +1610,11 @@
   color: var(--fg-muted, var(--p-text-muted-color));
 }
 
-@media (max-width: 768px) {
+/* Tablet em pé (<= 839px, a faixa de retrato da régua do portal): título e ações
+   de seção param de disputar a mesma linha. O corte é 839 e não 768 porque
+   metade dos tablets em retrato mede 800-834 CSS px — em 768 eles receberiam o
+   layout de paisagem. */
+@media (max-width: 839px) {
   .w-section-header,
   .w-form-section__header,
   .w-action-bar--stack {
@@ -1610,7 +1627,9 @@
   .w-action-bar__filters {
     justify-content: flex-start;
   }
+}
 
+@media (max-width: 768px) {
   .w-kpi-grid--cols-2,
   .w-kpi-grid--cols-3,
   .w-kpi-grid--cols-4 {
@@ -3753,4 +3772,90 @@
    O PrimeVue define `position: fixed` INLINE na mask, daí o !important. */
 .w-tab-viewport__pane > .p-dialog-mask {
   position: absolute !important;
+}
+
+/* ==========================================================
+   TABLET E TOQUE — a régua de campo
+   ==========================================================
+   Faixas de largura do portal consumidor (documentadas no `tokens.css` do
+   app; CSS não aceita `var()` em media query, então o número é literal aqui
+   e a régua é uma só):
+
+     < 600px      celular
+     600-839px    tablet RETRATO   — um painel por vez, drill-in
+     840-1199px   tablet PAISAGEM  — dois painéis
+     >= 1200px    desktop
+
+   Largura é a chave, nunca `orientation`: travar orientação é falha de
+   acessibilidade (WCAG 1.3.4), e um tablet de 12,9" em retrato tem largura
+   de laptop — ele DEVE receber dois painéis.
+   ========================================================== */
+
+/* Toque: `pointer: coarse` é o ponteiro PRIMÁRIO — notebook com tela sensível
+   reporta `fine` e não entra aqui. Alvo de 56px (~10,5mm) supera os 48dp do
+   Material e os 44pt da Apple; a polpa do dedo tem 10-14mm e o operador de
+   luva precisa de 15mm+, daí os 72px da ação primária. */
+@media (pointer: coarse) {
+  .w-page-header-actions .p-button,
+  .w-form-section__actions .p-button,
+  .w-action-bar .p-button,
+  .w-crud-toolbar .p-button,
+  .w-crud-card-actions .p-button {
+    min-height: var(--touch-h, 56px);
+  }
+
+  /* Linha de tabela é alvo de drill-in, não texto. */
+  .w-crud-table .p-datatable-tbody > tr > td {
+    padding-block: var(--space-3, 0.75rem);
+  }
+}
+
+/* Tablet em pé: as ações do cabeçalho tomam a linha inteira e dividem a
+   largura entre si — em cima da mesma linha do título elas roubavam a largura
+   dele até sobrar uma letra por linha. */
+@media (max-width: 839px) {
+  .w-page-header-actions {
+    width: 100%;
+  }
+
+  .w-page-header-actions .p-button {
+    flex: 1 1 10rem;
+    justify-content: center;
+  }
+}
+
+/* Formulário em tablet em pé: tela cheia. A caixa centrada do desktop, numa
+   largura dessas, comprime o conteúdo e joga os botões para onde o polegar não
+   alcança — e o teclado virtual come o resto. `dvh` e não `vh`: no navegador do
+   tablet, `100vh` é a altura COM a barra escondida e o rodapé some atrás dela. */
+@media (max-width: 839px) {
+  .p-dialog.w-crud-form-dialog {
+    width: 100vw !important;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .w-crud-form-dialog .p-dialog-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  /* Rodapé ancorado, ação primária cheia e por último: é o alcance do polegar
+     com o tablet segurado nas duas mãos. */
+  .w-crud-form-dialog .p-dialog-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: var(--space-3, 0.75rem);
+    padding-bottom: max(var(--space-4, 1rem), env(safe-area-inset-bottom));
+  }
+
+  .w-crud-form-dialog .p-dialog-footer .p-button {
+    width: 100%;
+    justify-content: center;
+    min-height: var(--touch-h, 56px);
+  }
 }
