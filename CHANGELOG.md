@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.27.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.27.0...v0.27.1) (2026-09-10)
+
+### Correções
+
+* **dialog:** medir o formulário em tela cheia pelo mask, não pela viewport ([c15e48c](https://github.com/wgalleti/wPrimeVueComponents/commit/c15e48c800a5fce0c24c88447fe58c2c391a2a7c))
 ## [0.27.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.26.0...v0.27.0) (2026-09-09)
 
 ### Funcionalidades
