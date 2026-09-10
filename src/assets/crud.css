@@ -3826,14 +3826,19 @@
 
 /* Formulário em tablet em pé: tela cheia. A caixa centrada do desktop, numa
    largura dessas, comprime o conteúdo e joga os botões para onde o polegar não
-   alcança — e o teclado virtual come o resto. `dvh` e não `vh`: no navegador do
-   tablet, `100vh` é a altura COM a barra escondida e o rodapé some atrás dela. */
+   alcança — e o teclado virtual come o resto.
+
+   "Tela cheia" é a área do MASK, não a viewport: quando o app pendura o dialog
+   num contêiner próprio (o pane de uma aba, por exemplo), o mask é `absolute`
+   sobre ele e começa abaixo do chrome. Medido em `dvh`, o dialog nasce com a
+   altura da tela dentro de uma caixa mais curta e o rodapé — com o botão de
+   salvar — cai para fora da janela. `%` do mask acerta os dois casos. */
 @media (max-width: 839px) {
   .p-dialog.w-crud-form-dialog {
-    width: 100vw !important;
-    max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
+    width: 100% !important;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
     margin: 0;
     border-radius: 0;
   }
