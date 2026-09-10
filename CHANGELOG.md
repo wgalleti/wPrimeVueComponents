@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.28.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.27.1...v0.28.0) (2026-09-10)
+
+### Funcionalidades
+
+* **tablet:** tabela editável vira card no retrato ([357e508](https://github.com/wgalleti/wPrimeVueComponents/commit/357e508720c44b538204c0aec62b860b1ee0b59c))
 ## [0.27.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.27.0...v0.27.1) (2026-09-10)
 
 ### Correções
