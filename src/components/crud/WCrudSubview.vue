@@ -45,6 +45,11 @@ const props = withDefaults(
     /** Rótulo da primeira célula do rodapé de totais. */
     footerLabel?: string
     rowKey?: string
+    /** Quando a tabela vira card — repassado à `WEditableTable` (default `auto`:
+     *  card abaixo de 840px). */
+    cardMode?: 'auto' | 'never' | 'always'
+    /** Rótulo do abridor da expansão no card (ex.: "Insumos do lote"). */
+    expansionLabel?: string
   }>(),
   {
     addLabel: 'Adicionar',
@@ -70,7 +75,12 @@ const COLUNA_ACOES = '__acoes'
 
 const colunas = computed<EditableColumnDef[]>(() =>
   temAcoes.value
-    ? [...props.columns, { field: COLUNA_ACOES, header: '', width: '5rem', align: 'right' }]
+    ? [
+        ...props.columns,
+        // `card: 'actions'` põe editar/excluir ao lado do título do card no
+        // tablet, em vez de virarem mais uma linha de campo lá embaixo.
+        { field: COLUNA_ACOES, header: '', width: '5rem', align: 'right', card: 'actions' },
+      ]
     : props.columns,
 )
 
@@ -114,6 +124,8 @@ function onLinhas(linhas: EditableRow[]): void {
       :empty-message="emptyMessage ?? crud.labels.emptyMessage"
       :footer-label="footerLabel"
       :row-key="rowKey"
+      :card-mode="cardMode"
+      :expansion-label="expansionLabel"
       @update:model-value="onLinhas"
       @add="crud.openCreateDialog()"
     >

@@ -293,3 +293,83 @@ describe('grupos de cabeçalho', () => {
     expect(celulas).toHaveLength(3)
   })
 })
+
+describe('WEditableTable — modo card (tablet em pé)', () => {
+  // `cardMode: 'always'` em vez de mexer no matchMedia: o que se testa aqui é o
+  // card, não a régua de largura (essa é do useBreakpoint).
+  const card = (props: Record<string, unknown> = {}) => montar({ cardMode: 'always', ...props })
+
+  /** Papéis da PRIMEIRA linha (as demais repetem). */
+  const papeis = (w: VueWrapper) =>
+    w
+      .findAll('.w-editable-table__row')[0]
+      .findAll('td')
+      .map((td) => td.attributes('data-card'))
+
+  it('liga a classe do card e mantém a MESMA tabela (sem árvore paralela)', () => {
+    const w = card()
+    expect(w.find('.w-editable-table--cards').exists()).toBe(true)
+    expect(w.findAll('.w-editable-table__row')).toHaveLength(2)
+  })
+
+  it('sem metadata: a primeira coluna é o título e o resto vira campo', () => {
+    expect(papeis(card())).toEqual(['title', 'field', 'field'])
+  })
+
+  it('o papel declarado na coluna vence o default', () => {
+    const w = card({
+      columns: [
+        { field: 'produto', header: 'Produto' },
+        { field: 'area', header: 'Área (ha)', editor: 'number', card: 'meta' },
+        { field: 'volume_kg', header: 'Volume (kg)', card: 'read' },
+      ],
+    })
+    expect(papeis(w)).toEqual(['title', 'meta', 'read'])
+  })
+
+  it('o rótulo da coluna entra na célula (no card não há cabeçalho para ler)', () => {
+    const w = card()
+    expect(w.findAll('.w-editable-table__card-label').map((s) => s.text())).toContain('Área (ha)')
+  })
+
+  it('grupo do cabeçalho vira prefixo do rótulo', () => {
+    const w = card({
+      columns: [{ field: 'area', header: 'A tratar', group: 'Bags', editor: 'number' }],
+    })
+    expect(w.find('.w-editable-table__card-label').text()).toBe('Bags · A tratar')
+  })
+
+  it('a edição continua na célula — o card não troca os editores', async () => {
+    const w = card()
+    await w.findAll('input[type="text"]')[0].setValue('HO APORE II')
+    expect(ultimo(w)[0].produto).toBe('HO APORE II')
+  })
+
+  it('largura fixa de coluna não vai para o card', () => {
+    const colunasComLargura = colunas.map((c) => ({ ...c, width: 120 }))
+    expect(
+      card({ columns: colunasComLargura }).find('.w-editable-table__row td').attributes('style'),
+    ).toBeUndefined()
+    expect(
+      montar({ columns: colunasComLargura }).find('.w-editable-table__row td').attributes('style'),
+    ).toContain('120px')
+  })
+
+  it('no rodapé só entram as colunas que somam', () => {
+    const w = card()
+    const papeisRodape = w
+      .findAll('.w-editable-table__footer td')
+      .map((td) => td.attributes('data-card'))
+    expect(papeisRodape).toEqual(['total-label', 'read', 'read'])
+  })
+
+  it('cardMode never mantém a tabela', () => {
+    expect(montar({ cardMode: 'never' }).find('.w-editable-table--cards').exists()).toBe(false)
+  })
+
+  it('o abridor da expansão ganha rótulo no card', () => {
+    const w = card({ expandable: true, expansionLabel: 'Insumos do lote' })
+    expect(w.find('.w-editable-table__toggle-label').text()).toBe('Insumos do lote')
+    expect(w.find('.w-editable-table__toggle').attributes('aria-label')).toBe('Insumos do lote')
+  })
+})

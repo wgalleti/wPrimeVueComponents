@@ -2419,6 +2419,270 @@
 }
 
 /* ==========================================================
+   WEditableTable — MODO CARD (tablet em pé, < 840px)
+
+   A mesma tabela, outro display: o `<table>` vira bloco, cada `<tbody>` (que já
+   era UMA linha, por causa da expansão) vira um card e cada `<td>` vira uma
+   linha do card. Nenhuma marcação paralela — é o que mantém os slots `#cell-*`,
+   os editores e a expansão idênticos nas duas larguras.
+
+   O `display: contents` do `<tr>` é a peça que faz isso caber: sem ele os `<td>`
+   seriam netos do card e não itens do grid, e a hierarquia por `order` (título,
+   ações, contexto, campos, leitura) não existiria.
+   ========================================================== */
+
+.w-editable-table--cards .w-editable-table__table {
+  display: block;
+}
+
+.w-editable-table--cards thead {
+  display: none;
+}
+
+.w-editable-table--cards tbody,
+.w-editable-table--cards tfoot {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--space-2, 0.625rem) var(--space-3, 0.875rem);
+  margin-bottom: var(--space-3, 0.875rem);
+  padding: var(--space-3, 0.875rem);
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-md, 0.625rem);
+  background: var(--surface, var(--p-content-background));
+}
+
+.w-editable-table--cards tbody > tr,
+.w-editable-table--cards tfoot > tr {
+  display: contents;
+}
+
+.w-editable-table--cards td {
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+}
+
+/* Zebra e hover são leitura de grade: no card cada linha já é uma caixa. */
+.w-editable-table--cards .w-editable-table__row,
+.w-editable-table--cards .w-editable-table__row--alt,
+.w-editable-table--cards .w-editable-table__row:hover {
+  background: transparent;
+  border-bottom: 0;
+}
+
+/* Na grade o texto trunca para a coluna não estourar; no card ele pode quebrar —
+   nome de produto cortado é justamente o que o operador precisa ler inteiro. */
+.w-editable-table--cards .w-editable-table__text {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.w-editable-table--cards td[data-card='hidden'] {
+  display: none;
+}
+
+/* O rótulo é opt-in por papel: manchete, ações e o abridor da expansão já dizem
+   o que são. Sem esta regra o card abre com um "Produto" solto sobre o nome. */
+.w-editable-table--cards .w-editable-table__card-label {
+  display: none;
+}
+
+/* --- Manchete e ações -------------------------------------------------- */
+
+.w-editable-table--cards td[data-card='title'] {
+  order: 0;
+  grid-column: 1;
+  font-size: var(--text-base, 0.9375rem);
+  font-weight: var(--fw-medium, 600);
+  line-height: var(--leading-snug, 1.35);
+}
+
+/* Sem ações na linha, o título toma o card inteiro. */
+.w-editable-table--cards tbody:not(:has(td[data-card='actions'])) td[data-card='title'] {
+  grid-column: 1 / -1;
+}
+
+.w-editable-table--cards td[data-card='actions'] {
+  order: 1;
+  grid-column: 2;
+  justify-self: end;
+  width: auto;
+}
+
+/* --- Contexto (meta) ---------------------------------------------------- */
+
+.w-editable-table--cards td[data-card='meta'] {
+  order: 2;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--text-sm, 0.8125rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-editable-table--cards td[data-card='meta'] .w-editable-table__card-label {
+  display: inline;
+  flex: 0 0 auto;
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+/* --- Campos editáveis --------------------------------------------------- */
+
+/* `field` e `read` dividem o MESMO `order` de propósito: assim os dois seguem a
+   ordem das colunas, e o card lê na mesma sequência da tabela — Sugestão antes de
+   A tratar, como na grade. Só título, ações, contexto e expansão têm posição fixa;
+   o miolo é o fluxo da tabela. */
+.w-editable-table--cards td[data-card='field'] {
+  order: 3;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.875rem);
+  min-height: var(--touch-h, 2.75rem);
+}
+
+.w-editable-table--cards td[data-card='field'] .w-editable-table__card-label,
+.w-editable-table--cards tbody td[data-card='read'] .w-editable-table__card-label {
+  display: inline;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Rótulo encostado no controle: é o que faz campo e leitura lerem como uma coluna
+     só, em vez de dois blocos com réguas diferentes. */
+  text-align: right;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-regular, 400);
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--fg, var(--p-text-color));
+}
+
+/* O controle é o que sobra da linha: metade larga o bastante para o dedo, e
+   nunca menor que o próprio campo numérico. */
+.w-editable-table--cards td[data-card='field'] > *:not(.w-editable-table__card-label) {
+  flex: 0 1 52%;
+  min-width: 8.5rem;
+}
+
+/* --- Derivados (leitura) ------------------------------------------------ */
+
+/* Na LINHA, o derivado é irmão do campo: mesma régua, mesma caixa, mesmo lugar do
+   número — quem edita e quem só lê ficam na mesma coluna, e o olho desce reto. O que
+   separa os dois é a borda: **borda é o que se edita**. O derivado ganha a caixa
+   tinta, sem moldura e sem gatilho, no lugar de virar uma linha de texto solta na
+   margem esquerda. */
+.w-editable-table--cards tbody td[data-card='read'] {
+  order: 3;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.875rem);
+  min-height: var(--touch-h, 2.75rem);
+  font-size: var(--text-sm, 0.8125rem);
+}
+
+.w-editable-table--cards tbody td[data-card='read'] > *:not(.w-editable-table__card-label) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 1 52%;
+  min-width: 8.5rem;
+  min-height: var(--control-h, 2.375rem);
+  padding: 0 var(--control-px, 0.75rem);
+  border-radius: var(--radius, 0.5rem);
+  background: var(--surface-2, var(--p-content-hover-background));
+  color: var(--fg, var(--p-text-color));
+  font-weight: var(--fw-medium, 500);
+  font-variant-numeric: tabular-nums;
+}
+
+/* No rodapé o derivado é resumo, não linha de formulário: segue compacto, duas por
+   linha, sem caixa — não há campo nenhum ao lado com que se alinhar. */
+.w-editable-table--cards tfoot td[data-card='read'] {
+  order: 3;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+  font-size: var(--text-sm, 0.8125rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-editable-table--cards tfoot td[data-card='read'] .w-editable-table__card-label {
+  display: inline;
+  font-size: var(--text-2xs, 0.6875rem);
+  font-weight: var(--fw-bold, 700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+/* --- Expansão ----------------------------------------------------------- */
+
+.w-editable-table--cards td[data-card='expander'] {
+  order: 5;
+  grid-column: 1 / -1;
+  width: auto;
+}
+
+.w-editable-table--cards .w-editable-table__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2, 0.5rem);
+  width: 100%;
+  height: auto;
+  min-height: var(--touch-h, 2.75rem);
+  padding: 0 var(--space-3, 0.875rem);
+  font-family: inherit;
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-medium, 500);
+}
+
+.w-editable-table--cards .w-editable-table__toggle-label {
+  display: inline;
+}
+
+.w-editable-table--cards td[data-card='expansion'] {
+  order: 6;
+  grid-column: 1 / -1;
+  margin: 0 calc(-1 * var(--space-3, 0.875rem)) calc(-1 * var(--space-3, 0.875rem));
+  padding: var(--space-3, 0.875rem);
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: 0 0 var(--radius-md, 0.625rem) var(--radius-md, 0.625rem);
+}
+
+.w-editable-table--cards .w-editable-table__empty {
+  padding: var(--space-5, 1.25rem) 0 !important;
+}
+
+/* --- Card de totais ----------------------------------------------------- */
+
+.w-editable-table--cards tfoot {
+  border-top: 2px solid var(--primary, var(--p-primary-color));
+  background: var(--surface-2, var(--p-content-hover-background));
+}
+
+.w-editable-table--cards td[data-card='total-label'] {
+  order: 0;
+  grid-column: 1 / -1;
+}
+
+/* --- Barra de ações ----------------------------------------------------- */
+
+/* Adicionar é a ação primária da etapa no tablet: linha inteira e alvo de toque. */
+.w-editable-table--cards .w-editable-table__add {
+  width: 100%;
+  justify-content: center;
+  min-height: var(--touch-h, 2.75rem);
+}
+
+/* ==========================================================
    WFormRenderer — segmented / choice / chips
    ========================================================== */
 
@@ -3807,6 +4071,14 @@
   /* Linha de tabela é alvo de drill-in, não texto. */
   .w-crud-table .p-datatable-tbody > tr > td {
     padding-block: var(--space-3, 0.75rem);
+  }
+
+  /* Ações da linha no card: o ícone continua pequeno, o alvo é que cresce —
+     no dedo, editar e excluir a 1,75rem ficavam a um deslize um do outro. */
+  .w-editable-table--cards .w-crud-subview__action,
+  .w-editable-table--cards .w-editable-table__remove {
+    width: var(--touch-h, 56px);
+    height: var(--touch-h, 56px);
   }
 }
 

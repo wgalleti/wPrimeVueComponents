@@ -10,7 +10,12 @@ export type { ColumnDef, ColumnType } from './column'
 
 export type { FieldDef, FieldType, SelectOption, FieldDependency } from './field'
 
-export type { EditableColumnDef, EditableColumnEditor, EditableRow } from './editableTable'
+export type {
+  EditableCardRole,
+  EditableColumnDef,
+  EditableColumnEditor,
+  EditableRow,
+} from './editableTable'
 
 export type { CheckListItem, CheckListLevel } from './checkList'
 
