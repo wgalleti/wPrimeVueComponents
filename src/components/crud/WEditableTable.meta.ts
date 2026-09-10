@@ -63,6 +63,23 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Card (tablet em pé)',
+      description:
+        'Abaixo de 840px a MESMA tabela vira card. `card` por coluna dá a hierarquia: título, contexto, campo e leitura.',
+      props: {
+        modelValue: lotes,
+        cardMode: 'always',
+        addLabel: 'Adicionar lote',
+        columns: [
+          { field: 'produto', header: 'Produto', card: 'title' },
+          { field: 'lote', header: 'Lote', card: 'meta' },
+          { field: 'area', header: 'Área (ha)', editor: 'number', decimals: 0, footer: 'sum' },
+          { field: 'volume', header: 'A tratar', editor: 'number', decimals: 0, footer: 'sum' },
+          { field: 'volume_kg', header: 'Volume (kg)', decimals: 0, footer: 'sum', card: 'read' },
+        ] satisfies EditableColumnDef[],
+      },
+    },
+    {
       name: 'Vazia',
       props: { modelValue: [], columns: colunas, emptyMessage: 'Nenhum lote adicionado' },
     },

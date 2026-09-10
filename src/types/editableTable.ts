@@ -7,6 +7,9 @@ export type EditableRow = Record<string, unknown>
 /** Editor da célula. `none` (default) só exibe o valor formatado. */
 export type EditableColumnEditor = 'number' | 'text' | 'select' | 'none'
 
+/** Papel da coluna quando a tabela vira card (tablet em pé). Ver `EditableColumnDef.card`. */
+export type EditableCardRole = 'title' | 'actions' | 'meta' | 'field' | 'read' | 'hidden'
+
 /**
  * Coluna do WEditableTable. Diferente do `ColumnDef` (que descreve uma coluna de
  * listagem vinda da API), aqui a coluna também descreve COMO se edita a célula e
@@ -43,4 +46,24 @@ export interface EditableColumnDef {
    *  único numa linha acima delas (ex.: "Bags" sobre Sugestão e A tratar).
    *  Colunas sem grupo ficam com a célula de cima vazia. */
   group?: string
+  /**
+   * Papel da coluna no **modo card** (tablet em pé, `< 840px`).
+   *
+   * Sem declarar nada a tabela já vira card: a primeira coluna é o `title` e as
+   * demais viram `field`. Declare para dar hierarquia ao card — o que se lê de
+   * relance em cima, o que se edita no meio, o que é derivado embaixo.
+   *
+   * - `title` — a manchete do card (uma por linha; sobrando, a primeira vence)
+   * - `actions` — ações da linha, ao lado do título
+   * - `meta` — contexto compacto sob o título, duas por linha (talhão, saldo)
+   * - `field` — rótulo à esquerda e o controle à direita, largura cheia
+   * - `read` — derivado: mesma régua do `field` (rótulo, caixa e número na mesma
+   *   coluna), com a caixa tinta e sem borda — borda é o que se edita
+   * - `hidden` — fora do card (a coluna continua na tabela larga)
+   *
+   * `field` e `read` aparecem na ORDEM DAS COLUNAS, intercalados — o miolo do card
+   * lê na mesma sequência da tabela. Posição fixa só para `title`, `actions`, `meta`
+   * (contexto, logo abaixo do título) e a expansão, que fecha o card.
+   */
+  card?: EditableCardRole
 }

@@ -286,6 +286,20 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "cardMode",
+          "type": "\"auto\" | \"never\" | \"always\" | undefined",
+          "required": false,
+          "default": null,
+          "description": "Quando a tabela vira card — repassado à `WEditableTable` (default `auto`:\ncard abaixo de 840px)."
+        },
+        {
+          "name": "expansionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Rótulo do abridor da expansão no card (ex.: \"Insumos do lote\")."
         }
       ],
       "events": [],
@@ -663,6 +677,20 @@
           "required": false,
           "default": null,
           "description": "Campo usado como `key` das linhas. Sem ele, a chave é o índice."
+        },
+        {
+          "name": "cardMode",
+          "type": "\"auto\" | \"never\" | \"always\" | undefined",
+          "required": false,
+          "default": "\"auto\"",
+          "description": "Quando a tabela vira card. `auto` (default) segue a régua: card abaixo de\n840px, tabela acima. `never` mantém a tabela em qualquer largura (planilha\nque só faz sentido em grade); `always` é para vitrine e teste."
+        },
+        {
+          "name": "expansionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Detalhes\"",
+          "description": "Rótulo do abridor da expansão no card — lá não existe coluna de seta."
         }
       ],
       "events": [
