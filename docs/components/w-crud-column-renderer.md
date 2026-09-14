@@ -19,13 +19,43 @@ Normalmente voce nao usa este componente diretamente. O `WCrudView` o utiliza in
 | Tipo | Renderizacao |
 |------|-------------|
 | `text` | Texto simples, ou `format()` se definido |
-| `boolean` | Tag verde "Sim" / vermelha "Nao" |
+| `boolean` | Tag `Ativo` (success) / `Inativo` (danger) — ver abaixo |
 | `date` | Formatado com `DD/MM/YYYY` |
 | `datetime` | Formatado com `DD/MM/YYYY HH:mm` |
 | `number` | Formatado com locale pt-BR e decimais |
 | `currency` | Formatado como moeda BRL |
 | `image` | Thumbnail circular |
 | `custom` | Usa `format()` da coluna |
+
+## Coluna boolean — rótulos e cor
+
+Por padrão `true` vira a tag **Ativo** (`success`) e `false` **Inativo** (`danger`). Para um
+boolean que não é status, troque os rótulos — e, se `false` não merece cor, deixe-o neutro
+com `falseSeverity: null` (renderiza texto abafado, sem tag):
+
+```ts
+columns: [
+  // "Não exige análise: Inativo" seria dupla negação
+  {
+    field: 'nao_exige_analise',
+    header: 'Análise',
+    type: 'boolean',
+    trueLabel: 'Dispensada',
+    falseLabel: '—',
+    falseSeverity: null,
+  },
+  // Sim/Não com cor só no sim
+  { field: 'certificado', header: 'Certificado', type: 'boolean', trueLabel: 'Sim', falseLabel: 'Não', falseSeverity: null },
+]
+```
+
+| Prop | Default | Papel |
+|---|---|---|
+| `trueLabel` / `falseLabel` | `'Ativo'` / `'Inativo'` | texto |
+| `trueSeverity` / `falseSeverity` | `'success'` / `'danger'` | cor da tag; `null` = texto neutro sem tag |
+
+`tagValue` / `tagSeverity` (funções, abaixo) têm prioridade sobre os estáticos. A cor da tag sai
+dos tokens do app (`--success`, `--danger`… — ver [Classes CSS](/css/classes#cores-de-status)).
 
 ## Coluna com Format Customizado
 

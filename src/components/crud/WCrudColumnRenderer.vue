@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Tag from 'primevue/tag'
-import type { ColumnDef } from '@/types/column'
+import type { ColumnDef, TagSeverity } from '@/types/column'
 import { useFormatters } from '@/composables/useFormatters'
 
 defineProps<{
@@ -10,6 +10,27 @@ defineProps<{
 }>()
 
 const { formatDate, formatDateTime, formatCurrency, formatNumber } = useFormatters()
+
+// --- Boolean: rótulo e cor ---------------------------------------------
+// `tagValue`/`tagSeverity` (funções) vencem; senão `trueLabel`/`falseLabel` e
+// `trueSeverity`/`falseSeverity` (estáticos); default Ativo/Inativo, success/danger.
+// Severidade `null` = sem tag: texto neutro (ex.: "—" para o `false` de um
+// boolean que não é status, evitando a dupla negação "nao_exige → Inativo").
+
+function boolLabel(column: ColumnDef, value: unknown, rowData: Record<string, unknown>) {
+  if (column.tagValue) return column.tagValue(value, rowData)
+  return value ? (column.trueLabel ?? 'Ativo') : (column.falseLabel ?? 'Inativo')
+}
+
+function boolSeverity(
+  column: ColumnDef,
+  value: unknown,
+  rowData: Record<string, unknown>,
+): TagSeverity | null {
+  if (column.tagSeverity) return column.tagSeverity(value, rowData) as TagSeverity
+  if (value) return column.trueSeverity === undefined ? 'success' : column.trueSeverity
+  return column.falseSeverity === undefined ? 'danger' : column.falseSeverity
+}
 </script>
 
 <template>
@@ -24,16 +45,14 @@ const { formatDate, formatDateTime, formatCurrency, formatNumber } = useFormatte
   </template>
 
   <template v-else-if="column.type === 'boolean'">
+    <span v-if="boolSeverity(column, value, rowData) === null" class="w-cell-neutral">
+      {{ boolLabel(column, value, rowData) }}
+    </span>
     <Tag
-      :value="column.tagValue ? column.tagValue(value, rowData) : value ? 'Ativo' : 'Inativo'"
-      :severity="
-        (column.tagSeverity
-          ? column.tagSeverity(value, rowData)
-          : value
-            ? 'success'
-            : 'danger') as any
-      "
-      class="text-xs"
+      v-else
+      :value="boolLabel(column, value, rowData)"
+      :severity="boolSeverity(column, value, rowData) as any"
+      :class="['w-tag', `w-tag--${boolSeverity(column, value, rowData)}`]"
     />
   </template>
 
