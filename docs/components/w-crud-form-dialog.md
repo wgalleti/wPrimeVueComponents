@@ -130,6 +130,30 @@ Renderizacao customizada de um campo:
 </template>
 ```
 
+### `after-fields`
+
+Conteudo depois dos campos e antes do rodape — a previa do que vai ser gravado, um
+aviso que depende do preenchimento. Recebe `{ formData, isEditing }`.
+
+### `aside`
+
+Painel ao lado dos campos: o form vira duas colunas (campos a esquerda, painel a
+direita, rodape atravessando as duas) e volta a empilhar abaixo de 840px. E o lugar do
+"documento filho" que acompanha o preenchimento — as parcelas de um lancamento, os itens
+de um pedido — num `WEditableTable`. A largura da coluna vem de `asideWidth` (track do
+grid: `'24rem'`, `'2fr'`; default metade). Recebe `{ formData, isEditing }`.
+
+```vue
+<WCrudFormDialog v-model:visible="aberto" :fields="campos" :form-data="form" width="72rem" aside-width="28rem" ...>
+  <template v-if="parcelado" #aside>
+    <WEditableTable v-model="parcelas" :columns="colunasDeParcelas" />
+  </template>
+</WCrudFormDialog>
+```
+
+Passe o slot com `v-if` no `<template>`: sem ele o form fica em uma coluna e o dialog
+pode ser mais estreito.
+
 ### `footer`
 
 Botoes customizados no rodape:
