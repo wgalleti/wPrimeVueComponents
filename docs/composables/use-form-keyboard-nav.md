@@ -60,3 +60,13 @@ encontra o painel aberto e deixa passar. Em capture o Enter num select fechado v
 - Enter num `input` nunca é o submit implícito do `<form>`.
 - `data-kbd-skip` tira o elemento da sequência (o botão Cancelar, um gatilho auxiliar) —
   combine com `tabindex="-1"` para o Tab também pular.
+- `data-kbd-hold` (no alvo ou num ancestral) **segura** o Enter no campo: o handler só faz
+  `preventDefault()` e não avança, deixando o componente tratar o Enter ele mesmo. É o que o
+  `WAutoCompleteFK` põe no wrapper enquanto há texto novo e cadastro permitido (Enter abre o
+  cadastro). Marque só enquanto valer — com o atributo fora, o campo volta a pular.
+
+```vue
+<div :data-kbd-hold="temTextoNovo || undefined">
+  <input @keydown.enter="tratarEnter" />
+</div>
+```

@@ -74,6 +74,10 @@ const props = withDefaults(
     canCreate?: boolean
     canEdit?: boolean
     canDelete?: boolean
+    /** Quando a lista (com os filtros/cascata atuais) tem **um** registro só, ele já
+     *  entra selecionado — ao montar sem valor e ao preencher a cascata. Só no modo
+     *  simples; limpar o campo não redispara. `false` desliga. */
+    autoSelectSingle?: boolean
     crudFields?: FieldDef[]
     crudColumns?: ColumnDef[]
     /** Sub-linhas do grid do modal: recebe as linhas da página e devolve o mapa
@@ -85,6 +89,11 @@ const props = withDefaults(
      *  para que o `focus()` do PrimeVue Dialog (em onAfterEnter) o encontre e
      *  não roube o foco para o botão de fechar. */
     autofocus?: boolean
+    /** `id` do input de digitação — alvo do `<label for>` do formulário. */
+    inputId?: string
+    /** Atributos extras no input de digitação (`aria-labelledby`, `aria-describedby`,
+     *  `aria-required`, `aria-invalid`…). Vão direto no `<input>`, não no wrapper. */
+    inputAttrs?: Record<string, unknown>
   }>(),
   {
     multiple: false,
@@ -99,10 +108,15 @@ const props = withDefaults(
     canCreate: undefined,
     canEdit: undefined,
     canDelete: undefined,
+    autoSelectSingle: true,
     dialogWidth: '480px',
     autofocus: false,
   },
 )
+
+/** `pt` estável: objeto novo a cada render faria o InputText interno remontar
+ *  (e perder o texto digitado). */
+const acPt = computed(() => ({ pcInputText: { root: props.inputAttrs } }))
 
 const emit = defineEmits<{
   /** Objeto selecionado — ou a lista de objetos quando `multiple`. */
@@ -190,6 +204,7 @@ function onChipRemove(event: Event, remove: (event: Event) => void) {
 /** Limpar tudo: em `multiple` a lista inteira; no simples, o valor. */
 function limparSelecao() {
   if (props.disabled) return
+  textoDigitado.value = ''
   if (props.multiple) {
     if (!selectedItems.value.length) return
     selectedItems.value = []
@@ -218,13 +233,54 @@ const mostrarLimpar = computed(() => {
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-// Referência ao AutoComplete para aplicar o autofocus no input nativo.
-const acRef = ref<{ $el?: HTMLElement } | null>(null)
+/** Instância do AutoComplete: além do `$el`, usamos o estado do painel e o
+ *  `search()` interno — o mesmo que o botão dropdown do PrimeVue chama (marca
+ *  `searching` e emite `complete`; quando as sugestões chegam, ele abre o painel). */
+interface AutoCompleteInstance {
+  $el?: HTMLElement
+  overlayVisible?: boolean
+  search?: (event: Event, query: string, source: string) => void
+  show?: () => void
+}
+const acRef = ref<AutoCompleteInstance | null>(null)
+
+function inputEl(): HTMLInputElement | null {
+  return (acRef.value?.$el?.querySelector?.('input') as HTMLInputElement | null) ?? null
+}
+
+/** O que o usuário digitou no campo (só via `input` — valor posto pelo componente
+ *  ao resolver o v-model não conta). Zera ao selecionar/limpar. */
+const textoDigitado = ref('')
+
+/** Lê o texto no BUBBLE, nunca em capture: mexer num `ref` que a template usa
+ *  antes de o PrimeVue tratar o `input` dispara a re-renderização no microtask
+ *  entre os listeners — e o `<input v-bind>` do InputText re-aplica `value`
+ *  (o Vue sempre re-patcha `value`) com o `d_value` ainda antigo, apagando a
+ *  letra digitada antes de o AutoComplete lê-la. */
+function onInputTexto(e: Event) {
+  const target = e.target as HTMLInputElement | null
+  if (target?.tagName !== 'INPUT') return
+  textoDigitado.value = target.value ?? ''
+}
+
+/** Texto digitado é "novo" quando não é o rótulo do que já está selecionado. */
+const textoNovo = computed(() => {
+  const texto = textoDigitado.value.trim()
+  if (!texto) return ''
+  if (!props.multiple && selectedItem.value && labelOf(selectedItem.value) === texto) return ''
+  return texto
+})
+
+/** Com texto novo e cadastro permitido, o Enter fica no campo (abre o cadastro)
+ *  em vez de a navegação por Enter do formulário avançar o foco — `data-kbd-hold`
+ *  é o que o `useFormKeyboardNav` respeita. Campo resolvido continua pulando.
+ *  Mesma condição do `onEnterKey`: segurar sem agir seria um beco sem saída. */
+const segurarEnter = computed(() => cadastroInline.value && textoNovo.value !== '')
 
 onMounted(() => {
   if (!props.autofocus) return
   nextTick(() => {
-    const input = acRef.value?.$el?.querySelector?.('input') as HTMLInputElement | null
+    const input = inputEl()
     if (!input) return
     // O atributo nativo faz o Dialog.focus() (onAfterEnter) mirar este input
     // em vez do botão fechar; o focus() cobre o caso fora de Dialog.
@@ -317,7 +373,17 @@ async function resolveMany(valores: FKValue[]): Promise<Record<string, unknown>[
   return itens.filter((i): i is Record<string, unknown> => i !== null)
 }
 
+/** Contador de requisição: resposta antiga (busca mais lenta) não sobrescreve a nova. */
+let searchSeq = 0
+/** Busca em curso (para o Enter esperar antes de decidir se cadastra). */
+let buscaEmCurso: Promise<void> | null = null
+/** Query da última busca concluída — o Enter só rebusca se o texto mudou. */
+let ultimaQueryBuscada: string | null = null
+/** Pedido explícito (↓ ou Enter): o próximo `complete` ignora `minLength` e debounce. */
+let buscaImediata = false
+
 async function search(query: string) {
+  const seq = ++searchSeq
   // Cascata obrigatória sem valor → não busca (evita listar tudo).
   if (blockedByRequired.value) {
     suggestions.value = []
@@ -332,25 +398,58 @@ async function search(query: string) {
     }
     if (query) params.search = query
     const response = await provider.list(props.endpoint, params)
+    if (seq !== searchSeq) return
     suggestions.value = response.data
+    ultimaQueryBuscada = query
+    // Metadata de campos: sem isto o cadastro auto-detectado (`showCreate`) só
+    // existiria depois de abrir o modal — e o Enter inline precisa dele antes.
+    if (response.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
+      apiFields.value = response.extras.fields as ApiFieldMeta[]
+    }
   } catch {
-    suggestions.value = []
+    if (seq === searchSeq) suggestions.value = []
   } finally {
-    searching.value = false
+    if (seq === searchSeq) searching.value = false
   }
 }
 
 function onSearch(event: { query: string }) {
   const query = event.query || ''
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+    debounceTimer = null
+  }
+  if (buscaImediata) {
+    buscaImediata = false
+    buscaEmCurso = search(query).finally(() => {
+      buscaEmCurso = null
+    })
+    return
+  }
   if (query.length < props.minLength) {
     suggestions.value = []
     return
   }
-  if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => search(query), 300)
+  debounceTimer = setTimeout(() => {
+    debounceTimer = null
+    buscaEmCurso = search(query).finally(() => {
+      buscaEmCurso = null
+    })
+  }, 300)
+}
+
+/** Busca imediata pelo caminho do PrimeVue (`search()` interno): ele marca
+ *  `searching` e, quando as sugestões chegam, abre o painel sozinho. */
+function pedirBusca(e: Event, query: string) {
+  const ac = acRef.value
+  if (!ac?.search) return
+  buscaImediata = true
+  ac.search(e, query, 'dropdown')
+  buscaImediata = false
 }
 
 function onSelect(event: { value: Record<string, unknown> }) {
+  textoDigitado.value = ''
   // Em `multiple` o AutoComplete já mantém a lista — tratado em `onAcUpdate`.
   if (props.multiple) return
   selectedItem.value = event.value
@@ -367,6 +466,7 @@ function onAcUpdate(value: unknown) {
 }
 
 function onClear() {
+  textoDigitado.value = ''
   // Em `multiple`, o AutoComplete emite `clear` também quando só descarta o texto
   // digitado (`forceSelection` sem correspondência) — limpar a lista aqui apagaria
   // a seleção inteira a cada busca sem match. O clear real chega como
@@ -403,6 +503,44 @@ watch(
   },
   { immediate: true },
 )
+
+// ---------------------------------------------------------------------------
+// Único registro → já vem selecionado
+// ---------------------------------------------------------------------------
+
+let autoSelSeq = 0
+
+/** Se a lista (com filtros e cascata atuais) tem um registro só, seleciona-o.
+ *  Roda ao montar sem valor e quando a cascata passa a estar preenchida — nunca
+ *  quando o usuário limpa (senão limpar fica impossível). */
+async function tentarAutoSelecao() {
+  if (props.disabled || props.multiple || !props.autoSelectSingle) return
+  // Quem chama logo após emitir `null` precisa do pai ter propagado o v-model.
+  await nextTick()
+  if (blockedByRequired.value) return
+  if (selectedItem.value || props.modelValue != null) return
+  const seq = ++autoSelSeq
+  try {
+    const response = await provider.list(props.endpoint, {
+      page_size: 2,
+      ...props.endpointParams,
+      ...drilldownParams(),
+    })
+    if (seq !== autoSelSeq) return
+    if (selectedItem.value || props.modelValue != null) return
+    const unico =
+      typeof response.rows === 'number' ? response.rows === 1 : response.data.length === 1
+    if (!unico || !response.data[0]) return
+    selectedItem.value = response.data[0]
+    emit('update:modelValue', response.data[0])
+  } catch {
+    // Auto-seleção é conveniência: falhou, o campo segue vazio.
+  }
+}
+
+onMounted(() => {
+  void tentarAutoSelecao()
+})
 
 // ---------------------------------------------------------------------------
 // Modal — State
@@ -468,6 +606,9 @@ const crudAvailable = computed(() => {
 
 // Respeita props explícitas, senão auto-detecta
 const showCreate = computed(() => props.canCreate ?? crudAvailable.value)
+/** Cadastro pelo Enter no campo: permitido E com form para abrir (`canCreate`
+ *  explícito sem `crudFields` nem `extras.fields` não tem o que mostrar). */
+const cadastroInline = computed(() => showCreate.value && crudAvailable.value)
 const showEdit = computed(() => props.canEdit ?? crudAvailable.value)
 const showDelete = computed(() => props.canDelete ?? crudAvailable.value)
 const hasRowActions = computed(() => showEdit.value || showDelete.value)
@@ -536,11 +677,48 @@ async function fetchModalData() {
 }
 
 function onInputKeydown(e: KeyboardEvent) {
+  if (props.disabled) return
   // F2 abre o modal de pesquisa (atalho estilo desktop).
-  if (e.key === 'F2' && !props.disabled) {
+  if (e.key === 'F2') {
     e.preventDefault()
     openModal()
+    return
   }
+  // ↓ com o painel fechado abre a lista (o PrimeVue ignora a seta nesse estado).
+  // Pedido explícito: sem `minLength` nem debounce; vazio lista os primeiros.
+  if (e.key === 'ArrowDown' && acRef.value && acRef.value.overlayVisible === false) {
+    if (blockedByRequired.value) return
+    e.preventDefault()
+    pedirBusca(e, (e.target as HTMLInputElement | null)?.value ?? '')
+    return
+  }
+  if (e.key === 'Enter' && !e.isComposing) void onEnterKey(e)
+}
+
+/** Enter com texto novo e sem correspondência → abre o cadastro com o texto no
+ *  nome. Com sugestões, não interfere (o PrimeVue escolhe a focada). */
+async function onEnterKey(e: KeyboardEvent) {
+  const texto = textoNovo.value
+  if (!texto || !cadastroInline.value || blockedByRequired.value) return
+  // Enter é pedido explícito: se a busca deste texto ainda não terminou
+  // (debounce pendente, em curso, ou abaixo do `minLength`), busca agora.
+  if (ultimaQueryBuscada !== texto || buscaEmCurso) {
+    pedirBusca(e, texto)
+    if (buscaEmCurso) await buscaEmCurso
+  }
+  // O próprio Enter dispara o `change` nativo e o `forceSelection` do PrimeVue
+  // descarta o texto (vira ''): isso não é desistência. Só aborta se o usuário
+  // continuou digitando outra coisa enquanto a busca corria.
+  const agora = textoDigitado.value.trim()
+  if (agora !== '' && agora !== texto) return
+  if (suggestions.value.length) {
+    // Há o que escolher: garante o painel aberto (Escape pode tê-lo fechado).
+    if (acRef.value?.overlayVisible === false) acRef.value.show?.()
+    return
+  }
+  e.preventDefault()
+  e.stopPropagation()
+  abrirCriacaoCom(texto)
 }
 
 function openModal() {
@@ -663,18 +841,21 @@ watch(
     }
     if (!antigos) return
     const mudou = novos.some((v, i) => v !== antigos[i])
+    if (!mudou) return
     const tinhaValorAntes = antigos.some((v) => !isEmptyValue(v))
-    if (!mudou || !tinhaValorAntes) return
-    if (props.multiple) {
-      if (!selectedItems.value.length) return
-      selectedItems.value = []
-      emitSelection()
-      return
+    if (tinhaValorAntes) {
+      if (props.multiple) {
+        if (selectedItems.value.length) {
+          selectedItems.value = []
+          emitSelection()
+        }
+      } else if (selectedItem.value) {
+        selectedItem.value = null
+        emit('update:modelValue', null)
+      }
     }
-    if (selectedItem.value) {
-      selectedItem.value = null
-      emit('update:modelValue', null)
-    }
+    // Cascata preenchida/desbloqueada: se o pai só tem um filho, já entra.
+    if (!blockedByRequired.value) void tentarAutoSelecao()
   },
 )
 
@@ -688,7 +869,11 @@ const editingItem = ref<Record<string, unknown> | null>(null)
 const formData = reactive<Record<string, unknown>>({})
 
 const isEditing = computed(() => editingItem.value !== null)
-const formDialogTitle = computed(() => (isEditing.value ? 'Editar Registro' : 'Novo Registro'))
+/** "Novo registro — Recomendante": o `dialogHeader` (label do campo) diz o quê. */
+const formDialogTitle = computed(() => {
+  const acao = isEditing.value ? 'Editar registro' : 'Novo registro'
+  return props.dialogHeader ? `${acao} — ${props.dialogHeader}` : acao
+})
 
 function getDefaults(): Record<string, unknown> {
   const defaults: Record<string, unknown> = {}
@@ -717,6 +902,29 @@ function openCreateForm() {
   editingItem.value = null
   resetForm()
   formDialogVisible.value = true
+}
+
+/** Cadastro a partir do campo: o texto digitado já entra no campo do nome
+ *  (`optionLabel` se existir no form; senão o primeiro campo de texto). */
+function abrirCriacaoCom(texto: string) {
+  editingItem.value = null
+  resetForm()
+  const campos = formFields.value
+  const campo =
+    campos.find((f) => f.field === props.optionLabel) ??
+    campos.find((f) => !f.type || f.type === 'text')
+  if (campo) formData[campo.field] = texto
+  formDialogVisible.value = true
+}
+
+/** Devolve o foco ao input do campo (depois de fechar o cadastro inline). */
+function focarInput(limpar: boolean) {
+  nextTick(() => {
+    const input = inputEl()
+    if (!input) return
+    if (limpar) input.value = ''
+    input.focus()
+  })
 }
 
 function openEditForm(item: Record<string, unknown>) {
@@ -777,6 +985,22 @@ async function saveForm() {
     formDialogVisible.value = false
     editingItem.value = null
 
+    if (!modalVisible.value) {
+      // Cadastro inline (Enter no campo): o registro entra direto na seleção
+      // e o foco volta ao input — sem passar pelo modal.
+      textoDigitado.value = ''
+      if (props.multiple) {
+        selectedItems.value = dedupeByKey([...selectedItems.value, response.data])
+        emitSelection()
+      } else {
+        selectedItem.value = response.data
+        emit('update:modelValue', response.data)
+      }
+      // Em `multiple` o input de digitação guarda o texto; a label vem no chip.
+      focarInput(props.multiple)
+      return
+    }
+
     // Auto-seleciona o registro criado/editado (em `multiple`, acrescenta)
     modalSelection.value = props.multiple
       ? dedupeByKey([...modalSelecionados.value, response.data])
@@ -827,11 +1051,15 @@ function confirmDelete(item: Record<string, unknown>) {
     class="w-autocompletefk"
     :class="{ 'w-autocompletefk-has-clear': mostrarLimpar }"
     :style="chipStyle"
+    :data-kbd-hold="segurarEnter || undefined"
     v-bind="$attrs"
+    @input="onInputTexto"
   >
     <!-- `auto-option-focus`: a primeira sugestão já nasce focada, então digitar
          e dar Enter escolhe — sem seta para baixo antes. É o que faz o campo
-         fluir na navegação por Enter dos formulários. -->
+         fluir na navegação por Enter dos formulários. Teclado extra (no
+         `onInputKeydown`): ↓ abre a lista, F2 pesquisa, Enter com texto novo
+         e sem correspondência abre o cadastro. -->
     <AutoComplete
       ref="acRef"
       :model-value="acModel"
@@ -843,6 +1071,8 @@ function confirmDelete(item: Record<string, unknown>) {
       :force-selection="forceSelection"
       :loading="searching"
       :show-clear="false"
+      :input-id="inputId"
+      :pt="acPt"
       fluid
       auto-option-focus
       @complete="onSearch"
@@ -890,6 +1120,7 @@ function confirmDelete(item: Record<string, unknown>) {
       v-if="mostrarLimpar"
       v-tooltip.top="'Limpar'"
       type="button"
+      aria-label="Limpar"
       data-kbd-skip
       tabindex="-1"
       class="w-autocompletefk-clear"
@@ -900,6 +1131,7 @@ function confirmDelete(item: Record<string, unknown>) {
     <button
       v-tooltip.top="'Pesquisar (F2)'"
       type="button"
+      aria-label="Pesquisar (F2)"
       :disabled="disabled"
       data-kbd-skip
       tabindex="-1"
@@ -996,6 +1228,7 @@ function confirmDelete(item: Record<string, unknown>) {
                 v-if="showEdit"
                 v-tooltip.top="'Editar'"
                 icon="pi pi-pencil"
+                aria-label="Editar"
                 text
                 rounded
                 size="small"
@@ -1005,6 +1238,7 @@ function confirmDelete(item: Record<string, unknown>) {
                 v-if="showDelete"
                 v-tooltip.top="'Excluir'"
                 icon="pi pi-trash"
+                aria-label="Excluir"
                 text
                 rounded
                 size="small"
