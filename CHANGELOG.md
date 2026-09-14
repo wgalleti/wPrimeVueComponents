@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.28.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.28.0...v0.28.1) (2026-09-14)
+
+### Correções
+
+* **keyboard-nav:** Enter é Tab de verdade no select, no FK e no segmented ([2ca0c04](https://github.com/wgalleti/wPrimeVueComponents/commit/2ca0c047dbf9ef8cf2187e41866664cf263f93b9))
 ## [0.28.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.27.1...v0.28.0) (2026-09-10)
 
 ### Funcionalidades
