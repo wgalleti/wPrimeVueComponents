@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.29.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.28.1...v0.29.0) (2026-09-14)
+
+### Funcionalidades
+
+* **crud-form-dialog:** slot aside — painel ao lado dos campos ([eee59c6](https://github.com/wgalleti/wPrimeVueComponents/commit/eee59c6c83e78efbe05fb9a93c16a34ab6afdd2e))
+* **editable-table:** editor de data na célula ([2b0188b](https://github.com/wgalleti/wPrimeVueComponents/commit/2b0188bdfb67c560b9a4fc89006cc1e1d79dc416))
 ## [0.28.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.28.0...v0.28.1) (2026-09-14)
 
 ### Correções
