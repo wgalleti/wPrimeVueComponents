@@ -56,7 +56,18 @@ interface ColumnDef {
 
   /** Severidade do Tag para type 'boolean' */
   tagSeverity?: (value: unknown, rowData?: Record<string, unknown>) => string
+
+  /** type 'boolean' — rotulos estaticos. Default 'Ativo' / 'Inativo' */
+  trueLabel?: string
+  falseLabel?: string
+
+  /** type 'boolean' — cor da tag. Default 'success' / 'danger'.
+   *  `null` = texto neutro, sem tag (ex.: o `false` de `nao_exige_analise` como "—") */
+  trueSeverity?: TagSeverity | null
+  falseSeverity?: TagSeverity | null
 }
+
+type TagSeverity = 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | 'primary'
 ```
 
 ### Exemplos
@@ -69,6 +80,19 @@ interface ColumnDef {
 { field: 'preco', header: 'Preco', type: 'currency' }
 
 // Coluna booleana com labels customizados
+{ field: 'certificado', header: 'Certificado', type: 'boolean', trueLabel: 'Sim', falseLabel: 'Não' }
+
+// Boolean que nao e status: false neutro, sem tag
+{
+  field: 'nao_exige_analise',
+  header: 'Análise',
+  type: 'boolean',
+  trueLabel: 'Dispensada',
+  falseLabel: '—',
+  falseSeverity: null,
+}
+
+// Rotulo/cor por funcao (vence os estaticos)
 {
   field: 'ativo',
   header: 'Status',
@@ -134,6 +158,9 @@ interface FieldDef {
   /** Placeholder do input */
   placeholder?: string
 
+  /** Texto de apoio abaixo do campo, ligado ao input por aria-describedby */
+  hint?: string
+
   /** Validacao customizada. Retorna mensagem de erro ou null */
   validate?: (value: unknown) => string | null
 
@@ -168,6 +195,10 @@ interface FieldDef {
 
   /** Colunas da tabela para CRUD inline no modal FK (v0.2.0+) */
   crudColumns?: ColumnDef[]
+
+  /** Lista com um registro so ja entra selecionada (ao abrir sem valor e ao
+   *  preencher a cascata). Default: true */
+  autoSelectSingle?: boolean
 
   // --- Opcoes para 'number' e 'currency' ---
 

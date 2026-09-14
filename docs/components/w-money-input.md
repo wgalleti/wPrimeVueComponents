@@ -6,6 +6,12 @@ Input numérico com máscara de moeda/decimal (preenchido da direita, estilo cai
 
 <ApiTable name="WMoneyInput" />
 
+### Rótulo programático
+
+`inputId` põe o `id` no `<input>` real (alvo do `<label for>`); `inputAttrs` entra no mesmo
+input (`aria-labelledby`, `aria-describedby`, `aria-required`…) — nunca no wrapper. O
+`WFormRenderer` já passa os dois.
+
 ## Exemplo
 
 ```vue
