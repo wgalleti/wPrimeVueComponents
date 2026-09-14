@@ -54,7 +54,7 @@ function onSave() {
   }
 }
 
-// Navegação por teclado (opt-in) — sem watchers: @keydown no <form> + @show no Dialog.
+// Navegação por teclado (opt-in) — sem watchers: @keydown.capture no <form> + @show no Dialog.
 const { focusFirst, handleKeydown } = useFormKeyboardNav(formRef, {
   enabled: () => props.keyboardNav === true,
   onSubmit: onSave,
@@ -83,7 +83,12 @@ watch(
     @update:visible="emit('update:visible', $event)"
     @show="focusFirst"
   >
-    <form ref="formRef" class="w-crud-form" @submit.prevent="onSave" @keydown="handleKeydown">
+    <form
+      ref="formRef"
+      class="w-crud-form"
+      @submit.prevent="onSave"
+      @keydown.capture="handleKeydown"
+    >
       <WFormRenderer
         ref="rendererRef"
         :fields="fields"

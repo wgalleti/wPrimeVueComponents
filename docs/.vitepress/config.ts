@@ -98,6 +98,7 @@ export default defineConfig({
           { text: 'useAppConfirm', link: '/composables/use-app-confirm' },
           { text: 'useApiError', link: '/composables/use-api-error' },
           { text: 'useFormatters', link: '/composables/use-formatters' },
+          { text: 'useFormKeyboardNav', link: '/composables/use-form-keyboard-nav' },
           { text: 'useBreakpoint', link: '/composables/use-breakpoint' },
           { text: 'useRouteTabs', link: '/composables/use-route-tabs' },
         ],

@@ -829,6 +829,9 @@ function confirmDelete(item: Record<string, unknown>) {
     :style="chipStyle"
     v-bind="$attrs"
   >
+    <!-- `auto-option-focus`: a primeira sugestão já nasce focada, então digitar
+         e dar Enter escolhe — sem seta para baixo antes. É o que faz o campo
+         fluir na navegação por Enter dos formulários. -->
     <AutoComplete
       ref="acRef"
       :model-value="acModel"
@@ -841,6 +844,7 @@ function confirmDelete(item: Record<string, unknown>) {
       :loading="searching"
       :show-clear="false"
       fluid
+      auto-option-focus
       @complete="onSearch"
       @item-select="onSelect"
       @update:model-value="onAcUpdate"
