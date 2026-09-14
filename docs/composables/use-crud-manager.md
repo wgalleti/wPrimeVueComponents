@@ -38,6 +38,7 @@ const crud = useCrudManager({
 | `rowActions` | `RowAction[]` | auto | Acoes customizadas por linha |
 | `filterParams` | `() => Record` | — | Parametros extras para a query |
 | `fetchDetailOnEdit` | `boolean` | `false` | Antes de abrir editar/visualizar/duplicar, busca o registro completo (`GET /:pk/`) em vez de usar a linha da lista. Use quando o serializer de list e enxuto (omite campos pesados, ex.: geometria) — sem isso o form abriria com o campo vazio e um save poderia gravar essa ausencia por cima do valor real |
+| `keyboardNav` | `boolean` | `false` | Foco no 1º campo ao abrir e Enter avança campo a campo até salvar (ver `useFormKeyboardNav`) |
 | `transformItems` | `(rawItems) => Items[]` | — | Pre-processa os dados carregados antes de virarem `items` (agrupar, enriquecer, reestruturar) |
 | `transformPayload` | `(payload, isEditing) => Record` | — | Transforma o payload antes de enviar |
 | `onAfterSave` | `(data, isEditing) => void` | — | Callback apos salvar |
