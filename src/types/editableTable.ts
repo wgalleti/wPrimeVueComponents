@@ -4,8 +4,10 @@ import type { SelectOption } from './field'
 /** Uma linha da tabela editável — estado local do consumidor, sem manager. */
 export type EditableRow = Record<string, unknown>
 
-/** Editor da célula. `none` (default) só exibe o valor formatado. */
-export type EditableColumnEditor = 'number' | 'text' | 'select' | 'none'
+/** Editor da célula. `none` (default) só exibe o valor formatado.
+ *  `date` edita com o `WDatePicker` (digitação com máscara, calendário, F2 = hoje)
+ *  e guarda `YYYY-MM-DD` na linha — o mesmo formato que a API recebe. */
+export type EditableColumnEditor = 'number' | 'text' | 'select' | 'date' | 'none'
 
 /** Papel da coluna quando a tabela vira card (tablet em pé). Ver `EditableColumnDef.card`. */
 export type EditableCardRole = 'title' | 'actions' | 'meta' | 'field' | 'read' | 'hidden'
@@ -40,6 +42,9 @@ export interface EditableColumnDef {
   placeholder?: string
   min?: number
   max?: number
+  /** Limites do `editor: 'date'` (string `YYYY-MM-DD` ou `Date`). */
+  minDate?: string | Date
+  maxDate?: string | Date
   /** Trava a célula (a coluna inteira ou linha a linha). */
   disabled?: boolean | ((row: EditableRow, index: number) => boolean)
   /** Grupo do cabeçalho: colunas VIZINHAS com o mesmo `group` ganham um rótulo

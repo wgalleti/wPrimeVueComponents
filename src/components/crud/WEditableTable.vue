@@ -3,6 +3,7 @@ import { computed, isRef, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
+import WDatePicker from '@/components/form/WDatePicker.vue'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useFormatters } from '@/composables/useFormatters'
 import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/editableTable'
@@ -385,6 +386,20 @@ const headerGroupCells = computed(() => {
                 :option-value="column.optionValue || 'value'"
                 :placeholder="column.placeholder"
                 :disabled="isCellDisabled(column, row, index)"
+                @update:model-value="(val) => setCell(index, column.field, val)"
+              />
+
+              <!-- Data: o mesmo campo dos formulários (máscara, calendário, F2 = hoje),
+                   guardando `YYYY-MM-DD` na linha. Sem o "limpar" — numa grade, célula
+                   de data vazia é linha sem vencimento, que ninguém quer criar sem querer. -->
+              <WDatePicker
+                v-else-if="column.editor === 'date'"
+                :model-value="row[column.field] as string | null"
+                :min-date="column.minDate"
+                :max-date="column.maxDate"
+                :placeholder="column.placeholder"
+                :disabled="isCellDisabled(column, row, index)"
+                :show-clear="false"
                 @update:model-value="(val) => setCell(index, column.field, val)"
               />
 

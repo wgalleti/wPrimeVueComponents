@@ -16,8 +16,9 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 | `field` / `header` | `string` | Chave na linha e título da coluna |
 | `width` | `string \| number` | Largura fixa (número = px) |
 | `align` | `'left' \| 'center' \| 'right'` | Default: `right` quando `editor: 'number'` |
-| `editor` | `'number' \| 'text' \| 'select' \| 'none'` | Default `none` (célula só de leitura) |
+| `editor` | `'number' \| 'text' \| 'select' \| 'date' \| 'none'` | Default `none` (célula só de leitura) |
 | `options` / `optionLabel` / `optionValue` | — | Do `editor: 'select'` |
+| `minDate` / `maxDate` | `string \| Date` | Limites do `editor: 'date'`, que guarda `YYYY-MM-DD` na linha (o `WDatePicker`, com máscara, calendário e F2 = hoje) |
 | `format(value, row)` | `=> string` | Formatação da célula de leitura (vence `decimals`/`suffix`) |
 | `footer` | `'sum' \| 'none' \| (rows) => string` | Rodapé de totais da coluna |
 | `decimals` / `suffix` | `number` / `string` | Exibição e soma, em pt-BR |
@@ -91,7 +92,7 @@ cada `<tbody>` (que já era uma linha, por causa da expansão) vira o card e cad
 linha do card. Por isso continuam funcionando sem nenhum ajuste no consumidor:
 
 - os slots `#cell-{field}` (botões, popovers, o que o consumidor desenhou);
-- os editores `number` / `text` / `select`, com edição inline de verdade;
+- os editores `number` / `text` / `select` / `date`, com edição inline de verdade;
 - a linha expansível — vira uma seção no rodapé do card, com o rótulo de `expansionLabel`;
 - o rodapé de totais, que vira um card de "Total" no fim da lista.
 
