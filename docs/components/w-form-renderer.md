@@ -21,6 +21,32 @@ import { WFormRenderer } from '@wgalleti/primevue-components'
 | `validateAll()` | `string[]` | Executa validacoes customizadas de todos os campos. Retorna array de mensagens de erro (vazio = valido) |
 | `clearErrors()` | `void` | Limpa todas as mensagens de erro |
 
+## Acessibilidade — rótulo programático
+
+Cada campo ganha um `id` estável e único por instância do form (`${formId}-${field}`, via
+`useId()` do Vue — dois forms com o mesmo campo na mesma tela não colidem). O renderer liga:
+
+| O quê | Como |
+|---|---|
+| rótulo | `<label for>` → `id` do input real (`inputId` do PrimeVue / dos `W*`); no `select`, cujo foco é um `<span role="combobox">`, por `aria-labelledby` + `label-id` (clicar no rótulo foca) |
+| obrigatório | `aria-required="true"` (o `*` visual é `aria-hidden`) |
+| texto de apoio | `FieldDef.hint` → `<small class="w-crud-form-hint">` ligado por `aria-describedby` |
+| erro | `aria-invalid="true"`, mensagem com `role="alert"` e também no `aria-describedby` |
+| grupos sem input único (`segmented`, `choice`, `chips`, `transfer`, `image`) | `role="group"` + `aria-labelledby` (+ `aria-required`/`aria-describedby`) |
+
+```ts
+{ field: 'lote', label: 'Lote', type: 'text', required: true, hint: 'Como impresso na etiqueta' }
+```
+
+O slot `field-{field}` recebe `fieldId` — use-o no seu controle para o `<label>` do renderer
+continuar apontando para ele:
+
+```vue
+<template #field-geo="{ fieldId, formData, setFormField }">
+  <WMapSelect :id="fieldId" ... />
+</template>
+```
+
 ## Diferenca entre WFormRenderer e WCrudFormDialog
 
 | | WFormRenderer | WCrudFormDialog |
@@ -47,7 +73,7 @@ Todos os tipos do `FieldDef` sao suportados:
 | `datetime` | DatePicker showTime | Formato 24h |
 | `select` | Select | `options`, `optionLabel` |
 | `autocomplete` | AutoComplete | Com filtragem local |
-| `fk` | WAutoCompleteFK | Busca na API + modal + CRUD inline |
+| `fk` | WAutoCompleteFK | Busca na API + modal + CRUD inline; `↓` abre a lista, Enter com texto novo cadastra, `autoSelectSingle` (default `true`) preenche quando há um registro só |
 | `switch` | ToggleSwitch | Com `switchLabel` |
 | `textarea` | Textarea | `rows` configuravel |
 | `color` | ColorPicker | Com input hex |

@@ -32,6 +32,9 @@ const props = withDefaults(
     placeholder?: string
     invalid?: boolean
     inputId?: string
+    /** Atributos extras no `<input>` (`aria-labelledby`, `aria-describedby`,
+     *  `aria-required`…). */
+    inputAttrs?: Record<string, unknown>
   }>(),
   {
     modelValue: null,
@@ -126,6 +129,7 @@ onMounted(() => {
     <IconField>
       <InputText
         :id="inputId"
+        v-bind="inputAttrs"
         v-model="typed"
         v-maska="maskaOptions"
         :placeholder="placeholder ?? di.placeholder()"

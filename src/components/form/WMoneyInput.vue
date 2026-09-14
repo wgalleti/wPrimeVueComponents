@@ -21,6 +21,11 @@ const props = withDefaults(
     disabled?: boolean
     placeholder?: string
     invalid?: boolean
+    /** `id` do `<input>` — alvo do `<label for>` do formulário. */
+    inputId?: string
+    /** Atributos extras no `<input>` (`aria-labelledby`, `aria-describedby`,
+     *  `aria-required`…). Sempre no input, mesmo quando há prefixo/sufixo. */
+    inputAttrs?: Record<string, unknown>
   }>(),
   {
     decimals: 2,
@@ -63,6 +68,8 @@ function onInput(event: Event) {
   <InputGroup v-if="hasAddon" class="w-money-input">
     <InputGroupAddon v-if="resolvedPrefix">{{ resolvedPrefix }}</InputGroupAddon>
     <InputText
+      :id="inputId"
+      v-bind="inputAttrs"
       :model-value="display"
       inputmode="numeric"
       class="w-money-input__field"
@@ -75,6 +82,8 @@ function onInput(event: Event) {
   </InputGroup>
   <InputText
     v-else
+    :id="inputId"
+    v-bind="inputAttrs"
     :model-value="display"
     inputmode="numeric"
     fluid

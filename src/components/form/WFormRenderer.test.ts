@@ -2,7 +2,8 @@
 //
 // Cobre só os tipos de campo novos (segmented / choice / chips) — os demais já
 // são exercitados pelos testes de CRUD.
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { defineComponent } from 'vue'
 import { mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import WFormRenderer from './WFormRenderer.vue'
@@ -196,5 +197,126 @@ describe('WFormRenderer — marca do foco inicial', () => {
     const inputs = w.findAll('input')
     expect(inputs[0].attributes('autofocus')).toBeUndefined()
     expect(inputs[1].attributes('autofocus')).toBeDefined()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Acessibilidade: rótulo programático, obrigatório, apoio e erro
+// ---------------------------------------------------------------------------
+
+describe('WFormRenderer — rótulo programático (WCAG 1.3.1 / 3.3.2)', () => {
+  beforeAll(() => {
+    // O Select do PrimeVue escuta orientação da tela no mount.
+    if (!window.matchMedia) {
+      window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }))
+    }
+  })
+
+  const nome: FieldDef = { field: 'nome', label: 'Nome', type: 'text', required: true }
+  const obs: FieldDef = { field: 'obs', label: 'Observação', type: 'textarea', hint: 'Opcional' }
+  const qtd: FieldDef = { field: 'qtd', label: 'Quantidade', type: 'number', required: true }
+  const tipo: FieldDef = {
+    field: 'tipo',
+    label: 'Tipo',
+    type: 'select',
+    options: [{ label: 'A', value: 'a' }],
+  }
+  const ativo: FieldDef = { field: 'ativo', label: 'Ativo', type: 'switch' }
+
+  it('label `for` aponta para o id do input, único por instância do form', () => {
+    // Dois forms com o MESMO campo na mesma app (ex.: dialog + filtro lateral):
+    // os ids não podem colidir — `useId()` distingue por instância.
+    const Dois = defineComponent({
+      components: { WFormRenderer },
+      setup: () => ({ fields: [nome] }),
+      template: `<div>
+        <WFormRenderer class="a" :fields="fields" :form-data="{ nome: '' }" :is-editing="false" />
+        <WFormRenderer class="b" :fields="fields" :form-data="{ nome: '' }" :is-editing="false" />
+      </div>`,
+    })
+    const w = mount(Dois, { global: { plugins: [PrimeVue] } })
+    const label1 = w.find('.a label.w-crud-form-label')
+    const input1 = w.find('.a input')
+    expect(label1.attributes('for')).toBe(input1.attributes('id'))
+    expect(input1.attributes('id')).toMatch(/-nome$/)
+    expect(w.find('.b input').attributes('id')).not.toBe(input1.attributes('id'))
+    expect(w.find('.b label.w-crud-form-label').attributes('for')).toBe(
+      w.find('.b input').attributes('id'),
+    )
+  })
+
+  it('obrigatório vira aria-required e o asterisco fica fora da árvore acessível', () => {
+    const w = montar([nome], { nome: '' })
+    expect(w.find('input').attributes('aria-required')).toBe('true')
+    expect(w.find('.w-crud-form-required').attributes('aria-hidden')).toBe('true')
+    expect(w.find('input').attributes('aria-labelledby')).toBe(
+      w.find('label.w-crud-form-label').attributes('id'),
+    )
+  })
+
+  it('hint entra no aria-describedby; erro vira aria-invalid + role=alert', async () => {
+    const w = montar([obs], { obs: '' })
+    const ta = w.find('textarea')
+    const hint = w.find('.w-crud-form-hint')
+    expect(hint.text()).toBe('Opcional')
+    expect(ta.attributes('aria-describedby')).toBe(hint.attributes('id'))
+    expect(ta.attributes('aria-invalid')).toBeUndefined()
+
+    const w2 = montar([{ ...nome, validate: () => 'Obrigatório' }], { nome: '' })
+    ;(w2.vm as unknown as { validateAll: () => string[] }).validateAll()
+    await w2.vm.$nextTick()
+    const erro = w2.find('.w-crud-form-error')
+    expect(erro.attributes('role')).toBe('alert')
+    expect(w2.find('input').attributes('aria-invalid')).toBe('true')
+    expect(w2.find('input').attributes('aria-describedby')).toBe(erro.attributes('id'))
+  })
+
+  it('InputNumber recebe o id no input interno (inputId) e aria-required', () => {
+    const w = montar([qtd], { qtd: null })
+    const input = w.find('input')
+    expect(w.find('label').attributes('for')).toBe(input.attributes('id'))
+    expect(input.attributes('aria-required')).toBe('true')
+  })
+
+  it('Select: combobox rotulado por aria-labelledby (o `for` não alcança um span)', () => {
+    const w = montar([tipo], { tipo: null })
+    const combo = w.find('[role="combobox"]')
+    const label = w.find('label.w-crud-form-label')
+    expect(combo.attributes('id')).toBe(label.attributes('for'))
+    expect(combo.attributes('aria-labelledby')).toBe(label.attributes('id'))
+  })
+
+  it('switch: label for → input do ToggleSwitch', () => {
+    const w = montar([ativo], { ativo: true })
+    const input = w.find('input[type="checkbox"]')
+    expect(w.find('label.w-crud-form-switch-label').attributes('for')).toBe(input.attributes('id'))
+  })
+
+  it('grupos de pílulas são role=group rotulados pelo label', () => {
+    const w = montar([{ ...formas, required: true }], { forma_calculo: 'KG_HA' })
+    const grupo = w.find('.w-segmented')
+    expect(grupo.attributes('role')).toBe('group')
+    expect(grupo.attributes('aria-labelledby')).toBe(w.find('label').attributes('id'))
+    expect(grupo.attributes('aria-required')).toBe('true')
+  })
+
+  it('slot field-* recebe o fieldId para o consumidor rotular o próprio controle', () => {
+    const w = montar(
+      [nome],
+      { nome: '' },
+      {
+        'field-nome': `<template #field-nome="{ fieldId }"><input class="custom" :id="fieldId" /></template>`,
+      },
+    )
+    expect(w.find('input.custom').attributes('id')).toMatch(/-nome$/)
   })
 })

@@ -70,6 +70,8 @@ export interface FieldDef {
   disabledOnEdit?: boolean
   visible?: boolean | ((formData: Record<string, unknown>, isEditing: boolean) => boolean)
   placeholder?: string
+  /** Texto de apoio abaixo do campo; ligado ao input por `aria-describedby`. */
+  hint?: string
   validate?: (value: unknown) => string | null
   autofocus?: boolean | 'create' | 'edit'
   /** Campo somente-leitura: renderiza desabilitado (o valor ainda vai no payload). */
@@ -126,6 +128,10 @@ export interface FieldDef {
   canCreate?: boolean
   canEdit?: boolean
   canDelete?: boolean
+  /** FK: quando a lista (com filtros/cascata atuais) tem um registro só, ele já entra
+   *  selecionado — ao abrir sem valor e ao preencher a cascata. Default `true`;
+   *  `false` desliga. */
+  autoSelectSingle?: boolean
 
   // number / currency
   min?: number

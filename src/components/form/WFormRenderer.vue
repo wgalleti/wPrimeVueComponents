@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef, watch } from 'vue'
+import { computed, reactive, isRef, watch, useId } from 'vue'
 import { vMaska } from 'maska/vue'
 import { isFieldVisible } from '@/utils/formRecord'
 import InputText from 'primevue/inputtext'
@@ -39,6 +39,68 @@ const emit = defineEmits<{
 }>()
 
 const fieldErrors = reactive<Record<string, string | null>>({})
+
+// --- Acessibilidade: ids estáveis por instância ---------------------------
+// Cada campo ganha `${formId}-${field}`: o `<label for>` aponta para o input, o
+// texto de apoio e o erro entram por `aria-describedby`, obrigatório vira
+// `aria-required` e erro vira `aria-invalid`. Componentes cujo foco não é um
+// elemento rotulável (Select, grupos de pílulas) recebem `aria-labelledby`.
+
+const formId = useId()
+
+function fieldId(field: FieldDef): string {
+  return `${formId}-${field.field}`
+}
+
+function labelId(field: FieldDef): string {
+  return `${fieldId(field)}-label`
+}
+
+function hintId(field: FieldDef): string {
+  return `${fieldId(field)}-hint`
+}
+
+function errorId(field: FieldDef): string {
+  return `${fieldId(field)}-error`
+}
+
+/** Erro visível do campo: o de CEP tem prioridade (mesma ordem do template). */
+function fieldError(field: FieldDef): string | null {
+  return cepError[field.field] ?? fieldErrors[field.field] ?? null
+}
+
+function describedBy(field: FieldDef): string | undefined {
+  const ids: string[] = []
+  if (field.hint) ids.push(hintId(field))
+  if (fieldError(field)) ids.push(errorId(field))
+  return ids.length ? ids.join(' ') : undefined
+}
+
+/** Atributos ARIA do controle (sem `id` — para quem recebe o id por prop própria). */
+function ariaAttrs(field: FieldDef): Record<string, string | undefined> {
+  return {
+    'aria-labelledby': labelId(field),
+    'aria-describedby': describedBy(field),
+    'aria-required': field.required ? 'true' : undefined,
+    'aria-invalid': fieldError(field) ? 'true' : undefined,
+  }
+}
+
+/** `id` + ARIA, para controles cujo root É o `<input>` (InputText, Textarea). */
+function inputAttrs(field: FieldDef): Record<string, string | undefined> {
+  return { id: fieldId(field), ...ariaAttrs(field) }
+}
+
+/** Grupos sem input único (pílulas, chips, transfer, imagem): rotulados pelo label. */
+function groupAttrs(field: FieldDef): Record<string, string | undefined> {
+  return {
+    id: fieldId(field),
+    'aria-labelledby': labelId(field),
+    'aria-describedby': describedBy(field),
+    'aria-required': field.required ? 'true' : undefined,
+    'aria-invalid': fieldError(field) ? 'true' : undefined,
+  }
+}
 
 // --- CEP state ---
 const cepLoading = reactive<Record<string, boolean>>({})
@@ -458,6 +520,7 @@ defineExpose({ validateAll, clearErrors })
             :field="field"
             :form-data="formData"
             :is-editing="isEditing"
+            :field-id="fieldId(field)"
             :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
           >
             <!-- Switch -->
@@ -468,10 +531,19 @@ defineExpose({ validateAll, clearErrors })
             >
               <ToggleSwitch
                 :model-value="formData[field.field] as boolean"
+                :input-id="fieldId(field)"
+                :aria-labelledby="labelId(field)"
+                :invalid="!!fieldError(field)"
+                :pt="{ input: { 'aria-describedby': describedBy(field) } }"
                 :disabled="isFieldDisabled(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
-              <label class="w-crud-form-switch-label">{{ field.switchLabel || field.label }}</label>
+              <label :id="labelId(field)" :for="fieldId(field)" class="w-crud-form-switch-label">
+                {{ field.switchLabel || field.label }}
+              </label>
+              <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
+                {{ field.hint }}
+              </small>
             </div>
 
             <!-- Color -->
@@ -480,25 +552,42 @@ defineExpose({ validateAll, clearErrors })
               :class="fieldSpanClass(field, group)"
               :style="fieldSpanStyle(field, group)"
             >
-              <label class="w-crud-form-label">
+              <label :id="labelId(field)" :for="fieldId(field)" class="w-crud-form-label">
                 {{ field.label }}
-                <span v-if="field.required" class="w-crud-form-required">*</span>
+                <span v-if="field.required" class="w-crud-form-required" aria-hidden="true">
+                  *
+                </span>
               </label>
               <div class="w-crud-form-color-row">
                 <ColorPicker
                   :model-value="getColorPickerValue(field)"
+                  :input-id="`${fieldId(field)}-picker`"
+                  :pt="{ preview: { 'aria-label': `${field.label} (seletor de cor)` } }"
                   :disabled="isFieldDisabled(field)"
                   @update:model-value="onColorChange(field, $event as string)"
                 />
                 <InputText
+                  v-bind="inputAttrs(field)"
                   :model-value="formData[field.field] as string"
                   class="w-28"
                   maxlength="7"
                   placeholder="#000000"
                   :disabled="isFieldDisabled(field)"
+                  :invalid="!!fieldError(field)"
                   @update:model-value="(val) => emit('update:field', field.field, val)"
                 />
               </div>
+              <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
+                {{ field.hint }}
+              </small>
+              <small
+                v-if="fieldErrors[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-error"
+                role="alert"
+              >
+                {{ fieldErrors[field.field] }}
+              </small>
             </div>
 
             <!-- Image -->
@@ -507,22 +596,32 @@ defineExpose({ validateAll, clearErrors })
               :class="fieldSpanClass(field, group)"
               :style="fieldSpanStyle(field, group)"
             >
-              <label class="w-crud-form-label">
+              <label :id="labelId(field)" class="w-crud-form-label">
                 {{ field.label }}
               </label>
-              <slot :name="`image-${field.field}`" :field="field" :form-data="formData">
-                <WImageCropper
-                  :model-value="formData[field.field] as File | string | null"
-                  :accept="field.accept || 'image/*'"
-                  @update:model-value="(file) => emit('update:field', field.field, file)"
-                  @error="
-                    (msg) => {
-                      fieldErrors[field.field] = msg
-                    }
-                  "
-                />
-              </slot>
-              <small v-if="fieldErrors[field.field]" class="w-crud-form-error">
+              <div role="group" v-bind="groupAttrs(field)">
+                <slot :name="`image-${field.field}`" :field="field" :form-data="formData">
+                  <WImageCropper
+                    :model-value="formData[field.field] as File | string | null"
+                    :accept="field.accept || 'image/*'"
+                    @update:model-value="(file) => emit('update:field', field.field, file)"
+                    @error="
+                      (msg) => {
+                        fieldErrors[field.field] = msg
+                      }
+                    "
+                  />
+                </slot>
+              </div>
+              <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
+                {{ field.hint }}
+              </small>
+              <small
+                v-if="fieldErrors[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-error"
+                role="alert"
+              >
                 {{ fieldErrors[field.field] }}
               </small>
             </div>
@@ -533,19 +632,26 @@ defineExpose({ validateAll, clearErrors })
               :class="fieldSpanClass(field, group)"
               :style="fieldSpanStyle(field, group)"
             >
-              <label class="w-crud-form-label">
+              <label :id="labelId(field)" class="w-crud-form-label">
                 {{ field.label }}
-                <span v-if="field.required" class="w-crud-form-required">*</span>
+                <span v-if="field.required" class="w-crud-form-required" aria-hidden="true">
+                  *
+                </span>
               </label>
-              <WTransferList
-                :source="(unwrapRef(field.options) as any[]) || []"
-                :selected="(formData[field.field] as any[]) || []"
-                :track-by="field.optionValue || 'id'"
-                :option-label="field.optionLabel || 'nome'"
-                :search-fields="field.searchFields"
-                :disabled="isFieldDisabled(field)"
-                @update:selected="(val) => emit('update:field', field.field, val)"
-              />
+              <div role="group" v-bind="groupAttrs(field)">
+                <WTransferList
+                  :source="(unwrapRef(field.options) as any[]) || []"
+                  :selected="(formData[field.field] as any[]) || []"
+                  :track-by="field.optionValue || 'id'"
+                  :option-label="field.optionLabel || 'nome'"
+                  :search-fields="field.searchFields"
+                  :disabled="isFieldDisabled(field)"
+                  @update:selected="(val) => emit('update:field', field.field, val)"
+                />
+              </div>
+              <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
+                {{ field.hint }}
+              </small>
             </div>
 
             <!-- All other types -->
@@ -555,12 +661,15 @@ defineExpose({ validateAll, clearErrors })
               :class="fieldSpanClass(field, group)"
               :style="fieldSpanStyle(field, group)"
             >
-              <label class="w-crud-form-label">
+              <label :id="labelId(field)" :for="fieldId(field)" class="w-crud-form-label">
                 {{ field.label }}
-                <span v-if="field.required" class="w-crud-form-required">*</span>
+                <span v-if="field.required" class="w-crud-form-required" aria-hidden="true">
+                  *
+                </span>
                 <i
                   v-if="cepLoading[field.field]"
                   class="pi pi-spin pi-spinner w-crud-form-cep-spinner"
+                  aria-hidden="true"
                 />
               </label>
 
@@ -568,34 +677,40 @@ defineExpose({ validateAll, clearErrors })
               <InputText
                 v-if="(!field.type || field.type === 'text') && field.mask"
                 v-maska="{ mask: convertMask(field.mask) }"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- Text -->
               <InputText
                 v-else-if="!field.type || field.type === 'text'"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- Email -->
               <InputText
                 v-else-if="field.type === 'email'"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 type="email"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -603,11 +718,14 @@ defineExpose({ validateAll, clearErrors })
               <Password
                 v-else-if="field.type === 'password'"
                 :model-value="formData[field.field] as string"
+                :input-id="fieldId(field)"
+                :input-props="ariaAttrs(field)"
                 fluid
                 toggle-mask
                 :feedback="field.feedback !== false"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -615,6 +733,8 @@ defineExpose({ validateAll, clearErrors })
               <InputNumber
                 v-else-if="field.type === 'number'"
                 :model-value="formData[field.field] as number"
+                :input-id="fieldId(field)"
+                :pt="{ pcInputText: { root: ariaAttrs(field) } }"
                 fluid
                 locale="pt-BR"
                 :min="field.min"
@@ -625,6 +745,7 @@ defineExpose({ validateAll, clearErrors })
                 :prefix="field.prefix"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -632,12 +753,15 @@ defineExpose({ validateAll, clearErrors })
               <WMoneyInput
                 v-else-if="field.type === 'currency' && field.fillFromRight"
                 :model-value="formData[field.field] as number | null"
+                :input-id="fieldId(field)"
+                :input-attrs="ariaAttrs(field)"
                 :decimals="field.decimals ?? 2"
                 currency
                 :prefix="field.prefix"
                 :suffix="field.suffix"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -645,6 +769,8 @@ defineExpose({ validateAll, clearErrors })
               <InputNumber
                 v-else-if="field.type === 'currency'"
                 :model-value="formData[field.field] as number"
+                :input-id="fieldId(field)"
+                :pt="{ pcInputText: { root: ariaAttrs(field) } }"
                 fluid
                 mode="currency"
                 currency="BRL"
@@ -653,13 +779,20 @@ defineExpose({ validateAll, clearErrors })
                 :max="field.max"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- Select -->
+              <!-- O foco do Select é um <span role="combobox">, que `for` não alcança:
+                   o nome vem por `aria-labelledby`; o `label-id` faz o clique no
+                   rótulo focar o campo (o PrimeVue procura `label[for]`). -->
               <Select
                 v-else-if="field.type === 'select'"
                 :model-value="formData[field.field]"
+                :label-id="fieldId(field)"
+                :aria-labelledby="labelId(field)"
+                :pt="{ label: ariaAttrs(field) }"
                 fluid
                 :options="unwrapRef(field.options) as any[]"
                 :option-label="field.optionLabel || 'label'"
@@ -667,6 +800,7 @@ defineExpose({ validateAll, clearErrors })
                 :show-clear="field.showClear !== false"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -674,11 +808,14 @@ defineExpose({ validateAll, clearErrors })
               <AutoComplete
                 v-else-if="field.type === 'autocomplete'"
                 :model-value="getAutocompleteValue(field)"
+                :input-id="fieldId(field)"
+                :pt="{ pcInputText: { root: ariaAttrs(field) } }"
                 fluid
                 :suggestions="getFilteredSuggestions(field) as any[]"
                 :option-label="field.optionLabel || 'label'"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @complete="onAutocompleteSearch(field, $event)"
                 @item-select="onAutocompleteSelect(field, $event)"
                 @clear="emit('update:field', field.field, null)"
@@ -688,6 +825,8 @@ defineExpose({ validateAll, clearErrors })
               <WAutoCompleteFK
                 v-else-if="field.type === 'fk'"
                 :model-value="formData[field.field] as any"
+                :input-id="fieldId(field)"
+                :input-attrs="ariaAttrs(field)"
                 :autofocus="shouldAutofocus(field) || undefined"
                 :endpoint="field.endpoint!"
                 :endpoint-params="resolveEndpointParams(field)"
@@ -706,6 +845,7 @@ defineExpose({ validateAll, clearErrors })
                 :can-create="field.canCreate"
                 :can-edit="field.canEdit"
                 :can-delete="field.canDelete"
+                :auto-select-single="field.autoSelectSingle"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -713,12 +853,15 @@ defineExpose({ validateAll, clearErrors })
               <WDatePicker
                 v-else-if="field.type === 'date'"
                 :model-value="formData[field.field] as Date | string | null"
+                :input-id="fieldId(field)"
+                :input-attrs="ariaAttrs(field)"
                 value-format="date"
                 :autonow="field.autonow"
                 :min-date="field.minDate"
                 :max-date="field.maxDate"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
@@ -726,6 +869,8 @@ defineExpose({ validateAll, clearErrors })
               <WDatePicker
                 v-else-if="field.type === 'datetime'"
                 :model-value="formData[field.field] as Date | string | null"
+                :input-id="fieldId(field)"
+                :input-attrs="ariaAttrs(field)"
                 value-format="date"
                 show-time
                 :autonow="field.autonow"
@@ -733,18 +878,20 @@ defineExpose({ validateAll, clearErrors })
                 :max-date="field.maxDate"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- CPF/CNPJ -->
               <InputText
                 v-else-if="field.type === 'cpf_cnpj'"
+                v-bind="inputAttrs(field)"
                 :model-value="displayCpfCnpj(formData[field.field])"
                 fluid
                 maxlength="18"
                 :placeholder="field.placeholder || '000.000.000-00'"
                 :disabled="isFieldDisabled(field)"
-                :invalid="!!fieldErrors[field.field]"
+                :invalid="!!fieldError(field)"
                 @input="onCpfCnpjInput(field.field, $event)"
                 @blur="validateField(field)"
               />
@@ -753,11 +900,12 @@ defineExpose({ validateAll, clearErrors })
               <InputText
                 v-else-if="field.type === 'mask'"
                 v-maska="{ mask: convertMask(field.mask) }"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
-                :invalid="!!fieldErrors[field.field]"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
                 @blur="validateField(field)"
               />
@@ -766,28 +914,36 @@ defineExpose({ validateAll, clearErrors })
               <InputText
                 v-else-if="field.type === 'cep'"
                 v-maska="{ mask: '#####-###' }"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :placeholder="field.placeholder || '00000-000'"
                 :disabled="isFieldDisabled(field)"
-                :invalid="!!cepError[field.field]"
+                :invalid="!!fieldError(field)"
                 @input="onCepInput(field, $event)"
               />
 
               <!-- Textarea -->
               <Textarea
                 v-else-if="field.type === 'textarea'"
+                v-bind="inputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
                 :rows="field.rows || 3"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
               />
 
               <!-- Segmented (escolha única, 2-3 opções curtas, num trilho) -->
-              <div v-else-if="field.type === 'segmented'" class="w-segmented">
+              <div
+                v-else-if="field.type === 'segmented'"
+                class="w-segmented"
+                role="group"
+                v-bind="groupAttrs(field)"
+              >
                 <button
                   v-for="option in fieldOptions(field)"
                   :key="String(optionValueOf(field, option))"
@@ -803,7 +959,12 @@ defineExpose({ validateAll, clearErrors })
               </div>
 
               <!-- Choice (escolha única em chips, N opções) -->
-              <div v-else-if="field.type === 'choice'" class="w-choice">
+              <div
+                v-else-if="field.type === 'choice'"
+                class="w-choice"
+                role="group"
+                v-bind="groupAttrs(field)"
+              >
                 <button
                   v-for="option in fieldOptions(field)"
                   :key="String(optionValueOf(field, option))"
@@ -817,13 +978,19 @@ defineExpose({ validateAll, clearErrors })
                   <i
                     v-if="isOptionSelected(field, option) && field.choiceIcon !== ''"
                     :class="field.choiceIcon || 'pi pi-check-circle'"
+                    aria-hidden="true"
                   />
                   {{ optionLabelOf(field, option) }}
                 </button>
               </div>
 
               <!-- Chips (valor múltiplo removível + gatilho + resumo) -->
-              <div v-else-if="field.type === 'chips'" class="w-chips">
+              <div
+                v-else-if="field.type === 'chips'"
+                class="w-chips"
+                role="group"
+                v-bind="groupAttrs(field)"
+              >
                 <span
                   v-for="(chip, chipIndex) in chipEntries(field)"
                   :key="chip.key"
@@ -834,11 +1001,11 @@ defineExpose({ validateAll, clearErrors })
                     type="button"
                     class="w-chips__remove"
                     :title="field.chipsRemoveLabel || 'Remover'"
-                    :aria-label="field.chipsRemoveLabel || 'Remover'"
+                    :aria-label="`${field.chipsRemoveLabel || 'Remover'} ${chip.label}`"
                     :disabled="isFieldDisabled(field)"
                     @click="removeChip(field, chipIndex)"
                   >
-                    <i class="pi pi-times" />
+                    <i class="pi pi-times" aria-hidden="true" />
                   </button>
                 </span>
 
@@ -867,10 +1034,23 @@ defineExpose({ validateAll, clearErrors })
                 </span>
               </div>
 
-              <small v-if="cepError[field.field]" class="w-crud-form-cep-error">
+              <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
+                {{ field.hint }}
+              </small>
+              <small
+                v-if="cepError[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-cep-error"
+                role="alert"
+              >
                 {{ cepError[field.field] }}
               </small>
-              <small v-else-if="fieldErrors[field.field]" class="w-crud-form-error">
+              <small
+                v-else-if="fieldErrors[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-error"
+                role="alert"
+              >
                 {{ fieldErrors[field.field] }}
               </small>
             </div>
