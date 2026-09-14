@@ -22,10 +22,34 @@ O par funciona junto e todo o estado vem do composable
 ### Cor por grupo
 
 Cada grupo tem uma cor, usada **só em acentos** para o texto seguir neutro e legível: o
-ponto antes do rótulo do grupo, o ícone das abas do bloco e o fio + tint da aba ativa. Sem
-configuração a cor é derivada do nome do grupo (paleta OKLCH de 8 matizes, escolha
-estável por hash — o mesmo módulo tem sempre a mesma cor). Para fixar a cor de um módulo,
-devolva `color` no `resolveTabMeta`:
+ponto antes do rótulo do grupo, o ícone das abas do bloco e o fio + tint da aba ativa.
+
+Sem configuração, o grupo cai numa de **6 séries** (escolha estável por hash do nome — o
+mesmo módulo tem sempre a mesma série), e a cor da série N é resolvida em cascata:
+
+```
+var(--w-tab-group-N, var(--viz-N, <oklch da suite>))     N = 1..6
+```
+
+1. `--w-tab-group-N` — token específico do app para as abas;
+2. `--viz-N` — a série categórica da paleta do app (a mesma dos gráficos);
+3. o OKLCH da suite (azul, verde, laranja, ciano, âmbar, terracota — sem roxo nem rosa,
+   que colidiria com `--danger`).
+
+Assim a paleta é do app, não da suite. Para todos os grupos na cor primária:
+
+```css
+:root {
+  --w-tab-group-1: var(--primary);
+  --w-tab-group-2: var(--primary);
+  --w-tab-group-3: var(--primary);
+  --w-tab-group-4: var(--primary);
+  --w-tab-group-5: var(--primary);
+  --w-tab-group-6: var(--primary);
+}
+```
+
+Para fixar a cor de **um** módulo, devolva `color` no `resolveTabMeta` (vence a série):
 
 ```ts
 resolveTabMeta: (r) => ({ title: ..., group: 'Sementes', color: 'oklch(64% 0.13 150)' })
@@ -33,6 +57,12 @@ resolveTabMeta: (r) => ({ title: ..., group: 'Sementes', color: 'oklch(64% 0.13 
 
 A cor chega ao CSS como `--w-tab-group-color` no item e no rótulo — dá para estender os
 acentos no app sem tocar na suite.
+
+### Alvos de toque
+
+Os botões "Opções de <aba>" (⋮) e "Fechar <aba>" (X) têm caixa clicável de **28×28px**
+(`--w-tabnav-btn`, mínimo de alvo no desktop) com o ícone pequeno dentro; a faixa segue
+com 40px (`--w-tabnav-h`) porque o item centraliza a caixa.
 
 ### Animação de entrada da página
 

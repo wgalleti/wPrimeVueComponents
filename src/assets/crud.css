@@ -38,6 +38,155 @@
 }
 
 /* ==========================================================
+   Densidade dos controles
+   ==========================================================
+   O app manda pela tríade `--control-h` / `--ui-font` / `--control-px`
+   (ex.: 38px / 14px / 12px; compacto 32px / 13px). Sem os tokens, os
+   fallbacks abaixo valem — nunca o 42px/16px do tema PrimeVue. Vale para o
+   input de busca, os filtros de coluna, os campos do formulário e os botões
+   das barras (toolbar, cabeçalho, rodapé do form, rail). Botão de linha usa
+   `--control-h-sm` para não esticar a tabela. */
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-filters .p-inputtext,
+.w-crud-form .p-inputtext,
+.w-crud-toolbar .p-select,
+.w-crud-filters .p-select,
+.w-crud-form .p-select,
+.w-crud-form .p-multiselect,
+.w-crud-form .p-autocomplete,
+.w-crud-form .p-inputnumber,
+.w-crud-form .p-password {
+  font-size: var(--ui-font, 0.875rem);
+}
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-filters .p-inputtext,
+.w-crud-form .p-inputtext,
+.w-crud-toolbar .p-select,
+.w-crud-filters .p-select,
+.w-crud-form .p-select,
+.w-crud-form .p-multiselect {
+  height: var(--control-h, 2.375rem);
+}
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-filters .p-inputtext,
+.w-crud-form .p-inputtext {
+  padding-block: 0;
+  padding-inline: var(--control-px, 0.75rem);
+}
+
+/* Busca com ícone: o IconField reserva espaço à esquerda pelo próprio token. */
+.w-crud-toolbar .p-iconfield .p-inputtext {
+  padding-inline-start: calc(var(--control-px, 0.75rem) * 2 + 1rem);
+}
+
+.w-crud-toolbar .p-select-label,
+.w-crud-filters .p-select-label,
+.w-crud-form .p-select-label,
+.w-crud-form .p-multiselect-label {
+  display: flex;
+  align-items: center;
+  padding-block: 0;
+  padding-inline-start: var(--control-px, 0.75rem);
+}
+
+.w-crud-form .p-textarea {
+  font-size: var(--ui-font, 0.875rem);
+  padding: calc(var(--control-px, 0.75rem) * 0.6) var(--control-px, 0.75rem);
+}
+
+.w-crud-header-actions .p-button,
+.w-crud-toolbar .p-button,
+.w-crud-filters .p-button,
+.w-crud-bulkbar .p-button,
+.w-crud-form-footer .p-button,
+.w-crud-rail .p-button {
+  height: var(--control-h, 2.375rem);
+  font-size: var(--ui-font, 0.875rem);
+}
+
+.w-crud-header-actions .p-button.p-button-icon-only,
+.w-crud-toolbar .p-button.p-button-icon-only,
+.w-crud-bulkbar .p-button.p-button-icon-only,
+.w-crud-rail .p-button.p-button-icon-only {
+  width: var(--control-h, 2.375rem);
+  padding-inline: 0;
+}
+
+.w-crud-actions .p-button.p-button-icon-only,
+.w-crud-card-actions .p-button.p-button-icon-only {
+  width: var(--control-h-sm, 2rem);
+  height: var(--control-h-sm, 2rem);
+}
+
+/* ==========================================================
+   Tags de status — .w-tag
+   ==========================================================
+   Cor de status sai dos tokens do app (`--success`, `--danger`, `--warning`,
+   `--info` e os `-soft`), não da paleta fixa do PrimeVue (que no escuro usa
+   red-300/red-500 e não acompanha o tema). Aplicada sobre o `<Tag>` para
+   manter a estrutura `.p-tag` que os consumidores já estilizam. */
+
+.p-tag.w-tag {
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.p-tag.w-tag--success {
+  background: var(
+    --success-soft,
+    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 12%, transparent)
+  );
+  color: var(--success, var(--p-green-500, #22c55e));
+}
+
+.p-tag.w-tag--danger {
+  background: var(
+    --danger-soft,
+    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 12%, transparent)
+  );
+  color: var(--danger, var(--p-red-500, #ef4444));
+}
+
+.p-tag.w-tag--warn,
+.p-tag.w-tag--warning {
+  background: var(
+    --warning-soft,
+    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 12%, transparent)
+  );
+  color: var(--warning, var(--p-yellow-500, #eab308));
+}
+
+.p-tag.w-tag--info {
+  background: var(
+    --info-soft,
+    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 12%, transparent)
+  );
+  color: var(--info, var(--p-sky-500, #0ea5e9));
+}
+
+.p-tag.w-tag--primary {
+  background: var(
+    --primary-soft,
+    color-mix(in srgb, var(--primary, var(--p-primary-color)) 12%, transparent)
+  );
+  color: var(--primary, var(--p-primary-color));
+}
+
+.p-tag.w-tag--secondary,
+.p-tag.w-tag--contrast {
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* Valor sem status (ex.: `false` neutro numa coluna boolean): texto abafado. */
+.w-cell-neutral {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+/* ==========================================================
    WCrudView — .w-crud
    ========================================================== */
 
@@ -56,6 +205,25 @@
 
 .w-crud-header-content {
   min-width: 0;
+}
+
+.w-crud-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+/* Contagem total do filtro, ao lado do título — texto abafado, sem moldura. */
+.w-crud-count {
+  font-size: var(--text-xs, 0.75rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  white-space: nowrap;
+}
+
+.w-crud-count[aria-busy='true'] {
+  opacity: 0.6;
 }
 
 .w-crud-title {
@@ -91,8 +259,8 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
+  padding: calc(var(--card-pad, 1.25rem) * 0.8) var(--card-pad, 1.25rem);
+  border-radius: var(--radius-lg, 0.75rem);
   border: 1px solid var(--p-content-border-color);
   background: var(--p-content-background);
 }
@@ -117,23 +285,35 @@
 }
 
 .w-crud-kpi-icon--success {
-  background: color-mix(in srgb, var(--p-green-500, #22c55e) 10%, transparent);
-  color: var(--p-green-500, #22c55e);
+  background: var(
+    --success-soft,
+    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
+  );
+  color: var(--success, var(--p-green-500, #22c55e));
 }
 
 .w-crud-kpi-icon--warning {
-  background: color-mix(in srgb, var(--p-yellow-500, #eab308) 10%, transparent);
-  color: var(--p-yellow-500, #eab308);
+  background: var(
+    --warning-soft,
+    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 10%, transparent)
+  );
+  color: var(--warning, var(--p-yellow-500, #eab308));
 }
 
 .w-crud-kpi-icon--danger {
-  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
-  color: var(--p-red-500, #ef4444);
+  background: var(
+    --danger-soft,
+    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
+  );
+  color: var(--danger, var(--p-red-500, #ef4444));
 }
 
 .w-crud-kpi-icon--info {
-  background: color-mix(in srgb, var(--p-blue-500, #3b82f6) 10%, transparent);
-  color: var(--p-blue-500, #3b82f6);
+  background: var(
+    --info-soft,
+    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 10%, transparent)
+  );
+  color: var(--info, var(--p-sky-500, #0ea5e9));
 }
 
 .w-crud-kpi-content {
@@ -375,7 +555,7 @@
 .w-crud-form-cep-error {
   display: block;
   font-size: 0.75rem;
-  color: var(--p-red-500);
+  color: var(--danger, var(--p-red-500, #ef4444));
   margin-top: 0.25rem;
 }
 
@@ -425,7 +605,7 @@
 
 /* Required asterisk */
 .w-crud-form-required {
-  color: var(--p-red-400, #f87171);
+  color: var(--danger, var(--p-red-500, #ef4444));
   margin-left: 0.125rem;
 }
 
@@ -463,11 +643,19 @@
   user-select: none;
 }
 
+/* Texto de apoio (FieldDef.hint) — ligado ao input por aria-describedby */
+.w-crud-form-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--fg-muted, var(--p-text-muted-color));
+  margin-top: 0.25rem;
+}
+
 /* Validation error */
 .w-crud-form-error {
   display: block;
   font-size: 0.75rem;
-  color: var(--p-red-400, #f87171);
+  color: var(--danger, var(--p-red-500, #ef4444));
   margin-top: 0.25rem;
 }
 
@@ -1061,9 +1249,9 @@
   flex-direction: column;
   gap: 0.875rem;
   min-height: 100%;
-  padding: 1rem 1.125rem;
+  padding: var(--card-pad, 1.25rem);
   border: 1px solid var(--p-content-border-color);
-  border-radius: 1rem;
+  border-radius: var(--radius-lg, 0.75rem);
   background: var(--p-content-background);
 }
 
@@ -1135,13 +1323,19 @@
 }
 
 .w-kpi-card__trend-badge--up {
-  background: color-mix(in srgb, var(--p-green-500, #22c55e) 10%, transparent);
-  color: var(--p-green-500, #22c55e);
+  background: var(
+    --success-soft,
+    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
+  );
+  color: var(--success, var(--p-green-500, #22c55e));
 }
 
 .w-kpi-card__trend-badge--down {
-  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
-  color: var(--p-red-500, #ef4444);
+  background: var(
+    --danger-soft,
+    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
+  );
+  color: var(--danger, var(--p-red-500, #ef4444));
 }
 
 .w-kpi-card__loading {
@@ -1158,23 +1352,35 @@
 }
 
 .w-kpi-card--success .w-kpi-card__icon {
-  background: color-mix(in srgb, var(--p-green-500, #22c55e) 10%, transparent);
-  color: var(--p-green-500, #22c55e);
+  background: var(
+    --success-soft,
+    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
+  );
+  color: var(--success, var(--p-green-500, #22c55e));
 }
 
 .w-kpi-card--warning .w-kpi-card__icon {
-  background: color-mix(in srgb, var(--p-yellow-500, #eab308) 10%, transparent);
-  color: var(--p-yellow-500, #eab308);
+  background: var(
+    --warning-soft,
+    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 10%, transparent)
+  );
+  color: var(--warning, var(--p-yellow-500, #eab308));
 }
 
 .w-kpi-card--danger .w-kpi-card__icon {
-  background: color-mix(in srgb, var(--p-red-500, #ef4444) 10%, transparent);
-  color: var(--p-red-500, #ef4444);
+  background: var(
+    --danger-soft,
+    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
+  );
+  color: var(--danger, var(--p-red-500, #ef4444));
 }
 
 .w-kpi-card--info .w-kpi-card__icon {
-  background: color-mix(in srgb, var(--p-blue-500, #3b82f6) 10%, transparent);
-  color: var(--p-blue-500, #3b82f6);
+  background: var(
+    --info-soft,
+    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 10%, transparent)
+  );
+  color: var(--info, var(--p-sky-500, #0ea5e9));
 }
 
 .w-kpi-card--neutral .w-kpi-card__icon {
@@ -1250,9 +1456,12 @@
 }
 
 .w-progress-flow__step--done .w-progress-flow__marker {
-  border-color: var(--p-green-500, #22c55e);
-  background: color-mix(in srgb, var(--p-green-500, #22c55e) 12%, transparent);
-  color: var(--p-green-500, #22c55e);
+  border-color: var(--success, var(--p-green-500, #22c55e));
+  background: var(
+    --success-soft,
+    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 12%, transparent)
+  );
+  color: var(--success, var(--p-green-500, #22c55e));
 }
 
 /* ==========================================================
@@ -1429,7 +1638,7 @@
 /* Context menu — destructive item */
 .w-crud-ctx-danger .p-contextmenu-item-link,
 .w-crud-ctx-danger .p-contextmenu-item-link .p-contextmenu-item-icon {
-  color: var(--p-red-500, #ef4444);
+  color: var(--danger, var(--p-red-500, #ef4444));
 }
 
 /* ==========================================================
@@ -3954,14 +4163,17 @@
   text-overflow: ellipsis;
 }
 
-/* X e ⋮ só se anunciam no hover/ativa — barra cheia de ícones é ruído. */
+/* X e ⋮ só se anunciam no hover/ativa — barra cheia de ícones é ruído.
+   Caixa clicável de 28px (mínimo de alvo no desktop); o ícone segue pequeno
+   dentro dela, e a caixa não altera a altura da faixa (item centraliza). */
 .w-tab-nav__menu,
 .w-tab-nav__close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: var(--w-tabnav-btn, 1.75rem);
+  height: var(--w-tabnav-btn, 1.75rem);
+  margin-left: calc(-1 * var(--space-1, 0.25rem));
   border: 0;
   border-radius: var(--radius-full, 999px);
   background: none;
@@ -3978,9 +4190,15 @@
   font-size: var(--text-2xs, 0.6875rem);
 }
 
-/* Os dois botões colados: o ⋮ perde o respiro para o X ao lado. */
+/* Os dois botões colados: caixas encostadas, sem sobreposição de alvo. */
 .w-tab-nav__menu + .w-tab-nav__close {
-  margin-left: calc(var(--space-2, 0.5rem) * -1);
+  margin-left: calc(-1 * var(--space-2, 0.5rem));
+}
+
+/* O último come parte do padding do item: a caixa maior não engorda a aba. */
+.w-tab-nav__close:last-child,
+.w-tab-nav__menu:last-child {
+  margin-right: calc(-1 * var(--space-1, 0.25rem));
 }
 
 .w-tab-nav__item:hover .w-tab-nav__menu,

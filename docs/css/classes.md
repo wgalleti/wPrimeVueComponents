@@ -32,6 +32,59 @@ O zebrado é **padrão**, não opt-in: `WCrudView` (via `striped-rows` do DataTa
 linha pelo índice do dado e por isso não se perde com linha de expansão) e `WEditableTable` /
 `WCrudSubview` (via classe por índice, já que ali cada linha é um `<tbody>` próprio).
 
+## Tokens do app que a suite lê
+
+A suite **não define** estes tokens — lê os do app, com fallback. Defina-os no `:root` do
+app e todos os componentes acompanham (inclusive no tema escuro, já que o app troca o valor).
+
+### Densidade dos controles
+
+| Token | Fallback | Onde |
+|---|---|---|
+| `--control-h` | `2.375rem` (38px) | altura do input de busca, dos filtros de coluna, dos campos do form (`InputText`, `Select`, `MultiSelect`, `InputNumber`, `AutoComplete`, `Password`, `WDatePicker`, `WMoneyInput`, FK) e dos botões das barras (cabeçalho, toolbar, filtros, lote, rodapé do form, rail) |
+| `--control-h-sm` | `2rem` (32px) | botões de ação de linha (tabela e cards) |
+| `--ui-font` | `0.875rem` (14px) | fonte dos mesmos controles e botões |
+| `--control-px` | `0.75rem` (12px) | padding horizontal dos inputs; o textarea usa 60% dele na vertical |
+| `--card-pad` | `1.25rem` (20px) | padding do `.w-kpi-card` e do `.w-crud-kpi` |
+| `--radius-lg` | `0.75rem` (12px) | raio dos mesmos cards |
+
+```css
+:root {
+  --control-h: 38px;
+  --ui-font: 14px;
+  --control-px: 12px;
+}
+.compact {
+  --control-h: 32px;
+  --ui-font: 13px;
+}
+```
+
+### Cores de status
+
+Toda cor de status da suite (tags de boolean/status, `.w-kpi-card--*`, ícones de KPI, erro de
+validação, item destrutivo do menu de contexto, passo concluído do `WProgressFlow`) sai
+destes tokens — nunca de `--p-red-*`/`--p-green-*` direto, que no escuro não acompanham o tema:
+
+| Token | Fallback | Soft (fundo) | Fallback do soft |
+|---|---|---|---|
+| `--success` | `--p-green-500` | `--success-soft` | 12% de `--success` sobre transparente |
+| `--danger` | `--p-red-500` | `--danger-soft` | idem |
+| `--warning` | `--p-yellow-500` | `--warning-soft` | idem |
+| `--info` | `--p-sky-500` | `--info-soft` | idem |
+
+As tags (`WStatusTag` e a coluna `type: 'boolean'`) continuam sendo o `<Tag>` do PrimeVue, mas
+carregam a classe `w-tag w-tag--<severity>` (`success`, `danger`, `warn`, `info`, `primary`,
+`secondary`) — é ela quem pinta. Para uma tag própria com as mesmas cores, use as classes.
+
+### Cor dos grupos de abas (`WTabNav`)
+
+| Token | Fallback |
+|---|---|
+| `--w-tab-group-1` … `--w-tab-group-6` | `--viz-1` … `--viz-6` (série categórica do app) → OKLCH da suite |
+
+Ver [WTabNav › Cor por grupo](/components/w-tab-nav#cor-por-grupo).
+
 ## WCrudView — `w-crud-*`
 
 ### Estrutura
@@ -173,7 +226,7 @@ Uso automatico: colunas `number` e `currency` recebem `text-right` automaticamen
 | `--p-content-border-color` | Bordas |
 | `--p-content-hover-background` | Hover/estados vazios |
 | `--p-border-radius` | Borda arredondada |
-| `--p-red-400` | Erros e obrigatorios |
+| `--danger` (fallback `--p-red-500`) | Erros e obrigatorios |
 
 ## Importacao
 
