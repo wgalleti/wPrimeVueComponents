@@ -80,6 +80,32 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Parcelas (editor de data)',
+      description:
+        'A coluna `editor: "date"` edita com o WDatePicker e guarda `YYYY-MM-DD` na linha. A última parcela fecha a conta, então fica travada.',
+      props: {
+        modelValue: [
+          { numero: '1/3', vencimento: '2026-10-05', valor: 500 },
+          { numero: '2/3', vencimento: '2026-11-05', valor: 500 },
+          { numero: '3/3', vencimento: '2026-12-05', valor: 500 },
+        ],
+        footerLabel: 'Total',
+        columns: [
+          { field: 'numero', header: 'Parcela', width: 90 },
+          { field: 'vencimento', header: 'Vencimento', width: 160, editor: 'date' },
+          {
+            field: 'valor',
+            header: 'Valor',
+            width: 140,
+            editor: 'number',
+            decimals: 2,
+            footer: 'sum',
+            disabled: (_row, index) => index === 2,
+          },
+        ] satisfies EditableColumnDef[],
+      },
+    },
+    {
       name: 'Vazia',
       props: { modelValue: [], columns: colunas, emptyMessage: 'Nenhum lote adicionado' },
     },

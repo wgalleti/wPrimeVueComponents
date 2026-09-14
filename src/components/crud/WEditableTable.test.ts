@@ -131,6 +131,40 @@ describe('WEditableTable — edição de célula', () => {
     expect(ultimo(w)).toEqual([{ classe: 'BIOLOGICO' }])
   })
 
+  it('editor date guarda YYYY-MM-DD na linha e sai como DD/MM/YYYY no campo', async () => {
+    const w = montar({
+      modelValue: [{ numero: 1, vencimento: '2026-10-05' }],
+      columns: [
+        { field: 'numero', header: 'Parcela' },
+        { field: 'vencimento', header: 'Vencimento', editor: 'date' },
+      ],
+    })
+    const picker = w.findComponent({ name: 'WDatePicker' })
+    expect(picker.exists()).toBe(true)
+    expect((picker.find('input').element as HTMLInputElement).value).toBe('05/10/2026')
+
+    picker.vm.$emit('update:modelValue', '2026-11-05')
+    await w.vm.$nextTick()
+    expect(ultimo(w)).toEqual([{ numero: 1, vencimento: '2026-11-05' }])
+  })
+
+  it('editor date respeita o disabled por linha', () => {
+    const w = montar({
+      modelValue: [{ vencimento: '2026-10-05' }, { vencimento: '2026-11-05' }],
+      columns: [
+        {
+          field: 'vencimento',
+          header: 'Vencimento',
+          editor: 'date',
+          disabled: (_row: EditableRow, index: number) => index === 1,
+        },
+      ],
+    })
+    const pickers = w.findAllComponents({ name: 'WDatePicker' })
+    expect(pickers[0].props('disabled')).toBe(false)
+    expect(pickers[1].props('disabled')).toBe(true)
+  })
+
   it('disabled trava os editores', () => {
     const w = montar({ disabled: true })
     expect(w.find('input[type="text"]').attributes('disabled')).toBeDefined()
