@@ -121,6 +121,7 @@ function fmtSize(bytes: number): string {
         <Button
           type="button"
           icon="pi pi-times"
+          :aria-label="`Remover ${f.name}`"
           text
           rounded
           size="small"

@@ -121,6 +121,7 @@ function removeAll() {
       <Button
         type="button"
         icon="pi pi-angle-double-right"
+        aria-label="Adicionar todos"
         text
         rounded
         :disabled="disabled || !available.length"
@@ -129,6 +130,7 @@ function removeAll() {
       <Button
         type="button"
         icon="pi pi-angle-double-left"
+        aria-label="Remover todos"
         text
         rounded
         :disabled="disabled || !selected.length"
