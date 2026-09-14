@@ -196,6 +196,19 @@ volta intacta quando a janela cresce. O corte é o `isRetrato` do
 
 Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
 
+## Contagem e paginador
+
+O título vem acompanhado da **contagem total do filtro/busca atual** ("32 registros", texto
+abafado, `aria-live="polite"` — leitor de tela anuncia quando o filtro muda). O total sai do
+`rows` da resposta paginada; sem paginação, do tamanho da lista. Com `showHeader: false` a
+contagem vai para a toolbar, ao lado da busca. `hideCount` desliga.
+
+O paginador (tabela e cards) reporta em pt-BR: `1–20 de 132` (`{first}–{last} de
+{totalRecords}`).
+
+Com isso o KPI "Total de registros" (`show-kpi`) só faz sentido quando há outros KPIs ao lado
+— sozinho, ele repetia a contagem.
+
 ## KPIs
 
 ```vue

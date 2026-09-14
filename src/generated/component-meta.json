@@ -387,6 +387,13 @@
           "description": ""
         },
         {
+          "name": "hideCount",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Esconde a contagem total do filtro que acompanha o título (\"32 registros\").\nCom `showHeader: false` a contagem vai para a toolbar."
+        },
+        {
           "name": "dialogWidth",
           "type": "string | undefined",
           "required": false,
@@ -889,6 +896,13 @@
           "description": ""
         },
         {
+          "name": "autoSelectSingle",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Quando a lista (com os filtros/cascata atuais) tem **um** registro só, ele já\nentra selecionado — ao montar sem valor e ao preencher a cascata. Só no modo\nsimples; limpar o campo não redispara. `false` desliga."
+        },
+        {
           "name": "crudFields",
           "type": "FieldDef[] | undefined",
           "required": false,
@@ -922,6 +936,20 @@
           "required": false,
           "default": "false",
           "description": "Foca o campo ao montar. Marca o input com o atributo nativo `autofocus`\npara que o `focus()` do PrimeVue Dialog (em onAfterEnter) o encontre e\nnão roube o foco para o botão de fechar."
+        },
+        {
+          "name": "inputId",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "`id` do input de digitação — alvo do `<label for>` do formulário."
+        },
+        {
+          "name": "inputAttrs",
+          "type": "Record<string, unknown> | undefined",
+          "required": false,
+          "default": null,
+          "description": "Atributos extras no input de digitação (`aria-labelledby`, `aria-describedby`,\n`aria-required`, `aria-invalid`…). Vão direto no `<input>`, não no wrapper."
         }
       ],
       "events": [
@@ -1012,6 +1040,13 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "inputAttrs",
+          "type": "Record<string, unknown> | undefined",
+          "required": false,
+          "default": null,
+          "description": "Atributos extras no `<input>` (`aria-labelledby`, `aria-describedby`,\n`aria-required`…)."
         }
       ],
       "events": [
@@ -1385,6 +1420,20 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "inputId",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "`id` do `<input>` — alvo do `<label for>` do formulário."
+        },
+        {
+          "name": "inputAttrs",
+          "type": "Record<string, unknown> | undefined",
+          "required": false,
+          "default": null,
+          "description": "Atributos extras no `<input>` (`aria-labelledby`, `aria-describedby`,\n`aria-required`…). Sempre no input, mesmo quando há prefixo/sufixo."
         }
       ],
       "events": [

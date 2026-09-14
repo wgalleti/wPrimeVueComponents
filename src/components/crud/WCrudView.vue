@@ -42,6 +42,9 @@ const props = withDefaults(
     subtitle?: string
     showSearch?: boolean
     showHeader?: boolean
+    /** Esconde a contagem total do filtro que acompanha o título ("32 registros").
+     *  Com `showHeader: false` a contagem vai para a toolbar. */
+    hideCount?: boolean
     dialogWidth?: string
     /** Nº de colunas do grid do form dialog (default: `formColumns` da config
      *  do useCrudManager, senão 2). */
@@ -73,6 +76,7 @@ const props = withDefaults(
   {
     showSearch: true,
     showHeader: true,
+    hideCount: false,
     dialogWidth: '480px',
     autoInit: true,
     showKpi: false,
@@ -265,6 +269,15 @@ const hasActions = computed(
   () => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']),
 )
 
+/** Nome acessível do botão só-ícone: tooltip da action, senão o identificador. */
+function actionLabel(action: RowAction): string {
+  return action.tooltip ?? action.action
+}
+
+const csvLabel = computed(() =>
+  props.csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)',
+)
+
 function handleRowAction(action: RowAction, data: Record<string, unknown>) {
   // Custom handler tem prioridade — permite sobrescrever ações nomeadas.
   if (action.handler) {
@@ -315,6 +328,26 @@ function isActionDisabled(action: RowAction, data: Record<string, unknown>): boo
   if (action.disabled) return action.disabled(data)
   return false
 }
+
+// --- Contagem total (do filtro/busca atual) ---
+// Sai do `rows` da resposta paginada; sem paginação (lista crua) cai no tamanho
+// da lista. Vive junto do título (§ toolbar: título e contagem à esquerda) e
+// anuncia a mudança ao filtrar por `aria-live`.
+
+const totalCount = computed<number>(() => {
+  const rows = props.crud.pagination.rows
+  return typeof rows === 'number' && rows > 0 ? rows : props.crud.items.value.length
+})
+
+const countLabel = computed(() => {
+  const n = totalCount.value
+  return `${formatNumber(n, 0)} ${n === 1 ? 'registro' : 'registros'}`
+})
+
+const showCount = computed(() => !props.hideCount)
+
+/** Paginador em pt-BR: "1–20 de 132". */
+const pageReportTemplate = '{first}–{last} de {totalRecords}'
 
 // --- KPIs ---
 
@@ -437,7 +470,7 @@ const contextMenuItems = computed<MenuItem[]>(() => {
   for (const action of effectiveRowActions.value) {
     if (!isActionVisible(action, row)) continue
     items.push({
-      label: action.tooltip ?? action.action,
+      label: actionLabel(action),
       icon: action.icon,
       class: action.severity === 'danger' ? 'w-crud-ctx-danger' : undefined,
       disabled: isActionDisabled(action, row),
@@ -503,7 +536,17 @@ onMounted(() => {
     <!-- Header -->
     <div v-if="showHeader" class="w-crud-header">
       <div class="w-crud-header-content">
-        <h1 class="w-crud-title">{{ title }}</h1>
+        <div class="w-crud-title-row">
+          <h1 class="w-crud-title">{{ title }}</h1>
+          <span
+            v-if="showCount"
+            class="w-crud-count"
+            aria-live="polite"
+            :aria-busy="crud.loading.value || undefined"
+          >
+            {{ countLabel }}
+          </span>
+        </div>
         <p v-if="subtitle" class="w-crud-subtitle">{{ subtitle }}</p>
       </div>
       <div class="w-crud-header-actions">
@@ -552,6 +595,7 @@ onMounted(() => {
               v-if="(col.filter?.type || 'text') === 'text'"
               :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
               :placeholder="col.filter?.placeholder || col.header"
+              :aria-label="col.filter?.placeholder || col.header"
               size="small"
               @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
             />
@@ -562,6 +606,7 @@ onMounted(() => {
               option-label="label"
               option-value="value"
               :placeholder="col.filter?.placeholder || col.header"
+              :aria-label="col.filter?.placeholder || col.header"
               show-clear
               size="small"
               @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
@@ -573,6 +618,7 @@ onMounted(() => {
               option-label="label"
               option-value="value"
               :placeholder="col.filter?.placeholder || col.header"
+              :aria-label="col.filter?.placeholder || col.header"
               show-clear
               size="small"
               @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
@@ -581,6 +627,7 @@ onMounted(() => {
               v-else-if="col.filter?.type === 'numeric'"
               :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
               :placeholder="col.filter?.placeholder || col.header"
+              :aria-label="col.filter?.placeholder || col.header"
               size="small"
               @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
             />
@@ -630,6 +677,7 @@ onMounted(() => {
             <Button
               v-tooltip.top="'Limpar seleção'"
               icon="pi pi-times"
+              aria-label="Limpar seleção"
               text
               rounded
               size="small"
@@ -646,7 +694,7 @@ onMounted(() => {
             :total-records="crud.pagination.rows"
             :rows-per-page-options="[10, 20, 50]"
             paginator-template="CurrentPageReport PrevPageLink NextPageLink"
-            current-page-report-template="Página {currentPage} de {totalPages}"
+            :current-page-report-template="pageReportTemplate"
             :pt="{ pcPaginator: { root: { class: 'w-crud-paginator' } } }"
             lazy
             striped-rows
@@ -687,10 +735,19 @@ onMounted(() => {
                     <InputText
                       :model-value="crud.search.value"
                       placeholder="Buscar..."
+                      aria-label="Buscar"
                       class="w-72"
                       @input="crud.onSearch"
                     />
                   </IconField>
+                  <span
+                    v-if="!showHeader && showCount"
+                    class="w-crud-count"
+                    aria-live="polite"
+                    :aria-busy="crud.loading.value || undefined"
+                  >
+                    {{ countLabel }}
+                  </span>
                   <slot name="toolbar-start" />
                   <slot name="toolbar-filters" />
                 </div>
@@ -700,6 +757,8 @@ onMounted(() => {
                     <Button
                       v-tooltip.top="'Colunas'"
                       icon="pi pi-sliders-h"
+                      aria-label="Colunas"
+                      aria-haspopup="dialog"
                       text
                       size="small"
                       @click="(e) => chooser?.toggle(e)"
@@ -736,10 +795,9 @@ onMounted(() => {
                   </template>
                   <Button
                     v-if="exportCsv"
-                    v-tooltip.top="
-                      csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'
-                    "
+                    v-tooltip.top="csvLabel"
                     icon="pi pi-download"
+                    :aria-label="csvLabel"
                     text
                     size="small"
                     :loading="exporting"
@@ -747,14 +805,20 @@ onMounted(() => {
                   />
                   <div v-if="canToggleView" class="w-crud-view-toggle">
                     <Button
+                      v-tooltip.top="'Ver como tabela'"
                       icon="pi pi-table"
+                      aria-label="Ver como tabela"
+                      :aria-pressed="isView('table')"
                       size="small"
                       :text="!isView('table')"
                       :outlined="isView('table')"
                       @click="setView('table')"
                     />
                     <Button
+                      v-tooltip.top="'Ver como cards'"
                       icon="pi pi-th-large"
+                      aria-label="Ver como cards"
+                      :aria-pressed="isView('cards')"
                       size="small"
                       :text="!isView('cards')"
                       :outlined="isView('cards')"
@@ -844,6 +908,7 @@ onMounted(() => {
                       v-if="isActionVisible(action, data)"
                       v-tooltip.top="action.tooltip"
                       :icon="action.icon"
+                      :aria-label="actionLabel(action)"
                       text
                       rounded
                       size="small"
@@ -873,10 +938,19 @@ onMounted(() => {
                 <InputText
                   :model-value="crud.search.value"
                   placeholder="Buscar..."
+                  aria-label="Buscar"
                   class="w-72"
                   @input="crud.onSearch"
                 />
               </IconField>
+              <span
+                v-if="!showHeader && showCount"
+                class="w-crud-count"
+                aria-live="polite"
+                :aria-busy="crud.loading.value || undefined"
+              >
+                {{ countLabel }}
+              </span>
               <slot name="toolbar-start" />
               <slot name="toolbar-filters" />
             </div>
@@ -884,8 +958,9 @@ onMounted(() => {
               <slot name="toolbar-actions" />
               <Button
                 v-if="exportCsv"
-                v-tooltip.top="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
+                v-tooltip.top="csvLabel"
                 icon="pi pi-download"
+                :aria-label="csvLabel"
                 text
                 size="small"
                 :loading="exporting"
@@ -893,14 +968,20 @@ onMounted(() => {
               />
               <div v-if="canToggleView" class="w-crud-view-toggle">
                 <Button
+                  v-tooltip.top="'Ver como tabela'"
                   icon="pi pi-table"
+                  aria-label="Ver como tabela"
+                  :aria-pressed="isView('table')"
                   size="small"
                   :text="!isView('table')"
                   :outlined="isView('table')"
                   @click="setView('table')"
                 />
                 <Button
+                  v-tooltip.top="'Ver como cards'"
                   icon="pi pi-th-large"
+                  aria-label="Ver como cards"
+                  :aria-pressed="isView('cards')"
                   size="small"
                   :text="!isView('cards')"
                   :outlined="isView('cards')"
@@ -973,6 +1054,7 @@ onMounted(() => {
                       v-if="isActionVisible(action, row)"
                       v-tooltip.top="action.tooltip"
                       :icon="action.icon"
+                      :aria-label="actionLabel(action)"
                       text
                       rounded
                       size="small"
@@ -994,7 +1076,7 @@ onMounted(() => {
             :first="paginatorFirst"
             :rows-per-page-options="[10, 20, 50]"
             template="CurrentPageReport PrevPageLink NextPageLink"
-            current-page-report-template="Página {currentPage} de {totalPages}"
+            :current-page-report-template="pageReportTemplate"
             class="w-crud-paginator"
             @page="crud.onPage"
           />
@@ -1008,6 +1090,7 @@ onMounted(() => {
           v-if="canCreate"
           v-tooltip.left="'Novo'"
           icon="pi pi-plus"
+          aria-label="Novo"
           rounded
           @click="crud.openCreateDialog()"
         />
@@ -1017,6 +1100,7 @@ onMounted(() => {
             v-if="!selectedRow || isActionVisible(action, selectedRow)"
             v-tooltip.left="action.tooltip"
             :icon="action.icon"
+            :aria-label="actionLabel(action)"
             text
             rounded
             :severity="action.severity as any"
@@ -1030,6 +1114,7 @@ onMounted(() => {
           v-if="showPrint"
           v-tooltip.left="'Imprimir'"
           icon="pi pi-print"
+          aria-label="Imprimir"
           text
           rounded
           :disabled="!selectedRow"
@@ -1037,8 +1122,9 @@ onMounted(() => {
         />
         <Button
           v-if="exportCsv"
-          v-tooltip.left="csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)'"
+          v-tooltip.left="csvLabel"
           icon="pi pi-download"
+          :aria-label="csvLabel"
           text
           rounded
           :loading="exporting"
