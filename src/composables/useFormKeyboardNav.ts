@@ -30,6 +30,10 @@ import { nextTick, type Ref } from 'vue'
  *   Enter no último campo (`onSubmit`) ou o botão de salvar.
  * - marque um elemento com `data-kbd-skip` para excluí-lo da sequência (ex.: o
  *   botão Cancelar, para o Enter ir direto ao Salvar).
+ * - `data-kbd-hold` (no alvo ou num ancestral) segura o Enter no campo: o handler
+ *   só faz `preventDefault()` e não avança — para o componente tratar o Enter
+ *   ele mesmo (ex.: FK com texto novo, que abre o cadastro). Marque só enquanto
+ *   valer; com o atributo fora, o campo volta a pular.
  */
 
 // Elementos que recebem foco por tabulação.
@@ -99,6 +103,9 @@ export function useFormKeyboardNav(
 
     // Nada de submit implícito: o form só submete pelo `onSubmit` ou pelo botão.
     e.preventDefault()
+
+    // O campo pediu para segurar o Enter (`data-kbd-hold`) → ele mesmo trata.
+    if (target.closest('[data-kbd-hold]')) return
 
     // Painel do próprio campo aberto → o componente trata o Enter (seleciona).
     if (target.closest('[aria-expanded="true"]')) return

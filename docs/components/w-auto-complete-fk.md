@@ -14,6 +14,17 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 
 <ApiTable name="WAutoCompleteFK" />
 
+### Rótulo programático
+
+`inputId` põe o `id` no input de digitação do AutoComplete (alvo do `<label for>`);
+`inputAttrs` entra no mesmo input (`aria-labelledby`, `aria-describedby`, `aria-required`…),
+não no wrapper. O `WFormRenderer` já passa os dois; standalone, rotule assim:
+
+```vue
+<label :for="`${id}-produto`">Produto</label>
+<WAutoCompleteFK v-model="produto" endpoint="/produtos" :input-id="`${id}-produto`" />
+```
+
 ## Comportamento
 
 ### Autocomplete Inline
@@ -21,6 +32,35 @@ import { WAutoCompleteFK } from '@wgalleti/primevue-components'
 - Busca com parametro `?search=termo`
 - Exibe ate 20 sugestoes
 - Seleciona ao clicar
+
+### Teclado
+
+| Tecla | Painel | O que faz |
+|---|---|---|
+| `↓` | fechado | Abre a lista na hora: busca imediata com o texto atual (vazio lista os primeiros 20), sem esperar o debounce nem o `minLength`. Cascata obrigatória vazia continua sem buscar. |
+| `↓` / `↑` | aberto | Navega entre as sugestões (PrimeVue). |
+| `Enter` | aberto | Escolhe a sugestão focada — a primeira já nasce focada, então digitar e dar Enter seleciona. |
+| `Enter` | fechado, texto novo, sem correspondência | Abre o **cadastro** com o texto já no campo do nome (`optionLabel` se existir no form; senão o primeiro campo de texto). Ao salvar, o registro entra selecionado e o foco volta ao campo. Só quando há cadastro para abrir: `canCreate` com `crudFields`, ou auto-detectado pelo `extras.fields` (que a busca inline também captura). |
+| `Enter` | fechado, campo resolvido | Nada aqui — a navegação por Enter do formulário avança o foco. |
+| `F2` | — | Abre o modal de pesquisa. |
+
+Dentro de um formulário com `useFormKeyboardNav`, o campo marca o wrapper com `data-kbd-hold`
+enquanto há texto novo e cadastro permitido — é o que segura o Enter no campo (em vez de o
+formulário pular para o próximo) para ele virar cadastro. Texto igual ao rótulo do que já está
+selecionado não é "novo".
+
+### Único registro já vem preenchido (`autoSelectSingle`)
+
+Quando a lista — com `endpointParams` e a cascata (`drilldown`) atuais — tem **um registro só**,
+ele já entra selecionado (e sai no `update:modelValue`). Dispara ao montar sem valor e quando a
+cascata passa a estar preenchida; **não** dispara quando o usuário limpa o campo, senão limpar
+ficaria impossível. Só no modo simples (`multiple` ignora). Default `true`; `false` desliga:
+
+```vue
+<WAutoCompleteFK v-model="local" endpoint="/api/v1/locais/" :auto-select-single="false" />
+```
+
+No `FieldDef` (`type: 'fk'`), a chave é a mesma: `autoSelectSingle: false`.
 
 ### Modal de Busca
 - Botao de lupa abre modal com DataTable completo
