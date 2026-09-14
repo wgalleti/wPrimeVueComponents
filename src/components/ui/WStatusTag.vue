@@ -51,5 +51,11 @@ const statusInfo = computed(() => {
 </script>
 
 <template>
-  <Tag :value="statusInfo.label" :severity="statusInfo.severity as any" />
+  <!-- A cor vem da classe `w-tag--<severity>` (tokens do app: --success, --danger…);
+       o `severity` do PrimeVue fica só como fallback de quem não carrega o CSS. -->
+  <Tag
+    :value="statusInfo.label"
+    :severity="statusInfo.severity as any"
+    :class="['w-tag', `w-tag--${statusInfo.severity}`]"
+  />
 </template>

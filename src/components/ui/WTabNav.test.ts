@@ -129,7 +129,8 @@ describe('WTabNav — render', () => {
     const grupos = w.findAll('.w-tab-nav__group')
     const corA = (abas[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')
     expect(abas[0].classes()).toContain('w-tab-nav__item--grupo')
-    expect(corA).toMatch(/^oklch\(/)
+    // Série N (1..6): token do app → série categórica → OKLCH da suite
+    expect(corA).toMatch(/^var\(--w-tab-group-([1-6]), var\(--viz-\1, oklch\(.+\)\)\)$/)
     expect((grupos[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe(
       corA,
     )
