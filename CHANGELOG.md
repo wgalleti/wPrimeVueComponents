@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.30.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.29.0...v0.30.0) (2026-09-14)
+
+### Funcionalidades
+
+* **a11y:** aria-label em todo botão só-ícone ([b0b199f](https://github.com/wgalleti/wPrimeVueComponents/commit/b0b199f9da63ef550ca17a56288538cf6f8cec71))
+* **autocomplete-fk:** seta abre a lista, único registro preenche, Enter novo cadastra ([e375ea1](https://github.com/wgalleti/wPrimeVueComponents/commit/e375ea1662c59f19d56f18db7f52a37e2ac53df9))
+* **crud-view:** contagem no título, total no paginador e rótulos da coluna boolean ([2032114](https://github.com/wgalleti/wPrimeVueComponents/commit/2032114524cba07db1ccf3c78f829b53c2fa41c1))
+* **form:** rótulo programático, aria-required/describedby e hint nos campos ([faf3242](https://github.com/wgalleti/wPrimeVueComponents/commit/faf32426b4aebb25325941e4ed5c4202a526ae3f))
+* **theme:** status, densidade e cor de grupo lidos dos tokens do app ([1113161](https://github.com/wgalleti/wPrimeVueComponents/commit/1113161941d31b3935c2d09205993511c3a7aadf))
 ## [0.29.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.28.1...v0.29.0) (2026-09-14)
 
 ### Funcionalidades
