@@ -168,6 +168,13 @@
           "required": false,
           "default": null,
           "description": "Navegação por teclado estilo desktop: foca o 1º campo ao abrir e o Enter\npula para o próximo campo até o botão de salvar. Opt-in."
+        },
+        {
+          "name": "asideWidth",
+          "type": "string | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Largura da coluna do slot `#aside` (track do grid: `'24rem'`, `'2fr'`…).\nDefault: metade do dialog. Só vale quando o slot está preenchido."
         }
       ],
       "events": [
@@ -190,6 +197,11 @@
       "slots": [
         {
           "name": "after-fields",
+          "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "aside",
           "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
           "description": ""
         },

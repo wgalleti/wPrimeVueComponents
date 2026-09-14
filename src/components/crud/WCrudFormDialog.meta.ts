@@ -3,7 +3,8 @@ import { defineComponentMeta } from '@/types/componentMeta'
 export default defineComponentMeta({
   category: 'CRUD',
   icon: 'pi pi-window-maximize',
-  summary: 'Dialog de formulário para criar/editar registros de um CRUD.',
+  summary:
+    'Dialog de formulário para criar/editar registros de um CRUD, com painel lateral opcional (#aside) para o documento filho.',
   examples: [
     {
       name: 'Config',

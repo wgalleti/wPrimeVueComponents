@@ -317,6 +317,36 @@
   gap: 1.5rem;
 }
 
+.w-crud-form-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+/* Com o slot #aside: campos à esquerda, painel à direita, rodapé atravessando os
+   dois. O painel tem a largura de `--w-form-aside` (prop asideWidth) ou metade. */
+.w-crud-form--with-aside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--w-form-aside, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+  align-items: start;
+}
+
+.w-crud-form-aside {
+  min-width: 0;
+}
+
+.w-crud-form--with-aside > .w-crud-form-footer {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 839px) {
+  .w-crud-form--with-aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Form group (fieldGroup sections) */
 .w-crud-form-group-header {
   margin-bottom: 0.75rem;

@@ -26,11 +26,15 @@ const props = withDefaults(
     /** Navegação por teclado estilo desktop: foca o 1º campo ao abrir e o Enter
      *  pula para o próximo campo até o botão de salvar. Opt-in. */
     keyboardNav?: boolean
+    /** Largura da coluna do slot `#aside` (track do grid: `'24rem'`, `'2fr'`…).
+     *  Default: metade do dialog. Só vale quando o slot está preenchido. */
+    asideWidth?: string
   }>(),
   {
     width: '480px',
     disabled: false,
     formColumns: undefined,
+    asideWidth: undefined,
   },
 )
 
@@ -83,43 +87,55 @@ watch(
     @update:visible="emit('update:visible', $event)"
     @show="focusFirst"
   >
+    <!-- Com `#aside` preenchido o form vira duas colunas: os campos à esquerda e o
+         painel à direita (a prévia do que vai ser gravado, o documento filho que
+         acompanha o preenchimento). Abaixo de 840px empilha, painel depois dos
+         campos — é onde o dialog já ocupa a tela inteira. -->
     <form
       ref="formRef"
       class="w-crud-form"
+      :class="{ 'w-crud-form--with-aside': $slots.aside }"
+      :style="asideWidth ? { '--w-form-aside': asideWidth } : undefined"
       @submit.prevent="onSave"
       @keydown.capture="handleKeydown"
     >
-      <WFormRenderer
-        ref="rendererRef"
-        :fields="fields"
-        :form-data="formData"
-        :is-editing="isEditing"
-        :disabled="disabled"
-        :columns="formColumns"
-        @update:field="(f, v) => emit('update:field', f, v)"
-      >
-        <!-- Forward field-* slots from parent -->
-        <template
-          v-for="field in fields"
-          :key="`fwd-${field.field}`"
-          #[`field-${field.field}`]="slotData"
+      <div class="w-crud-form-main">
+        <WFormRenderer
+          ref="rendererRef"
+          :fields="fields"
+          :form-data="formData"
+          :is-editing="isEditing"
+          :disabled="disabled"
+          :columns="formColumns"
+          @update:field="(f, v) => emit('update:field', f, v)"
         >
-          <slot :name="`field-${field.field}`" v-bind="slotData" />
-        </template>
-        <!-- Forward image-* slots from parent -->
-        <template
-          v-for="field in fields.filter((f) => f.type === 'image')"
-          :key="`img-${field.field}`"
-          #[`image-${field.field}`]="slotData"
-        >
-          <slot :name="`image-${field.field}`" v-bind="slotData" />
-        </template>
-      </WFormRenderer>
+          <!-- Forward field-* slots from parent -->
+          <template
+            v-for="field in fields"
+            :key="`fwd-${field.field}`"
+            #[`field-${field.field}`]="slotData"
+          >
+            <slot :name="`field-${field.field}`" v-bind="slotData" />
+          </template>
+          <!-- Forward image-* slots from parent -->
+          <template
+            v-for="field in fields.filter((f) => f.type === 'image')"
+            :key="`img-${field.field}`"
+            #[`image-${field.field}`]="slotData"
+          >
+            <slot :name="`image-${field.field}`" v-bind="slotData" />
+          </template>
+        </WFormRenderer>
 
-      <!-- Depois dos campos, antes do rodapé: prévia do que vai ser gravado, saldo do
+        <!-- Depois dos campos, antes do rodapé: prévia do que vai ser gravado, saldo do
            que foi escolhido, aviso dependente do preenchimento. É conteúdo do form
            (reage ao que está digitado), não ação — por isso não vive no `#footer`. -->
-      <slot name="after-fields" :form-data="formData" :is-editing="isEditing" />
+        <slot name="after-fields" :form-data="formData" :is-editing="isEditing" />
+      </div>
+
+      <aside v-if="$slots.aside" class="w-crud-form-aside">
+        <slot name="aside" :form-data="formData" :is-editing="isEditing" />
+      </aside>
 
       <!-- Footer -->
       <div class="w-crud-form-footer">
