@@ -31,7 +31,9 @@ export {
   WInfoCard,
   WKpiCard,
   WKpiGrid,
+  WSectionAccordion,
   WSectionHeader,
+  WSectionPanel,
   WFormSection,
   WActionBar,
   WProgressFlow,
@@ -121,6 +123,8 @@ export type { StatusMapping } from './components/ui/WStatusTag.vue'
 export type { InfoField } from './components/ui/WInfoCard.vue'
 export type { StepFlowContext, StepFlowOrientation } from './utils/stepFlow'
 export { W_STEP_FLOW_KEY } from './utils/stepFlow'
+export type { SectionAccordionContext } from './utils/sectionAccordion'
+export { W_SECTION_ACCORDION_KEY } from './utils/sectionAccordion'
 export type {
   CreateSupabaseDataProviderOptions,
   SupabaseDataProviderClient,
