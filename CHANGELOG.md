@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.31.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.30.0...v0.31.0) (2026-09-15)
+
+### Funcionalidades
+
+* **section-accordion:** WSectionAccordion + WSectionPanel for master-detail editors ([193053d](https://github.com/wgalleti/wPrimeVueComponents/commit/193053db3673b517d3a9afd4a02a707ed3153bf5))
+
+### Documentação
+
+* install from npm with an exact version instead of the git URL ([f684897](https://github.com/wgalleti/wPrimeVueComponents/commit/f684897d99a7b1477935898cd180fb0c1c121a99)), references [#v0](https://github.com/wgalleti/wPrimeVueComponents/issues/v0)
 ## [0.30.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.29.0...v0.30.0) (2026-09-14)
 
 ### Funcionalidades
