@@ -62,6 +62,7 @@ export default defineConfig({
             items: [
               { text: 'WActionBar', link: '/components/w-action-bar' },
               { text: 'WPageHeader', link: '/components/w-page-header' },
+              { text: 'WSectionAccordion / WSectionPanel', link: '/components/w-section-accordion' },
               { text: 'WSectionHeader', link: '/components/w-section-header' },
               { text: 'WDetailHeader', link: '/components/w-detail-header' },
             ],

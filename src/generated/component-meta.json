@@ -2553,6 +2553,39 @@
         }
       ]
     },
+    "WSectionAccordion": {
+      "file": "src/components/ui/WSectionAccordion.vue",
+      "props": [
+        {
+          "name": "modelValue",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "`value` das seções abertas (`v-model`). Omitido = estado interno, tudo aberto."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Trava o clique no cabeçalho de todas as seções."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[open: string[]]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WSectionHeader": {
       "file": "src/components/ui/WSectionHeader.vue",
       "props": [
@@ -2599,6 +2632,71 @@
         },
         {
           "name": "actions",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
+    "WSectionPanel": {
+      "file": "src/components/ui/WSectionPanel.vue",
+      "props": [
+        {
+          "name": "value",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": "Identificador da seção — é o que o `v-model` do acordeão carrega."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "description",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Frase abaixo do título: o que a seção é e o que acontece com ela."
+        },
+        {
+          "name": "icon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Ícone PrimeIcons do tile à esquerda (ex.: `pi pi-list`)."
+        },
+        {
+          "name": "count",
+          "type": "string | number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Badge de contagem à direita (registros da seção)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "icon",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "actions",
+          "type": "{ open: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "default",
           "type": "{}",
           "description": ""
         }

@@ -2329,6 +2329,152 @@
 }
 
 /* ==========================================================
+   WSectionAccordion / WSectionPanel — .w-section-accordion, .w-section-panel
+   ==========================================================
+   As seções de um editor master-detail num bloco só, com moldura leve; os
+   painéis se separam por uma régua, não por caixas. Espaçamento pelos tokens
+   de densidade do app, com fallback no tema do PrimeVue. */
+.w-section-accordion {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border, var(--p-content-border-color));
+  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--surface, var(--p-content-background));
+  overflow: hidden;
+}
+
+.w-section-panel {
+  min-width: 0;
+}
+
+.w-section-accordion > .w-section-panel + .w-section-panel {
+  border-top: 1px solid var(--border, var(--p-content-border-color));
+}
+
+.w-section-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+}
+
+/* Cabeçalho = botão inteiro: ícone tonal + nome + frase + contagem + chevron
+   (mesma anatomia do WSectionHeader, clicável). */
+.w-section-panel__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.w-section-panel__trigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-section-panel__trigger:focus-visible {
+  outline: 2px solid var(--primary, var(--p-primary-color));
+  outline-offset: 2px;
+  border-radius: var(--radius, 0.5rem);
+}
+
+.w-section-panel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--control-h, 2.25rem);
+  height: var(--control-h, 2.25rem);
+  border-radius: var(--radius, 0.5rem);
+  background: var(--primary-soft, var(--p-primary-50, var(--p-highlight-background)));
+  color: var(--primary, var(--p-primary-color));
+}
+
+.w-section-panel__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.w-section-panel__title {
+  font-size: var(--text-base, 0.9375rem);
+  font-weight: var(--fw-medium, 600);
+  line-height: var(--leading-tight, 1.25);
+  color: var(--fg, var(--p-text-color));
+}
+
+.w-section-panel__description {
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: var(--fw-regular, 400);
+  color: var(--fg-muted, var(--p-text-muted-color));
+}
+
+.w-section-panel__count {
+  flex: none;
+  min-width: 1.75em;
+  padding-inline: var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 999px);
+  background: var(--surface-3, var(--p-content-hover-background));
+  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--fw-medium, 600);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.w-section-panel__chevron {
+  flex: none;
+  font-size: var(--text-xs, 0.6875rem);
+  color: var(--fg-subtle, var(--p-text-muted-color));
+}
+
+.w-section-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  flex-shrink: 0;
+}
+
+.w-section-panel__content {
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem) var(--space-5, 1.25rem);
+}
+
+/* Bloco que já vem com moldura própria (WInfoCard) perde a caixa dentro da seção:
+   a moldura é a do acordeão, o cabeçalho é o do painel. */
+.w-section-panel__content > .w-info-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+/* Tablet em pé / celular: a frase some (o título basta) e as ações descem
+   para a linha de baixo, em vez de espremer o cabeçalho. */
+@media (max-width: 640px) {
+  .w-section-panel__header {
+    flex-wrap: wrap;
+  }
+
+  .w-section-panel__description {
+    display: none;
+  }
+
+  .w-section-panel__content {
+    padding-inline: var(--space-3, 0.75rem);
+  }
+}
+
+/* ==========================================================
    WCrudSubview — .w-crud-subview
    ========================================================== */
 
