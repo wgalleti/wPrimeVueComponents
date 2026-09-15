@@ -5,10 +5,10 @@ Biblioteca de componentes Vue 3 + PrimeVue 4 para padronizar componentes reutili
 ## Instalação
 
 ```bash
-# Via git (recomendado para projetos internos)
-yarn add git+https://github.com/wgalleti/wPrimeVueComponents.git
+# Pacote público no npm — fixe versão exata (sem ^), o mesmo número em todos os projetos
+yarn add @wgalleti/primevue-components@<versão> --exact
 
-# Ou npm link para desenvolvimento local
+# Desenvolvimento local da própria suíte
 cd wPrimeVueComponents && yarn link
 cd seu-projeto && yarn link @wgalleti/primevue-components
 ```
@@ -18,10 +18,10 @@ cd seu-projeto && yarn link @wgalleti/primevue-components
 Certifique-se de ter instalado no seu projeto:
 
 ```bash
-yarn add vue@^3.4 primevue@^4.0 dayjs@^1.11
+yarn add vue@^3.4 primevue@^4.2 dayjs@^1.11 vue-router
 ```
 
-Se o projeto usar a camada Axios padrao, instale tambem `axios@^1.0`.
+Se o projeto usar a camada Axios padrão (o data provider default), instale também `axios@^1.0`.
 
 ## Setup
 

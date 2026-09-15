@@ -4,13 +4,13 @@ Automatize com `npx @wgalleti/primevue-components init` (registra o plugin, impo
 
 ## 1. Dependências
 
-Peers (o app precisa ter): `vue ^3.4`, `primevue ^4`, `axios ^1`, `dayjs ^1.11`.
+Peers (o app precisa ter): `vue ^3.4`, `primevue ^4`, `dayjs ^1.11`, `vue-router ^4 || ^5`; `axios ^1` só se usar o data provider Axios (o padrão).
 
 ```bash
-yarn add @wgalleti/primevue-components@git+https://github.com/wgalleti/wPrimeVueComponents.git
+yarn add @wgalleti/primevue-components
 ```
 
-Fixar versão: sufixo `#v0.8.1`.
+O pacote é público no npm. Fixe **versão exata** no `package.json` (sem `^`): a suíte muda rápido e o número precisa ser o mesmo entre os projetos que a consomem — `yarn add @wgalleti/primevue-components@<versão> --exact`.
 
 ## 2. main.ts
 
