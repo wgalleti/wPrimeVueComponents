@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef, watch, useId } from 'vue'
+import { computed, reactive, isRef, watch, useId, useSlots } from 'vue'
 import { vMaska } from 'maska/vue'
 import { isFieldVisible } from '@/utils/formRecord'
 import InputText from 'primevue/inputtext'
@@ -37,6 +37,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   'update:field': [field: string, value: unknown]
 }>()
+const slots = useSlots()
 
 const fieldErrors = reactive<Record<string, string | null>>({})
 
@@ -367,6 +368,36 @@ function removeChip(field: FieldDef, index: number) {
     field.field,
     raw.filter((_, i) => i !== index),
   )
+}
+
+// Entrada livre: o rascunho digitado por campo vive aqui até o Enter. Ligada por padrão
+// quando a tela não trouxe um gatilho próprio — é o que deixa UM FieldDef servir tanto no
+// CRUD da tela quanto no CRUD embutido de uma FK, que não repassa slots.
+const chipDraft = reactive<Record<string, string>>({})
+
+function chipsHasInput(field: FieldDef): boolean {
+  if (field.chipsInput === false) return false
+  if (field.chipsInput === true) return true
+  return !slots[`chips-trigger-${field.field}`]
+}
+
+function addChipFromDraft(field: FieldDef) {
+  if (isFieldDisabled(field)) return
+  const texto = (chipDraft[field.field] ?? '').trim()
+  if (!texto) return
+  const atual = props.formData[field.field]
+  const lista = Array.isArray(atual) ? atual : []
+  chipDraft[field.field] = ''
+  if (lista.some((item) => String(item) === texto)) return
+  emit('update:field', field.field, [...lista, texto])
+}
+
+function removeLastChipIfEmpty(field: FieldDef, event: KeyboardEvent) {
+  if ((chipDraft[field.field] ?? '') !== '') return
+  const atual = props.formData[field.field]
+  if (!Array.isArray(atual) || !atual.length) return
+  event.preventDefault()
+  removeChip(field, atual.length - 1)
 }
 
 // --- Color ---
@@ -1022,6 +1053,18 @@ defineExpose({ validateAll, clearErrors })
                   :form-data="formData"
                   :disabled="isFieldDisabled(field)"
                   :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
+                />
+
+                <input
+                  v-if="chipsHasInput(field)"
+                  v-model="chipDraft[field.field]"
+                  type="text"
+                  class="w-chips__input"
+                  :placeholder="field.chipsPlaceholder || 'Digite e pressione Enter'"
+                  :disabled="isFieldDisabled(field)"
+                  :aria-label="`Adicionar a ${field.label}`"
+                  @keydown.enter.prevent="addChipFromDraft(field)"
+                  @keydown.backspace="removeLastChipIfEmpty(field, $event)"
                 />
 
                 <span class="w-chips__summary">

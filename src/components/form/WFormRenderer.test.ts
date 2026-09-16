@@ -143,6 +143,49 @@ describe('FieldDef type: chips', () => {
     await w.find('.w-chips__remove').trigger('click')
     expect(emitido(w)).toEqual([])
   })
+
+  describe('entrada livre', () => {
+    const bairros: FieldDef = { field: 'bairros', label: 'Bairros', type: 'chips' }
+
+    it('sem slot de gatilho, tem input; Enter adiciona o texto aparado', async () => {
+      const w = montar([bairros], { bairros: ['Centro'] })
+      const input = w.find('.w-chips__input')
+      expect(input.exists()).toBe(true)
+      await input.setValue('  Jardim Itália ')
+      await input.trigger('keydown', { key: 'Enter' })
+      expect(emitido(w)).toEqual([['bairros', ['Centro', 'Jardim Itália']]])
+      expect((input.element as HTMLInputElement).value).toBe('')
+    })
+
+    it('ignora vazio e repetido', async () => {
+      const w = montar([bairros], { bairros: ['Centro'] })
+      const input = w.find('.w-chips__input')
+      await input.setValue('   ')
+      await input.trigger('keydown', { key: 'Enter' })
+      await input.setValue('Centro')
+      await input.trigger('keydown', { key: 'Enter' })
+      expect(emitido(w)).toEqual([])
+    })
+
+    it('Backspace no input vazio remove o último chip', async () => {
+      const w = montar([bairros], { bairros: ['Centro', 'Bela Vista'] })
+      await w.find('.w-chips__input').trigger('keydown', { key: 'Backspace' })
+      expect(emitido(w)).toEqual([['bairros', ['Centro']]])
+    })
+
+    it('com slot de gatilho ou chipsInput=false, não há input', () => {
+      const comSlot = montar(
+        [bairros],
+        { bairros: [] },
+        {
+          'chips-trigger-bairros': '<button class="gatilho">Mapa</button>',
+        },
+      )
+      expect(comSlot.find('.w-chips__input').exists()).toBe(false)
+      const desligado = montar([{ ...bairros, chipsInput: false }], { bairros: [] })
+      expect(desligado.find('.w-chips__input').exists()).toBe(false)
+    })
+  })
 })
 
 describe('validateAll', () => {

@@ -64,6 +64,9 @@ Props por tipo:
 - **number/currency**: `min`, `max`, `minFractionDigits`, `maxFractionDigits`, `prefix`, `suffix`, `fillFromRight` (moeda estilo POS), `decimals`.
 - **date/datetime**: `autonow` (preenche hoje no mount se null), `minDate`, `maxDate`, `dateFormat`, `hourFormat`.
 - **mask**: `mask`. **textarea**: `rows`. **cep**: `cepFields` (auto-preenche endereço via ViaCEP).
+- **chips** (lista de texto livre ou de ids): `chipsEmptyLabel`, `chipsRemoveLabel`; entrada livre
+  nativa (`chipsInput`, ligada por padrão quando a tela não passa o slot `chips-trigger-<campo>`;
+  `chipsPlaceholder`). É o que deixa UM FieldDef servir no CRUD da tela e no CRUD embutido da FK.
 - **fieldGroup**: `{ id, title, description?, order?, columns? }` agrupa campos numa seção titulada.
 
 ## WFormRenderer (form standalone, sem dialog)
