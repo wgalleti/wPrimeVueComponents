@@ -228,6 +228,45 @@ describe('WAutoCompleteFK — Enter sem correspondência abre o cadastro', () =>
     wrapper.unmount()
   })
 
+  it('o cadastro embutido segue a tela da entidade: colunas, largura, títulos e payload', async () => {
+    const { wrapper, provider } = montar({
+      autoSelectSingle: false,
+      canCreate: true,
+      // o MESMO objeto que a tela da entidade passa ao useCrudManager
+      crud: {
+        form: campos,
+        formColumns: 4,
+        dialogWidth: '640px',
+        labels: { createTitle: 'Novo item', successCreate: 'Item cadastrado' },
+        createDefaults: () => ({ unidade: 7 }),
+        transformPayload: (payload: Record<string, unknown>, isEditing: boolean) => ({
+          ...payload,
+          nome: `${payload.nome}!`,
+          isEditing,
+        }),
+      },
+    })
+    await flushPromises()
+    await digitar(wrapper, 'Soja')
+    await input(wrapper).trigger('keydown', { key: 'Enter', code: 'Enter' })
+    await flushPromises()
+
+    const form = wrapper.findComponent(WCrudFormDialog)
+    expect(form.props('title')).toBe('Novo item')
+    expect(form.props('formColumns')).toBe(4)
+    expect(form.props('width')).toBe('640px')
+
+    form.vm.$emit('save')
+    await flushPromises()
+    expect(provider.create).toHaveBeenCalledWith('/itens', {
+      codigo: null,
+      nome: 'Soja!',
+      unidade: 7,
+      isEditing: false,
+    })
+    wrapper.unmount()
+  })
+
   it('com sugestões, Enter não abre o cadastro', async () => {
     const { wrapper, provider } = montar(
       { autoSelectSingle: false, canCreate: true, crudFields: campos },

@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import type { ColumnDef } from './column'
+import type { CrudLabels } from './labels'
 
 // ---------------------------------------------------------------------------
 // Field
@@ -54,6 +55,22 @@ export interface FieldSubRowsResult {
 
 /** Busca as sub-linhas de uma página do modal da FK. */
 export type FieldSubRowsFetch = (rows: Record<string, unknown>[]) => Promise<FieldSubRowsResult>
+
+/** Recorte do `CrudManagerConfig` que faz sentido dentro do modal de uma FK. */
+export interface FkCrudConfig {
+  form: FieldDef[]
+  columns?: ColumnDef[]
+  formColumns?: number
+  dialogWidth?: string
+  labels?: Partial<
+    Pick<CrudLabels, 'createTitle' | 'editTitle' | 'successCreate' | 'successUpdate'>
+  >
+  transformPayload?: (
+    payload: Record<string, unknown>,
+    isEditing: boolean,
+  ) => Record<string, unknown>
+  createDefaults?: () => Record<string, unknown>
+}
 
 export interface FieldValidateContext {
   formData: Record<string, unknown>
@@ -123,6 +140,11 @@ export interface FieldDef {
   blockedPlaceholder?: string
   crudFields?: FieldDef[]
   crudColumns?: ColumnDef[]
+  /** A configuração de CRUD da entidade apontada — o MESMO objeto que a tela dela passa ao
+   *  `useCrudManager` (form, columns, formColumns, labels, transformPayload, createDefaults) mais
+   *  a largura do diálogo. Um schema por entidade: o cadastro dentro da FK é a tela da entidade,
+   *  não uma versão dela. Preenche `crudFields`/`crudColumns` quando estes não vierem. */
+  crud?: FkCrudConfig
   /** Sub-linhas do grid do modal da FK: recebe as linhas da página e devolve o mapa
    *  `id → sub-linhas` + as colunas (dinâmicas) do mini-grid. Linha com entrada no
    *  mapa abre expandida — ex.: lote (linha) com as análises dele (sub-linhas). */

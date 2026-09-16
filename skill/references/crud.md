@@ -60,7 +60,7 @@ Campos comuns: `field`, `label`, `type`, `required`, `colSpan` (`'full'` | `0.5`
 
 Props por tipo:
 - **select/autocomplete/transfer**: `options` (array ou `Ref`), `optionLabel`, `optionValue`, `showClear`, `searchFields`.
-- **fk**: `endpoint`, `endpointParams`, `dependsOn` (cascata/drill-down), `blockedPlaceholder`, `crudFields`/`crudColumns` (CRUD dentro do modal).
+- **fk**: `endpoint`, `endpointParams`, `dependsOn` (cascata/drill-down), `blockedPlaceholder`, `crud` (CRUD dentro do modal: `{ form, columns, formColumns, dialogWidth, labels, transformPayload, createDefaults }` — o MESMO objeto que a tela da entidade passa ao `useCrudManager`; o cadastro embutido é a tela da entidade, não uma versão dela). `crudFields`/`crudColumns` avulsos continuam aceitos.
 - **number/currency**: `min`, `max`, `minFractionDigits`, `maxFractionDigits`, `prefix`, `suffix`, `fillFromRight` (moeda estilo POS), `decimals`.
 - **date/datetime**: `autonow` (preenche hoje no mount se null), `minDate`, `maxDate`, `dateFormat`, `hourFormat`.
 - **mask**: `mask`. **textarea**: `rows`. **cep**: `cepFields` (auto-preenche endereço via ViaCEP).

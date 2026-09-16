@@ -875,6 +875,7 @@ defineExpose({ validateAll, clearErrors })
                 :dialog-header="field.label"
                 :crud-fields="field.crudFields"
                 :crud-columns="field.crudColumns"
+                :crud="field.crud"
                 :sub-rows="subRowsFetchDe(field)"
                 :dialog-width="field.dialogWidth"
                 :can-create="field.canCreate"

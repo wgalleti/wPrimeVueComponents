@@ -917,6 +917,13 @@
           "description": ""
         },
         {
+          "name": "crud",
+          "type": "FkCrudConfig | undefined",
+          "required": false,
+          "default": null,
+          "description": "A configuração de CRUD da entidade (a mesma da tela dela) — ver `FieldDef.crud`."
+        },
+        {
           "name": "subRows",
           "type": "FieldSubRowsFetch | undefined",
           "required": false,
