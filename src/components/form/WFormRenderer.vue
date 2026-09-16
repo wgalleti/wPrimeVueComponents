@@ -370,6 +370,10 @@ function removeChip(field: FieldDef, index: number) {
   )
 }
 
+function validateContext() {
+  return { formData: props.formData, isEditing: Boolean(props.isEditing) }
+}
+
 // Entrada livre: o rascunho digitado por campo vive aqui até o Enter. Ligada por padrão
 // quando a tela não trouxe um gatilho próprio — é o que deixa UM FieldDef servir tanto no
 // CRUD da tela quanto no CRUD embutido de uma FK, que não repassa slots.
@@ -429,7 +433,7 @@ function resolveDrilldown(field: FieldDef) {
 
 function validateField(field: FieldDef) {
   if (typeof field.validate === 'function') {
-    const error = field.validate(props.formData[field.field])
+    const error = field.validate(props.formData[field.field], validateContext())
     fieldErrors[field.field] = error || null
   }
 }
@@ -447,7 +451,7 @@ function validateAll(): string[] {
       continue
     }
     if (typeof field.validate === 'function') {
-      const error = field.validate(props.formData[field.field])
+      const error = field.validate(props.formData[field.field], validateContext())
       fieldErrors[field.field] = error || null
       if (error) errors.push(error)
     }

@@ -109,7 +109,7 @@ export function validateFormRecord(
   for (const f of fields) {
     if (!isFieldVisible(f, formData, isEditing)) continue
     if (f.validate) {
-      const result = f.validate(formData[f.field])
+      const result = f.validate(formData[f.field], { formData, isEditing })
       if (result) return result
     }
     if (f.required) {

@@ -8,7 +8,13 @@ export type {
 
 export type { ColumnDef, ColumnType } from './column'
 
-export type { FieldDef, FieldType, SelectOption, FieldDependency } from './field'
+export type {
+  FieldDef,
+  FieldType,
+  FieldValidateContext,
+  SelectOption,
+  FieldDependency,
+} from './field'
 
 export type {
   EditableCardRole,

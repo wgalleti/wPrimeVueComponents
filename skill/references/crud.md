@@ -54,7 +54,7 @@ Outros campos: `format(value, row) => string` (render próprio), `visible`, `dec
 }
 ```
 
-Campos comuns: `field`, `label`, `type`, `required`, `colSpan` (`'full'` | `0.5` | inteiro), `defaultValue`, `disabled` (bool | fn), `visible` (bool | fn), `placeholder`, `validate(v) => string|null`, `autofocus`.
+Campos comuns: `field`, `label`, `type`, `required`, `colSpan` (`'full'` | `0.5` | inteiro), `defaultValue`, `disabled` (bool | fn), `visible` (bool | fn), `placeholder`, `validate(v, { formData, isEditing }) => string|null` (regra por modo, ex.: senha obrigatória só na criação, mora no schema — a tela não injeta getter), `autofocus`.
 
 `type` (FieldType): `text · email · password · number · currency · date · datetime · select · autocomplete · fk · switch · textarea · color · cpf_cnpj · mask · image · cep · transfer`.
 

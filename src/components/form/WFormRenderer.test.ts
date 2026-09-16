@@ -188,6 +188,31 @@ describe('FieldDef type: chips', () => {
   })
 })
 
+describe('validate recebe o contexto do form', () => {
+  it('passa formData e isEditing como 2º argumento', () => {
+    const chamadas: unknown[] = []
+    const campo: FieldDef = {
+      field: 'senha',
+      label: 'Senha',
+      validate: (v, ctx) => {
+        chamadas.push([v, ctx])
+        return !v && !ctx.isEditing ? 'Obrigatória na criação' : null
+      },
+    }
+    const criando = montar([campo], { senha: '' })
+    expect((criando.vm as unknown as { validateAll: () => string[] }).validateAll()).toEqual([
+      'Obrigatória na criação',
+    ])
+    expect(chamadas[0]).toEqual(['', { formData: { senha: '' }, isEditing: false }])
+
+    const editando = mount(WFormRenderer, {
+      props: { fields: [campo], formData: { senha: '' }, isEditing: true },
+      global: { plugins: [PrimeVue] },
+    })
+    expect((editando.vm as unknown as { validateAll: () => string[] }).validateAll()).toEqual([])
+  })
+})
+
 describe('validateAll', () => {
   const campos: FieldDef[] = [
     { field: 'nome', label: 'Nome', validate: (v) => (v ? null : 'Nome obrigatório') },
