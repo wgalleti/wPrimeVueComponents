@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.32.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.31.0...v0.32.0) (2026-09-16)
+
+### Funcionalidades
+
+* **fk:** inline CRUD takes the entity's crud config as one object ([3251e6b](https://github.com/wgalleti/wPrimeVueComponents/commit/3251e6b49fa545753b1d9014ac4a774bf956e9d9))
+* **form:** FieldDef.validate receives the form context ([702f1ff](https://github.com/wgalleti/wPrimeVueComponents/commit/702f1ffd3a8a6165e4955d2d09f4c83a11e895f6))
+* **form:** native free-text entry for chips fields ([419b42c](https://github.com/wgalleti/wPrimeVueComponents/commit/419b42c1d668d30534812c727191dbf88bf7ece3))
+
+### Correções
+
+* **form:** chips input holds Enter only while it has text ([c14eb67](https://github.com/wgalleti/wPrimeVueComponents/commit/c14eb6774ed27f2e2f2d821369dd2a9ff1350e6b))
 ## [0.31.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.30.0...v0.31.0) (2026-09-15)
 
 ### Funcionalidades
