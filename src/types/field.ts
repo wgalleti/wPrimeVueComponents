@@ -55,6 +55,11 @@ export interface FieldSubRowsResult {
 /** Busca as sub-linhas de uma página do modal da FK. */
 export type FieldSubRowsFetch = (rows: Record<string, unknown>[]) => Promise<FieldSubRowsResult>
 
+export interface FieldValidateContext {
+  formData: Record<string, unknown>
+  isEditing: boolean
+}
+
 export interface FieldDef {
   field: string
   label: string
@@ -72,7 +77,10 @@ export interface FieldDef {
   placeholder?: string
   /** Texto de apoio abaixo do campo; ligado ao input por `aria-describedby`. */
   hint?: string
-  validate?: (value: unknown) => string | null
+  /** Validação própria do campo. O 2º argumento traz o contexto do form (`formData` e o
+   *  modo `isEditing`) — é o que permite regra por modo ("obrigatório só na criação") sem
+   *  a tela injetar um getter no schema. Quem só lê o valor segue funcionando. */
+  validate?: (value: unknown, ctx: FieldValidateContext) => string | null
   autofocus?: boolean | 'create' | 'edit'
   /** Campo somente-leitura: renderiza desabilitado (o valor ainda vai no payload). */
   readonly?: boolean
