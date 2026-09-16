@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.32.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.0...v0.32.1) (2026-09-16)
+
+### Correções
+
+* **crud:** column filters render in the grid toolbar next to search ([1c57608](https://github.com/wgalleti/wPrimeVueComponents/commit/1c5760884a5af494ca669c7c71a307cdf3225a1e))
 ## [0.32.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.31.0...v0.32.0) (2026-09-16)
 
 ### Funcionalidades
