@@ -157,6 +157,14 @@ describe('FieldDef type: chips', () => {
       expect((input.element as HTMLInputElement).value).toBe('')
     })
 
+    it('com texto, segura o Enter no campo (data-kbd-hold); vazio, deixa o form pular', async () => {
+      const w = montar([bairros], { bairros: [] })
+      const input = w.find('.w-chips__input')
+      expect(input.attributes('data-kbd-hold')).toBeUndefined()
+      await input.setValue('Centro')
+      expect(input.attributes('data-kbd-hold')).toBe('')
+    })
+
     it('ignora vazio e repetido', async () => {
       const w = montar([bairros], { bairros: ['Centro'] })
       const input = w.find('.w-chips__input')

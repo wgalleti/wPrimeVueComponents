@@ -1059,6 +1059,9 @@ defineExpose({ validateAll, clearErrors })
                   :set-form-field="(f: string, v: unknown) => emit('update:field', f, v)"
                 />
 
+                <!-- `data-kbd-hold` só com texto: Enter adiciona (a navegação por teclado do
+                     form segura o foco); vazio, Enter pula pro próximo campo como em qualquer
+                     input — mesmo desenho da FK com texto novo. -->
                 <input
                   v-if="chipsHasInput(field)"
                   v-model="chipDraft[field.field]"
@@ -1067,6 +1070,7 @@ defineExpose({ validateAll, clearErrors })
                   :placeholder="field.chipsPlaceholder || 'Digite e pressione Enter'"
                   :disabled="isFieldDisabled(field)"
                   :aria-label="`Adicionar a ${field.label}`"
+                  :data-kbd-hold="(chipDraft[field.field] ?? '').trim() ? '' : undefined"
                   @keydown.enter.prevent="addChipFromDraft(field)"
                   @keydown.backspace="removeLastChipIfEmpty(field, $event)"
                 />
