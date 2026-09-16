@@ -578,70 +578,6 @@ onMounted(() => {
     <!-- Content (table/cards + optional action rail) -->
     <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
       <div class="w-crud-content-main">
-        <!-- Barra de filtros de coluna (declarativos, opt-in via ColumnDef.filter) -->
-        <div
-          v-if="filterableColumns.length"
-          class="w-crud-filters"
-          style="
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.75rem;
-          "
-        >
-          <template v-for="col in filterableColumns" :key="col.field">
-            <InputText
-              v-if="(col.filter?.type || 'text') === 'text'"
-              :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
-              :placeholder="col.filter?.placeholder || col.header"
-              :aria-label="col.filter?.placeholder || col.header"
-              size="small"
-              @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
-            />
-            <Select
-              v-else-if="col.filter?.type === 'select'"
-              :model-value="crud.columnFilters[fParam(col)]"
-              :options="col.filter?.options"
-              option-label="label"
-              option-value="value"
-              :placeholder="col.filter?.placeholder || col.header"
-              :aria-label="col.filter?.placeholder || col.header"
-              show-clear
-              size="small"
-              @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-            />
-            <Select
-              v-else-if="col.filter?.type === 'boolean'"
-              :model-value="crud.columnFilters[fParam(col)]"
-              :options="booleanFilterOptions"
-              option-label="label"
-              option-value="value"
-              :placeholder="col.filter?.placeholder || col.header"
-              :aria-label="col.filter?.placeholder || col.header"
-              show-clear
-              size="small"
-              @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-            />
-            <InputNumber
-              v-else-if="col.filter?.type === 'numeric'"
-              :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
-              :placeholder="col.filter?.placeholder || col.header"
-              :aria-label="col.filter?.placeholder || col.header"
-              size="small"
-              @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
-            />
-          </template>
-          <Button
-            v-if="Object.keys(crud.columnFilters).length"
-            label="Limpar filtros"
-            icon="pi pi-filter-slash"
-            text
-            size="small"
-            @click="crud.clearColumnFilters()"
-          />
-        </div>
-
         <!-- Table -->
         <div v-if="isView('table')" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->
@@ -749,7 +685,59 @@ onMounted(() => {
                     {{ countLabel }}
                   </span>
                   <slot name="toolbar-start" />
+                  <!-- Filtros declarativos de coluna (ColumnDef.filter): moram na toolbar do
+                       grid, ao lado da busca — nunca numa faixa própria acima da tabela. -->
+                  <template v-for="col in filterableColumns" :key="col.field">
+                    <InputText
+                      v-if="(col.filter?.type || 'text') === 'text'"
+                      :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
+                      :placeholder="col.filter?.placeholder || col.header"
+                      :aria-label="col.filter?.placeholder || col.header"
+                      size="small"
+                      @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
+                    />
+                    <Select
+                      v-else-if="col.filter?.type === 'select'"
+                      :model-value="crud.columnFilters[fParam(col)]"
+                      :options="col.filter?.options"
+                      option-label="label"
+                      option-value="value"
+                      :placeholder="col.filter?.placeholder || col.header"
+                      :aria-label="col.filter?.placeholder || col.header"
+                      show-clear
+                      size="small"
+                      @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+                    />
+                    <Select
+                      v-else-if="col.filter?.type === 'boolean'"
+                      :model-value="crud.columnFilters[fParam(col)]"
+                      :options="booleanFilterOptions"
+                      option-label="label"
+                      option-value="value"
+                      :placeholder="col.filter?.placeholder || col.header"
+                      :aria-label="col.filter?.placeholder || col.header"
+                      show-clear
+                      size="small"
+                      @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+                    />
+                    <InputNumber
+                      v-else-if="col.filter?.type === 'numeric'"
+                      :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
+                      :placeholder="col.filter?.placeholder || col.header"
+                      :aria-label="col.filter?.placeholder || col.header"
+                      size="small"
+                      @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
+                    />
+                  </template>
                   <slot name="toolbar-filters" />
+                  <Button
+                    v-if="Object.keys(crud.columnFilters).length"
+                    label="Limpar filtros"
+                    icon="pi pi-filter-slash"
+                    text
+                    size="small"
+                    @click="crud.clearColumnFilters()"
+                  />
                 </div>
                 <div class="w-crud-toolbar-end">
                   <slot name="toolbar-actions" />
@@ -952,7 +940,59 @@ onMounted(() => {
                 {{ countLabel }}
               </span>
               <slot name="toolbar-start" />
+              <!-- Filtros declarativos de coluna (ColumnDef.filter): moram na toolbar do
+                   grid, ao lado da busca — nunca numa faixa própria acima da tabela. -->
+              <template v-for="col in filterableColumns" :key="col.field">
+                <InputText
+                  v-if="(col.filter?.type || 'text') === 'text'"
+                  :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
+                  :placeholder="col.filter?.placeholder || col.header"
+                  :aria-label="col.filter?.placeholder || col.header"
+                  size="small"
+                  @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
+                />
+                <Select
+                  v-else-if="col.filter?.type === 'select'"
+                  :model-value="crud.columnFilters[fParam(col)]"
+                  :options="col.filter?.options"
+                  option-label="label"
+                  option-value="value"
+                  :placeholder="col.filter?.placeholder || col.header"
+                  :aria-label="col.filter?.placeholder || col.header"
+                  show-clear
+                  size="small"
+                  @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+                />
+                <Select
+                  v-else-if="col.filter?.type === 'boolean'"
+                  :model-value="crud.columnFilters[fParam(col)]"
+                  :options="booleanFilterOptions"
+                  option-label="label"
+                  option-value="value"
+                  :placeholder="col.filter?.placeholder || col.header"
+                  :aria-label="col.filter?.placeholder || col.header"
+                  show-clear
+                  size="small"
+                  @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
+                />
+                <InputNumber
+                  v-else-if="col.filter?.type === 'numeric'"
+                  :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
+                  :placeholder="col.filter?.placeholder || col.header"
+                  :aria-label="col.filter?.placeholder || col.header"
+                  size="small"
+                  @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
+                />
+              </template>
               <slot name="toolbar-filters" />
+              <Button
+                v-if="Object.keys(crud.columnFilters).length"
+                label="Limpar filtros"
+                icon="pi pi-filter-slash"
+                text
+                size="small"
+                @click="crud.clearColumnFilters()"
+              />
             </div>
             <div class="w-crud-toolbar-end">
               <slot name="toolbar-actions" />
