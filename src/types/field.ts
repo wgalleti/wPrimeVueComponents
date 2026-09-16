@@ -171,6 +171,13 @@ export interface FieldDef {
   chipsEmptyLabel?: string
   /** `type: 'chips'` — `aria-label`/`title` do botão de remover do chip. */
   chipsRemoveLabel?: string
+  /** `type: 'chips'` — entrada livre nativa: um input no fim dos chips; Enter adiciona o
+   *  texto (aparado, sem repetir), Backspace no input vazio remove o último. Default: ligada
+   *  quando a tela NÃO passa o slot `chips-trigger-<campo>` — assim o mesmo FieldDef serve
+   *  no CRUD da tela e no CRUD embutido de uma FK (que não repassa slots). `false` desliga. */
+  chipsInput?: boolean
+  /** `type: 'chips'` — placeholder da entrada livre (default "Digite e pressione Enter"). */
+  chipsPlaceholder?: string
 
   // switch
   switchLabel?: string
