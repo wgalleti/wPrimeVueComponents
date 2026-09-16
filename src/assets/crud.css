@@ -43,35 +43,32 @@
    O app manda pela tríade `--control-h` / `--ui-font` / `--control-px`
    (ex.: 38px / 14px / 12px; compacto 32px / 13px). Sem os tokens, os
    fallbacks abaixo valem — nunca o 42px/16px do tema PrimeVue. Vale para o
-   input de busca, os filtros de coluna, os campos do formulário e os botões
-   das barras (toolbar, cabeçalho, rodapé do form, rail). Botão de linha usa
+   input de busca, os filtros de coluna (na mesma toolbar), os campos do
+   formulário e os botões das barras (toolbar, cabeçalho, rodapé do form,
+   rail). Botão de linha usa
    `--control-h-sm` para não esticar a tabela. */
 
 .w-crud-toolbar .p-inputtext,
-.w-crud-filters .p-inputtext,
 .w-crud-form .p-inputtext,
 .w-crud-toolbar .p-select,
-.w-crud-filters .p-select,
 .w-crud-form .p-select,
 .w-crud-form .p-multiselect,
 .w-crud-form .p-autocomplete,
+.w-crud-toolbar .p-inputnumber,
 .w-crud-form .p-inputnumber,
 .w-crud-form .p-password {
   font-size: var(--ui-font, 0.875rem);
 }
 
 .w-crud-toolbar .p-inputtext,
-.w-crud-filters .p-inputtext,
 .w-crud-form .p-inputtext,
 .w-crud-toolbar .p-select,
-.w-crud-filters .p-select,
 .w-crud-form .p-select,
 .w-crud-form .p-multiselect {
   height: var(--control-h, 2.375rem);
 }
 
 .w-crud-toolbar .p-inputtext,
-.w-crud-filters .p-inputtext,
 .w-crud-form .p-inputtext {
   padding-block: 0;
   padding-inline: var(--control-px, 0.75rem);
@@ -83,7 +80,6 @@
 }
 
 .w-crud-toolbar .p-select-label,
-.w-crud-filters .p-select-label,
 .w-crud-form .p-select-label,
 .w-crud-form .p-multiselect-label {
   display: flex;
@@ -99,7 +95,6 @@
 
 .w-crud-header-actions .p-button,
 .w-crud-toolbar .p-button,
-.w-crud-filters .p-button,
 .w-crud-bulkbar .p-button,
 .w-crud-form-footer .p-button,
 .w-crud-rail .p-button {

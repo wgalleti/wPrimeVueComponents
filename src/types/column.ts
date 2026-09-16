@@ -9,8 +9,8 @@ export type ColumnType =
 export type TagSeverity =
   'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | 'primary'
 
-/** Filtro declarativo de coluna — renderizado na barra de filtros e enviado
- *  como parâmetro na requisição de `list`. Opt-in por coluna. */
+/** Filtro declarativo de coluna — renderizado na toolbar do grid, ao lado da
+ *  busca, e enviado como parâmetro na requisição de `list`. Opt-in por coluna. */
 export interface ColumnFilter {
   /** Widget do filtro. Default: 'text'. */
   type?: 'text' | 'select' | 'boolean' | 'numeric'
@@ -43,6 +43,6 @@ export interface ColumnDef {
   /** `type: 'boolean'` — cor do tag no `false` (default 'danger'). `null` = texto neutro,
    *  sem tag — para boolean que não é status (ex.: `nao_exige_analise` → "—"). */
   falseSeverity?: TagSeverity | null
-  /** Filtro declarativo desta coluna (aparece na barra de filtros). */
+  /** Filtro declarativo desta coluna (aparece na toolbar do grid, junto da busca). */
   filter?: ColumnFilter
 }

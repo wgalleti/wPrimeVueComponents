@@ -171,3 +171,63 @@ describe('WCrudView — contagem total junto ao título', () => {
     w.unmount()
   })
 })
+
+describe('WCrudView — filtros de coluna moram na toolbar do grid', () => {
+  const colunas = [
+    { field: 'nome', header: 'Nome' },
+    {
+      field: 'status',
+      header: 'Situação',
+      filter: { type: 'select' as const, options: [{ label: 'Ativo', value: 'A' }] },
+    },
+    { field: 'ativo', header: 'Ativo', filter: { type: 'boolean' as const, param: 'is_ativo' } },
+  ]
+
+  it('tabela: filtros declarativos ficam na toolbar, ao lado da busca; nada fora dela', async () => {
+    const w = montar({ columns: colunas })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const toolbar = w.find('.p-datatable-header .w-crud-toolbar-start')
+    expect(toolbar.exists()).toBe(true)
+    expect(toolbar.find('input[aria-label="Buscar"]').exists()).toBe(true)
+    expect(toolbar.find('[aria-label="Situação"]').exists()).toBe(true)
+    expect(toolbar.find('[aria-label="Ativo"]').exists()).toBe(true)
+    expect(w.find('.w-crud-filters').exists()).toBe(false)
+    // Fora do cabeçalho da tabela não há nenhum controle de filtro.
+    expect(w.findAll('[aria-label="Situação"]')).toHaveLength(1)
+    w.unmount()
+  })
+
+  it('cards: a mesma toolbar carrega os filtros', async () => {
+    const w = montar({ columns: colunas }, { viewToggle: true, defaultView: 'cards' })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const toolbar = w.find('.w-crud-toolbar--standalone .w-crud-toolbar-start')
+    expect(toolbar.exists()).toBe(true)
+    expect(toolbar.find('[aria-label="Situação"]').exists()).toBe(true)
+    expect(toolbar.find('input[aria-label="Buscar"]').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('"Limpar filtros" aparece na toolbar só com filtro ativo', async () => {
+    const w = montar({ columns: colunas })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const limpar = () =>
+      w.findAll('.w-crud-toolbar-start button').find((b) => b.text() === 'Limpar filtros')
+    expect(limpar()).toBeUndefined()
+    const crud = w.findComponent(WCrudView).props('crud') as {
+      setColumnFilter: (k: string, v: unknown) => void
+      columnFilters: Record<string, unknown>
+    }
+    crud.setColumnFilter('is_ativo', true)
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(limpar()).toBeDefined()
+    await limpar()!.trigger('click')
+    await flushPromises()
+    expect(crud.columnFilters.is_ativo).toBeUndefined()
+    expect(limpar()).toBeUndefined()
+    w.unmount()
+  })
+})

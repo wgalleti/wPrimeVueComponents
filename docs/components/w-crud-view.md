@@ -85,17 +85,25 @@ Conteudo entre o header e a tabela (substitui os KPIs):
 
 ### `toolbar-start`
 
-Conteudo no inicio do toolbar (apos a busca):
-
-```vue
-<template #toolbar-start>
-  <Select v-model="filtroCategoria" :options="categorias" placeholder="Categoria" />
-</template>
-```
+Conteúdo no início do toolbar, logo após a busca e **antes** dos filtros de coluna (ex.: um
+seletor de contexto que não é filtro).
 
 ### `toolbar-filters`
 
-Alias para filtros no toolbar.
+Filtros que o `ColumnDef.filter` não cobre — FK com busca no servidor, alternador de
+"sem corretor", período. Renderiza na toolbar do grid, **depois** dos filtros declarativos e
+antes do "Limpar filtros". É o único lugar de um filtro; ver [Filtros](#filtros).
+
+```vue
+<template #toolbar-filters>
+  <WAutoCompleteFK
+    :model-value="crud.columnFilters.categoria ?? null"
+    v-bind="categoriaFk"
+    placeholder="Categoria"
+    @update:model-value="(v) => crud.setColumnFilter('categoria', v?.id ?? undefined)"
+  />
+</template>
+```
 
 ### `toolbar-actions`
 
@@ -195,6 +203,29 @@ volta intacta quando a janela cresce. O corte é o `isRetrato` do
 [`useBreakpoint`](/composables/use-breakpoint).
 
 Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
+
+## Filtros
+
+**Todo filtro mora na toolbar do grid, ao lado da busca** — nunca numa faixa própria acima da
+tabela, num painel lateral ou no cabeçalho da página. A ordem na toolbar é fixa: busca →
+`toolbar-start` → filtros declarativos (`ColumnDef.filter`) → `toolbar-filters` → "Limpar
+filtros" (aparece quando há algum filtro ativo). Na visão em cards a toolbar é a mesma.
+
+O caminho padrão é o **declarativo**, no schema da coluna:
+
+```ts
+{ field: 'status', header: 'Situação', filter: { type: 'select', options: STATUS_OPCOES } },
+{ field: 'ativo',  header: 'Ativo',    filter: { type: 'boolean' } },
+{ field: 'nome',   header: 'Nome',     filter: { type: 'text', param: 'nome__icontains' } },
+```
+
+`type`: `text` (com atraso de digitação) · `select` · `boolean` · `numeric`. `param` é o nome
+do parâmetro na API (default: o `field`) — tem de existir na allowlist do servidor. O valor vai
+para `crud.columnFilters` e a lista reconsulta.
+
+O slot `toolbar-filters` é para o que o declarativo não faz (FK assíncrona, período, toggle) —
+ele fala com o mesmo `crud.setColumnFilter`, então "Limpar filtros" limpa os dois. O que **não**
+é filtro (um funil clicável, KPIs) fica em `before-table`.
 
 ## Contagem e paginador
 

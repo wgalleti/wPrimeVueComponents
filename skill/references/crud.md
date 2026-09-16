@@ -27,6 +27,15 @@ Retornos úteis do `crud` (além de alimentar o WCrudView): `selectedItems`, `cl
 
 `<WCrudView>` aceita `title`, `subtitle`, `dialog-width`, e **slots** para sobrescrever qualquer seção (toolbar, ações de linha, etc.).
 
+### Filtros: sempre na toolbar do grid, ao lado da busca
+
+Todo filtro de uma listagem mora **dentro do grid**, na mesma toolbar da busca — nunca numa faixa própria acima da tabela, num painel lateral, no cabeçalho da página ou em `before-table`. Ordem fixa na toolbar: busca → `toolbar-start` → filtros declarativos (`ColumnDef.filter`) → slot `toolbar-filters` → "Limpar filtros". Dois caminhos, nessa ordem de preferência:
+
+1. **Declarativo** (`ColumnDef.filter` no schema) — select, boolean, text, numeric. É o padrão; o WCrudView renderiza na toolbar sozinho.
+2. **Slot `toolbar-filters`** — só para o que o declarativo não cobre: FK com busca no servidor (`WAutoCompleteFK` com o schema da entidade, sem CRUD), período, alternador. Grava pelo mesmo `crud.setColumnFilter(param, valor)`, então "Limpar filtros" limpa tudo junto.
+
+`before-table` é para o que **não** é filtro (KPIs, funil clicável). Filtro fora da toolbar é defeito — corrija movendo para o schema ou para o slot, não com CSS.
+
 ## ColumnDef (tabela)
 
 ```ts
@@ -35,14 +44,14 @@ Retornos úteis do `crud` (além de alimentar o WCrudView): `selectedItems`, `cl
 
 `type`: `text | boolean | date | datetime | number | currency | image | custom`. Sem `type` → texto cru. Para célula custom, use `type: 'custom'` + slot, ou `WCrudColumnRenderer`.
 
-Outros campos: `format(value, row) => string` (render próprio), `visible`, `decimals`, `tagValue`/`tagSeverity` (renderiza como tag), e **`filter`** — filtro declarativo por coluna que aparece na barra de filtros e vai como parâmetro no `list`:
+Outros campos: `format(value, row) => string` (render próprio), `visible`, `decimals`, `tagValue`/`tagSeverity` (renderiza como tag), e **`filter`** — filtro declarativo por coluna que aparece na toolbar do grid (ao lado da busca) e vai como parâmetro no `list`:
 
 ```ts
 { field: 'status', header: 'Status', filter: { type: 'select', options: [
   { label: 'Ativo', value: 'A' }, { label: 'Inativo', value: 'I' },
 ] } }
 ```
-`filter.type`: `text | select | boolean | numeric`. Sem `param`, usa o `field`.
+`filter.type`: `text | select | boolean | numeric`. Sem `param`, usa o `field` — e o nome tem de existir na allowlist de filtros da API.
 
 ## FieldDef (formulário)
 

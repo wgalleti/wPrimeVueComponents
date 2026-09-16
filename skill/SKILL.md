@@ -20,6 +20,7 @@ Biblioteca interna de componentes **Vue 3 + PrimeVue 4** para CRUD, formulários
 3. **Endpoints são strings**; a resposta paginada esperada é `{ data, page, page_size, rows }`.
 4. **Datas**: use `WDatePicker` (v-model string `YYYY-MM-DD`). Nunca `parseDate`/`toISOString` à mão.
 5. Antes de inventar prop, confirme a API nos tipos publicados: `node_modules/@wgalleti/primevue-components/dist/*.d.ts` (`FieldDef`, `ColumnDef`, `CrudManagerConfig`, props dos componentes).
+6. **Filtro de listagem mora na toolbar do grid, ao lado da busca** — declarado em `ColumnDef.filter` (padrão) ou, quando o declarativo não cobre (FK, período), no slot `toolbar-filters`. Nunca em faixa própria acima da tabela, painel lateral ou `before-table`.
 
 ## Fluxo rápido
 
