@@ -12,6 +12,7 @@ export type {
   FieldDef,
   FieldType,
   FieldValidateContext,
+  FkCrudConfig,
   SelectOption,
   FieldDependency,
 } from './field'

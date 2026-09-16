@@ -12,7 +12,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import { W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
-import type { FieldDef, FieldSubRowsFetch } from '@/types/field'
+import type { FieldDef, FieldSubRowsFetch, FkCrudConfig } from '@/types/field'
 import type { ColumnDef } from '@/types/column'
 import type { ApiFieldMeta } from '@/utils/fieldMapper'
 import { mapApiFieldsToFieldDefs, mapApiFieldsToColumnDefs } from '@/utils/fieldMapper'
@@ -80,6 +80,8 @@ const props = withDefaults(
     autoSelectSingle?: boolean
     crudFields?: FieldDef[]
     crudColumns?: ColumnDef[]
+    /** A configuração de CRUD da entidade (a mesma da tela dela) — ver `FieldDef.crud`. */
+    crud?: FkCrudConfig
     /** Sub-linhas do grid do modal: recebe as linhas da página e devolve o mapa
      *  `id → sub-linhas` + as colunas (dinâmicas) do mini-grid. Linha com entrada
      *  no mapa abre expandida — ex.: lote (linha) com suas análises (sub-linhas). */
@@ -403,7 +405,7 @@ async function search(query: string) {
     ultimaQueryBuscada = query
     // Metadata de campos: sem isto o cadastro auto-detectado (`showCreate`) só
     // existiria depois de abrir o modal — e o Enter inline precisa dele antes.
-    if (response.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
+    if (response.extras?.fields && !props.columns?.length && !crudFieldsResolved.value?.length) {
       apiFields.value = response.extras.fields as ApiFieldMeta[]
     }
   } catch {
@@ -597,9 +599,13 @@ function subRowsDe(row: Record<string, unknown>): Record<string, unknown>[] {
 
 // Metadata from extras.fields
 const apiFields = ref<ApiFieldMeta[]>([])
+/** `crud.form`/`crud.columns` (a configuração da tela da entidade) valem antes das props avulsas. */
+const crudFieldsResolved = computed(() => props.crud?.form ?? props.crudFields)
+const crudColumnsResolved = computed(() => props.crud?.columns ?? props.crudColumns)
+
 const crudAvailable = computed(() => {
-  // Se o usuário forneceu crudFields, CRUD está habilitado
-  if (props.crudFields?.length) return true
+  // Se o usuário forneceu o form do CRUD, CRUD está habilitado
+  if (crudFieldsResolved.value?.length) return true
   // Se a API retornou extras.fields, CRUD está disponível
   return apiFields.value.length > 0
 })
@@ -615,13 +621,13 @@ const hasRowActions = computed(() => showEdit.value || showDelete.value)
 
 // Campos do form — prioridade: props > auto-gerados do extras
 const formFields = computed<FieldDef[]>(() => {
-  if (props.crudFields?.length) return props.crudFields
+  if (crudFieldsResolved.value?.length) return crudFieldsResolved.value
   return mapApiFieldsToFieldDefs(apiFields.value)
 })
 
 // Colunas do modal — prioridade: crudColumns > props.columns > auto-geradas > fallback
 const modalColumns = computed<ColumnDef[]>(() => {
-  if (props.crudColumns?.length) return props.crudColumns
+  if (crudColumnsResolved.value?.length) return crudColumnsResolved.value
   if (props.columns?.length) {
     return props.columns.map((c) => ({
       field: c.field,
@@ -665,7 +671,7 @@ async function fetchModalData() {
     void fetchSubRows()
 
     // Captura metadata de campos na primeira requisição
-    if (response.extras?.fields && !props.columns?.length && !props.crudFields?.length) {
+    if (response.extras?.fields && !props.columns?.length && !crudFieldsResolved.value?.length) {
       apiFields.value = response.extras.fields as ApiFieldMeta[]
     }
   } catch {
@@ -871,6 +877,8 @@ const formData = reactive<Record<string, unknown>>({})
 const isEditing = computed(() => editingItem.value !== null)
 /** "Novo registro — Recomendante": o `dialogHeader` (label do campo) diz o quê. */
 const formDialogTitle = computed(() => {
+  const proprio = isEditing.value ? props.crud?.labels?.editTitle : props.crud?.labels?.createTitle
+  if (proprio) return proprio
   const acao = isEditing.value ? 'Editar registro' : 'Novo registro'
   return props.dialogHeader ? `${acao} — ${props.dialogHeader}` : acao
 })
@@ -885,7 +893,8 @@ function getDefaults(): Record<string, unknown> {
           : f.defaultValue
         : null
   }
-  return defaults
+  // `createDefaults` da tela da entidade (ex.: FK-pai oculta) vale aqui também.
+  return { ...defaults, ...(props.crud?.createDefaults?.() ?? {}) }
 }
 
 function resetForm() {
@@ -942,7 +951,7 @@ function setFormField(field: string, value: unknown) {
 async function saveForm() {
   formSaving.value = true
   try {
-    const payload = { ...formData }
+    let payload: Record<string, unknown> = { ...formData }
 
     // FK — extrair ID de objetos selecionados
     for (const f of formFields.value) {
@@ -952,6 +961,10 @@ async function saveForm() {
         payload[f.field] = (val as Record<string, unknown>)[key] ?? val
       }
     }
+    // A mesma transformação que a tela da entidade aplica (senha só quando preenchida,
+    // campo somente-leitura fora, etc.) — o cadastro embutido não pode divergir dela.
+    if (props.crud?.transformPayload)
+      payload = props.crud.transformPayload(payload, isEditing.value)
 
     let response
 
@@ -963,7 +976,7 @@ async function saveForm() {
       if (idx !== -1) {
         modalData.value[idx] = response.data
       }
-      toast.success('Registro atualizado com sucesso')
+      toast.success(props.crud?.labels?.successUpdate || 'Registro atualizado com sucesso')
     } else {
       // Cria herdando o(s) pai(s) da cascata (dependsOn) — ex.: um novo lote nasce
       // no produto selecionado. Sem semear o pai o backend rejeitaria o filho órfão.
@@ -979,7 +992,7 @@ async function saveForm() {
       // Adiciona na lista e seleciona automaticamente
       modalData.value.unshift(response.data)
       modalTotalRecords.value++
-      toast.success('Registro criado com sucesso')
+      toast.success(props.crud?.labels?.successCreate || 'Registro criado com sucesso')
     }
 
     formDialogVisible.value = false
@@ -1299,7 +1312,8 @@ function confirmDelete(item: Record<string, unknown>) {
     :form-data="formData"
     :is-editing="isEditing"
     :saving="formSaving"
-    :width="dialogWidth"
+    :width="crud?.dialogWidth || dialogWidth"
+    :form-columns="crud?.formColumns"
     @update:visible="
       (v) => {
         formDialogVisible = v

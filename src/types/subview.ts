@@ -31,7 +31,10 @@ export interface SubviewCrudConfig<T> {
   /** Valores que a linha nova nasce com (ex.: a classe padrão do insumo). */
   createDefaults?: () => Record<string, unknown>
   /** Última palavra sobre o que vai para o array — normalização, campos derivados. */
-  transformPayload?: (payload: Record<string, unknown>, isEditing: boolean) => Record<string, unknown>
+  transformPayload?: (
+    payload: Record<string, unknown>,
+    isEditing: boolean,
+  ) => Record<string, unknown>
   /**
    * O que não pode repetir na coleção: um campo (`'produto'`) ou uma função que
    * monta a chave composta (`(i) => \`${i.produto}|${i.lote}\``).
