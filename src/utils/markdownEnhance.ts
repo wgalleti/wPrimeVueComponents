@@ -189,13 +189,47 @@ function token(estilo: CSSStyleDeclaration, nome: string, padrao: string): strin
   return estilo.getPropertyValue(nome).trim() || padrao
 }
 
+/**
+ * Lê um token de COR já resolvido para uma cor absoluta.
+ *
+ * `getPropertyValue` devolve a propriedade customizada como foi declarada — um portal
+ * que define `--surface-2: color-mix(in srgb, var(--surface) 92%, var(--ink))` entrega
+ * exatamente essa string, e o mermaid (khroma) só entende hex/rgb/hsl: o diagrama fica
+ * em "Desenhando…" com "Unsupported color format". Uma sonda com `color: <valor>` faz o
+ * navegador resolver var()/color-mix() para uma cor absoluta; `color(srgb …)` (como o
+ * Chrome serializa mistura fora do sRGB legado) é convertido para `rgb()`.
+ */
+function cor(estilo: CSSStyleDeclaration, nome: string, padrao: string): string {
+  const bruto = token(estilo, nome, padrao)
+  const sonda = document.createElement('span')
+  sonda.style.display = 'none'
+  sonda.style.color = bruto
+  document.documentElement.appendChild(sonda)
+  const resolvida = getComputedStyle(sonda).color.trim()
+  sonda.remove()
+  return normalizarCor(resolvida) ?? bruto
+}
+
+/** `color(srgb r g b [/ a])` → `rgb()`/`rgba()`; hex/rgb/hsl passam intactos; vazio → null. */
+export function normalizarCor(valor: string): string | null {
+  if (!valor) return null
+  const m = /^color\(srgb\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)(?:\s*\/\s*([\d.%]+))?\)$/.exec(valor)
+  if (!m) return valor
+  const canal = (v: string) => Math.round(Math.min(1, Math.max(0, Number(v))) * 255)
+  const [, r, g, b, a] = m
+  const rgb = `${canal(r)}, ${canal(g)}, ${canal(b)}`
+  if (a === undefined) return `rgb(${rgb})`
+  const alfa = a.endsWith('%') ? Number(a.slice(0, -1)) / 100 : Number(a)
+  return `rgba(${rgb}, ${alfa})`
+}
+
 function configurarMermaid(mermaid: Awaited<ReturnType<typeof carregarMermaid>>): void {
   const estilo = getComputedStyle(document.documentElement)
-  const superficie = token(estilo, '--surface', '#ffffff')
-  const texto = token(estilo, '--fg', '#141a22')
-  const primaria = token(estilo, '--primary', '#1f5092')
-  const suave = token(estilo, '--primary-soft', '#eef4fb')
-  const borda = token(estilo, '--border-strong', '#cdd6e2')
+  const superficie = cor(estilo, '--surface', '#ffffff')
+  const texto = cor(estilo, '--fg', '#141a22')
+  const primaria = cor(estilo, '--primary', '#1f5092')
+  const suave = cor(estilo, '--primary-soft', '#eef4fb')
+  const borda = cor(estilo, '--border-strong', '#cdd6e2')
 
   mermaid.initialize({
     startOnLoad: false,
@@ -208,13 +242,13 @@ function configurarMermaid(mermaid: Awaited<ReturnType<typeof carregarMermaid>>)
       primaryColor: suave,
       primaryTextColor: texto,
       primaryBorderColor: primaria,
-      secondaryColor: token(estilo, '--surface-3', '#eef2f7'),
-      tertiaryColor: token(estilo, '--surface-2', '#f8fafc'),
+      secondaryColor: cor(estilo, '--surface-3', '#eef2f7'),
+      tertiaryColor: cor(estilo, '--surface-2', '#f8fafc'),
       lineColor: borda,
       textColor: texto,
       mainBkg: suave,
       nodeBorder: primaria,
-      clusterBkg: token(estilo, '--surface-2', '#f8fafc'),
+      clusterBkg: cor(estilo, '--surface-2', '#f8fafc'),
       clusterBorder: borda,
       fontSize: '13px',
     },
