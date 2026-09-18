@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.32.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.1...v0.32.2) (2026-09-18)
+
+### Correções
+
+* **markdown:** resolve color tokens before handing them to mermaid ([a655f83](https://github.com/wgalleti/wPrimeVueComponents/commit/a655f835030b9e08c633c3c07fa5abecd851c40e))
 ## [0.32.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.0...v0.32.1) (2026-09-16)
 
 ### Correções
