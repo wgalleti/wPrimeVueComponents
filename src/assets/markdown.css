@@ -214,7 +214,7 @@
   padding: 0.1em 0.35em;
   border-radius: var(--radius-xs, 4px);
   background: var(--surface-3, var(--p-content-hover-background));
-  color: color-mix(in srgb, var(--primary, #1f5092) 70%, var(--fg, #000));
+  color: color-mix(in srgb, var(--primary, #1f5092) 70%, var(--fg, var(--p-text-color)));
 }
 
 .md-code {
@@ -230,7 +230,7 @@
   align-items: center;
   gap: var(--space-2, 0.5rem);
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--fg, #000) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg, var(--p-text-color)) 8%, transparent);
   font-size: var(--text-2xs, 0.6875rem);
   color: var(--fg-muted, var(--p-text-muted-color));
 }
@@ -304,7 +304,7 @@
 /* Realce de sintaxe: a paleta é a do design system, não a do highlight.js. */
 .hljs-comment,
 .hljs-quote {
-  color: var(--fg-subtle, #8794a3);
+  color: var(--fg-subtle, var(--p-text-muted-color));
   font-style: italic;
 }
 
@@ -353,7 +353,7 @@
 
 .hljs-meta,
 .hljs-params {
-  color: var(--fg-muted, #5a6573);
+  color: var(--fg-muted, var(--p-text-muted-color));
 }
 
 .hljs-deletion {
@@ -397,7 +397,7 @@
 
 .w-markdown-view td {
   padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--border, #e2e8f0) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border, var(--p-content-border-color)) 60%, transparent);
   vertical-align: top;
 }
 
@@ -459,7 +459,7 @@
   padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
   border-left: 3px solid var(--md-tone);
   border-radius: 0 var(--radius-md, 0.625rem) var(--radius-md, 0.625rem) 0;
-  background: color-mix(in srgb, var(--md-tone) 7%, var(--surface, #fff));
+  background: color-mix(in srgb, var(--md-tone) 7%, var(--surface, var(--p-content-background)));
 }
 
 .md-alert--dica {
@@ -491,7 +491,7 @@
 }
 
 .md-alert--resumo {
-  --md-tone: var(--border-strong, #cdd6e2);
+  --md-tone: var(--border-strong, var(--p-content-border-color));
   background: var(--surface-2, var(--p-content-hover-background));
 }
 
@@ -500,7 +500,7 @@
   align-items: center;
   gap: var(--space-2, 0.5rem);
   margin: 0 0 var(--space-2, 0.5rem);
-  color: color-mix(in srgb, var(--md-tone) 70%, var(--fg, #000));
+  color: color-mix(in srgb, var(--md-tone) 70%, var(--fg, var(--p-text-color)));
   font-weight: var(--fw-medium, 500);
   font-size: var(--text-2xs, 0.6875rem);
   text-transform: uppercase;

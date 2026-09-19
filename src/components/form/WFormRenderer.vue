@@ -494,6 +494,14 @@ function fieldSpanStyle(field: FieldDef, group: FieldGroup) {
   return { '--w-col-span': fieldSpan(field, groupColumns(group)) }
 }
 
+function warnUnknownType(field: FieldDef) {
+  if (import.meta.env.DEV) {
+    console.warn(
+      `[WFormRenderer] campo "${field.field}": type "${String(field.type)}" não existe em FieldType — renderizado como texto.`,
+    )
+  }
+}
+
 function fieldSpanClass(field: FieldDef, group: FieldGroup): string {
   return fieldSpan(field, groupColumns(group)) === groupColumns(group)
     ? 'w-crud-form-col-full'
@@ -1085,6 +1093,21 @@ defineExpose({ validateAll, clearErrors })
                   />
                 </span>
               </div>
+
+              <!-- `type` que a suíte não conhece (ex.: 'boolean', que é tipo de coluna):
+                   antes rendia só o rótulo, sem controle e sem aviso. Cai no texto e
+                   avisa em dev para o erro de configuração aparecer. -->
+              <InputText
+                v-else
+                v-bind="inputAttrs(field)"
+                :model-value="formData[field.field] as string"
+                fluid
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :invalid="!!fieldError(field)"
+                @vue:mounted="warnUnknownType(field)"
+                @update:model-value="(val) => emit('update:field', field.field, val)"
+              />
 
               <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
                 {{ field.hint }}

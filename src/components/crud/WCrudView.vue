@@ -227,9 +227,11 @@ const visibleColumns = computed(() =>
     }),
 )
 
+// `w-col-*` é quem alinha (definida no CSS da suíte); `text-*` fica junto só
+// para quem já sobrescreve essas classes no app — a lib nunca as definiu.
 function colAlignClass(col: { align?: string }) {
-  if (col.align === 'right') return 'text-right'
-  if (col.align === 'center') return 'text-center'
+  if (col.align === 'right') return 'w-col-right text-right'
+  if (col.align === 'center') return 'w-col-center text-center'
   return undefined
 }
 

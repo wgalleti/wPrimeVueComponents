@@ -10,7 +10,7 @@ export default defineComponentMeta({
       props: {
         fields: [
           { field: 'nome', label: 'Nome', type: 'text', required: true },
-          { field: 'ativo', label: 'Ativo', type: 'boolean' },
+          { field: 'ativo', label: 'Ativo', type: 'switch' },
         ],
         formData: { nome: '', ativo: true },
         isEditing: false,
