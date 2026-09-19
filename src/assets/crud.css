@@ -91,7 +91,7 @@
   width: var(--w-icon-box);
   height: var(--w-icon-box);
   border-radius: var(--w-radius-lg);
-  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  background: var(--w-primary-soft);
   color: var(--w-primary);
   flex-shrink: 0;
   font-size: var(--w-text-lg);
@@ -99,7 +99,7 @@
 
 /* KPI severity variants */
 .w-crud-kpi-icon--primary {
-  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  background: var(--w-primary-soft);
   color: var(--w-primary);
 }
 
@@ -497,14 +497,16 @@
 }
 
 /* Switch row */
+/* Sem faixa de fundo: o booleano é um campo como os outros. Alinha pela
+   base da linha do grid, na altura do controle vizinho, para o switch ficar
+   na linha dos inputs e não do rótulo deles. */
 .w-crud-form-switch {
   grid-column: span var(--w-col-span, 2); /* knob por campo, via :style */
   display: flex;
   align-items: center;
+  align-self: end;
   gap: var(--w-space-3);
-  padding: var(--w-space-2) var(--w-space-3);
-  border-radius: var(--w-radius);
-  background: var(--w-surface-2);
+  min-height: var(--w-control-h);
 }
 
 .w-crud-form-switch-label {

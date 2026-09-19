@@ -67,7 +67,7 @@
 .w-markdown-view h4,
 .w-markdown-view h5,
 .w-markdown-view h6 {
-  font-size: var(--w-text-sm);
+  font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
@@ -241,6 +241,7 @@
 .md-code__lang {
   margin-left: auto;
   margin-right: var(--w-icon-btn);
+  font-size: var(--w-text-2xs);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
@@ -387,6 +388,7 @@
   background: var(--w-surface-2);
   border-bottom: 1px solid var(--w-border);
   text-align: left;
+  font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-medium);
   color: var(--w-fg-muted);
   text-transform: uppercase;
@@ -758,6 +760,7 @@
 .w-md-toc__titulo {
   margin: 0 0 var(--w-space-2);
   color: var(--w-fg-muted);
+  font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-medium);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);

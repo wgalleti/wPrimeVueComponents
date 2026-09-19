@@ -9,15 +9,15 @@ export default defineComponentMeta({
       name: 'Entre extremos',
       props: { align: 'between' },
       slots: {
-        primary: '<button class="p-button p-component">Salvar</button>',
-        secondary: '<button class="p-button p-component p-button-text">Cancelar</button>',
+        primary: '<Button label="Salvar" icon="pi pi-check" />',
+        secondary: '<Button label="Cancelar" text />',
       },
     },
     {
       name: 'Alinhado à direita',
       props: { align: 'end' },
       slots: {
-        primary: '<button class="p-button p-component">Novo registro</button>',
+        primary: '<Button label="Novo registro" icon="pi pi-plus" />',
       },
     },
   ],

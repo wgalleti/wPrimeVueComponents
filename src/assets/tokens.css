@@ -169,6 +169,20 @@
   --w-row-hover: color-mix(in srgb, var(--w-primary) 14%, transparent);
 }
 
+/* Perfil compacto pronto: <html data-density="compact">. Densidade é escolha
+   do usuário, aplicada antes da primeira pintura — nunca por instância. O app
+   que já define os nomes curtos (`--control-h`…) nesse mesmo seletor continua
+   mandando: a cadeia lê o nome curto primeiro. */
+html[data-density='compact'] {
+  --w-control-h: var(--control-h, 2rem);
+  --w-control-h-sm: var(--control-h-sm, 1.75rem);
+  --w-control-px: var(--control-px, 0.625rem);
+  --w-ui-font: var(--ui-font, var(--w-text-sm));
+  --w-cell-py: var(--cell-py, 0.4375rem);
+  --w-card-pad: var(--card-pad, 1rem);
+  --w-field-gap: var(--field-gap, 0.25rem);
+}
+
 /* Faixas de largura da suíte — media query não aceita var(); os cortes ficam
    aqui como documentação e no CSS como literal, mas o valor é UM só:
      <= 599px  celular          1 coluna
