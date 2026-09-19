@@ -140,6 +140,27 @@ body,
 
 Sem isso, modais e overlays renderizarao com a fonte padrao do navegador. Veja detalhes em [Plugin — Heranca de Fontes](./plugin.md#heranca-de-fontes-tipografia).
 
+## Migrando para o CSS por tokens (0.33+)
+
+A partir da versão com `tokens.css`, todo valor do CSS da suíte sai de `--w-*` (ver
+[Classes CSS e tokens](/css/classes)). O que muda para quem já usa:
+
+- **Nada quebra no import**: continua `import '@wgalleti/primevue-components/style.css'`.
+- **App com folha de tokens** (`--fg`, `--space-2`, `--control-h`, `--success`… no `:root` ou em
+  `html[data-*]`): continua mandando, sem alteração.
+- **Sobrescrita do nome curto abaixo do `<html>`** (`.compacto { --control-h: 32px }`): deixa de
+  chegar à suíte. Troque pelo token da suíte no mesmo lugar: `.compacto { --w-control-h: 2rem }`.
+- **Breakpoints** dos componentes passaram de 640/768/900/1279px para a régua de três cortes
+  599/839/1199px (celular · tablet retrato · tablet paisagem). Telas entre 768 e 839px passam a
+  receber o layout de retrato.
+- **Espaçamentos e fontes normalizados** na escala (diferenças de 1–2px em alguns componentes
+  antigos: `--space-3` era 12 ou 14px conforme o lugar, agora é 12px).
+- **`text-right`/`text-center`** nas colunas: a suíte agora alinha por `w-col-right`/`w-col-center`
+  (próprias), e continua emitindo as antigas — se o app as definia só para a suíte funcionar,
+  pode apagar.
+- **Patch local do Esc em dialogs empilhados** (`Dialog.methods.onKeyDown`): apague — o plugin
+  faz isso (`patchDialogEscape`, default `true`).
+
 ## Notas
 
 - A migracao pode ser **incremental** — views nao migradas continuam usando o codigo local
