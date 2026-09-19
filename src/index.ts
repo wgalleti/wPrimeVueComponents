@@ -152,6 +152,7 @@ export type { ChartTheme, DonutOptionInput, WChartOption } from './utils/chart'
 export { buildChartTheme, buildPrintTheme, donutOption } from './utils/chart'
 export type { ToCsvOptions } from './utils/csv'
 export { toCsv, downloadCsv } from './utils/csv'
+export { patchDialogEscapeStack, isTopOverlay, visibleOverlays } from './utils/dialogEscapeStack'
 export type {
   TreeSelectId,
   TreeSelectOption,

@@ -10,6 +10,11 @@ export interface WPluginOptions {
   locale?: string
   currency?: string
   registerComponents?: boolean
+  /**
+   * Corrige o `Dialog`/`Drawer` do PrimeVue 4 para o Esc fechar só o overlay
+   * do topo (nativo fecha todos os empilhados). Default: `true`.
+   */
+  patchDialogEscape?: boolean
 }
 
 export interface WPluginConfig {
