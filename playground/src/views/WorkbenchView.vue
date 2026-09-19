@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, shallowRef, computed, onErrorCaptured } from 'vue'
+import { ref, reactive, shallowRef, computed, onErrorCaptured, defineComponent, h } from 'vue'
 import type { Component } from 'vue'
+import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -93,12 +94,48 @@ async function select(name: string) {
   applyExample(0)
 }
 
+/**
+ * Slots do exemplo ativo — o sidecar traz o conteúdo como template Vue (pode
+ * usar <WStepSection>, <WSectionPanel>…). Sem renderizar isso, um componente
+ * de layout (WActionBar, WStepFlow, WSectionAccordion) aparece vazio no
+ * workbench. Cada slot vira um componente compilado em runtime (alias do Vue
+ * com compilador no vite.config), com os W* referenciados carregados antes.
+ */
+const exampleSlots = computed<Record<string, string>>(
+  () => selected.value?.sidecar?.examples?.[activeExample.value]?.slots ?? {},
+)
+const slotComponents = shallowRef<Record<string, Component>>({ Button })
+
+async function loadSlotComponents(html: string) {
+  const names = [...new Set([...html.matchAll(/<(W[A-Z][A-Za-z]+)/g)].map((m) => m[1]))]
+  const missing = names.filter((n) => !slotComponents.value[n] && loaderByName[n])
+  if (!missing.length) return
+  const loaded = await Promise.all(
+    missing.map(async (n) => [n, ((await loaderByName[n]()) as { default: Component }).default]),
+  )
+  slotComponents.value = { ...slotComponents.value, ...Object.fromEntries(loaded) }
+}
+
+const SlotContent = defineComponent({
+  props: { html: { type: String, required: true } },
+  setup(props) {
+    const Compiled = computed(() =>
+      defineComponent({
+        components: slotComponents.value,
+        template: `<div class="contents">${props.html}</div>`,
+      }),
+    )
+    return () => h(Compiled.value)
+  },
+})
+
 function applyExample(idx: number) {
   activeExample.value = idx
   for (const k of Object.keys(propState)) delete propState[k]
   const ex = selected.value?.sidecar?.examples?.[idx]
   if (ex?.props) Object.assign(propState, JSON.parse(JSON.stringify(ex.props)))
   previewError.value = null
+  void loadSlotComponents(Object.values(ex?.slots ?? {}).join('\n'))
 }
 
 onErrorCaptured((err) => {
@@ -207,10 +244,7 @@ const snippet = computed(() => {
       </p>
 
       <!-- Exemplos -->
-      <div
-        v-if="selected.sidecar?.examples?.length"
-        class="flex flex-wrap gap-1.5 mb-3"
-      >
+      <div v-if="selected.sidecar?.examples?.length" class="flex flex-wrap gap-1.5 mb-3">
         <button
           v-for="(ex, i) in selected.sidecar.examples"
           :key="ex.name"
@@ -230,16 +264,17 @@ const snippet = computed(() => {
       <div
         class="rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 p-8 mb-5 flex items-center justify-center min-h-40"
       >
-        <div
-          v-if="previewError"
-          class="text-center max-w-sm text-sm text-muted-color"
-        >
+        <div v-if="previewError" class="text-center max-w-sm text-sm text-muted-color">
           <i class="pi pi-info-circle text-2xl mb-2 block opacity-60" />
           Este componente precisa de contexto para renderizar (ex.:
           <code>dataProvider</code> via plugin). Veja os cenários de CRUD.
           <div class="mt-2 text-xs opacity-60">{{ previewError }}</div>
         </div>
-        <component :is="loaded" v-else-if="loaded" v-bind="propState" />
+        <component :is="loaded" v-else-if="loaded" v-bind="propState">
+          <template v-for="(html, name) in exampleSlots" :key="name" #[name]>
+            <SlotContent :html="html" />
+          </template>
+        </component>
       </div>
 
       <!-- Controles + Snippet -->
