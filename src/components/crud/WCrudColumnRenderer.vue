@@ -37,11 +37,7 @@ function boolSeverity(
   <span v-if="value == null" class="w-cell-empty">&mdash;</span>
 
   <template v-else-if="column.type === 'image'">
-    <img
-      :src="String(value)"
-      :alt="column.header"
-      class="w-cell-image"
-    />
+    <img :src="String(value)" :alt="column.header" class="w-cell-image" />
   </template>
 
   <template v-else-if="column.type === 'boolean'">
@@ -60,10 +56,7 @@ function boolSeverity(
     {{ formatDate(value as string) }}
   </span>
 
-  <span
-    v-else-if="column.type === 'datetime'"
-    class="w-cell-date"
-  >
+  <span v-else-if="column.type === 'datetime'" class="w-cell-date">
     {{ formatDateTime(value as string) }}
   </span>
 
@@ -79,7 +72,7 @@ function boolSeverity(
     }}
   </span>
 
-  <span v-else class="text-[0.8125rem]">
+  <span v-else class="w-cell-text">
     {{ column.format ? column.format(value, rowData) : value }}
   </span>
 </template>

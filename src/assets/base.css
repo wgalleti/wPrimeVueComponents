@@ -150,6 +150,10 @@
   color: var(--w-fg-muted);
 }
 
+.w-cell-text {
+  font-size: var(--w-text-sm);
+}
+
 .w-cell-number {
   font-size: var(--w-text-sm);
   font-weight: var(--w-fw-semibold);

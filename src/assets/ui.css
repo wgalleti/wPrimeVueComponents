@@ -165,7 +165,7 @@
    tela vazia. */
 .w-info-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
   gap: var(--w-space-3) var(--w-space-6);
 }
 
@@ -180,7 +180,7 @@
   font-weight: var(--w-fw-medium);
   color: var(--w-fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
 }
 
 .w-info-card-value {
@@ -372,7 +372,7 @@
 
 /* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow) */
 .w-kpi-grid--auto {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.625rem), 1fr));
 }
 
 .w-kpi-grid--dense {
@@ -418,7 +418,7 @@
 .w-kpi-card__label {
   font-size: var(--w-text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
   font-weight: var(--w-fw-semibold);
 }
@@ -426,7 +426,7 @@
 .w-kpi-card__value {
   font-size: var(--w-text-2xl);
   font-weight: var(--w-fw-bold);
-  line-height: 1.1;
+  line-height: var(--w-leading-tight);
   letter-spacing: -0.02em;
   color: var(--w-fg);
 }
@@ -649,7 +649,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
 }
 
@@ -701,7 +701,7 @@
 .w-check-list__label {
   min-width: 0;
   font-size: var(--w-text-sm);
-  line-height: 1.4;
+  line-height: var(--w-leading-snug);
   color: var(--w-fg);
 }
 

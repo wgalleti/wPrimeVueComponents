@@ -42,7 +42,7 @@ const props = withDefaults(
     renderer: 'canvas',
     print: false,
     height: '',
-  }
+  },
 )
 
 const container = ref<HTMLElement | null>(null)
@@ -74,11 +74,9 @@ const build = async () => {
   }
   unavailable.value = false
   chart.value?.dispose()
-  chart.value = core.init(
-    container.value,
-    props.print ? buildPrintTheme() : buildChartTheme(),
-    { renderer: props.print ? 'svg' : props.renderer }
-  )
+  chart.value = core.init(container.value, props.print ? buildPrintTheme() : buildChartTheme(), {
+    renderer: props.print ? 'svg' : props.renderer,
+  })
   applyOption()
   applyLoading()
 }

@@ -44,7 +44,7 @@
    inteira. `min-width: 0` no chip e no label é o que permite o ellipsis
    dentro de um flex item. */
 .w-autocompletefk .p-autocomplete-chip-item {
-  max-width: var(--w-fk-chip-max, 100%);
+  max-width: var(--w-fk-chip-max);
   /* Piso de legibilidade: em vez de espremer o chip até sobrar só o "x", a
      área de digitação é que desce para a linha de baixo. */
   min-width: min(100%, 6rem);
@@ -313,7 +313,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
 }
 
@@ -408,7 +408,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-medium);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
 }
 
@@ -432,7 +432,7 @@
 }
 
 .w-tree-select__tree {
-  max-height: var(--w-tree-select-max-h, 18rem);
+  max-height: var(--w-tree-select-max-h);
   overflow-y: auto;
   padding: 0;
   border: 0;
@@ -517,7 +517,7 @@
 .w-segmented {
   display: inline-flex;
   gap: var(--w-space-1);
-  padding: 3px;
+  padding: var(--w-space-05);
   height: var(--w-control-h);
   border-radius: var(--w-radius);
   background: var(--w-surface-3);
@@ -610,7 +610,7 @@
   gap: var(--w-space-1);
   flex-wrap: wrap;
   min-height: var(--w-control-h);
-  padding: 3px var(--w-space-1);
+  padding: var(--w-space-05) var(--w-space-1);
   border: 1px solid var(--w-border-strong);
   border-radius: var(--w-radius);
   background: var(--w-surface);
@@ -621,7 +621,7 @@
   align-items: center;
   gap: var(--w-space-1);
   height: 1.5rem;
-  padding: 0 3px 0 var(--w-space-2);
+  padding: 0 var(--w-space-05) 0 var(--w-space-2);
   border-radius: var(--w-radius-full);
   background: var(--w-primary-soft);
   color: var(--w-primary);

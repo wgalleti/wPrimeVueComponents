@@ -71,6 +71,7 @@
     "release:major": "commit-and-tag-version --release-as major",
     "release:publish": "npm publish --registry https://registry.npmjs.org/ && git push --follow-tags origin main",
     "docs:check": "node scripts/check-docs.mjs",
+    "style:check": "node scripts/check-style.mjs",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"

@@ -95,6 +95,7 @@
   --w-leading-tight: var(--leading-tight, 1.2);
   --w-leading-snug: var(--leading-snug, 1.35);
   --w-leading-normal: var(--leading-normal, 1.5);
+  --w-leading-relaxed: var(--leading-relaxed, 1.7); /* prosa longa (markdown) */
   --w-font-mono: var(--font-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
   --w-tracking-caps: var(--tracking-caps, 0.04em);
 
@@ -124,8 +125,14 @@
   --w-card-pad: var(--card-pad, 1.25rem);
 
   /* ---- Medidas de elemento (o que se repete entre componentes) ----------- */
-  --w-icon-box: var(--icon-box, 2.5rem); /* caixa tonal de ícone: KPI, cabeçalho de seção, trigger da FK */
-  --w-icon-btn: var(--icon-btn, 1.75rem); /* botão só-ícone pequeno: limpar FK, remover linha, fechar aba */
+  --w-icon-box: var(
+    --icon-box,
+    2.5rem
+  ); /* caixa tonal de ícone: KPI, cabeçalho de seção, trigger da FK */
+  --w-icon-btn: var(
+    --icon-btn,
+    1.75rem
+  ); /* botão só-ícone pequeno: limpar FK, remover linha, fechar aba */
   --w-empty-icon: var(--empty-icon, 4rem); /* ícone do estado vazio */
   --w-badge-h: var(--badge-h, 1.25rem); /* contador/badge inline */
   --w-search-w: var(--search-w, 18rem); /* campo de busca das toolbars */
@@ -133,6 +140,17 @@
   --w-dialog-sm: var(--dialog-sm, 30rem); /* diálogo curto: confirmação, mensagem */
   --w-col-narrow: var(--col-narrow, 3rem); /* coluna de seleção/expansor */
   --w-col-actions: var(--col-actions, 6rem); /* coluna de ações de linha */
+
+  /* ---- Knobs de componente (o consumidor ajusta por instância via :style) - */
+  --w-form-cols: 2; /* colunas do grid do formulário */
+  --w-form-aside: 18rem; /* largura do painel #aside do form */
+  --w-fk-chip-max: 6rem; /* largura máxima do chip da FK múltipla */
+  --w-tree-select-max-h: 18rem; /* altura máxima da árvore */
+  --w-map-h: 28.75rem; /* altura do WMapSelect */
+  --w-map-list-h: 23.75rem; /* altura da lista do WMapSelect */
+  --w-chart-h: 18rem; /* altura do WChart */
+  --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
+  --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
 
   /* ---- Movimento --------------------------------------------------------- */
   --w-motion-fast: var(--motion-fast, 140ms);

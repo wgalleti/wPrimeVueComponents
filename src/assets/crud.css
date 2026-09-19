@@ -69,7 +69,7 @@
 /* --- KPI Cards --- */
 .w-crud-kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
   gap: var(--w-space-3);
   margin-bottom: var(--w-space-5);
 }
@@ -132,7 +132,7 @@
   font-weight: var(--w-fw-medium);
   color: var(--w-fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   line-height: 1;
   margin-bottom: var(--w-space-1);
 }
@@ -167,7 +167,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
   background: var(--w-surface);
 }
@@ -379,7 +379,7 @@
    dois. O painel tem a largura de `--w-form-aside` (prop asideWidth) ou metade. */
 .w-crud-form--with-aside {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--w-form-aside, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) var(--w-form-aside);
   gap: var(--w-space-6) var(--w-space-8);
   align-items: start;
 }
@@ -437,18 +437,18 @@
    (prop `columns` do WFormRenderer / `fieldGroup.columns`; default 2) */
 .w-crud-form-fields {
   display: grid;
-  grid-template-columns: repeat(var(--w-form-cols, 2), 1fr);
+  grid-template-columns: repeat(var(--w-form-cols), 1fr);
   gap: var(--w-space-4) var(--w-space-4);
 }
 
 /* Grid span helpers — span resolvido pelo WFormRenderer via --w-col-span
    (colSpan do FieldDef). Fallbacks preservam o comportamento legado. */
 .w-crud-form-col-full {
-  grid-column: span var(--w-col-span, 2);
+  grid-column: span var(--w-col-span, 2); /* knob por campo, via :style */
 }
 
 .w-crud-form-col-half {
-  grid-column: span var(--w-col-span, 1);
+  grid-column: span var(--w-col-span, 1); /* knob por campo, via :style */
 }
 
 /* Mobile: uma coluna, campos empilhados */
@@ -498,7 +498,7 @@
 
 /* Switch row */
 .w-crud-form-switch {
-  grid-column: span var(--w-col-span, 2);
+  grid-column: span var(--w-col-span, 2); /* knob por campo, via :style */
   display: flex;
   align-items: center;
   gap: var(--w-space-3);
@@ -566,7 +566,7 @@
 
 .w-crud-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
   gap: var(--w-space-4);
   /* Cada card dimensiona ao próprio conteúdo (não estica à altura da linha) —
      importante quando o pré-processamento gera cards de alturas diferentes. */
@@ -576,7 +576,7 @@
 /* Modo "bare": o slot #card desenha o card inteiro. Sem chrome no wrapper e grid
    com coluna mínima maior (cards de design costumam pedir ~360px). */
 .w-crud-cards--bare {
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(22.5rem, 1fr));
 }
 
 .w-crud-card-bare {
@@ -628,7 +628,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-medium);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
   flex-shrink: 0;
 }
@@ -744,7 +744,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
 }
 
@@ -900,7 +900,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
   white-space: nowrap;
 }
@@ -1157,7 +1157,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
 }
 
@@ -1247,7 +1247,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
 }
 

@@ -60,7 +60,7 @@
 
 .w-map-select__canvas {
   width: 100%;
-  height: var(--w-map-h, 460px);
+  height: var(--w-map-h);
 }
 
 .w-map-select__fallback {
@@ -89,19 +89,19 @@
   position: absolute;
   right: var(--w-space-3);
   top: var(--w-space-3);
-  z-index: 500;
+  z-index: 500; /* escala do Leaflet (panes 400–700, controles 800) */
   display: inline-flex;
   align-items: center;
   gap: var(--w-space-2);
   height: var(--w-icon-btn);
   padding: 0 var(--w-space-2);
   border-radius: var(--w-radius-full);
-  background: rgba(15, 31, 48, 0.72);
-  color: #fff;
+  background: rgba(15, 31, 48, 0.72); /* sobre a foto de satélite: sem tema */
+  color: #fff; /* sobre a foto de satélite: sem tema */
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   pointer-events: none;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .w-map-select__panel {
-  width: 300px;
+  width: 18.75rem;
   flex: none;
   display: flex;
   flex-direction: column;
@@ -136,7 +136,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -162,7 +162,7 @@
 .w-map-select__list {
   flex: 1;
   min-height: 0;
-  max-height: var(--w-map-list-h, 23.75rem);
+  max-height: var(--w-map-list-h);
   overflow-y: auto;
   list-style: none;
   margin: 0;
@@ -285,7 +285,7 @@
    do slot — aqui só a caixa, o recorte e a posição. */
 .w-map-select__detail {
   position: absolute;
-  z-index: 600;
+  z-index: 600; /* escala do Leaflet (panes 400–700, controles 800) */
   display: flex;
   flex-direction: column;
   gap: var(--w-space-1);
@@ -298,9 +298,9 @@
   background: var(--w-surface);
   color: var(--w-fg);
   font-size: var(--w-text-sm);
-  box-shadow: 0 10px 30px rgba(15, 31, 48, 0.28);
+  box-shadow: 0 10px 30px rgba(15, 31, 48, 0.28); /* sobre a foto de satélite: sem tema */
   /* Ancorado no ponto: sobe acima do cursor com uma folga para a seta do mouse. */
-  transform: translate(-50%, calc(-100% - 14px));
+  transform: translate(-50%, calc(-100% - 14px)); /* sobre a foto de satélite: sem tema */
 }
 
 /* No hover o cartão não pode receber o ponteiro: ele nasce embaixo do cursor e
@@ -310,7 +310,7 @@
 }
 
 .w-map-select__detail--abaixo {
-  transform: translate(-50%, 14px);
+  transform: translate(-50%, 14px); /* sobre a foto de satélite: sem tema */
 }
 
 .w-map-select__detail--canto {
@@ -341,8 +341,8 @@
   font-family: inherit;
   font-size: var(--w-text-sm);
   font-weight: var(--w-fw-bold);
-  color: rgba(255, 255, 255, 0.86);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.92);
+  color: rgba(255, 255, 255, 0.86); /* sobre a foto de satélite: sem tema */
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.92); /* sobre a foto de satélite: sem tema */
 }
 
 .leaflet-tooltip.w-map-select__tip::before {
@@ -350,7 +350,7 @@
 }
 
 .leaflet-tooltip.w-map-select__tip--on {
-  color: #fff;
+  color: #fff; /* sobre a foto de satélite: sem tema */
 }
 
 /* `tooltips="auto"`: o rótulo que não cabe no polígono sai de cena. `display`
@@ -447,8 +447,8 @@
      onde ele existe (o navegador descarta a que não entende). */
   background: var(--w-surface);
   background: color-mix(in srgb, var(--w-surface) 92%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%); /* sobre a foto de satélite: sem tema */
+  backdrop-filter: blur(14px) saturate(140%); /* sobre a foto de satélite: sem tema */
 }
 
 /* Sem backdrop-filter o véu vira sólido. Texto sobre imagem crua é o único
@@ -731,7 +731,7 @@
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--w-tracking-caps);
   color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--w-fg));
   white-space: nowrap;
   overflow: hidden;
