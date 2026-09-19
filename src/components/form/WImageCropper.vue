@@ -334,12 +334,15 @@ function confirmCrop() {
 </template>
 
 <style scoped>
+/* Valores só via tokens.css (`--w-*`). EXCEÇÃO DECLARADA: o que fica SOBRE a
+   foto não tem tema — o palco escuro do recorte, o traço branco do stencil e
+   o véu das ações sobre a miniatura são literais de propósito. */
 .w-imgcropper-preview {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid var(--p-content-border-color, #e2e8f0);
-  background: var(--p-content-background, #f8fafc);
+  border-radius: var(--w-radius);
+  border: 1px solid var(--w-border);
+  background: var(--w-surface-2);
 }
 .w-imgcropper-preview.is-circular {
   border-radius: 50%;
@@ -355,11 +358,11 @@ function confirmCrop() {
   inset: auto 0 0 0;
   display: flex;
   justify-content: center;
-  gap: 4px;
-  padding: 4px;
-  background: color-mix(in srgb, #000 45%, transparent);
+  gap: var(--w-space-1);
+  padding: var(--w-space-1);
+  background: color-mix(in srgb, #000 45%, transparent); /* véu sobre a foto */
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--w-motion-fast) var(--w-ease);
 }
 .w-imgcropper-preview:hover .w-imgcropper-actions,
 .w-imgcropper-preview:focus-within .w-imgcropper-actions {
@@ -372,15 +375,13 @@ function confirmCrop() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--w-space-15);
   cursor: pointer;
-  border: none;
-  background: transparent;
-  color: var(--p-text-muted-color, #64748b);
-  font-size: 0.85rem;
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-sm);
 }
 .w-imgcropper-empty i {
-  font-size: 1.5rem;
+  font-size: var(--w-text-2xl);
 }
 .w-imgcropper-file {
   display: none;
@@ -388,7 +389,7 @@ function confirmCrop() {
 .w-imgcropper-stage {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--w-space-4);
   align-items: center;
 }
 .w-imgcropper-viewport {
@@ -396,8 +397,8 @@ function confirmCrop() {
   overflow: hidden;
   touch-action: none;
   cursor: grab;
-  background: #1e1e1e;
-  border-radius: 4px;
+  background: #1e1e1e; /* palco do recorte: neutro escuro, igual nos dois temas */
+  border-radius: var(--w-radius-xs);
 }
 .w-imgcropper-viewport:active {
   cursor: grabbing;
@@ -417,7 +418,7 @@ function confirmCrop() {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: 0 0 0 1px color-mix(in srgb, #fff 60%, transparent) inset;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #fff 60%, transparent) inset; /* traço sobre a foto */
 }
 .w-imgcropper-stencil.is-circular {
   border-radius: 50%;
@@ -425,9 +426,9 @@ function confirmCrop() {
 .w-imgcropper-zoom {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--w-space-3);
   width: 100%;
-  color: var(--p-text-muted-color, #64748b);
+  color: var(--w-fg-muted);
 }
 .w-imgcropper-slider {
   flex: 1;

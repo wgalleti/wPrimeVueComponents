@@ -586,18 +586,8 @@ onMounted(() => {
           <div
             v-if="isMultiSelect && crud.selectedItems.value.length"
             class="w-crud-bulkbar"
-            style="
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              margin-bottom: 0.5rem;
-              padding: 0.5rem 0.75rem;
-              border-radius: 8px;
-              background: var(--p-primary-50, #eef2ff);
-              color: var(--p-primary-700, #3730a3);
-            "
           >
-            <span style="font-weight: 600; font-size: 0.85rem; margin-right: auto">
+            <span class="w-crud-bulkbar__count">
               {{ crud.selectedItems.value.length }} selecionado(s)
             </span>
             <slot name="bulk-actions" :selected="crud.selectedItems.value" :crud="crud">
@@ -674,7 +664,7 @@ onMounted(() => {
                       :model-value="crud.search.value"
                       placeholder="Buscar..."
                       aria-label="Buscar"
-                      class="w-72"
+                      class="w-crud-search"
                       @input="crud.onSearch"
                     />
                   </IconField>
@@ -754,29 +744,15 @@ onMounted(() => {
                       @click="(e) => chooser?.toggle(e)"
                     />
                     <Popover ref="chooser">
-                      <div
-                        style="
-                          display: flex;
-                          flex-direction: column;
-                          gap: 0.35rem;
-                          min-width: 180px;
-                        "
-                      >
-                        <div
-                          v-for="col in baseColumns"
-                          :key="col.field"
-                          style="display: flex; align-items: center; gap: 0.5rem"
-                        >
+                      <div class="w-crud-chooser">
+                        <div v-for="col in baseColumns" :key="col.field" class="w-crud-chooser__item">
                           <Checkbox
                             :model-value="!columnState.hidden.includes(col.field)"
                             :input-id="`wcrud-col-${col.field}`"
                             binary
                             @update:model-value="(v) => toggleColumn(col.field, !!v)"
                           />
-                          <label
-                            :for="`wcrud-col-${col.field}`"
-                            style="font-size: 0.85rem; cursor: pointer"
-                          >
+                          <label :for="`wcrud-col-${col.field}`" class="w-crud-chooser__label">
                             {{ col.header }}
                           </label>
                         </div>
@@ -838,10 +814,10 @@ onMounted(() => {
             </template>
 
             <!-- Seleção múltipla (checkbox) -->
-            <Column v-if="isMultiSelect" selection-mode="multiple" style="width: 3rem" />
+            <Column v-if="isMultiSelect" selection-mode="multiple" class="w-col-narrow" />
 
             <!-- Expander -->
-            <Column v-if="expandable" expander style="width: 3rem" />
+            <Column v-if="expandable" expander class="w-col-narrow" />
 
             <!-- Data columns -->
             <Column
@@ -929,7 +905,7 @@ onMounted(() => {
                   :model-value="crud.search.value"
                   placeholder="Buscar..."
                   aria-label="Buscar"
-                  class="w-72"
+                  class="w-crud-search"
                   @input="crud.onSearch"
                 />
               </IconField>
@@ -1224,7 +1200,6 @@ onMounted(() => {
       modal
       :draggable="false"
       class="w-crud-delete-dialog"
-      :style="{ width: '30rem' }"
     >
       <slot name="delete-message" :item="deleteTarget" />
       <template #footer>

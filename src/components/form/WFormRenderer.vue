@@ -612,7 +612,7 @@ defineExpose({ validateAll, clearErrors })
                 <InputText
                   v-bind="inputAttrs(field)"
                   :model-value="formData[field.field] as string"
-                  class="w-28"
+                  class="w-crud-form-color-input"
                   maxlength="7"
                   placeholder="#000000"
                   :disabled="isFieldDisabled(field)"

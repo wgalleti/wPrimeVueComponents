@@ -1211,7 +1211,7 @@ function confirmDelete(item: Record<string, unknown>) {
         @sort="(e: any) => onModalSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
         @row-dblclick="onRowDblClick"
       >
-        <Column :selection-mode="multiple ? 'multiple' : 'single'" header-style="width: 3rem" />
+        <Column :selection-mode="multiple ? 'multiple' : 'single'" class="w-col-narrow" />
         <Column
           v-for="col in modalColumns"
           :key="col.field"
@@ -1234,9 +1234,9 @@ function confirmDelete(item: Record<string, unknown>) {
         </Column>
 
         <!-- Coluna de ações CRUD -->
-        <Column v-if="hasRowActions" header="" :style="{ width: '6rem' }">
+        <Column v-if="hasRowActions" header="" class="w-col-actions">
           <template #body="{ data }">
-            <div class="flex items-center justify-end gap-1">
+            <div class="w-autocompletefk-row-actions">
               <Button
                 v-if="showEdit"
                 v-tooltip.top="'Editar'"
