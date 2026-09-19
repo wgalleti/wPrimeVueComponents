@@ -87,6 +87,17 @@ export interface UseRouteTabsOptions {
    * `'module'`. Obrigatório nesse modo; retornar falsy cai em `route.path`.
    */
   moduleRoot?: (route: RouteLocationNormalizedLoaded) => string | null | undefined
+  /**
+   * Modo `'module'`: trocar de path dentro da aba remonta a view. Devolva `false`
+   * para uma troca que é a MESMA tela mudando de identidade — o caso clássico é
+   * `/pedidos/novo` → `/pedidos/<id>` quando o rascunho nasce: a view fica viva e
+   * recebe os `props` novos, sem remontar, sem animação de entrada, sem reler o
+   * documento. Default: sempre remonta.
+   */
+  shouldRemount?: (
+    from: RouteLocationNormalizedLoaded,
+    to: RouteLocationNormalizedLoaded,
+  ) => boolean
   /** Título/ícone/closable da aba. O que faltar cai em defaults sensatos. */
   resolveTabMeta?: (route: RouteLocationNormalizedLoaded) => Partial<RouteTabMeta>
   /** Quais rotas viram aba. Default: todas. */

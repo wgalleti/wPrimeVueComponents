@@ -76,6 +76,7 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     router,
     mode = 'screen',
     moduleRoot,
+    shouldRemount,
     resolveTabMeta = (): Partial<RouteTabMeta> => ({}),
     isTabRoute = () => true,
     storage = typeof localStorage === 'undefined' ? null : localStorage,
@@ -181,8 +182,15 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     // remonta inteiro (chave inclui `remount`) com um runtime NOVO — a
     // instância que está saindo fica com o snapshot dela intacto até
     // desmontar (mutar a rota sob uma tela viva quebra o patch do Vue), e
-    // título/ícone voltam aos da rota nova. Query-only continua no else.
-    if (runtime && mode === 'module' && (runtime.route as { path: string }).path !== to.path) {
+    // título/ícone voltam aos da rota nova. Query-only continua no else — e
+    // também a troca que `shouldRemount` declara ser a mesma tela (rascunho
+    // que ganhou id): a view viva recebe os props novos.
+    if (
+      runtime &&
+      mode === 'module' &&
+      (runtime.route as { path: string }).path !== to.path &&
+      (shouldRemount?.(runtime.route, to) ?? true)
+    ) {
       runtimes.delete(tab.key)
       runtime = undefined
       tab.remount += 1
@@ -214,8 +222,8 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
       runtimes.set(tab.key, runtime)
     } else {
       // Só a aba ativa recebe a rota nova — panes ocultos ficam congelados.
-      // Aqui é sempre a MESMA tela (query/hash); path novo já virou runtime
-      // novo acima.
+      // Aqui é sempre a MESMA tela (query/hash, ou path que `shouldRemount`
+      // liberou); path novo já virou runtime novo acima.
       runtime.component = resolveViewComponent(to)
       runtime.props = resolveViewProps(to)
       Object.assign(runtime.route, snapshotRoute(to))
