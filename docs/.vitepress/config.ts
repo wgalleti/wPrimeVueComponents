@@ -4,6 +4,8 @@ export default defineConfig({
   title: 'wPrimeVue Components',
   description: 'Biblioteca de componentes Vue 3 + PrimeVue 4 para CRUDs e formulários',
   base: '/wPrimeVueComponents/',
+  // docs/features/ guarda relatórios e planos internos (SDD) — não vai para o site.
+  srcExclude: ['features/**'],
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/wPrimeVueComponents/logo.svg' }],
