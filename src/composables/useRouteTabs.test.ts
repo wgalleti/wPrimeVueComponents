@@ -138,6 +138,25 @@ describe("useRouteTabs — mode: 'module' (lista + detalhe na mesma aba)", () =>
     expect(api.runtime('/clientes')?.props).toEqual({ id: '2' })
   })
 
+  it('shouldRemount=false mantém a view viva e só troca os props (novo → id)', async () => {
+    montar({
+      mode: 'module',
+      moduleRoot: (r) => (r.name === 'nota-editor' ? '/clientes' : r.path),
+      shouldRemount: (de, para) => !(de.name === para.name && de.params.id === 'novo'),
+    })
+    await router.push('/notas/novo')
+    const runtime = api.runtime('/clientes')
+    await router.replace('/notas/7')
+    expect(api.tabs.value[0].remount).toBe(0)
+    expect(api.runtime('/clientes')).toBe(runtime)
+    expect(runtime?.props).toEqual({ id: '7' })
+    expect(runtime?.route.path).toBe('/notas/7')
+    expect(api.tabs.value[0].fullPath).toBe('/notas/7')
+    // Troca que o app NÃO liberou segue remontando.
+    await router.push('/notas/8')
+    expect(api.tabs.value[0].remount).toBe(1)
+  })
+
   it('título dinâmico do detalhe não gruda: voltar à lista restaura o default', async () => {
     porModulo()
     await router.push('/clientes')
