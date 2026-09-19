@@ -98,6 +98,7 @@ const crud = useCrudManager({
 | `dateFormat` | `string` | `'DD/MM/YYYY'` | Formato de data |
 | `dateTimeFormat` | `string` | `'DD/MM/YYYY HH:mm'` | Formato de data/hora |
 | `registerComponents` | `boolean` | `true` | Registra componentes globalmente |
+| `patchDialogEscape` | `boolean` | `true` | Esc fecha so o dialog do topo em modais empilhados ([detalhes](/plugin#esc-em-dialogs-empilhados)) |
 
 ## Proximo Passo
 
