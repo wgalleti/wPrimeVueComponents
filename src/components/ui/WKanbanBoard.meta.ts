@@ -16,7 +16,7 @@ export default defineComponentMeta({
           {
             value: 'backlog',
             label: 'Backlog',
-            accent: 'var(--fg-subtle)',
+            accent: 'var(--w-fg-subtle)',
             items: items(['Importar geometria', 'Novo relatório']),
           },
           {
@@ -34,7 +34,7 @@ export default defineComponentMeta({
           {
             value: 'done',
             label: 'Concluído',
-            accent: 'var(--success)',
+            accent: 'var(--w-success)',
             items: items(['Login SSO', 'Auditoria'], 30),
           },
         ],

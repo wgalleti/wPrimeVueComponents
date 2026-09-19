@@ -58,15 +58,16 @@ export type WChartOption = Record<string, unknown>
 
 /**
  * Tema construído a partir dos tokens do design system do consumidor no momento
- * da chamada (`--fg`, `--fg-muted`, `--border`, `--surface`, `--viz-1..6`,
- * `--font-sans`) — lê os valores já resolvidos para light/dark. O WChart
+ * da chamada (`--w-fg`, `--w-fg-muted`, `--w-border`, `--w-surface`,
+ * `--w-viz-1..6`, `--font-sans`) — os tokens da suíte já resolvem para o
+ * valor do app ou do preset PrimeVue, claro ou escuro. O WChart
  * reconstrói sozinho quando o atributo de tema do documento muda.
  */
 export function buildChartTheme(): ChartTheme {
-  const fg = token('--fg')
-  const fgMuted = token('--fg-muted')
-  const border = token('--border')
-  const surface = token('--surface')
+  const fg = token('--w-fg')
+  const fgMuted = token('--w-fg-muted')
+  const border = token('--w-border')
+  const surface = token('--w-surface')
   const fontFamily = token('--font-sans', 'sans-serif')
 
   const axis = {
@@ -78,7 +79,7 @@ export function buildChartTheme(): ChartTheme {
   }
 
   return {
-    color: [1, 2, 3, 4, 5, 6].map((i) => token(`--viz-${i}`)),
+    color: [1, 2, 3, 4, 5, 6].map((i) => token(`--w-viz-${i}`)),
     backgroundColor: 'transparent',
     textStyle: { color: fg, fontFamily },
     categoryAxis: { ...axis, splitLine: { show: false } },
@@ -100,7 +101,7 @@ export function buildChartTheme(): ChartTheme {
       textStyle: { color: fg },
       // Sombra e raio vêm dos tokens do consumidor; sem token, fica sem sombra
       // (melhor plano B do que inventar uma cor fora do DS de quem consome).
-      extraCssText: 'box-shadow: var(--shadow-md, none); border-radius: var(--radius-sm, 0);',
+      extraCssText: 'box-shadow: var(--w-shadow-md); border-radius: var(--w-radius-sm);',
     },
     line: { symbolSize: 6, smooth: false },
     pie: {
@@ -146,7 +147,7 @@ export function buildPrintTheme(): ChartTheme {
 export function buildLoadingOptions(): Record<string, unknown> {
   return {
     text: '',
-    color: token('--primary'),
+    color: token('--w-primary'),
     maskColor: 'transparent',
     spinnerRadius: 8,
     lineWidth: 2,

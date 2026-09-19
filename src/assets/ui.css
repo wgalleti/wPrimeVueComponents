@@ -1,0 +1,1169 @@
+/* ============================================================
+   wPrimeVue Components — UI
+   ============================================================
+   Blocos de página e de documento: cabeçalhos, estado vazio, cards de
+   informação e KPI, check-list, etapas (WStepFlow/WStepSection) e
+   acordeão de seções. Valores só via tokens.css (`--w-*`).
+   ============================================================ */
+
+/* ==========================================================
+   WPageHeader — .w-page-header
+   ========================================================== */
+
+/* O cabeçalho quebra: sem `wrap`, um documento com meia dúzia de transições
+   espreme o título até ele sair uma letra por linha em tela estreita. O bloco
+   de título tem base própria para nunca ser o que encolhe. */
+.w-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--w-space-4);
+  margin-bottom: var(--w-space-6);
+}
+
+.w-page-header-content {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.w-page-header-title {
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-semibold);
+  letter-spacing: -0.015em;
+  color: var(--w-fg);
+  line-height: var(--w-leading-tight);
+}
+
+.w-page-header-subtitle {
+  margin-top: var(--w-space-05);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   WDetailHeader — .w-detail-header
+   ========================================================== */
+
+.w-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--w-space-4);
+  margin-bottom: var(--w-space-4);
+}
+
+.w-detail-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  min-width: 0;
+}
+
+.w-detail-header-icon {
+  font-size: var(--w-text-xl);
+  color: var(--w-primary);
+}
+
+.w-detail-header-content {
+  min-width: 0;
+}
+
+.w-detail-header-title {
+  font-size: var(--w-text-lg);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+  line-height: var(--w-leading-tight);
+}
+
+.w-detail-header-subtitle {
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  margin-top: var(--w-space-05);
+}
+
+.w-detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   WEmptyState — .w-empty-state
+   ========================================================== */
+
+.w-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--w-space-8) var(--w-space-4);
+  text-align: center;
+}
+
+.w-empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-empty-icon);
+  height: var(--w-empty-icon);
+  border-radius: var(--w-radius-xl);
+  margin-bottom: var(--w-space-4);
+  background: var(--w-surface-2);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-2xl);
+}
+
+.w-empty-state-title {
+  font-size: var(--w-text-md);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+}
+
+.w-empty-state-action {
+  margin-top: var(--w-space-3);
+}
+
+.w-empty-state-description {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+  margin-top: var(--w-space-1);
+  max-width: 24rem;
+}
+
+/* ==========================================================
+   WInfoCard — .w-info-card
+   ========================================================== */
+
+.w-info-card {
+  padding: var(--w-card-pad);
+  border-radius: var(--w-radius-lg);
+  border: 1px solid var(--w-border);
+  background: var(--w-surface);
+  margin-bottom: var(--w-space-4);
+}
+
+.w-info-card-title {
+  font-size: var(--w-text-md);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+  margin-bottom: var(--w-space-3);
+}
+
+/* Fluido, não duas colunas fixas: com poucos campos a grade fecha em duas ou
+   três e usa a largura; em tela estreita ela mesma cai para uma, sem media
+   query. Fixo em `repeat(2, 1fr)` o card virava uma tira alta ao lado de meia
+   tela vazia. */
+.w-info-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--w-space-3) var(--w-space-6);
+}
+
+.w-info-card-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-05);
+}
+
+.w-info-card-label {
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.w-info-card-value {
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg);
+}
+
+/* ==========================================================
+   Generic UI building blocks — w-*
+   ========================================================== */
+
+.w-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--w-space-4);
+  margin-bottom: var(--w-space-4);
+}
+
+.w-section-header--compact {
+  margin-bottom: var(--w-space-3);
+}
+
+.w-section-header__main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w-space-3);
+  min-width: 0;
+}
+
+.w-section-header__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-icon-box);
+  height: var(--w-icon-box);
+  flex-shrink: 0;
+  border-radius: var(--w-radius-lg);
+  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  color: var(--w-primary);
+}
+
+.w-section-header__content {
+  min-width: 0;
+}
+
+.w-section-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-wrap: wrap;
+}
+
+.w-section-header__title {
+  font-size: var(--w-text-md);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+  line-height: var(--w-leading-tight);
+}
+
+.w-section-header__subtitle {
+  margin-top: var(--w-space-05);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-section-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+.w-form-section {
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-xl);
+  background: var(--w-surface);
+  padding: var(--w-space-4);
+}
+
+.w-form-section--muted {
+  background: color-mix(in srgb, var(--w-surface) 88%, var(--w-primary) 2%);
+}
+
+.w-form-section--outlined {
+  background: transparent;
+}
+
+.w-form-section__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--w-space-4);
+  margin-bottom: var(--w-space-4);
+}
+
+.w-form-section__content {
+  min-width: 0;
+}
+
+.w-form-section__title {
+  font-size: var(--w-text-md);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+}
+
+.w-form-section__description {
+  margin-top: var(--w-space-05);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-form-section__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+.w-form-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-4);
+}
+
+/* A barra externa quebra junto: um documento com seis transições não cabe numa
+   linha em tela de tablet, e sem `wrap` os botões saem pela direita. */
+.w-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--w-space-3);
+}
+
+.w-action-bar--between {
+  justify-content: space-between;
+}
+
+.w-action-bar--start {
+  justify-content: flex-start;
+}
+
+.w-action-bar--end {
+  justify-content: flex-end;
+}
+
+.w-action-bar__primary,
+.w-action-bar__secondary,
+.w-action-bar__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-wrap: wrap;
+}
+
+.w-action-bar__primary {
+  min-width: 0;
+}
+
+.w-action-bar__secondary {
+  justify-content: flex-end;
+}
+
+.w-kpi-grid {
+  display: grid;
+  gap: var(--w-space-3);
+}
+
+.w-kpi-grid--cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.w-kpi-grid--cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.w-kpi-grid--cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.w-kpi-grid--cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.w-kpi-grid--cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow) */
+.w-kpi-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+}
+
+.w-kpi-grid--dense {
+  gap: var(--w-space-2);
+}
+
+.w-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-3);
+  min-height: 100%;
+  padding: var(--w-card-pad);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+}
+
+.w-kpi-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--w-space-3);
+}
+
+.w-kpi-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-icon-box);
+  height: var(--w-icon-box);
+  border-radius: var(--w-radius-lg);
+  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  color: var(--w-primary);
+  font-size: var(--w-text-lg);
+}
+
+.w-kpi-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-1);
+}
+
+.w-kpi-card__label {
+  font-size: var(--w-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--w-fg-muted);
+  font-weight: var(--w-fw-semibold);
+}
+
+.w-kpi-card__value {
+  font-size: var(--w-text-2xl);
+  font-weight: var(--w-fw-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--w-fg);
+}
+
+.w-kpi-card__hint {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-kpi-card__footer {
+  margin-top: auto;
+}
+
+.w-kpi-card__trend {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.w-kpi-card__trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  padding: var(--w-space-1) var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-semibold);
+  background: var(--w-surface-2);
+  color: var(--w-fg-muted);
+}
+
+.w-kpi-card__trend-badge--up {
+  background: var(--w-success-soft);
+  color: var(--w-success);
+}
+
+.w-kpi-card__trend-badge--down {
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
+}
+
+.w-kpi-card__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+}
+
+.w-kpi-card__loading-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--w-space-2);
+}
+
+.w-kpi-card--success .w-kpi-card__icon {
+  background: var(--w-success-soft);
+  color: var(--w-success);
+}
+
+.w-kpi-card--warning .w-kpi-card__icon {
+  background: var(--w-warning-soft);
+  color: var(--w-warning);
+}
+
+.w-kpi-card--danger .w-kpi-card__icon {
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
+}
+
+.w-kpi-card--info .w-kpi-card__icon {
+  background: var(--w-info-soft);
+  color: var(--w-info);
+}
+
+.w-kpi-card--neutral .w-kpi-card__icon {
+  background: var(--w-surface-2);
+  color: var(--w-fg-muted);
+}
+
+.w-progress-flow {
+  display: flex;
+  gap: var(--w-space-3);
+}
+
+.w-progress-flow--horizontal {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.w-progress-flow--vertical {
+  flex-direction: column;
+}
+
+.w-progress-flow__step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w-space-3);
+  min-width: 0;
+}
+
+.w-progress-flow--horizontal .w-progress-flow__step {
+  flex: 1 1 0;
+  min-width: 12rem;
+  padding: var(--w-space-3) var(--w-space-4);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-xl);
+  background: var(--w-surface);
+}
+
+.w-progress-flow__marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: var(--w-radius-full);
+  border: 1px solid var(--w-border);
+  color: var(--w-fg-muted);
+  background: transparent;
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-bold);
+}
+
+.w-progress-flow__content {
+  min-width: 0;
+}
+
+.w-progress-flow__label {
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+}
+
+.w-progress-flow__description {
+  margin-top: var(--w-space-05);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+.w-progress-flow__step--current .w-progress-flow__marker {
+  border-color: var(--w-primary);
+  background: color-mix(in srgb, var(--w-primary) 12%, transparent);
+  color: var(--w-primary);
+}
+
+.w-progress-flow__step--done .w-progress-flow__marker {
+  border-color: var(--w-success);
+  background: var(--w-success-soft);
+  color: var(--w-success);
+}
+
+/* ==========================================================
+   WInfoCard — variante `metric`
+   Linha por campo: rótulo à esquerda, número grande à direita.
+   ========================================================== */
+
+.w-info-card-metrics {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-info-card-metric {
+  display: flex;
+  align-items: baseline;
+  gap: var(--w-space-2);
+  padding: var(--w-space-3) 0;
+  border-top: 1px solid var(--w-border);
+}
+
+.w-info-card-metric:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.w-info-card-metric:last-child {
+  padding-bottom: 0;
+}
+
+.w-info-card-metric-label {
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-regular);
+  color: var(--w-fg-muted);
+  min-width: 0;
+}
+
+.w-info-card-metric-value {
+  margin-left: auto;
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  line-height: 1;
+  color: var(--w-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-info-card-metric-suffix {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+/* ==========================================================
+   WCheckList — .w-check-list
+   ========================================================== */
+
+.w-check-list {
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+  overflow: hidden;
+}
+
+.w-check-list__header {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding: var(--w-space-3) var(--w-space-4);
+  border-bottom: 1px solid var(--w-border);
+}
+
+.w-check-list__title {
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--w-fg-muted);
+}
+
+.w-check-list__count {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  height: var(--w-badge-h);
+  padding: 0 var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  background: var(--w-surface-3);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-check-list__items {
+  list-style: none;
+  margin: 0;
+  padding: var(--w-space-2) 0;
+}
+
+.w-check-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w-space-2);
+  padding: var(--w-space-2) var(--w-space-4);
+}
+
+.w-check-list__item i {
+  font-size: var(--w-text-sm);
+  margin-top: var(--w-space-05);
+  flex-shrink: 0;
+}
+
+.w-check-list__icon--ok {
+  color: var(--w-success);
+}
+
+.w-check-list__icon--warn {
+  color: var(--w-warning);
+}
+
+.w-check-list__icon--bad {
+  color: var(--w-danger);
+}
+
+.w-check-list__label {
+  min-width: 0;
+  font-size: var(--w-text-sm);
+  line-height: 1.4;
+  color: var(--w-fg);
+}
+
+.w-check-list__empty {
+  padding: var(--w-space-4);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+/* ==========================================================
+   WStepFlow / WStepSection — .w-step-flow, .w-step-section
+   ========================================================== */
+
+/* Empilhado é a base das duas orientações: a horizontal só vira régua a partir
+   de 840px (ver o bloco da orientação horizontal, mais abaixo). */
+.w-step-flow,
+.w-step-flow--vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.w-step-section {
+  display: flex;
+  align-items: stretch;
+  gap: var(--w-space-4);
+  min-width: 0;
+}
+
+/* Coluna das badges: a linha conectora é o `flex: 1` embaixo da badge, então ela
+   cresce junto com a altura da etapa aberta. */
+.w-step-section__rail {
+  flex: none;
+  width: 1.875rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--w-space-2);
+}
+
+.w-step-section__badge {
+  display: grid;
+  place-items: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  flex: none;
+  border-radius: var(--w-radius-full);
+  border: 1px solid var(--w-border-strong);
+  background: var(--w-surface);
+  color: var(--w-fg-subtle);
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-step-section__badge--on {
+  border-color: transparent;
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+}
+
+.w-step-section__line {
+  flex: 1;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--w-border);
+}
+
+.w-step-section__body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: var(--w-space-5);
+}
+
+/* A última etapa não liga em nada: sem linha conectora e sem folga embaixo. */
+.w-step-flow--vertical > .w-step-section:last-child .w-step-section__line {
+  display: none;
+}
+
+.w-step-flow--vertical > .w-step-section:last-child .w-step-section__body {
+  padding-bottom: 0;
+}
+
+.w-step-section__card {
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+  overflow: hidden;
+}
+
+.w-step-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  padding: var(--w-space-3) var(--w-card-pad);
+}
+
+.w-step-section__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.w-step-section__trigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-step-section__chevron {
+  flex: none;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-subtle);
+}
+
+.w-step-section__title {
+  margin: 0;
+  font-size: var(--w-text-lg);
+  font-weight: var(--w-fw-medium);
+  letter-spacing: -0.01em;
+  color: var(--w-fg);
+}
+
+.w-step-section__count {
+  display: inline-flex;
+  align-items: center;
+  height: 1.375rem;
+  flex: none;
+  padding: 0 var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  background: var(--w-surface-3);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-step-section__summary {
+  min-width: 0;
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-step-section__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+.w-step-section__content {
+  padding: 0 var(--w-card-pad) var(--w-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-3);
+}
+
+/* Conteúdo que se estende de borda a borda (tabela) anula o padding do corpo. */
+.w-step-section__content > .w-editable-table {
+  margin: 0 calc(-1 * var(--w-card-pad));
+}
+
+.w-step-section__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--w-space-2);
+  padding: var(--w-space-3) var(--w-card-pad);
+  border-top: 1px solid var(--w-border);
+}
+
+@media (max-width: 599px) {
+  .w-step-section {
+    gap: var(--w-space-2);
+  }
+}
+
+/* ----------------------------------------------------------
+   Orientação horizontal — régua de etapas no topo
+   ----------------------------------------------------------
+   Mobile-first: sem a régua, a etapa horizontal é o mesmo comportamento da
+   vertical (cabeçalho e, embaixo, o corpo da etapa aberta). A régua só entra
+   a partir de 840px — abaixo disso ela não caberia, e a queda é por CSS: o
+   markup é o mesmo nas duas larguras. */
+
+.w-step-flow--horizontal {
+  gap: var(--w-space-2);
+}
+
+.w-step-section--horizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--w-space-2);
+}
+
+.w-step-section--horizontal .w-step-section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  min-width: 0;
+}
+
+/* A linha conectora é horizontal e vem ANTES da badge: ela liga a etapa
+   anterior a esta. Fora da régua não há o que ligar. */
+.w-step-section--horizontal .w-step-section__line {
+  display: none;
+}
+
+.w-step-section--horizontal .w-step-section__trigger {
+  padding: var(--w-space-2);
+  border-radius: var(--w-radius-md);
+}
+
+.w-step-section--horizontal .w-step-section__trigger:hover:not(:disabled) {
+  background: var(--w-surface-3);
+}
+
+.w-step-section--horizontal .w-step-section__title {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: var(--w-text-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* O resumo é o secundário da régua: encolhe (e trunca) bem antes do título —
+   fator alto de propósito, para o título só ceder quando o resumo já sumiu. */
+.w-step-section--horizontal .w-step-section__summary {
+  flex: 0 20 auto;
+}
+
+.w-step-section__badge--done {
+  border-color: transparent;
+  background: var(--w-surface-3);
+  color: var(--w-fg-muted);
+}
+
+.w-step-section__badge--done .pi {
+  font-size: var(--w-text-2xs);
+}
+
+.w-step-section__panel {
+  min-width: 0;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+  overflow: hidden;
+}
+
+/* Sem cabeçalho dentro do painel, o corpo precisa do respiro de cima. */
+.w-step-section--horizontal .w-step-section__content {
+  padding-top: var(--w-space-4);
+}
+
+@media (min-width: 840px) {
+  .w-step-flow--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--w-space-3);
+    row-gap: var(--w-space-4);
+  }
+
+  /* A etapa some como caixa: cabeçalho e painel viram itens do flow. O `order`
+     junta todos os cabeçalhos na primeira linha e joga o painel da etapa ativa
+     para a última, independentemente de qual etapa está aberta. */
+  .w-step-flow--horizontal > .w-step-section--horizontal {
+    display: contents;
+  }
+
+  /* `basis: 0` mantém a régua numa linha só (fatias iguais, encolhendo quando
+     precisa). Com base no conteúdo, um título longo empurraria a última etapa
+     para uma segunda linha — deixaria de ser régua. */
+  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__head {
+    order: 1;
+    flex: 1 1 0;
+  }
+
+  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__panel {
+    order: 2;
+    flex: 0 0 100%;
+  }
+
+  .w-step-flow--horizontal .w-step-section__line {
+    display: block;
+    flex: none;
+    width: var(--w-space-5);
+    height: 2px;
+  }
+
+  /* A primeira etapa não vem de lugar nenhum. */
+  .w-step-flow--horizontal > .w-step-section:first-child .w-step-section__line {
+    display: none;
+  }
+
+  /* Trecho já percorrido da régua. */
+  .w-step-section__line--done {
+    background: var(--w-border-strong);
+  }
+}
+
+/* Na régua o resumo só entra quando sobra espaço de verdade: entre 840px e
+   1200px cada etapa fica com um terço da linha, e ali o título é que importa.
+   Abaixo de 840px o resumo volta — lá cada etapa tem a linha inteira para si. */
+@media (min-width: 840px) and (max-width: 1199px) {
+  .w-step-section--horizontal .w-step-section__summary {
+    display: none;
+  }
+}
+
+/* ==========================================================
+   WSectionAccordion / WSectionPanel — .w-section-accordion, .w-section-panel
+   ==========================================================
+   As seções de um editor master-detail num bloco só, com moldura leve; os
+   painéis se separam por uma régua, não por caixas. Espaçamento pelos tokens
+   de densidade do app, com fallback no tema do PrimeVue. */
+.w-section-accordion {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+  overflow: hidden;
+}
+
+.w-section-panel {
+  min-width: 0;
+}
+
+.w-section-accordion > .w-section-panel + .w-section-panel {
+  border-top: 1px solid var(--w-border);
+}
+
+.w-section-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  padding: var(--w-space-3) var(--w-space-4);
+}
+
+/* Cabeçalho = botão inteiro: ícone tonal + nome + frase + contagem + chevron
+   (mesma anatomia do WSectionHeader, clicável). */
+.w-section-panel__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.w-section-panel__trigger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-section-panel__trigger:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+  border-radius: var(--w-radius);
+}
+
+.w-section-panel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--w-control-h);
+  height: var(--w-control-h);
+  border-radius: var(--w-radius);
+  background: var(--w-primary-soft);
+  color: var(--w-primary);
+}
+
+.w-section-panel__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.w-section-panel__title {
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-medium);
+  line-height: var(--w-leading-tight);
+  color: var(--w-fg);
+}
+
+.w-section-panel__description {
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-regular);
+  color: var(--w-fg-muted);
+}
+
+.w-section-panel__count {
+  flex: none;
+  min-width: 1.75em;
+  padding-inline: var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  background: var(--w-surface-3);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-medium);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.w-section-panel__chevron {
+  flex: none;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-subtle);
+}
+
+.w-section-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex-shrink: 0;
+}
+
+.w-section-panel__content {
+  padding: var(--w-space-2) var(--w-space-4) var(--w-space-5);
+}
+
+/* Bloco que já vem com moldura própria (WInfoCard) perde a caixa dentro da seção:
+   a moldura é a do acordeão, o cabeçalho é o do painel. */
+.w-section-panel__content > .w-info-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+/* Tablet em pé / celular: a frase some (o título basta) e as ações descem
+   para a linha de baixo, em vez de espremer o cabeçalho. */
+@media (max-width: 599px) {
+  .w-section-panel__header {
+    flex-wrap: wrap;
+  }
+
+  .w-section-panel__description {
+    display: none;
+  }
+
+  .w-section-panel__content {
+    padding-inline: var(--w-space-3);
+  }
+}

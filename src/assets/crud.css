@@ -1,188 +1,9 @@
 /* ============================================================
-   wPrimeVue Components — CSS Classes Reference
+   wPrimeVue Components — CRUD
    ============================================================
-   All classes use the `w-` prefix and PrimeVue CSS variables.
-   Override any class in your app's CSS to customize appearance.
-
-   Structure:
-   - w-crud-*              → WCrudView component
-   - w-crud-form-*         → WCrudFormDialog component
-   - w-autocompletefk-*    → WAutoCompleteFK component
+   WCrudView (tabela, cards, rail, toggle), WCrudFormDialog, WCrudSubview,
+   WEditableTable. Valores só via tokens.css (`--w-*`).
    ============================================================ */
-
-/* ==========================================================
-   Tokens da biblioteca
-   ========================================================== */
-
-:root {
-  /**
-   * Faixa do zebrado — **tint do primário, relativo ao fundo**.
-   *
-   * Toda tabela da suite alterna as linhas com este valor. Duas decisões nele:
-   *
-   * 1. Sai do `--primary` do app, não de um cinza: a faixa passa a pertencer à
-   *    paleta do produto (no tema claro, um azul claríssimo) em vez de ser uma
-   *    sujeira neutra. Como o app troca o valor de `--primary` entre os temas, a
-   *    mesma fórmula serve os dois — não há variante `dark` aqui.
-   * 2. É `color-mix` com transparente, e não um tom sólido, porque a mesma tabela
-   *    aparece sobre fundos diferentes: no card (`--surface`) e dentro da expansão
-   *    de outra tabela (`--surface-2`). Tom sólido acerta um contexto e some no
-   *    outro — foi o que aconteceu com a subtabela de insumos, cuja faixa era
-   *    exatamente a cor do fundo em que ela vivia.
-   */
-  --w-zebra: color-mix(in srgb, var(--primary, var(--p-primary-color)) 7%, transparent);
-
-  /** Realce da linha sob o cursor: o mesmo azul, um degrau acima. O zebrado dá o
-   *  trilho, o hover diz onde o olho está agora. */
-  --w-row-hover: color-mix(in srgb, var(--primary, var(--p-primary-color)) 14%, transparent);
-}
-
-/* ==========================================================
-   Densidade dos controles
-   ==========================================================
-   O app manda pela tríade `--control-h` / `--ui-font` / `--control-px`
-   (ex.: 38px / 14px / 12px; compacto 32px / 13px). Sem os tokens, os
-   fallbacks abaixo valem — nunca o 42px/16px do tema PrimeVue. Vale para o
-   input de busca, os filtros de coluna (na mesma toolbar), os campos do
-   formulário e os botões das barras (toolbar, cabeçalho, rodapé do form,
-   rail). Botão de linha usa
-   `--control-h-sm` para não esticar a tabela. */
-
-.w-crud-toolbar .p-inputtext,
-.w-crud-form .p-inputtext,
-.w-crud-toolbar .p-select,
-.w-crud-form .p-select,
-.w-crud-form .p-multiselect,
-.w-crud-form .p-autocomplete,
-.w-crud-toolbar .p-inputnumber,
-.w-crud-form .p-inputnumber,
-.w-crud-form .p-password {
-  font-size: var(--ui-font, 0.875rem);
-}
-
-.w-crud-toolbar .p-inputtext,
-.w-crud-form .p-inputtext,
-.w-crud-toolbar .p-select,
-.w-crud-form .p-select,
-.w-crud-form .p-multiselect {
-  height: var(--control-h, 2.375rem);
-}
-
-.w-crud-toolbar .p-inputtext,
-.w-crud-form .p-inputtext {
-  padding-block: 0;
-  padding-inline: var(--control-px, 0.75rem);
-}
-
-/* Busca com ícone: a regra de padding acima apaga o espaço que o IconField
-   reserva para o ícone — devolve aqui, onde quer que o IconField esteja
-   (toolbar, busca do WTransferList/WTreeSelect dentro do form, subview). */
-.w-crud-toolbar .p-iconfield .p-inputtext,
-.w-crud-form .p-iconfield .p-inputtext {
-  padding-inline-start: calc(var(--control-px, 0.75rem) * 2 + 1rem);
-}
-
-.w-crud-toolbar .p-select-label,
-.w-crud-form .p-select-label,
-.w-crud-form .p-multiselect-label {
-  display: flex;
-  align-items: center;
-  padding-block: 0;
-  padding-inline-start: var(--control-px, 0.75rem);
-}
-
-.w-crud-form .p-textarea {
-  font-size: var(--ui-font, 0.875rem);
-  padding: calc(var(--control-px, 0.75rem) * 0.6) var(--control-px, 0.75rem);
-}
-
-.w-crud-header-actions .p-button,
-.w-crud-toolbar .p-button,
-.w-crud-bulkbar .p-button,
-.w-crud-form-footer .p-button,
-.w-crud-rail .p-button {
-  height: var(--control-h, 2.375rem);
-  font-size: var(--ui-font, 0.875rem);
-}
-
-.w-crud-header-actions .p-button.p-button-icon-only,
-.w-crud-toolbar .p-button.p-button-icon-only,
-.w-crud-bulkbar .p-button.p-button-icon-only,
-.w-crud-rail .p-button.p-button-icon-only {
-  width: var(--control-h, 2.375rem);
-  padding-inline: 0;
-}
-
-.w-crud-actions .p-button.p-button-icon-only,
-.w-crud-card-actions .p-button.p-button-icon-only {
-  width: var(--control-h-sm, 2rem);
-  height: var(--control-h-sm, 2rem);
-}
-
-/* ==========================================================
-   Tags de status — .w-tag
-   ==========================================================
-   Cor de status sai dos tokens do app (`--success`, `--danger`, `--warning`,
-   `--info` e os `-soft`), não da paleta fixa do PrimeVue (que no escuro usa
-   red-300/red-500 e não acompanha o tema). Aplicada sobre o `<Tag>` para
-   manter a estrutura `.p-tag` que os consumidores já estilizam. */
-
-.p-tag.w-tag {
-  font-size: var(--text-xs, 0.75rem);
-}
-
-.p-tag.w-tag--success {
-  background: var(
-    --success-soft,
-    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 12%, transparent)
-  );
-  color: var(--success, var(--p-green-500, #22c55e));
-}
-
-.p-tag.w-tag--danger {
-  background: var(
-    --danger-soft,
-    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 12%, transparent)
-  );
-  color: var(--danger, var(--p-red-500, #ef4444));
-}
-
-.p-tag.w-tag--warn,
-.p-tag.w-tag--warning {
-  background: var(
-    --warning-soft,
-    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 12%, transparent)
-  );
-  color: var(--warning, var(--p-yellow-500, #eab308));
-}
-
-.p-tag.w-tag--info {
-  background: var(
-    --info-soft,
-    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 12%, transparent)
-  );
-  color: var(--info, var(--p-sky-500, #0ea5e9));
-}
-
-.p-tag.w-tag--primary {
-  background: var(
-    --primary-soft,
-    color-mix(in srgb, var(--primary, var(--p-primary-color)) 12%, transparent)
-  );
-  color: var(--primary, var(--p-primary-color));
-}
-
-.p-tag.w-tag--secondary,
-.p-tag.w-tag--contrast {
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-/* Valor sem status (ex.: `false` neutro numa coluna boolean): texto abafado. */
-.w-cell-neutral {
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
 
 /* ==========================================================
    WCrudView — .w-crud
@@ -197,8 +18,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--w-space-4);
+  margin-bottom: var(--w-space-6);
 }
 
 .w-crud-header-content {
@@ -209,14 +30,14 @@
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
+  gap: var(--w-space-2) var(--w-space-3);
 }
 
 /* Contagem total do filtro, ao lado do título — texto abafado, sem moldura. */
 .w-crud-count {
-  font-size: var(--text-xs, 0.75rem);
+  font-size: var(--w-text-xs);
   font-variant-numeric: tabular-nums;
-  color: var(--fg-muted, var(--p-text-muted-color));
+  color: var(--w-fg-muted);
   white-space: nowrap;
 }
 
@@ -225,23 +46,23 @@
 }
 
 .w-crud-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-semibold);
   letter-spacing: -0.015em;
-  color: var(--p-text-color);
-  line-height: 1.3;
+  color: var(--w-fg);
+  line-height: var(--w-leading-tight);
 }
 
 .w-crud-subtitle {
-  margin-top: 0.125rem;
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
+  margin-top: var(--w-space-05);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
 }
 
 .w-crud-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--w-space-2);
   flex-shrink: 0;
 }
 
@@ -249,69 +70,57 @@
 .w-crud-kpis {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  gap: var(--w-space-3);
+  margin-bottom: var(--w-space-5);
 }
 
 .w-crud-kpi {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: calc(var(--card-pad, 1.25rem) * 0.8) var(--card-pad, 1.25rem);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
+  gap: var(--w-space-3);
+  padding: calc(var(--w-card-pad) * 0.8) var(--w-card-pad);
+  border-radius: var(--w-radius-lg);
+  border: 1px solid var(--w-border);
+  background: var(--w-surface);
 }
 
 .w-crud-kpi-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  color: var(--p-primary-color);
+  width: var(--w-icon-box);
+  height: var(--w-icon-box);
+  border-radius: var(--w-radius-lg);
+  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  color: var(--w-primary);
   flex-shrink: 0;
-  font-size: 1.125rem;
+  font-size: var(--w-text-lg);
 }
 
 /* KPI severity variants */
 .w-crud-kpi-icon--primary {
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  color: var(--p-primary-color);
+  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  color: var(--w-primary);
 }
 
 .w-crud-kpi-icon--success {
-  background: var(
-    --success-soft,
-    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
-  );
-  color: var(--success, var(--p-green-500, #22c55e));
+  background: var(--w-success-soft);
+  color: var(--w-success);
 }
 
 .w-crud-kpi-icon--warning {
-  background: var(
-    --warning-soft,
-    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 10%, transparent)
-  );
-  color: var(--warning, var(--p-yellow-500, #eab308));
+  background: var(--w-warning-soft);
+  color: var(--w-warning);
 }
 
 .w-crud-kpi-icon--danger {
-  background: var(
-    --danger-soft,
-    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
-  );
-  color: var(--danger, var(--p-red-500, #ef4444));
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
 }
 
 .w-crud-kpi-icon--info {
-  background: var(
-    --info-soft,
-    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 10%, transparent)
-  );
-  color: var(--info, var(--p-sky-500, #0ea5e9));
+  background: var(--w-info-soft);
+  color: var(--w-info);
 }
 
 .w-crud-kpi-content {
@@ -319,53 +128,53 @@
 }
 
 .w-crud-kpi-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
-  color: var(--p-text-muted-color);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   line-height: 1;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--w-space-1);
 }
 
 .w-crud-kpi-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--p-text-color);
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  color: var(--w-fg);
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
 /* --- Table wrapper --- */
 .w-crud-table {
-  border-radius: 0.75rem;
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
+  border-radius: var(--w-radius-lg);
+  border: 1px solid var(--w-border);
+  background: var(--w-surface);
   overflow: hidden;
 }
 
 .w-crud-table .p-datatable {
-  font-size: 0.8125rem;
+  font-size: var(--w-text-sm);
 }
 
 .w-crud-table .p-datatable-header {
   background: transparent;
-  border-bottom: 1px solid var(--p-content-border-color);
-  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--w-border);
+  padding: var(--w-space-3) var(--w-space-4);
 }
 
 .w-crud-table .p-datatable-thead > tr > th {
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--p-text-muted-color);
-  background: var(--p-content-background);
+  color: var(--w-fg-muted);
+  background: var(--w-surface);
 }
 
 .w-crud-table .p-datatable-tbody > tr > td {
-  padding-top: 0.625rem;
-  padding-bottom: 0.625rem;
+  padding-top: var(--w-space-3);
+  padding-bottom: var(--w-space-3);
 }
 
 /* Zebrado: o olho perde a linha em tabela larga, e a faixa alternada devolve o
@@ -379,7 +188,7 @@
 }
 
 .w-crud-table .p-datatable-paginator-bottom {
-  border-top: 1px solid var(--p-content-border-color);
+  border-top: 1px solid var(--w-border);
 }
 
 /* Paginator — compact: "Página X de Y  < >" aligned right */
@@ -388,8 +197,8 @@
 }
 
 .w-crud-paginator .p-paginator-current {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
   margin-right: auto !important;
 }
 
@@ -399,15 +208,15 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.25rem 0;
+  gap: var(--w-space-3);
+  padding: var(--w-space-1) 0;
 }
 
 .w-crud-toolbar-start {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--w-space-3);
   /* Permite encolher/quebrar quando os filtros estouram a largura. */
   min-width: 0;
   flex: 1 1 auto;
@@ -417,7 +226,56 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--w-space-2);
+}
+
+/* Campo de busca da toolbar: largura fixa para não brigar com os filtros. */
+.w-crud-search {
+  width: var(--w-search-w);
+  max-width: 100%;
+}
+
+/* Barra de ações em lote (seleção múltipla): tint do primário, sem borda. */
+.w-crud-bulkbar {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  margin-bottom: var(--w-space-2);
+  padding: var(--w-space-2) var(--w-space-3);
+  border-radius: var(--w-radius);
+  background: var(--w-primary-soft);
+  color: var(--w-primary);
+}
+
+.w-crud-bulkbar__count {
+  margin-right: auto;
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-semibold);
+}
+
+/* Seletor de colunas (popover da toolbar). */
+.w-crud-chooser {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-15);
+  min-width: 11rem;
+}
+
+.w-crud-chooser__item {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+}
+
+.w-crud-chooser__label {
+  font-size: var(--w-text-sm);
+  cursor: pointer;
+}
+
+/* Diálogo de confirmação de exclusão (slot #delete-message). */
+.p-dialog.w-crud-delete-dialog {
+  width: var(--w-dialog-sm);
+  max-width: calc(100vw - 2 * var(--w-space-4));
 }
 
 /* --- Actions column --- */
@@ -429,7 +287,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.125rem;
+  gap: var(--w-space-05);
 }
 
 /* --- Empty state --- */
@@ -438,32 +296,32 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 1rem;
+  padding: var(--w-space-8) var(--w-space-4);
 }
 
 .w-crud-empty-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 1rem;
-  margin-bottom: 1rem;
-  background: var(--p-content-hover-background);
-  color: var(--p-text-muted-color);
-  font-size: 1.5rem;
+  width: var(--w-empty-icon);
+  height: var(--w-empty-icon);
+  border-radius: var(--w-radius-xl);
+  margin-bottom: var(--w-space-4);
+  background: var(--w-surface-2);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-2xl);
 }
 
 .w-crud-empty-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--p-text-color);
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
 }
 
 .w-crud-empty-text {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-  margin-top: 0.25rem;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  margin-top: var(--w-space-1);
 }
 
 /* Alinhamento de coluna (header-class + body-class via ColumnDef.align).
@@ -496,24 +354,24 @@
 
 /* Dialog refinements — uses .p-dialog prefix for specificity over PrimeVue defaults */
 .p-dialog.w-crud-form-dialog > .p-dialog-header {
-  padding-bottom: 0.5rem;
+  padding-bottom: var(--w-space-2);
 }
 
 .p-dialog.w-crud-form-dialog > .p-dialog-content {
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--w-space-3);
 }
 
 /* Form container */
 .w-crud-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--w-space-6);
 }
 
 .w-crud-form-main {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--w-space-6);
   min-width: 0;
 }
 
@@ -522,7 +380,7 @@
 .w-crud-form--with-aside {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--w-form-aside, minmax(0, 1fr));
-  gap: 1.5rem 2rem;
+  gap: var(--w-space-6) var(--w-space-8);
   align-items: start;
 }
 
@@ -542,41 +400,37 @@
 
 /* Form group (fieldGroup sections) */
 .w-crud-form-group-header {
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--p-surface-200);
-}
-
-.dark .w-crud-form-group-header {
-  border-bottom-color: var(--p-surface-700);
+  margin-bottom: var(--w-space-3);
+  padding-bottom: var(--w-space-2);
+  border-bottom: 1px solid var(--w-border);
 }
 
 .w-crud-form-group-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--p-text-color);
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
   margin: 0;
 }
 
 .w-crud-form-group-desc {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-  margin: 0.25rem 0 0 0;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  margin: var(--w-space-1) 0 0 0;
 }
 
 /* CEP error message */
 .w-crud-form-cep-error {
   display: block;
-  font-size: 0.75rem;
-  color: var(--danger, var(--p-red-500, #ef4444));
-  margin-top: 0.25rem;
+  font-size: var(--w-text-xs);
+  color: var(--w-danger);
+  margin-top: var(--w-space-1);
 }
 
 /* CEP loading spinner in label */
 .w-crud-form-cep-spinner {
-  margin-left: 0.375rem;
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  margin-left: var(--w-space-15);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
 }
 
 /* Form fields grid — nº de colunas controlado por --w-form-cols
@@ -584,7 +438,7 @@
 .w-crud-form-fields {
   display: grid;
   grid-template-columns: repeat(var(--w-form-cols, 2), 1fr);
-  gap: 1rem 1rem;
+  gap: var(--w-space-4) var(--w-space-4);
 }
 
 /* Grid span helpers — span resolvido pelo WFormRenderer via --w-col-span
@@ -598,7 +452,7 @@
 }
 
 /* Mobile: uma coluna, campos empilhados */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .w-crud-form-fields {
     grid-template-columns: 1fr;
   }
@@ -618,24 +472,28 @@
 
 /* Required asterisk */
 .w-crud-form-required {
-  color: var(--danger, var(--p-red-500, #ef4444));
-  margin-left: 0.125rem;
+  color: var(--w-danger);
+  margin-left: var(--w-space-05);
 }
 
 /* Labels */
 .w-crud-form-label {
   display: block;
-  font-weight: 500;
-  margin-bottom: 0.375rem;
-  color: var(--p-text-color);
-  font-size: 0.75rem;
+  font-weight: var(--w-fw-medium);
+  margin-bottom: var(--w-space-15);
+  color: var(--w-fg);
+  font-size: var(--w-text-xs);
 }
 
 /* Color picker row */
 .w-crud-form-color-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--w-space-2);
+}
+
+.w-crud-form-color-input {
+  width: 7rem;
 }
 
 /* Switch row */
@@ -643,838 +501,44 @@
   grid-column: span var(--w-col-span, 2);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  background: var(--p-content-hover-background);
+  gap: var(--w-space-3);
+  padding: var(--w-space-2) var(--w-space-3);
+  border-radius: var(--w-radius);
+  background: var(--w-surface-2);
 }
 
 .w-crud-form-switch-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--p-text-color);
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg);
   user-select: none;
 }
 
 /* Texto de apoio (FieldDef.hint) — ligado ao input por aria-describedby */
 .w-crud-form-hint {
   display: block;
-  font-size: 0.75rem;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  margin-top: 0.25rem;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  margin-top: var(--w-space-1);
 }
 
 /* Validation error */
 .w-crud-form-error {
   display: block;
-  font-size: 0.75rem;
-  color: var(--danger, var(--p-red-500, #ef4444));
-  margin-top: 0.25rem;
+  font-size: var(--w-text-xs);
+  color: var(--w-danger);
+  margin-top: var(--w-space-1);
 }
 
 /* Footer */
 .w-crud-form-footer {
   display: flex;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  padding-bottom: 0.5rem;
-  border-top: 1px solid var(--p-content-border-color);
-  margin-top: 0.25rem;
-}
-
-/* ==========================================================
-   WAutoCompleteFK — .w-autocompletefk-*
-   ========================================================== */
-
-/* Inline field: autocomplete + search trigger */
-.w-autocompletefk {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-}
-
-/* `min-width: 0` desarma o mínimo intrínseco do flex: sem isso um chip de nome
-   longo (modo `multiple`) estica o campo além do container e empurra a tela. */
-.w-autocompletefk .p-autocomplete {
-  flex: 1;
-  min-width: 0;
-}
-
-.w-autocompletefk .p-autocomplete-input {
-  padding-right: 2.5rem;
-}
-
-/* multiple: quem faz o papel de input é a lista de chips (o PrimeVue já a
-   monta como flex com wrap, então os chips correm lado a lado). Aqui só
-   reservamos o espaço dos ícones e damos um teto de altura com rolagem — um
-   filtro não pode empurrar o resto da tela. */
-.w-autocompletefk .p-autocomplete-input-multiple {
-  padding-right: 2.5rem;
-  min-width: 0;
-  max-height: 7rem;
-  overflow-y: auto;
-}
-
-/* Nome longo trunca dentro do próprio chip em vez de esticar/ocupar a linha
-   inteira. `min-width: 0` no chip e no label é o que permite o ellipsis
-   dentro de um flex item. */
-.w-autocompletefk .p-autocomplete-chip-item {
-  max-width: var(--w-fk-chip-max, 100%);
-  /* Piso de legibilidade: em vez de espremer o chip até sobrar só o "x", a
-     área de digitação é que desce para a linha de baixo. */
-  min-width: min(100%, 6rem);
-}
-
-.w-autocompletefk .p-autocomplete-chip {
-  max-width: 100%;
-  min-width: 0;
-}
-
-/* Sugestão em duas linhas (`optionDescription`): o rótulo em cima e o dado que
-   decide a escolha embaixo, em texto de apoio. Só existe quando a prop é passada —
-   sem ela o slot nem é declarado e o render padrão continua o de sempre. */
-.w-fk-option {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  min-width: 0;
-}
-
-.w-fk-option__label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.w-fk-option__desc {
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-variant-numeric: tabular-nums;
-}
-
-.w-autocompletefk .p-autocomplete-chip .p-chip-label {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* O campo de digitação divide a linha com os chips em vez de exigir a linha
-   toda (padrão do input é ~20 caracteres de largura mínima). Ele é o primeiro
-   a ceder espaço: com filtro selecionado, o que importa ver é o chip. */
-.w-autocompletefk .p-autocomplete-input-chip {
-  flex: 1 1 2rem;
-  min-width: 2rem;
-}
-
-/* Chip é clicável: abre a listagem já marcada com a seleção atual. */
-.w-autocompletefk .w-autocompletefk-chip {
-  cursor: pointer;
-}
-
-/* Resumo `+N` dos chips escondidos por `maxChips`; o `li` do excedente sai do
-   fluxo para não deixar buraco de `gap`. */
-.w-autocompletefk .p-autocomplete-chip-item:has(> .w-autocompletefk-chip-hidden) {
-  display: none;
-}
-
-.w-autocompletefk .w-autocompletefk-chip-more {
-  font-variant-numeric: tabular-nums;
-}
-
-/* O `+N` não é nome, é contador: ocupa o mínimo e não entra no piso de
-   legibilidade dos chips (senão empurra a digitação para outra linha). */
-.w-autocompletefk .p-autocomplete-chip-item:has(> .w-autocompletefk-chip-more) {
-  min-width: 0;
-  flex: 0 0 auto;
-}
-
-/* Limpar tudo — ícone só-ícone, à esquerda da lupa. O campo cede o espaço dos
-   dois para o texto/chips não passarem por baixo. */
-.w-autocompletefk-clear {
-  position: absolute;
-  right: 2.25rem;
-  top: 0;
-  bottom: 0;
-  width: 1.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--p-text-muted-color);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  transition: color 0.15s;
-  font-size: 0.75rem;
-}
-
-.w-autocompletefk-clear:hover {
-  color: var(--p-primary-color);
-}
-
-.w-autocompletefk-clear i {
-  font-size: 0.75rem;
-}
-
-.w-autocompletefk-has-clear .p-autocomplete-input,
-.w-autocompletefk-has-clear .p-autocomplete-input-multiple {
-  padding-right: 4.25rem;
-}
-
-/* Search trigger — apenas o ícone (lupa) sobreposto à direita do input */
-.w-autocompletefk-trigger {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--p-text-muted-color);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  transition: color 0.15s;
-  font-size: 0.875rem;
-}
-
-.w-autocompletefk-trigger:hover {
-  color: var(--p-primary-color);
-}
-
-.w-autocompletefk-trigger:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.w-autocompletefk-trigger i {
-  font-size: 0.875rem;
-}
-
-/* Modal toolbar */
-.w-autocompletefk-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.w-autocompletefk-toolbar-search {
-  flex: 1;
-}
-
-.w-autocompletefk-toolbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-/* Modal empty state */
-.w-autocompletefk-empty {
-  text-align: center;
-  padding: 1.5rem;
-  color: var(--p-text-muted-color);
-  font-size: 0.875rem;
-}
-
-/* Modal footer */
-.w-autocompletefk-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-/* ==========================================================
-   WPageHeader — .w-page-header
-   ========================================================== */
-
-/* O cabeçalho quebra: sem `wrap`, um documento com meia dúzia de transições
-   espreme o título até ele sair uma letra por linha em tela estreita. O bloco
-   de título tem base própria para nunca ser o que encolhe. */
-.w-page-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4, 1rem);
-  margin-bottom: var(--space-6, 1.5rem);
-}
-
-.w-page-header-content {
-  flex: 1 1 16rem;
-  min-width: 0;
-}
-
-.w-page-header-title {
-  font-size: var(--text-xl, 1.25rem);
-  font-weight: var(--fw-semibold, 600);
-  letter-spacing: -0.015em;
-  color: var(--fg, var(--p-text-color));
-  line-height: var(--leading-tight, 1.3);
-}
-
-.w-page-header-subtitle {
-  margin-top: 0.125rem;
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-page-header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  flex-shrink: 0;
-}
-
-/* ==========================================================
-   WDetailHeader — .w-detail-header
-   ========================================================== */
-
-.w-detail-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.w-detail-header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.w-detail-header-icon {
-  font-size: 1.25rem;
-  color: var(--p-primary-color);
-}
-
-.w-detail-header-content {
-  min-width: 0;
-}
-
-.w-detail-header-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-  line-height: 1.3;
-}
-
-.w-detail-header-subtitle {
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-  margin-top: 0.125rem;
-}
-
-.w-detail-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-/* ==========================================================
-   WEmptyState — .w-empty-state
-   ========================================================== */
-
-.w-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  text-align: center;
-}
-
-.w-empty-state-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 1rem;
-  margin-bottom: 1rem;
-  background: var(--p-content-hover-background);
-  color: var(--p-text-muted-color);
-  font-size: 1.5rem;
-}
-
-.w-empty-state-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-}
-
-.w-empty-state-description {
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
-  margin-top: 0.25rem;
-  max-width: 24rem;
-}
-
-/* ==========================================================
-   WInfoCard — .w-info-card
-   ========================================================== */
-
-.w-info-card {
-  padding: var(--card-pad, 1.25rem);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid var(--border, var(--p-content-border-color));
-  background: var(--surface, var(--p-content-background));
-  margin-bottom: var(--space-4, 1rem);
-}
-
-.w-info-card-title {
-  font-size: var(--text-md, 0.9375rem);
-  font-weight: var(--fw-semibold, 600);
-  color: var(--fg, var(--p-text-color));
-  margin-bottom: var(--space-3, 0.75rem);
-}
-
-/* Fluido, não duas colunas fixas: com poucos campos a grade fecha em duas ou
-   três e usa a largura; em tela estreita ela mesma cai para uma, sem media
-   query. Fixo em `repeat(2, 1fr)` o card virava uma tira alta ao lado de meia
-   tela vazia. */
-.w-info-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-3, 0.75rem) var(--space-6, 1.5rem);
-}
-
-.w-info-card-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.w-info-card-label {
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-medium, 500);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.w-info-card-value {
-  font-size: var(--text-base, 0.875rem);
-  font-weight: var(--fw-medium, 500);
-  color: var(--fg, var(--p-text-color));
-}
-
-/* ==========================================================
-   Generic UI building blocks — w-*
-   ========================================================== */
-
-.w-section-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.w-section-header--compact {
-  margin-bottom: 0.75rem;
-}
-
-.w-section-header__main {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.w-section-header__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  color: var(--p-primary-color);
-}
-
-.w-section-header__content {
-  min-width: 0;
-}
-
-.w-section-header__title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.w-section-header__title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-  line-height: 1.3;
-}
-
-.w-section-header__subtitle {
-  margin-top: 0.125rem;
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
-}
-
-.w-section-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.w-form-section {
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 1rem;
-  background: var(--p-content-background);
-  padding: 1rem;
-}
-
-.w-form-section--muted {
-  background: color-mix(in srgb, var(--p-content-background) 88%, var(--p-primary-color) 2%);
-}
-
-.w-form-section--outlined {
-  background: transparent;
-}
-
-.w-form-section__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.w-form-section__content {
-  min-width: 0;
-}
-
-.w-form-section__title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-}
-
-.w-form-section__description {
-  margin-top: 0.125rem;
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
-}
-
-.w-form-section__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.w-form-section__body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* A barra externa quebra junto: um documento com seis transições não cabe numa
-   linha em tela de tablet, e sem `wrap` os botões saem pela direita. */
-.w-action-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3, 0.75rem);
-}
-
-.w-action-bar--between {
-  justify-content: space-between;
-}
-
-.w-action-bar--start {
-  justify-content: flex-start;
-}
-
-.w-action-bar--end {
-  justify-content: flex-end;
-}
-
-.w-action-bar__primary,
-.w-action-bar__secondary,
-.w-action-bar__filters {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.w-action-bar__primary {
-  min-width: 0;
-}
-
-.w-action-bar__secondary {
-  justify-content: flex-end;
-}
-
-.w-kpi-grid {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.w-kpi-grid--cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.w-kpi-grid--cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.w-kpi-grid--cols-4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.w-kpi-grid--cols-5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.w-kpi-grid--cols-6 {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow) */
-.w-kpi-grid--auto {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
-}
-
-.w-kpi-grid--dense {
-  gap: 0.5rem;
-}
-
-.w-kpi-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-  min-height: 100%;
-  padding: var(--card-pad, 1.25rem);
-  border: 1px solid var(--p-content-border-color);
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--p-content-background);
-}
-
-.w-kpi-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.w-kpi-card__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.875rem;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  color: var(--p-primary-color);
-  font-size: 1.125rem;
-}
-
-.w-kpi-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.w-kpi-card__label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--p-text-muted-color);
-  font-weight: 600;
-}
-
-.w-kpi-card__value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--p-text-color);
-}
-
-.w-kpi-card__hint {
-  font-size: 0.8125rem;
-  color: var(--p-text-muted-color);
-}
-
-.w-kpi-card__footer {
-  margin-top: auto;
-}
-
-.w-kpi-card__trend {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.w-kpi-card__trend-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: var(--p-content-hover-background);
-  color: var(--p-text-muted-color);
-}
-
-.w-kpi-card__trend-badge--up {
-  background: var(
-    --success-soft,
-    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
-  );
-  color: var(--success, var(--p-green-500, #22c55e));
-}
-
-.w-kpi-card__trend-badge--down {
-  background: var(
-    --danger-soft,
-    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
-  );
-  color: var(--danger, var(--p-red-500, #ef4444));
-}
-
-.w-kpi-card__loading {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-}
-
-.w-kpi-card__loading-content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.w-kpi-card--success .w-kpi-card__icon {
-  background: var(
-    --success-soft,
-    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 10%, transparent)
-  );
-  color: var(--success, var(--p-green-500, #22c55e));
-}
-
-.w-kpi-card--warning .w-kpi-card__icon {
-  background: var(
-    --warning-soft,
-    color-mix(in srgb, var(--warning, var(--p-yellow-500, #eab308)) 10%, transparent)
-  );
-  color: var(--warning, var(--p-yellow-500, #eab308));
-}
-
-.w-kpi-card--danger .w-kpi-card__icon {
-  background: var(
-    --danger-soft,
-    color-mix(in srgb, var(--danger, var(--p-red-500, #ef4444)) 10%, transparent)
-  );
-  color: var(--danger, var(--p-red-500, #ef4444));
-}
-
-.w-kpi-card--info .w-kpi-card__icon {
-  background: var(
-    --info-soft,
-    color-mix(in srgb, var(--info, var(--p-sky-500, #0ea5e9)) 10%, transparent)
-  );
-  color: var(--info, var(--p-sky-500, #0ea5e9));
-}
-
-.w-kpi-card--neutral .w-kpi-card__icon {
-  background: var(--p-content-hover-background);
-  color: var(--p-text-muted-color);
-}
-
-.w-progress-flow {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.w-progress-flow--horizontal {
-  align-items: stretch;
-  flex-wrap: wrap;
-}
-
-.w-progress-flow--vertical {
-  flex-direction: column;
-}
-
-.w-progress-flow__step {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.w-progress-flow--horizontal .w-progress-flow__step {
-  flex: 1 1 0;
-  min-width: 12rem;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 1rem;
-  background: var(--p-content-background);
-}
-
-.w-progress-flow__marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  flex-shrink: 0;
-  border-radius: 999px;
-  border: 1px solid var(--p-content-border-color);
-  color: var(--p-text-muted-color);
-  background: transparent;
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
-
-.w-progress-flow__content {
-  min-width: 0;
-}
-
-.w-progress-flow__label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-}
-
-.w-progress-flow__description {
-  margin-top: 0.125rem;
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-}
-
-.w-progress-flow__step--current .w-progress-flow__marker {
-  border-color: var(--p-primary-color);
-  background: color-mix(in srgb, var(--p-primary-color) 12%, transparent);
-  color: var(--p-primary-color);
-}
-
-.w-progress-flow__step--done .w-progress-flow__marker {
-  border-color: var(--success, var(--p-green-500, #22c55e));
-  background: var(
-    --success-soft,
-    color-mix(in srgb, var(--success, var(--p-green-500, #22c55e)) 12%, transparent)
-  );
-  color: var(--success, var(--p-green-500, #22c55e));
+  gap: var(--w-space-2);
+  padding-top: var(--w-space-4);
+  padding-bottom: var(--w-space-2);
+  border-top: 1px solid var(--w-border);
+  margin-top: var(--w-space-1);
 }
 
 /* ==========================================================
@@ -1484,16 +548,16 @@
 .w-crud-view-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: var(--w-space-05);
 }
 
 /* Standalone toolbar used above the cards grid */
 .w-crud-toolbar--standalone {
-  border: 1px solid var(--p-content-border-color);
-  background: var(--p-content-background);
-  border-radius: 0.75rem;
-  padding: 0.625rem 0.75rem;
-  margin-bottom: 0.75rem;
+  border: 1px solid var(--w-border);
+  background: var(--w-surface);
+  border-radius: var(--w-radius-lg);
+  padding: var(--w-space-3) var(--w-space-3);
+  margin-bottom: var(--w-space-3);
 }
 
 /* ==========================================================
@@ -1503,7 +567,7 @@
 .w-crud-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: var(--w-space-4);
   /* Cada card dimensiona ao próprio conteúdo (não estica à altura da linha) —
      importante quando o pré-processamento gera cards de alturas diferentes. */
   align-items: start;
@@ -1522,11 +586,11 @@
 .w-crud-card {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
-  padding: 1.25rem;
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 0.75rem;
-  background: var(--p-content-background);
+  gap: var(--w-space-3);
+  padding: var(--w-space-5);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
   cursor: default;
   transition:
     border-color 0.15s,
@@ -1534,13 +598,13 @@
 }
 
 .w-crud-card:hover {
-  border-color: color-mix(in srgb, var(--p-primary-color) 40%, var(--p-content-border-color));
+  border-color: color-mix(in srgb, var(--w-primary) 40%, var(--w-border));
 }
 
 .w-crud-card-body {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: var(--w-space-15);
   min-width: 0;
 }
 
@@ -1548,31 +612,31 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
+  gap: var(--w-space-3);
+  font-size: var(--w-text-sm);
   min-width: 0;
 }
 
 .w-crud-card-row--title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--p-text-color);
-  margin-bottom: 0.125rem;
+  font-size: var(--w-text-md);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+  margin-bottom: var(--w-space-05);
 }
 
 .w-crud-card-label {
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-medium);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--p-text-muted-color);
+  color: var(--w-fg-muted);
   flex-shrink: 0;
 }
 
 .w-crud-card-value {
   min-width: 0;
   text-align: right;
-  color: var(--p-text-color);
+  color: var(--w-fg);
 }
 
 .w-crud-card-row--title .w-crud-card-value {
@@ -1583,28 +647,28 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.125rem;
-  margin-top: 0.25rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--p-content-border-color);
+  gap: var(--w-space-05);
+  margin-top: var(--w-space-1);
+  padding-top: var(--w-space-2);
+  border-top: 1px solid var(--w-border);
 }
 
 .w-crud-cards-loading {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
-  color: var(--p-text-muted-color);
-  font-size: 1.5rem;
+  padding: var(--w-space-8) var(--w-space-4);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-2xl);
 }
 
 .w-crud-cards-wrap .w-crud-paginator {
-  margin-top: 0.75rem;
+  margin-top: var(--w-space-3);
 }
 
 .w-crud-card--selected {
-  border-color: var(--p-primary-color);
-  box-shadow: 0 0 0 1px var(--p-primary-color);
+  border-color: var(--w-primary);
+  box-shadow: 0 0 0 1px var(--w-primary);
 }
 
 /* ==========================================================
@@ -1614,7 +678,7 @@
 .w-crud-content--rail {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: var(--w-space-3);
 }
 
 .w-crud-content-main {
@@ -1627,864 +691,31 @@
 
 .w-crud-rail {
   position: sticky;
-  top: 1rem;
+  top: var(--w-space-4);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--w-space-15);
   flex-shrink: 0;
-  width: 52px;
-  padding: 0.5rem 0;
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 15px;
-  background: var(--p-content-background);
-  box-shadow: var(--p-overlay-popover-shadow, 0 6px 20px rgba(15, 23, 42, 0.09));
+  width: calc(var(--w-control-h) + var(--w-space-3));
+  padding: var(--w-space-2) 0;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+  box-shadow: var(--w-overlay-shadow);
 }
 
 .w-crud-rail-sep {
   width: 60%;
   height: 1px;
-  background: var(--p-content-border-color);
-  margin: 0.125rem 0;
+  background: var(--w-border);
+  margin: var(--w-space-05) 0;
 }
 
 /* Context menu — destructive item */
 .w-crud-ctx-danger .p-contextmenu-item-link,
 .w-crud-ctx-danger .p-contextmenu-item-link .p-contextmenu-item-icon {
-  color: var(--danger, var(--p-red-500, #ef4444));
-}
-
-/* ==========================================================
-   WMoneyInput — .w-money-input
-   ========================================================== */
-
-.w-money-input__field {
-  text-align: right;
-}
-
-/* ==========================================================
-   WTransferList — .w-transfer
-   ========================================================== */
-
-.w-transfer {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 0.75rem;
-  align-items: stretch;
-}
-
-.w-transfer--disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.w-transfer__pane {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  border: 1px solid var(--p-content-border-color);
-  border-radius: 0.75rem;
-  background: var(--p-content-background);
-  padding: 0.625rem;
-  min-width: 0;
-}
-
-.w-transfer__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.w-transfer__title {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--p-text-muted-color);
-}
-
-.w-transfer__count {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: var(--p-text-muted-color);
-  background: var(--p-content-hover-background);
-  border-radius: 999px;
-  padding: 0.0625rem 0.5rem;
-}
-
-.w-transfer__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  max-height: 14rem;
-  overflow-y: auto;
-}
-
-.w-transfer__item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.375rem 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.8125rem;
-  color: var(--p-text-color);
-  cursor: pointer;
-  transition: background-color 0.12s;
-}
-
-.w-transfer__item:hover {
-  background: var(--p-content-hover-background);
-}
-
-.w-transfer__item i {
-  color: var(--p-text-muted-color);
-  font-size: 0.75rem;
-}
-
-.w-transfer__empty {
-  padding: 0.75rem 0.5rem;
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--p-text-muted-color);
-}
-
-.w-transfer__controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-}
-
-/* ==========================================================
-   WTreeSelect — .w-tree-select
-   Tokens do design system com fallback no tema do PrimeVue:
-   funciona sozinho, e adere ao DS (dark + densidade) quando existe.
-   ========================================================== */
-
-.w-tree-select {
-  display: flex;
-  flex-direction: column;
-  gap: var(--field-gap, 0.375rem);
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--surface, var(--p-content-background));
-  padding: var(--control-px, 0.625rem);
-  min-width: 0;
-}
-
-.w-tree-select--disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.w-tree-select__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2, 0.5rem);
-  min-height: var(--control-h-sm, 2rem);
-}
-
-.w-tree-select__count {
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-medium, 600);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-tree-select__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1, 0.25rem);
-  flex-shrink: 0;
-}
-
-/* Atalho textual: é link de apoio, não ação primária — sem moldura de botão. */
-.w-tree-select__actions .p-button {
-  padding: 0 var(--space-2, 0.5rem);
-  height: var(--control-h-sm, 2rem);
-  font-size: var(--text-xs, 0.75rem);
-  font-weight: var(--fw-medium, 500);
-}
-
-.w-tree-select__filter {
-  width: 100%;
-}
-
-.w-tree-select__tree {
-  max-height: var(--w-tree-select-max-h, 18rem);
-  overflow-y: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-size: var(--ui-font, 0.8125rem);
-}
-
-/* A árvore mora dentro de um bloco que já tem borda e fundo. */
-.w-tree-select__tree.p-tree {
-  border: 0;
-  background: transparent;
-  padding: 0;
-}
-
-.w-tree-select__tree .p-tree-node-content {
-  border-radius: var(--radius-sm, 0.5rem);
-  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-  transition: background-color var(--motion-fast, 0.12s) var(--ease, ease);
-}
-
-.w-tree-select__tree .p-tree-node-content:hover {
-  background: var(--surface-2, var(--p-content-hover-background));
-}
-
-.w-tree-select__tree .p-tree-node-label {
-  color: var(--fg, var(--p-text-color));
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-/* Nó de grupo: mesma escala, só um pouco mais firme que a folha. */
-.w-tree-select__tree .p-tree-node[aria-level='1'] > .p-tree-node-content .p-tree-node-label {
-  font-weight: var(--fw-medium, 500);
-}
-
-.w-tree-select__empty {
-  padding: var(--space-3, 0.75rem) var(--space-2, 0.5rem);
-  text-align: center;
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-/* Tablet em pé (<= 839px, a faixa de retrato da régua do portal): título e ações
-   de seção param de disputar a mesma linha. O corte é 839 e não 768 porque
-   metade dos tablets em retrato mede 800-834 CSS px — em 768 eles receberiam o
-   layout de paisagem. */
-@media (max-width: 839px) {
-  .w-section-header,
-  .w-form-section__header,
-  .w-action-bar--stack {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .w-action-bar__primary,
-  .w-action-bar__secondary,
-  .w-action-bar__filters {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 768px) {
-  .w-kpi-grid--cols-2,
-  .w-kpi-grid--cols-3,
-  .w-kpi-grid--cols-4 {
-    grid-template-columns: 1fr;
-  }
-
-  .w-transfer {
-    grid-template-columns: 1fr;
-  }
-
-  .w-transfer__controls {
-    flex-direction: row;
-  }
-}
-
-/* ==========================================================
-   WInfoCard — variante `metric`
-   Linha por campo: rótulo à esquerda, número grande à direita.
-   ========================================================== */
-
-.w-info-card-metrics {
-  display: flex;
-  flex-direction: column;
-}
-
-.w-info-card-metric {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2, 0.625rem);
-  padding: var(--space-3, 0.75rem) 0;
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-info-card-metric:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.w-info-card-metric:last-child {
-  padding-bottom: 0;
-}
-
-.w-info-card-metric-label {
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-regular, 400);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  min-width: 0;
-}
-
-.w-info-card-metric-value {
-  margin-left: auto;
-  font-size: var(--text-xl, 1.25rem);
-  font-weight: var(--fw-bold, 700);
-  line-height: 1;
-  color: var(--fg, var(--p-text-color));
-  font-variant-numeric: tabular-nums;
-}
-
-.w-info-card-metric-suffix {
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-/* ==========================================================
-   WCheckList — .w-check-list
-   ========================================================== */
-
-.w-check-list {
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--surface, var(--p-content-background));
-  overflow: hidden;
-}
-
-.w-check-list__header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-3, 0.8125rem) var(--space-4, 1rem);
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-check-list__title {
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-check-list__count {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  height: 1.25rem;
-  padding: 0 var(--space-2, 0.5rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  font-variant-numeric: tabular-nums;
-}
-
-.w-check-list__items {
-  list-style: none;
-  margin: 0;
-  padding: var(--space-2, 0.5rem) 0;
-}
-
-.w-check-list__item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2, 0.5625rem);
-  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
-}
-
-.w-check-list__item i {
-  font-size: var(--text-sm, 0.8125rem);
-  margin-top: 0.125rem;
-  flex-shrink: 0;
-}
-
-.w-check-list__icon--ok {
-  color: var(--success, var(--p-green-500, #22c55e));
-}
-
-.w-check-list__icon--warn {
-  color: var(--warning, var(--p-yellow-500, #eab308));
-}
-
-.w-check-list__icon--bad {
-  color: var(--danger, var(--p-red-500, #ef4444));
-}
-
-.w-check-list__label {
-  min-width: 0;
-  font-size: var(--text-sm, 0.8125rem);
-  line-height: 1.4;
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-check-list__empty {
-  padding: var(--space-4, 1rem);
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-/* ==========================================================
-   WStepFlow / WStepSection — .w-step-flow, .w-step-section
-   ========================================================== */
-
-/* Empilhado é a base das duas orientações: a horizontal só vira régua a partir
-   de 768px (ver o bloco da orientação horizontal, mais abaixo). */
-.w-step-flow,
-.w-step-flow--vertical {
-  display: flex;
-  flex-direction: column;
-}
-
-.w-step-section {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-4, 1rem);
-  min-width: 0;
-}
-
-/* Coluna das badges: a linha conectora é o `flex: 1` embaixo da badge, então ela
-   cresce junto com a altura da etapa aberta. */
-.w-step-section__rail {
-  flex: none;
-  width: 1.875rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-}
-
-.w-step-section__badge {
-  display: grid;
-  place-items: center;
-  width: 1.875rem;
-  height: 1.875rem;
-  flex: none;
-  border-radius: var(--radius-full, 999px);
-  border: 1px solid var(--border-strong, var(--p-content-border-color));
-  background: var(--surface, var(--p-content-background));
-  color: var(--fg-subtle, var(--p-text-muted-color));
-  font-size: var(--text-xs, 0.75rem);
-  font-weight: var(--fw-bold, 700);
-  font-variant-numeric: tabular-nums;
-}
-
-.w-step-section__badge--on {
-  border-color: transparent;
-  background: var(--primary, var(--p-primary-color));
-  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
-}
-
-.w-step-section__line {
-  flex: 1;
-  width: 2px;
-  border-radius: 2px;
-  background: var(--border, var(--p-content-border-color));
-}
-
-.w-step-section__body {
-  flex: 1;
-  min-width: 0;
-  padding-bottom: var(--space-5, 1.25rem);
-}
-
-/* A última etapa não liga em nada: sem linha conectora e sem folga embaixo. */
-.w-step-flow--vertical > .w-step-section:last-child .w-step-section__line {
-  display: none;
-}
-
-.w-step-flow--vertical > .w-step-section:last-child .w-step-section__body {
-  padding-bottom: 0;
-}
-
-.w-step-section__card {
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--surface, var(--p-content-background));
-  overflow: hidden;
-}
-
-.w-step-section__header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-3, 0.875rem) var(--card-pad, 1.25rem);
-}
-
-.w-step-section__trigger {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.625rem);
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.w-step-section__trigger:disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-
-.w-step-section__chevron {
-  flex: none;
-  font-size: var(--text-xs, 0.6875rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-}
-
-.w-step-section__title {
-  margin: 0;
-  font-size: var(--text-lg, 1.0625rem);
-  font-weight: var(--fw-medium, 600);
-  letter-spacing: -0.01em;
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-step-section__count {
-  display: inline-flex;
-  align-items: center;
-  height: 1.375rem;
-  flex: none;
-  padding: 0 var(--space-2, 0.5625rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  font-variant-numeric: tabular-nums;
-}
-
-.w-step-section__summary {
-  min-width: 0;
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.w-step-section__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  flex-shrink: 0;
-}
-
-.w-step-section__content {
-  padding: 0 var(--card-pad, 1.25rem) var(--space-3, 0.875rem);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3, 0.75rem);
-}
-
-/* Conteúdo que se estende de borda a borda (tabela) anula o padding do corpo. */
-.w-step-section__content > .w-editable-table {
-  margin: 0 calc(-1 * var(--card-pad, 1.25rem));
-}
-
-.w-step-section__footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-3, 0.875rem) var(--card-pad, 1.25rem);
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-}
-
-@media (max-width: 640px) {
-  .w-step-section {
-    gap: var(--space-2, 0.5rem);
-  }
-}
-
-/* ----------------------------------------------------------
-   Orientação horizontal — régua de etapas no topo
-   ----------------------------------------------------------
-   Mobile-first: sem a régua, a etapa horizontal é o mesmo comportamento da
-   vertical (cabeçalho e, embaixo, o corpo da etapa aberta). A régua só entra
-   a partir de 768px — abaixo disso ela não caberia, e a queda é por CSS: o
-   markup é o mesmo nas duas larguras. */
-
-.w-step-flow--horizontal {
-  gap: var(--space-2, 0.5rem);
-}
-
-.w-step-section--horizontal {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--space-2, 0.5rem);
-}
-
-.w-step-section--horizontal .w-step-section__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  min-width: 0;
-}
-
-/* A linha conectora é horizontal e vem ANTES da badge: ela liga a etapa
-   anterior a esta. Fora da régua não há o que ligar. */
-.w-step-section--horizontal .w-step-section__line {
-  display: none;
-}
-
-.w-step-section--horizontal .w-step-section__trigger {
-  padding: var(--space-2, 0.5rem);
-  border-radius: var(--radius-md, 0.5rem);
-}
-
-.w-step-section--horizontal .w-step-section__trigger:hover:not(:disabled) {
-  background: var(--surface-3, var(--p-content-hover-background));
-}
-
-.w-step-section--horizontal .w-step-section__title {
-  flex: 0 1 auto;
-  min-width: 0;
-  font-size: var(--text-base, 0.9375rem);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* O resumo é o secundário da régua: encolhe (e trunca) bem antes do título —
-   fator alto de propósito, para o título só ceder quando o resumo já sumiu. */
-.w-step-section--horizontal .w-step-section__summary {
-  flex: 0 20 auto;
-}
-
-.w-step-section__badge--done {
-  border-color: transparent;
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-step-section__badge--done .pi {
-  font-size: var(--text-2xs, 0.6875rem);
-}
-
-.w-step-section__panel {
-  min-width: 0;
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--surface, var(--p-content-background));
-  overflow: hidden;
-}
-
-/* Sem cabeçalho dentro do painel, o corpo precisa do respiro de cima. */
-.w-step-section--horizontal .w-step-section__content {
-  padding-top: var(--space-4, 1rem);
-}
-
-@media (min-width: 768px) {
-  .w-step-flow--horizontal {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: var(--space-3, 0.75rem);
-    row-gap: var(--space-4, 1rem);
-  }
-
-  /* A etapa some como caixa: cabeçalho e painel viram itens do flow. O `order`
-     junta todos os cabeçalhos na primeira linha e joga o painel da etapa ativa
-     para a última, independentemente de qual etapa está aberta. */
-  .w-step-flow--horizontal > .w-step-section--horizontal {
-    display: contents;
-  }
-
-  /* `basis: 0` mantém a régua numa linha só (fatias iguais, encolhendo quando
-     precisa). Com base no conteúdo, um título longo empurraria a última etapa
-     para uma segunda linha — deixaria de ser régua. */
-  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__head {
-    order: 1;
-    flex: 1 1 0;
-  }
-
-  .w-step-flow--horizontal > .w-step-section--horizontal > .w-step-section__panel {
-    order: 2;
-    flex: 0 0 100%;
-  }
-
-  .w-step-flow--horizontal .w-step-section__line {
-    display: block;
-    flex: none;
-    width: var(--space-5, 1.25rem);
-    height: 2px;
-  }
-
-  /* A primeira etapa não vem de lugar nenhum. */
-  .w-step-flow--horizontal > .w-step-section:first-child .w-step-section__line {
-    display: none;
-  }
-
-  /* Trecho já percorrido da régua. */
-  .w-step-section__line--done {
-    background: var(--border-strong, var(--p-content-border-color));
-  }
-}
-
-/* Na régua o resumo só entra quando sobra espaço de verdade: entre 768px e
-   1280px cada etapa fica com um terço da linha, e ali o título é que importa.
-   Abaixo de 768px o resumo volta — lá cada etapa tem a linha inteira para si. */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .w-step-section--horizontal .w-step-section__summary {
-    display: none;
-  }
-}
-
-/* ==========================================================
-   WSectionAccordion / WSectionPanel — .w-section-accordion, .w-section-panel
-   ==========================================================
-   As seções de um editor master-detail num bloco só, com moldura leve; os
-   painéis se separam por uma régua, não por caixas. Espaçamento pelos tokens
-   de densidade do app, com fallback no tema do PrimeVue. */
-.w-section-accordion {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-lg, 0.75rem);
-  background: var(--surface, var(--p-content-background));
-  overflow: hidden;
-}
-
-.w-section-panel {
-  min-width: 0;
-}
-
-.w-section-accordion > .w-section-panel + .w-section-panel {
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-section-panel__header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-}
-
-/* Cabeçalho = botão inteiro: ícone tonal + nome + frase + contagem + chevron
-   (mesma anatomia do WSectionHeader, clicável). */
-.w-section-panel__trigger {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3, 0.75rem);
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.w-section-panel__trigger:disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-
-.w-section-panel__trigger:focus-visible {
-  outline: 2px solid var(--primary, var(--p-primary-color));
-  outline-offset: 2px;
-  border-radius: var(--radius, 0.5rem);
-}
-
-.w-section-panel__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: var(--control-h, 2.25rem);
-  height: var(--control-h, 2.25rem);
-  border-radius: var(--radius, 0.5rem);
-  background: var(--primary-soft, var(--p-primary-50, var(--p-highlight-background)));
-  color: var(--primary, var(--p-primary-color));
-}
-
-.w-section-panel__text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-
-.w-section-panel__title {
-  font-size: var(--text-base, 0.9375rem);
-  font-weight: var(--fw-medium, 600);
-  line-height: var(--leading-tight, 1.25);
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-section-panel__description {
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-regular, 400);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-section-panel__count {
-  flex: none;
-  min-width: 1.75em;
-  padding-inline: var(--space-2, 0.5rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-xs, 0.75rem);
-  font-weight: var(--fw-medium, 600);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-.w-section-panel__chevron {
-  flex: none;
-  font-size: var(--text-xs, 0.6875rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-}
-
-.w-section-panel__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  flex-shrink: 0;
-}
-
-.w-section-panel__content {
-  padding: var(--space-2, 0.5rem) var(--space-4, 1rem) var(--space-5, 1.25rem);
-}
-
-/* Bloco que já vem com moldura própria (WInfoCard) perde a caixa dentro da seção:
-   a moldura é a do acordeão, o cabeçalho é o do painel. */
-.w-section-panel__content > .w-info-card {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  margin-bottom: 0;
-}
-
-/* Tablet em pé / celular: a frase some (o título basta) e as ações descem
-   para a linha de baixo, em vez de espremer o cabeçalho. */
-@media (max-width: 640px) {
-  .w-section-panel__header {
-    flex-wrap: wrap;
-  }
-
-  .w-section-panel__description {
-    display: none;
-  }
-
-  .w-section-panel__content {
-    padding-inline: var(--space-3, 0.75rem);
-  }
+  color: var(--w-danger);
 }
 
 /* ==========================================================
@@ -2494,7 +725,7 @@
 .w-crud-subview {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 0.875rem);
+  gap: var(--w-space-3);
   min-width: 0;
 }
 
@@ -2502,38 +733,38 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3, 0.875rem);
+  gap: var(--w-space-3);
 }
 
 .w-crud-subview__title {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--w-space-2);
   margin: 0;
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--fg-muted, var(--p-text-muted-color));
+  color: var(--w-fg-muted);
 }
 
 /* A contagem é dado, não enfeite: mesma altura da linha do título, sem moldura. */
 .w-crud-subview__count {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
-  color: var(--fg-subtle, var(--p-text-muted-color));
+  color: var(--w-fg-subtle);
 }
 
 .w-crud-subview__subtitle {
-  margin: var(--space-1, 0.25rem) 0 0;
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
+  margin: var(--w-space-1) 0 0;
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
 }
 
 .w-crud-subview__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--w-space-2);
   margin-left: auto;
 }
 
@@ -2541,37 +772,37 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-1, 0.25rem);
+  gap: var(--w-space-1);
 }
 
 /* Ícone só-ícone: a moldura só aparece no hover (mesma regra da lixeira da tabela). */
 .w-crud-subview__action {
   display: grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--w-icon-btn);
+  height: var(--w-icon-btn);
   border: 1px solid transparent;
-  border-radius: var(--radius-sm, 0.375rem);
+  border-radius: var(--w-radius-sm);
   background: transparent;
-  color: var(--fg-subtle, var(--p-text-muted-color));
+  color: var(--w-fg-subtle);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast, 0.14s) var(--ease, ease),
-    color var(--motion-fast, 0.14s) var(--ease, ease);
+    background-color var(--w-motion-fast) var(--w-ease),
+    color var(--w-motion-fast) var(--w-ease);
 }
 
 .w-crud-subview__action:hover {
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg, var(--p-text-color));
+  background: var(--w-surface-3);
+  color: var(--w-fg);
 }
 
 .w-crud-subview__action--danger:hover {
-  background: var(--danger-soft, color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent));
-  color: var(--danger, var(--p-red-500, #ef4444));
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
 }
 
 .w-crud-subview__action i {
-  font-size: var(--text-xs, 0.75rem);
+  font-size: var(--w-text-xs);
 }
 
 /* ==========================================================
@@ -2586,29 +817,29 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-2, 0.5rem);
-  padding: 0 var(--card-pad, 1.25rem) var(--space-3, 0.875rem);
+  gap: var(--w-space-2);
+  padding: 0 var(--w-card-pad) var(--w-space-3);
 }
 
 .w-editable-table__add {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2, 0.4375rem);
-  height: var(--control-h-sm, 2rem);
-  padding: 0 var(--control-px, 0.75rem);
-  border: 1px solid var(--border-strong, var(--p-content-border-color));
-  border-radius: var(--radius, 0.5rem);
-  background: var(--surface, var(--p-content-background));
-  color: var(--fg, var(--p-text-color));
+  gap: var(--w-space-2);
+  height: var(--w-control-h-sm);
+  padding: 0 var(--w-control-px);
+  border: 1px solid var(--w-border-strong);
+  border-radius: var(--w-radius);
+  background: var(--w-surface);
+  color: var(--w-fg);
   font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-medium);
   cursor: pointer;
-  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
+  transition: background-color var(--w-motion-fast) var(--w-ease);
 }
 
 .w-editable-table__add:hover:not(:disabled) {
-  background: var(--surface-3, var(--p-content-hover-background));
+  background: var(--w-surface-3);
 }
 
 .w-editable-table__add:disabled {
@@ -2617,20 +848,20 @@
 }
 
 .w-editable-table__add i {
-  font-size: var(--text-xs, 0.6875rem);
+  font-size: var(--w-text-xs);
 }
 
 /* Ação irmã do adicionar (slot `toolbar-extra`): mesma moldura, tinta da marca —
    diferente o bastante para não ser confundida com "novo", parecida o bastante
    para não virar um botão estranho na barra. */
 .w-editable-table__add--accent {
-  border-color: var(--primary, var(--p-primary-color));
-  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
-  color: var(--primary, var(--p-primary-color));
+  border-color: var(--w-primary);
+  background: var(--w-primary-soft);
+  color: var(--w-primary);
 }
 
 .w-editable-table__add--accent:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--primary, var(--p-primary-color)) 18%, transparent);
+  background: color-mix(in srgb, var(--w-primary) 18%, transparent);
 }
 
 .w-editable-table__table {
@@ -2640,49 +871,49 @@
 }
 
 .w-editable-table__table thead tr {
-  background: var(--surface-2, var(--p-content-hover-background));
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+  background: var(--w-surface-2);
+  border-top: 1px solid var(--w-border);
+  border-bottom: 1px solid var(--w-border);
 }
 
 /* Linha de grupos do cabeçalho: rótulo único sobre colunas vizinhas com o
    mesmo `group`. A célula sem rótulo é invisível — só quem agrupa ganha tinta
    e a régua que "abraça" as colunas do grupo. */
 .w-editable-table__table thead tr.w-editable-table__group-row {
-  border-top: 1px solid var(--border, var(--p-content-border-color));
+  border-top: 1px solid var(--w-border);
   border-bottom: 0;
 }
 
 .w-editable-table__table th.w-editable-table__group {
-  padding-block: var(--space-1, 0.25rem);
+  padding-block: var(--w-space-1);
   text-align: center;
 }
 
 .w-editable-table__table th.w-editable-table__group--label {
-  border-bottom: 1px solid var(--border-strong, var(--p-content-border-color));
-  color: var(--fg-muted, var(--p-text-muted-color));
+  border-bottom: 1px solid var(--w-border-strong);
+  color: var(--w-fg-muted);
 }
 
 .w-editable-table__table th {
-  padding: var(--space-2, 0.5625rem) var(--space-2, 0.625rem);
+  padding: var(--w-space-2) var(--w-space-2);
   text-align: left;
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--fg-muted, var(--p-text-muted-color));
+  color: var(--w-fg-muted);
   white-space: nowrap;
 }
 
 .w-editable-table__table td {
-  padding: var(--cell-py, 0.625rem) var(--space-2, 0.625rem);
-  font-size: var(--ui-font, 0.875rem);
-  color: var(--fg, var(--p-text-color));
+  padding: var(--w-cell-py) var(--w-space-2);
+  font-size: var(--w-ui-font);
+  color: var(--w-fg);
   vertical-align: middle;
 }
 
 .w-editable-table__row {
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+  border-bottom: 1px solid var(--w-border);
 }
 
 /* Zebrado — mesma faixa do WCrudView, para as duas tabelas lerem igual. Vale também
@@ -2725,7 +956,7 @@
 }
 
 .w-editable-table__toggle-col {
-  width: 2.5rem;
+  width: var(--w-icon-box);
 }
 
 .w-editable-table__action-col {
@@ -2738,43 +969,43 @@
   place-items: center;
   width: 1.625rem;
   height: 1.625rem;
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-sm, 0.375rem);
-  background: var(--surface, var(--p-content-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-sm);
+  background: var(--w-surface);
+  color: var(--w-fg-muted);
   cursor: pointer;
-  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
+  transition: background-color var(--w-motion-fast) var(--w-ease);
 }
 
 .w-editable-table__toggle:hover {
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg, var(--p-text-color));
+  background: var(--w-surface-3);
+  color: var(--w-fg);
 }
 
 .w-editable-table__toggle i {
-  font-size: var(--text-2xs, 0.625rem);
+  font-size: var(--w-text-2xs);
 }
 
 /* Ícone só-ícone: sem moldura de botão (a moldura só aparece no hover). */
 .w-editable-table__remove {
   display: grid;
   place-items: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--w-icon-btn);
+  height: var(--w-icon-btn);
   margin-left: auto;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm, 0.375rem);
+  border-radius: var(--w-radius-sm);
   background: transparent;
-  color: var(--fg-subtle, var(--p-text-muted-color));
+  color: var(--w-fg-subtle);
   cursor: pointer;
   transition:
-    background-color var(--motion-fast, 0.14s) var(--ease, ease),
-    color var(--motion-fast, 0.14s) var(--ease, ease);
+    background-color var(--w-motion-fast) var(--w-ease),
+    color var(--w-motion-fast) var(--w-ease);
 }
 
 .w-editable-table__remove:hover:not(:disabled) {
-  background: var(--danger-soft, color-mix(in srgb, var(--p-red-500, #ef4444) 12%, transparent));
-  color: var(--danger, var(--p-red-500, #ef4444));
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
 }
 
 .w-editable-table__remove:disabled {
@@ -2783,37 +1014,37 @@
 }
 
 .w-editable-table__remove i {
-  font-size: var(--text-xs, 0.75rem);
+  font-size: var(--w-text-xs);
 }
 
 .w-editable-table__expansion > td {
-  padding: 0 var(--space-3, 0.875rem) var(--space-4, 1rem);
-  background: var(--surface-2, var(--p-content-hover-background));
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
+  padding: 0 var(--w-space-3) var(--w-space-4);
+  background: var(--w-surface-2);
+  border-bottom: 1px solid var(--w-border);
 }
 
 .w-editable-table__empty {
-  padding: var(--space-6, 1.5rem) var(--space-4, 1rem) !important;
+  padding: var(--w-space-6) var(--w-space-4) !important;
   text-align: center;
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
 }
 
 /* Régua azul do rodapé de totais — é o fecho da tabela, não uma linha a mais. */
 .w-editable-table__footer {
-  background: var(--surface-2, var(--p-content-hover-background));
-  border-top: 2px solid var(--primary, var(--p-primary-color));
+  background: var(--w-surface-2);
+  border-top: 2px solid var(--w-primary);
 }
 
 .w-editable-table__footer td {
-  font-weight: var(--fw-bold, 700);
+  font-weight: var(--w-fw-bold);
   font-variant-numeric: tabular-nums;
 }
 
 .w-editable-table__footer-label {
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 600);
-  color: var(--fg-muted, var(--p-text-muted-color));
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg-muted);
 }
 
 /* ==========================================================
@@ -2842,12 +1073,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-content: start;
-  gap: var(--space-2, 0.625rem) var(--space-3, 0.875rem);
-  margin-bottom: var(--space-3, 0.875rem);
-  padding: var(--space-3, 0.875rem);
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-md, 0.625rem);
-  background: var(--surface, var(--p-content-background));
+  gap: var(--w-space-2) var(--w-space-3);
+  margin-bottom: var(--w-space-3);
+  padding: var(--w-space-3);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-md);
+  background: var(--w-surface);
 }
 
 .w-editable-table--cards tbody > tr,
@@ -2892,9 +1123,9 @@
 .w-editable-table--cards td[data-card='title'] {
   order: 0;
   grid-column: 1;
-  font-size: var(--text-base, 0.9375rem);
-  font-weight: var(--fw-medium, 600);
-  line-height: var(--leading-snug, 1.35);
+  font-size: var(--w-text-base);
+  font-weight: var(--w-fw-medium);
+  line-height: var(--w-leading-snug);
 }
 
 /* Sem ações na linha, o título toma o card inteiro. */
@@ -2915,19 +1146,19 @@
   order: 2;
   display: flex;
   align-items: baseline;
-  gap: var(--space-2, 0.5rem);
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
+  gap: var(--w-space-2);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
 }
 
 .w-editable-table--cards td[data-card='meta'] .w-editable-table__card-label {
   display: inline;
   flex: 0 0 auto;
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--fg-subtle, var(--p-text-muted-color));
+  color: var(--w-fg-subtle);
 }
 
 /* --- Campos editáveis --------------------------------------------------- */
@@ -2941,8 +1172,8 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  gap: var(--space-3, 0.875rem);
-  min-height: var(--touch-h, 2.75rem);
+  gap: var(--w-space-3);
+  min-height: var(--w-touch-h);
 }
 
 .w-editable-table--cards td[data-card='field'] .w-editable-table__card-label,
@@ -2953,11 +1184,11 @@
   /* Rótulo encostado no controle: é o que faz campo e leitura lerem como uma coluna
      só, em vez de dois blocos com réguas diferentes. */
   text-align: right;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-regular, 400);
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-regular);
   text-transform: none;
   letter-spacing: normal;
-  color: var(--fg, var(--p-text-color));
+  color: var(--w-fg);
 }
 
 /* O controle é o que sobra da linha: metade larga o bastante para o dedo, e
@@ -2979,9 +1210,9 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  gap: var(--space-3, 0.875rem);
-  min-height: var(--touch-h, 2.75rem);
-  font-size: var(--text-sm, 0.8125rem);
+  gap: var(--w-space-3);
+  min-height: var(--w-touch-h);
+  font-size: var(--w-text-sm);
 }
 
 .w-editable-table--cards tbody td[data-card='read'] > *:not(.w-editable-table__card-label) {
@@ -2990,12 +1221,12 @@
   justify-content: flex-end;
   flex: 0 1 52%;
   min-width: 8.5rem;
-  min-height: var(--control-h, 2.375rem);
-  padding: 0 var(--control-px, 0.75rem);
-  border-radius: var(--radius, 0.5rem);
-  background: var(--surface-2, var(--p-content-hover-background));
-  color: var(--fg, var(--p-text-color));
-  font-weight: var(--fw-medium, 500);
+  min-height: var(--w-control-h);
+  padding: 0 var(--w-control-px);
+  border-radius: var(--w-radius);
+  background: var(--w-surface-2);
+  color: var(--w-fg);
+  font-weight: var(--w-fw-medium);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3006,18 +1237,18 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-2, 0.5rem);
-  font-size: var(--text-sm, 0.8125rem);
+  gap: var(--w-space-2);
+  font-size: var(--w-text-sm);
   font-variant-numeric: tabular-nums;
 }
 
 .w-editable-table--cards tfoot td[data-card='read'] .w-editable-table__card-label {
   display: inline;
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--fg-subtle, var(--p-text-muted-color));
+  color: var(--w-fg-subtle);
 }
 
 /* --- Expansão ----------------------------------------------------------- */
@@ -3032,14 +1263,14 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--w-space-2);
   width: 100%;
   height: auto;
-  min-height: var(--touch-h, 2.75rem);
-  padding: 0 var(--space-3, 0.875rem);
+  min-height: var(--w-touch-h);
+  padding: 0 var(--w-space-3);
   font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-medium);
 }
 
 .w-editable-table--cards .w-editable-table__toggle-label {
@@ -3049,21 +1280,21 @@
 .w-editable-table--cards td[data-card='expansion'] {
   order: 6;
   grid-column: 1 / -1;
-  margin: 0 calc(-1 * var(--space-3, 0.875rem)) calc(-1 * var(--space-3, 0.875rem));
-  padding: var(--space-3, 0.875rem);
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: 0 0 var(--radius-md, 0.625rem) var(--radius-md, 0.625rem);
+  margin: 0 calc(-1 * var(--w-space-3)) calc(-1 * var(--w-space-3));
+  padding: var(--w-space-3);
+  border-top: 1px solid var(--w-border);
+  border-radius: 0 0 var(--w-radius-md) var(--w-radius-md);
 }
 
 .w-editable-table--cards .w-editable-table__empty {
-  padding: var(--space-5, 1.25rem) 0 !important;
+  padding: var(--w-space-5) 0 !important;
 }
 
 /* --- Card de totais ----------------------------------------------------- */
 
 .w-editable-table--cards tfoot {
-  border-top: 2px solid var(--primary, var(--p-primary-color));
-  background: var(--surface-2, var(--p-content-hover-background));
+  border-top: 2px solid var(--w-primary);
+  background: var(--w-surface-2);
 }
 
 .w-editable-table--cards td[data-card='total-label'] {
@@ -3077,1490 +1308,5 @@
 .w-editable-table--cards .w-editable-table__add {
   width: 100%;
   justify-content: center;
-  min-height: var(--touch-h, 2.75rem);
-}
-
-/* ==========================================================
-   WFormRenderer — segmented / choice / chips
-   ========================================================== */
-
-.w-segmented {
-  display: inline-flex;
-  gap: var(--space-1, 0.25rem);
-  padding: 3px;
-  height: var(--control-h, 2.375rem);
-  border-radius: var(--radius, 0.5rem);
-  background: var(--surface-3, var(--p-content-hover-background));
-}
-
-.w-segmented__option {
-  /* Cresce para dividir o espaço sobrando, mas NUNCA encolhe abaixo do próprio
-     texto: com `flex: 1` (basis 0) + `min-width: 0`, a opção de rótulo mais longo
-     ("Germinação") ficava menor que o conteúdo e o texto vazava do pill. */
-  flex: 1 0 auto;
-  padding: 0 var(--control-px, 0.75rem);
-  border: 0;
-  border-radius: var(--radius-sm, 0.375rem);
-  background: transparent;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color var(--motion-fast, 0.14s) var(--ease, ease);
-}
-
-.w-segmented__option:hover:not(:disabled) {
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-segmented__option--on {
-  background: var(--surface, var(--p-content-background));
-  color: var(--fg, var(--p-text-color));
-  font-weight: var(--fw-medium, 600);
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(16, 30, 24, 0.06));
-}
-
-.w-segmented__option:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.w-choice {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1, 0.3125rem);
-}
-
-.w-choice__option {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 0.375rem);
-  height: var(--control-h, 2.125rem);
-  padding: 0 var(--control-px, 0.75rem);
-  border: 1px solid var(--border-strong, var(--p-content-border-color));
-  border-radius: var(--radius, 0.5rem);
-  background: var(--surface, var(--p-content-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color var(--motion-fast, 0.14s) var(--ease, ease),
-    border-color var(--motion-fast, 0.14s) var(--ease, ease);
-}
-
-.w-choice__option:hover:not(:disabled):not(.w-choice__option--on) {
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-choice__option--on {
-  border-color: var(--primary, var(--p-primary-color));
-  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
-  color: var(--primary, var(--p-primary-color));
-  font-weight: var(--fw-medium, 600);
-}
-
-.w-choice__option:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.w-choice__option i {
-  font-size: var(--text-xs, 0.6875rem);
-}
-
-.w-chips {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1, 0.375rem);
-  flex-wrap: wrap;
-  min-height: var(--control-h, 2.125rem);
-  padding: 3px var(--space-1, 0.375rem);
-  border: 1px solid var(--border-strong, var(--p-content-border-color));
-  border-radius: var(--radius, 0.5rem);
-  background: var(--surface, var(--p-content-background));
-}
-
-.w-chips__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1, 0.25rem);
-  height: 1.5rem;
-  padding: 0 3px 0 var(--space-2, 0.5625rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--primary-soft, color-mix(in srgb, var(--p-primary-color) 10%, transparent));
-  color: var(--primary, var(--p-primary-color));
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
-  white-space: nowrap;
-}
-
-.w-chips__remove {
-  display: grid;
-  place-items: center;
-  width: 1.0625rem;
-  height: 1.0625rem;
-  border: 0;
-  border-radius: var(--radius-full, 999px);
-  background: transparent;
-  color: inherit;
-  opacity: 0.55;
-  cursor: pointer;
-}
-
-.w-chips__remove:hover:not(:disabled) {
-  opacity: 1;
-}
-
-.w-chips__remove:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.w-chips__remove i {
-  font-size: 0.5625rem;
-}
-
-.w-chips__empty {
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-  padding-left: var(--space-1, 0.25rem);
-}
-
-.w-chips__input {
-  flex: 1 1 8rem;
-  min-width: 8rem;
-  height: 1.5rem;
-  padding: 0 var(--space-1, 0.25rem);
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--fg, var(--p-text-color));
-  font: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-}
-
-.w-chips__input::placeholder {
-  color: var(--fg-subtle, var(--p-text-muted-color));
-}
-
-.w-chips:focus-within {
-  border-color: var(--primary, var(--p-primary-color));
-}
-
-.w-chips__summary {
-  margin-left: auto;
-  padding-right: var(--space-1, 0.25rem);
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  white-space: nowrap;
-}
-
-.w-chips__summary:empty {
-  display: none;
-}
-
-/* ==========================================================
-   WMapSelect — .w-map-select
-   ========================================================== */
-
-/* Contexto de empilhamento próprio: o Leaflet trabalha com z-index alto por
-   conta própria (panes 400–700, controles 800) e o painel de vidro sobe para
-   900. Sem isolar, esses números competem com a moldura do app (topbar,
-   popovers, máscaras) e o mapa aparece na frente do menu. Com `isolation`, o
-   maior z-index de dentro nunca ultrapassa o `z-index: 0` do próprio mapa. */
-.w-map-select {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  position: relative;
-  z-index: 0;
-  isolation: isolate;
-}
-
-.w-map-select--disabled {
-  opacity: 0.7;
-}
-
-/* Nada seleciona (selectionMode efetivo 'none' — o default do readonly): o
-   polígono deixa de anunciar clique. O cursor de mão prometia uma seleção que
-   não existe; com `selectionMode` explícito, mesmo no readonly, ele volta. */
-.w-map-select--unselectable .leaflet-interactive {
-  cursor: inherit;
-}
-
-.w-map-select__body {
-  display: flex;
-  align-items: stretch;
-  min-height: 0;
-  min-width: 0;
-}
-
-.w-map-select__map {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-md, 0.625rem);
-  background: var(--surface-3, var(--p-content-hover-background));
-  overflow: hidden;
-}
-
-.w-map-select__canvas {
-  width: 100%;
-  height: var(--w-map-h, 460px);
-}
-
-.w-map-select__fallback {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-6, 1.5rem);
-  text-align: center;
-  background: var(--surface-2, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-sm, 0.8125rem);
-}
-
-.w-map-select__fallback i {
-  font-size: 1.25rem;
-  color: var(--fg-subtle, var(--p-text-muted-color));
-}
-
-/* Selo "Satélite": vive SOBRE a imagem, então usa tinta própria (escura fixa),
-   não o token de superfície — que no tema claro sumiria no fundo do mapa. */
-.w-map-select__badge {
-  position: absolute;
-  right: 0.75rem;
-  top: 0.75rem;
-  z-index: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  height: 1.75rem;
-  padding: 0 var(--space-2, 0.625rem);
-  border-radius: var(--radius-full, 999px);
-  background: rgba(15, 31, 48, 0.72);
-  color: #fff;
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  pointer-events: none;
-}
-
-.w-map-select__badge i {
-  font-size: 0.6875rem;
-}
-
-.w-map-select__panel {
-  width: 300px;
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border, var(--p-content-border-color));
-  margin-left: var(--space-4, 1rem);
-  padding-left: var(--space-4, 1rem);
-}
-
-.w-map-select__panel-head {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2, 0.625rem);
-  padding-bottom: var(--space-3, 0.75rem);
-}
-
-.w-map-select__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.625rem);
-}
-
-.w-map-select__count {
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-variant-numeric: tabular-nums;
-}
-
-/* Atalho textual, não ação primária: sem moldura de botão. */
-.w-map-select__clear {
-  margin-left: auto;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: var(--primary, var(--p-primary-color));
-  font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-medium, 500);
-  cursor: pointer;
-}
-
-.w-map-select__clear:disabled {
-  color: var(--fg-subtle, var(--p-text-muted-color));
-  cursor: default;
-}
-
-.w-map-select__list {
-  flex: 1;
-  min-height: 0;
-  max-height: var(--w-map-list-h, 23.75rem);
-  overflow-y: auto;
-  list-style: none;
-  margin: 0;
-  padding: 0 0 var(--space-3, 0.75rem);
-}
-
-.w-map-select__item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.6875rem);
-  padding: var(--space-2, 0.5625rem) var(--space-2, 0.625rem);
-  border: 1px solid transparent;
-  border-radius: var(--radius, 0.5rem);
-  background: transparent;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--motion-fast, 0.14s) var(--ease, ease);
-}
-
-.w-map-select__item:hover:not(:disabled) {
-  background: var(--surface-3, var(--p-content-hover-background));
-}
-
-.w-map-select__item:disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-
-.w-map-select__box {
-  display: grid;
-  place-items: center;
-  width: 1.125rem;
-  height: 1.125rem;
-  flex: none;
-  border: 1px solid var(--border-strong, var(--p-content-border-color));
-  border-radius: var(--radius-xs, 0.25rem);
-  background: var(--surface, var(--p-content-background));
-}
-
-.w-map-select__item--on .w-map-select__box {
-  border-color: transparent;
-  background: var(--primary, var(--p-primary-color));
-  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
-}
-
-.w-map-select__box i {
-  font-size: 0.5625rem;
-}
-
-.w-map-select__item-text {
-  min-width: 0;
-  flex: 1;
-}
-
-.w-map-select__item-name {
-  display: block;
-  font-size: var(--ui-font, 0.875rem);
-  font-weight: var(--fw-medium, 600);
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-map-select__item-sub {
-  display: block;
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.w-map-select__item-nogeo {
-  flex: none;
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-}
-
-.w-map-select__item-area {
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.w-map-select__empty {
-  padding: var(--space-4, 1rem) var(--space-2, 0.625rem);
-  text-align: center;
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-map-select__footer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3, 0.875rem);
-  margin-top: var(--space-3, 0.875rem);
-  padding-top: var(--space-3, 0.875rem);
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-map-select__area {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--space-2, 0.5rem);
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg-muted, var(--p-text-muted-color));
-}
-
-.w-map-select__area strong {
-  font-size: var(--text-xl, 1.25rem);
-  font-weight: var(--fw-bold, 700);
-  line-height: 1;
-  color: var(--fg, var(--p-text-color));
-  font-variant-numeric: tabular-nums;
-}
-
-/* Cartão de detalhe: vive SOBRE a imagem de satélite, então usa superfície
-   opaca própria (o vidro do painel some contra um talhão claro). O conteúdo é
-   do slot — aqui só a caixa, o recorte e a posição. */
-.w-map-select__detail {
-  position: absolute;
-  z-index: 600;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1, 0.25rem);
-  max-width: min(22rem, calc(100% - 1.5rem));
-  max-height: calc(100% - 1.5rem);
-  overflow: auto;
-  padding: var(--space-3, 0.75rem);
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-md, 0.625rem);
-  background: var(--surface-1, var(--p-content-background));
-  color: var(--fg, var(--p-text-color));
-  font-size: var(--text-sm, 0.8125rem);
-  box-shadow: 0 10px 30px rgba(15, 31, 48, 0.28);
-  /* Ancorado no ponto: sobe acima do cursor com uma folga para a seta do mouse. */
-  transform: translate(-50%, calc(-100% - 14px));
-}
-
-/* No hover o cartão não pode receber o ponteiro: ele nasce embaixo do cursor e
-   roubaria o `mouseout` do polígono — o cartão piscaria sem parar. */
-.w-map-select__detail--hover {
-  pointer-events: none;
-}
-
-.w-map-select__detail--abaixo {
-  transform: translate(-50%, 14px);
-}
-
-.w-map-select__detail--canto {
-  left: 0.75rem;
-  bottom: 0.75rem;
-  top: auto;
-  transform: none;
-}
-
-.w-map-select__detail-nome {
-  font-weight: var(--fw-semibold, 600);
-}
-
-.w-map-select__detail-sub {
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-xs, 0.75rem);
-}
-
-/* Rótulo do polígono: texto puro sobre a imagem de satélite. Sem caixa, sem
-   borda — a legibilidade vem do contorno de sombra, não de um fundo opaco. */
-.leaflet-tooltip.w-map-select__tip {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding: 0;
-  white-space: nowrap;
-  pointer-events: none;
-  font-family: inherit;
-  font-size: var(--text-sm, 0.8125rem);
-  font-weight: var(--fw-bold, 700);
-  color: rgba(255, 255, 255, 0.86);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.92);
-}
-
-.leaflet-tooltip.w-map-select__tip::before {
-  display: none;
-}
-
-.leaflet-tooltip.w-map-select__tip--on {
-  color: #fff;
-}
-
-/* `tooltips="auto"`: o rótulo que não cabe no polígono sai de cena. `display`
-   em vez de `opacity` — o Leaflet segue reposicionando o nó, mas ele não pinta
-   nem custa layout. */
-.leaflet-tooltip.w-map-select__tip--fora {
-  display: none;
-}
-
-/* Régua de medição do rótulo: mesmo CSS do tooltip, fora do fluxo e invisível.
-   `visibility` (não `display`) porque um nó sem caixa não tem o que medir. */
-.leaflet-tooltip.w-map-select__tip--medida {
-  position: absolute;
-  top: 0;
-  left: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: none;
-}
-
-@media (max-width: 900px) {
-  .w-map-select__body {
-    flex-direction: column;
-  }
-
-  .w-map-select__panel {
-    width: 100%;
-    border-left: 0;
-    border-top: 1px solid var(--border, var(--p-content-border-color));
-    margin-left: 0;
-    margin-top: var(--space-3, 0.875rem);
-    padding-left: 0;
-    padding-top: var(--space-3, 0.875rem);
-  }
-}
-
-/* ----------------------------------------------------------------------------
- * WMapSelect · layout="sobreposto"
- *
- * A MARCAÇÃO é a mesma do 'lado-a-lado' — só o posicionamento muda. O painel e
- * o rodapé continuam irmãos do mapa (não filhos do container do Leaflet), então
- * flutuam por cima sem que o Leaflet enxergue um evento sequer: nada de
- * `L.DomEvent.disableClickPropagation`, e arrastar/dar zoom por baixo segue
- * funcionando onde o vidro não cobre.
- *
- * Como as regras do sobreposto têm um nível a mais de especificidade
- * (`.w-map-select--overlay .w-map-select__x`), elas ganham das regras-base e do
- * @media 900px acima sem depender da ordem do arquivo.
- *
- * Escapes para o consumidor:
- *   --w-map-panel-w  largura do painel flutuante
- *   --w-map-inset    respiro entre os flutuantes e a borda do mapa
- *   --w-map-foot-h   altura da barra de resumo — MEDIDA em runtime pelo
- *                    componente (o valor aqui é só o antes-de-medir); é ela que
- *                    reserva o espaço do painel e levanta a atribuição.
- * ------------------------------------------------------------------------- */
-
-.w-map-select--overlay {
-  --w-map-panel-w: 20rem;
-  --w-map-inset: 0.75rem;
-  --w-map-foot-h: 3.25rem;
-  position: relative;
-}
-
-.w-map-select--overlay .w-map-select__body {
-  position: relative;
-  flex-direction: row;
-}
-
-/* Sem barra de resumo não há o que reservar: o `measureFooter` não roda (o
-   elemento não existe) e o valor ficaria no chute inicial, levantando a
-   atribuição do Leaflet sobre nada. */
-.w-map-select--overlay.w-map-select--readonly {
-  --w-map-foot-h: 0rem;
-}
-
-/* O vidro. Legibilidade sobre satélite é o ponto crítico: o véu sozinho (92% do
-   surface do tema) já garante AA — a lavoura clara e a mata escura sangram só
-   ~8%. O blur é enfeite; o que não pode faltar é o véu. */
-.w-map-select--overlay .w-map-select__panel,
-.w-map-select--overlay .w-map-select__footer {
-  /* Sobre imagem os cinzas de apoio perdem contraste: sobem um degrau,
-     derivados do --fg do tema para continuarem certos no claro E no escuro. */
-  --fg-muted: color-mix(in srgb, var(--fg, var(--p-text-color)) 74%, transparent);
-  --fg-subtle: color-mix(in srgb, var(--fg, var(--p-text-color)) 56%, transparent);
-  position: absolute;
-  z-index: 900; /* acima dos controles do Leaflet, que param em 800 */
-  margin: 0;
-  border: 1px solid var(--border, var(--p-content-border-color));
-  border-radius: var(--radius-md, 0.625rem);
-  box-shadow: var(--shadow-lg, 0 12px 32px rgba(15, 31, 48, 0.28));
-  color: var(--fg, var(--p-text-color));
-  /* 1ª declaração = fallback sólido para quem não tem color-mix; a 2ª só vale
-     onde ele existe (o navegador descarta a que não entende). */
-  background: var(--surface, var(--p-content-background));
-  background: color-mix(in srgb, var(--surface, var(--p-content-background)) 92%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-}
-
-/* Sem backdrop-filter o véu vira sólido. Texto sobre imagem crua é o único
-   resultado inaceitável — antes opaco que ilegível. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .w-map-select--overlay .w-map-select__panel,
-  .w-map-select--overlay .w-map-select__footer {
-    background: var(--surface, var(--p-content-background));
-  }
-}
-
-.w-map-select--overlay .w-map-select__panel {
-  top: var(--w-map-inset);
-  right: var(--w-map-inset);
-  /* para acima da barra de resumo — os dois nunca se cruzam */
-  bottom: calc(var(--w-map-inset) * 2 + var(--w-map-foot-h));
-  width: var(--w-map-panel-w);
-  max-width: calc(100% - var(--w-map-inset) * 2);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem) var(--space-3, 0.75rem);
-}
-
-.w-map-select--overlay .w-map-select__footer {
-  left: var(--w-map-inset);
-  right: var(--w-map-inset);
-  bottom: var(--w-map-inset);
-  padding: var(--space-2, 0.625rem) var(--space-3, 0.875rem);
-}
-
-/* O painel tem altura definida (top + bottom): a lista rola dentro dele em vez
-   do teto fixo do lado-a-lado. */
-.w-map-select--overlay .w-map-select__list {
-  max-height: none;
-  padding-bottom: 0;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-}
-
-/* Recolher: ícone puro, sem moldura de botão (é gatilho, não ação). */
-.w-map-select__collapse {
-  align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1, 0.375rem);
-  height: 1.5rem;
-  min-width: 1.5rem;
-  justify-content: center;
-  margin-bottom: var(--space-1, 0.25rem);
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-full, 999px);
-  background: transparent;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-family: inherit;
-  cursor: pointer;
-  transition: color var(--motion-fast, 0.14s) var(--ease, ease);
-}
-
-.w-map-select__collapse:hover {
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-map-select__collapse:focus-visible {
-  outline: 2px solid var(--primary, var(--p-primary-color));
-  outline-offset: 2px;
-}
-
-.w-map-select__collapse i {
-  font-size: 0.8125rem;
-}
-
-/* Recolhido o painel É a pílula: busca e lista saem por display:none, então
-   saem junto da ordem de tabulação e da árvore de acessibilidade. */
-.w-map-select--collapsed .w-map-select__panel {
-  bottom: auto;
-  width: auto;
-  padding: 0;
-  border-radius: var(--radius-full, 999px);
-}
-
-.w-map-select--collapsed .w-map-select__panel-head,
-.w-map-select--collapsed .w-map-select__list {
-  display: none;
-}
-
-.w-map-select--collapsed .w-map-select__collapse {
-  height: 2.25rem;
-  margin: 0;
-  padding: 0 var(--space-3, 0.75rem);
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-map-select__collapse-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 var(--space-1, 0.3125rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--primary, var(--p-primary-color));
-  color: var(--primary-fg, var(--p-primary-contrast-color, #fff));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-bold, 700);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Expandido o contador já está escrito por extenso no painel. */
-.w-map-select--overlay:not(.w-map-select--collapsed) .w-map-select__collapse-count {
-  display: none;
-}
-
-/* O selo "Satélite" mora onde agora fica o painel: passa para a esquerda, ao
-   lado (não embaixo) do zoom do Leaflet. */
-.w-map-select--overlay .w-map-select__badge {
-  right: auto;
-  left: 3.5rem;
-}
-
-/* Controle nativo do Leaflet não pode ficar embaixo do flutuante. A atribuição
-   nasce no canto inferior DIREITO — bem embaixo do painel: ela sobe acima da
-   barra de resumo e troca para a esquerda, a única faixa que nada cobre.
-   (No celular, com a gaveta aberta, ela fica encoberta; ao recolher, reaparece
-   — é o compromisso normal de mapa em tela cheia.) */
-.w-map-select--overlay .leaflet-bottom {
-  margin-bottom: calc(var(--w-map-foot-h) + var(--w-map-inset) + 0.25rem);
-}
-
-.w-map-select--overlay .leaflet-bottom.leaflet-right {
-  right: auto;
-  left: 0;
-}
-
-@media (max-width: 768px) {
-  /* Celular em campo: a gaveta ocupa a largura toda embaixo, empilhada acima da
-     barra de resumo. O mapa continua inteiro e o polegar alcança a lista. */
-  .w-map-select--overlay {
-    --w-map-inset: 0.5rem;
-  }
-
-  .w-map-select--overlay .w-map-select__panel {
-    top: auto;
-    left: var(--w-map-inset);
-    right: var(--w-map-inset);
-    width: auto;
-    max-width: none;
-    max-height: 55%;
-  }
-
-  /* Recolhida, a gaveta volta a ser pílula encostada à direita. */
-  .w-map-select--overlay.w-map-select--collapsed .w-map-select__panel {
-    left: auto;
-  }
-}
-
-/* ---------------------------------------------------------------------------
- * WDatePicker
- * ------------------------------------------------------------------------- */
-.w-datepicker {
-  width: 100%;
-}
-
-.w-datepicker .p-iconfield {
-  width: 100%;
-}
-
-.w-datepicker-icon {
-  cursor: pointer;
-  color: var(--p-text-muted-color);
-  transition: color 0.15s;
-}
-
-.w-datepicker-icon:hover {
-  color: var(--p-primary-color);
-}
-
-.w-datepicker-icon-disabled {
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
-}
-
-.w-datepicker-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.w-datepicker-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  border-top: 1px solid var(--p-content-border-color);
-  padding-top: 0.5rem;
-}
-
-/* Sub-linhas do modal da FK (WAutoCompleteFK `subRows`): mini-grid por linha
-   expandida — o caso "lote + análises" da recomendação. */
-.w-fk-subrows {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--text-sm, 0.8125rem);
-}
-
-.w-fk-subrows th {
-  padding: 0.25rem 0.625rem;
-  text-align: right;
-  font-weight: var(--fw-medium, 500);
-  color: var(--fg-muted, var(--p-text-muted-color));
-  white-space: nowrap;
-}
-
-.w-fk-subrows th:first-child,
-.w-fk-subrows td:first-child {
-  text-align: left;
-}
-
-.w-fk-subrows td {
-  padding: 0.3rem 0.625rem;
-  text-align: right;
-  border-top: 1px solid var(--border, var(--p-content-border-color));
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-/* ==========================================================
-   WKanbanBoard — .w-kanban-board
-   ==========================================================
-   Leitura do board: a cor vive no CABEÇALHO (pílula tintada com o acento da
-   coluna) e o corpo fica transparente — agrupa por espaço, não por caixa. O
-   card é a única superfície branca, com rodapé de metadados separado por fio.
-   Cada coluna publica seu acento em `--w-kanban-accent` (fallback neutro). */
-
-.w-kanban-board {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-4, 1rem);
-  align-items: start;
-}
-
-@media (max-width: 1279px) {
-  .w-kanban-board {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 639px) {
-  .w-kanban-board {
-    grid-template-columns: 1fr;
-  }
-}
-
-.w-kanban-board--loading {
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.w-kanban-board__column {
-  --w-kanban-accent: var(--border-strong, var(--p-content-border-color));
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3, 0.75rem);
-  min-width: 0;
-}
-
-/* Cabeçalho-pílula: o tint identifica a coluna sem pintar o fundo inteiro. */
-.w-kanban-board__header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  padding: 0 var(--space-3, 0.75rem);
-  height: var(--control-h-sm, 2rem);
-  border-radius: var(--radius-md, 0.625rem);
-  background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--surface, var(--p-content-background)));
-  transition:
-    background-color var(--motion, 220ms) var(--ease, ease),
-    box-shadow var(--motion, 220ms) var(--ease, ease);
-}
-
-.w-kanban-board__title {
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-semibold, 600);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--fg, var(--p-text-color)));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.w-kanban-board__count {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 var(--space-2, 0.5rem);
-  border-radius: var(--radius-sm, 0.375rem);
-  background: color-mix(in srgb, var(--w-kanban-accent) 26%, var(--surface, var(--p-content-background)));
-  color: color-mix(in srgb, var(--w-kanban-accent) 82%, var(--fg, var(--p-text-color)));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Realce de drop: a pílula acende e a lista ganha moldura tracejada. */
-.w-kanban-board__column--over .w-kanban-board__header {
-  background: color-mix(in srgb, var(--w-kanban-accent) 24%, var(--surface, var(--p-content-background)));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
-}
-
-.w-kanban-board__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-1, 0.25rem);
-  margin: calc(var(--space-1, 0.25rem) * -1);
-  border-radius: var(--radius-lg, 0.75rem);
-  overflow-y: auto;
-  transition:
-    background-color var(--motion, 220ms) var(--ease, ease),
-    box-shadow var(--motion, 220ms) var(--ease, ease);
-}
-
-.w-kanban-board--dragging .w-kanban-board__list {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 22%, transparent);
-}
-
-.w-kanban-board__column--over .w-kanban-board__list {
-  background: color-mix(in srgb, var(--w-kanban-accent) 6%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
-}
-
-.w-kanban-board__card {
-  border-radius: var(--radius-md, 0.625rem);
-  background: var(--surface, var(--p-content-background));
-  border: 1px solid var(--border, var(--p-content-border-color));
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
-  padding: var(--space-3, 0.75rem);
-  cursor: grab;
-  transition:
-    transform var(--motion-fast, 140ms) var(--ease, ease),
-    box-shadow var(--motion-fast, 140ms) var(--ease, ease),
-    border-color var(--motion-fast, 140ms) var(--ease, ease),
-    opacity var(--motion-fast, 140ms) var(--ease, ease);
-}
-
-.w-kanban-board__card:hover {
-  transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--w-kanban-accent) 40%, var(--border, var(--p-content-border-color)));
-  box-shadow: var(--shadow-md, 0 4px 10px rgba(0, 0, 0, 0.08));
-}
-
-.w-kanban-board__card:active {
-  cursor: grabbing;
-  transform: none;
-}
-
-.w-kanban-board__card:focus-visible {
-  outline: 2px solid var(--primary, var(--p-primary-color));
-  outline-offset: 2px;
-}
-
-/* O card arrastado fica como "vaga" — o conteúdo real está no cursor. */
-.w-kanban-board__card--dragging {
-  opacity: 0.4;
-  transform: scale(0.98);
-  box-shadow: none;
-}
-
-.w-kanban-board__card--static {
-  cursor: default;
-}
-
-.w-kanban-board__card--static:hover {
-  transform: none;
-  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
-  border-color: var(--border, var(--p-content-border-color));
-}
-
-.w-kanban-board__card-fallback {
-  font-size: var(--text-sm, 0.8125rem);
-  color: var(--fg, var(--p-text-color));
-}
-
-/* Linha indicadora da posição de drop. */
-.w-kanban-board__indicator {
-  flex-shrink: 0;
-  height: 2px;
-  margin: -1px 0;
-  border-radius: var(--radius-full, 999px);
-  background: var(--w-kanban-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--w-kanban-accent) 16%, transparent);
-  animation: w-kanban-indicator var(--motion-fast, 140ms) var(--ease, ease);
-}
-
-@keyframes w-kanban-indicator {
-  from {
-    opacity: 0;
-    transform: scaleX(0.7);
-  }
-  to {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-}
-
-.w-kanban-board__empty {
-  padding: var(--space-5, 1.25rem) var(--space-3, 0.75rem);
-  border: 1px dashed var(--border-strong, var(--p-content-border-color));
-  border-radius: var(--radius-md, 0.625rem);
-  font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-  text-align: center;
-}
-
-.w-kanban-board--dragging .w-kanban-board__empty {
-  border-color: color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
-  color: color-mix(in srgb, var(--w-kanban-accent) 70%, var(--fg-muted, var(--p-text-muted-color)));
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-kanban-board__card,
-  .w-kanban-board__header,
-  .w-kanban-board__list {
-    transition: none;
-  }
-
-  .w-kanban-board__card:hover {
-    transform: none;
-  }
-
-  .w-kanban-board__indicator {
-    animation: none;
-  }
-}
-
-/* ==========================================================
-   WTabBar — .w-tab-bar
-   ==========================================================
-   Abas de tela: fio contínuo embaixo e sublinhado na ativa. Sem caixa, sem
-   pílula — a hierarquia é do conteúdo, a aba só diz onde você está. */
-
-/* Sem overflow de propósito: barra de rolagem em barra de abas é ruído — em
-   tela estreita as abas quebram linha. */
-.w-tab-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1, 0.25rem);
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-tab-bar__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  margin-bottom: -1px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--ui-font, 0.875rem);
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    color var(--motion-fast, 140ms) var(--ease, ease),
-    border-color var(--motion-fast, 140ms) var(--ease, ease);
-}
-
-.w-tab-bar__item:hover:not(:disabled) {
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-tab-bar__item:focus-visible {
-  outline: 2px solid var(--primary, var(--p-primary-color));
-  outline-offset: -2px;
-  border-radius: var(--radius-sm, 0.375rem);
-}
-
-.w-tab-bar__item:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.w-tab-bar__item--ativa {
-  color: var(--primary, var(--p-primary-color));
-  border-bottom-color: var(--primary, var(--p-primary-color));
-}
-
-.w-tab-bar__item i {
-  font-size: var(--text-xs, 0.75rem);
-}
-
-.w-tab-bar__badge {
-  display: inline-flex;
-  align-items: center;
-  height: 1.125rem;
-  padding: 0 var(--space-2, 0.5rem);
-  border-radius: var(--radius-full, 999px);
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-variant-numeric: tabular-nums;
-}
-
-.w-tab-bar__item--ativa .w-tab-bar__badge {
-  background: var(--primary-soft, var(--p-highlight-background));
-  color: var(--primary, var(--p-primary-color));
-}
-
-/* ==========================================================
-   WTabNav — .w-tab-nav
-   ==========================================================
-   Barra da navegação por abas de ROTA (par do WTabViewport) — não confundir
-   com o .w-tab-bar (abas de seção dentro de uma tela). Aqui o overflow ROLA
-   na horizontal de propósito: aba de rota não pode quebrar linha, a barra é
-   parte do shell e tem altura fixa. A scrollbar fica invisível — quem traz a
-   aba à vista é o scrollIntoView da ativa. */
-
-.w-tab-nav {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2, 0.5rem);
-  height: var(--w-tabnav-h, 2.5rem);
-  border-bottom: 1px solid var(--border, var(--p-content-border-color));
-}
-
-.w-tab-nav__list {
-  display: flex;
-  align-items: stretch;
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.w-tab-nav__list::-webkit-scrollbar {
-  display: none;
-}
-
-.w-tab-nav__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-  padding: 0 var(--space-3, 0.75rem);
-  margin-bottom: -1px;
-  border-bottom: 2px solid transparent;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  font-size: var(--ui-font, 0.875rem);
-  cursor: pointer;
-  white-space: nowrap;
-  user-select: none;
-  transition:
-    color var(--motion-fast, 140ms) var(--ease, ease),
-    border-color var(--motion-fast, 140ms) var(--ease, ease);
-}
-
-.w-tab-nav__item:hover {
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-tab-nav__item:focus-visible {
-  outline: 2px solid var(--primary, var(--p-primary-color));
-  outline-offset: -2px;
-  border-radius: var(--radius-sm, 0.375rem);
-}
-
-/* A ativa é um cartão: tint primário suave, cantos superiores arredondados e
-   o fio embaixo — destaque imediato mesmo com muitas abas abertas. */
-.w-tab-nav__item--ativa {
-  color: var(--primary, var(--p-primary-color));
-  font-weight: var(--fw-medium, 500);
-  background: var(--primary-soft, var(--p-highlight-background));
-  border-radius: var(--radius-sm, 0.375rem) var(--radius-sm, 0.375rem) 0 0;
-  border-bottom-color: var(--primary, var(--p-primary-color));
-}
-
-/* Cor por grupo: só acentos (ícone, fio da ativa, ponto do rótulo). O texto
-   segue neutro para não brigar com o contraste — a cor identifica, não fala. */
-.w-tab-nav__item--grupo i {
-  color: var(--w-tab-group-color);
-}
-
-/* Fio contínuo embaixo, na cor do grupo, do rótulo até a última aba do bloco:
-   é a "linha" que liga o agrupamento (sobrepõe a borda da barra, como o fio
-   da ativa). A ativa se distingue pelo tint. */
-.w-tab-nav__item--grupo {
-  border-bottom-color: var(--w-tab-group-color);
-}
-
-.w-tab-nav__group {
-  margin-bottom: -1px;
-  border-bottom: 2px solid var(--w-tab-group-color, transparent);
-}
-
-.w-tab-nav__item--grupo.w-tab-nav__item--ativa {
-  color: var(--fg, var(--p-text-color));
-  background: color-mix(in srgb, var(--w-tab-group-color) 9%, transparent);
-  border-bottom-color: var(--w-tab-group-color);
-}
-
-/* Rótulo do grupo (módulo) antes do bloco de abas dele — eco da sidebar. */
-.w-tab-nav__group {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1, 0.25rem);
-  align-self: stretch;
-  padding: 0 var(--space-2, 0.5rem) 0 var(--space-3, 0.75rem);
-  color: var(--fg-subtle, var(--p-text-muted-color));
-  font-size: var(--text-2xs, 0.6875rem);
-  font-weight: var(--fw-medium, 500);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  user-select: none;
-}
-
-/* Ponto na cor do grupo — a mesma que acende a aba ativa do bloco. */
-.w-tab-nav__group::before {
-  content: '';
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: var(--radius-full, 999px);
-  background: var(--w-tab-group-color, var(--fg-subtle, var(--p-text-muted-color)));
-}
-
-/* O primeiro rótulo não precisa do respiro de separação. */
-.w-tab-nav__list > .w-tab-nav__group:first-child {
-  padding-left: 0;
-}
-
-.w-tab-nav__item i {
-  font-size: var(--text-xs, 0.75rem);
-}
-
-.w-tab-nav__title {
-  max-width: 11rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* X e ⋮ só se anunciam no hover/ativa — barra cheia de ícones é ruído.
-   Caixa clicável de 28px (mínimo de alvo no desktop); o ícone segue pequeno
-   dentro dela, e a caixa não altera a altura da faixa (item centraliza). */
-.w-tab-nav__menu,
-.w-tab-nav__close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--w-tabnav-btn, 1.75rem);
-  height: var(--w-tabnav-btn, 1.75rem);
-  margin-left: calc(-1 * var(--space-1, 0.25rem));
-  border: 0;
-  border-radius: var(--radius-full, 999px);
-  background: none;
-  color: var(--fg-muted, var(--p-text-muted-color));
-  cursor: pointer;
-  opacity: 0;
-  transition:
-    opacity var(--motion-fast, 140ms) var(--ease, ease),
-    background var(--motion-fast, 140ms) var(--ease, ease);
-}
-
-.w-tab-nav__menu i,
-.w-tab-nav__close i {
-  font-size: var(--text-2xs, 0.6875rem);
-}
-
-/* Os dois botões colados: caixas encostadas, sem sobreposição de alvo. */
-.w-tab-nav__menu + .w-tab-nav__close {
-  margin-left: calc(-1 * var(--space-2, 0.5rem));
-}
-
-/* O último come parte do padding do item: a caixa maior não engorda a aba. */
-.w-tab-nav__close:last-child,
-.w-tab-nav__menu:last-child {
-  margin-right: calc(-1 * var(--space-1, 0.25rem));
-}
-
-.w-tab-nav__item:hover .w-tab-nav__menu,
-.w-tab-nav__item--ativa .w-tab-nav__menu,
-.w-tab-nav__menu:focus-visible,
-.w-tab-nav__item:hover .w-tab-nav__close,
-.w-tab-nav__item--ativa .w-tab-nav__close,
-.w-tab-nav__close:focus-visible {
-  opacity: 1;
-}
-
-.w-tab-nav__menu:hover,
-.w-tab-nav__close:hover {
-  background: var(--surface-3, var(--p-content-hover-background));
-  color: var(--fg, var(--p-text-color));
-}
-
-.w-tab-nav__actions {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 0.5rem);
-}
-
-/* ==========================================================
-   WTabViewport — .w-tab-viewport
-   ==========================================================
-   Cada pane fica montado (v-show) e é o contexto dos seus dialogs: precisa
-   de position para a mask do Dialog com appendTo local cobrir SÓ a aba, e de
-   scroll próprio para cada aba guardar sua posição. */
-
-.w-tab-viewport {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-}
-
-.w-tab-viewport__pane {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  /* Stacking context próprio (z-index 0 + isolate): os overlays teleportados
-     para dentro do pane (WDialog, menus) recebem o z-index global do PrimeVue
-     (~1100+), mas ele só vale AQUI dentro — nada da aba passa por cima do
-     chrome de fora (topbar, popovers, command palette), que vence com
-     qualquer z-index ≥ 1. */
-  z-index: 0;
-  isolation: isolate;
-  /* Entrada da página: o v-show alterna display e a animação reinicia sempre
-     que o pane volta a ser renderizado — cobre a primeira abertura E a troca
-     entre abas. Calibrável pelos tokens do app consumidor (fallbacks locais);
-     desligue com `--w-tab-enter-duration: 0s`. */
-  animation: w-tab-enter var(--w-tab-enter-duration, var(--motion-slow, 380ms))
-    var(--w-tab-enter-ease, var(--ease-spring, cubic-bezier(0.34, 1.4, 0.64, 1))) backwards;
-}
-
-@keyframes w-tab-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .w-tab-viewport__pane {
-    animation: none;
-  }
-}
-
-/* O scroll mora num wrapper INTERNO: o pane fica parado como âncora dos
-   overlays teleportados (mask cobre a área visível da aba, não o conteúdo
-   rolado). Cada aba segue guardando sua posição de rolagem. */
-.w-tab-viewport__scroll {
-  height: 100%;
-  overflow-y: auto;
-}
-
-/* Mask de dialog ancorado no pane cobre SÓ a aba — a barra de abas, o menu e
-   a topbar continuam clicáveis (dá para trocar de aba com o modal aberto).
-   O PrimeVue define `position: fixed` INLINE na mask, daí o !important. */
-.w-tab-viewport__pane > .p-dialog-mask {
-  position: absolute !important;
-}
-
-/* ==========================================================
-   TABLET E TOQUE — a régua de campo
-   ==========================================================
-   Faixas de largura do portal consumidor (documentadas no `tokens.css` do
-   app; CSS não aceita `var()` em media query, então o número é literal aqui
-   e a régua é uma só):
-
-     < 600px      celular
-     600-839px    tablet RETRATO   — um painel por vez, drill-in
-     840-1199px   tablet PAISAGEM  — dois painéis
-     >= 1200px    desktop
-
-   Largura é a chave, nunca `orientation`: travar orientação é falha de
-   acessibilidade (WCAG 1.3.4), e um tablet de 12,9" em retrato tem largura
-   de laptop — ele DEVE receber dois painéis.
-   ========================================================== */
-
-/* Toque: `pointer: coarse` é o ponteiro PRIMÁRIO — notebook com tela sensível
-   reporta `fine` e não entra aqui. Alvo de 56px (~10,5mm) supera os 48dp do
-   Material e os 44pt da Apple; a polpa do dedo tem 10-14mm e o operador de
-   luva precisa de 15mm+, daí os 72px da ação primária. */
-@media (pointer: coarse) {
-  .w-page-header-actions .p-button,
-  .w-form-section__actions .p-button,
-  .w-action-bar .p-button,
-  .w-crud-toolbar .p-button,
-  .w-crud-card-actions .p-button {
-    min-height: var(--touch-h, 56px);
-  }
-
-  /* Linha de tabela é alvo de drill-in, não texto. */
-  .w-crud-table .p-datatable-tbody > tr > td {
-    padding-block: var(--space-3, 0.75rem);
-  }
-
-  /* Ações da linha no card: o ícone continua pequeno, o alvo é que cresce —
-     no dedo, editar e excluir a 1,75rem ficavam a um deslize um do outro. */
-  .w-editable-table--cards .w-crud-subview__action,
-  .w-editable-table--cards .w-editable-table__remove {
-    width: var(--touch-h, 56px);
-    height: var(--touch-h, 56px);
-  }
-}
-
-/* Tablet em pé: as ações do cabeçalho tomam a linha inteira e dividem a
-   largura entre si — em cima da mesma linha do título elas roubavam a largura
-   dele até sobrar uma letra por linha. */
-@media (max-width: 839px) {
-  .w-page-header-actions {
-    width: 100%;
-  }
-
-  .w-page-header-actions .p-button {
-    flex: 1 1 10rem;
-    justify-content: center;
-  }
-}
-
-/* Formulário em tablet em pé: tela cheia. A caixa centrada do desktop, numa
-   largura dessas, comprime o conteúdo e joga os botões para onde o polegar não
-   alcança — e o teclado virtual come o resto.
-
-   "Tela cheia" é a área do MASK, não a viewport: quando o app pendura o dialog
-   num contêiner próprio (o pane de uma aba, por exemplo), o mask é `absolute`
-   sobre ele e começa abaixo do chrome. Medido em `dvh`, o dialog nasce com a
-   altura da tela dentro de uma caixa mais curta e o rodapé — com o botão de
-   salvar — cai para fora da janela. `%` do mask acerta os dois casos. */
-@media (max-width: 839px) {
-  .p-dialog.w-crud-form-dialog {
-    width: 100% !important;
-    max-width: 100%;
-    height: 100%;
-    max-height: 100%;
-    margin: 0;
-    border-radius: 0;
-  }
-
-  .w-crud-form-dialog .p-dialog-content {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-  }
-
-  /* Rodapé ancorado, ação primária cheia e por último: é o alcance do polegar
-     com o tablet segurado nas duas mãos. */
-  .w-crud-form-dialog .p-dialog-footer {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: var(--space-3, 0.75rem);
-    padding-bottom: max(var(--space-4, 1rem), env(safe-area-inset-bottom));
-  }
-
-  .w-crud-form-dialog .p-dialog-footer .p-button {
-    width: 100%;
-    justify-content: center;
-    min-height: var(--touch-h, 56px);
-  }
+  min-height: var(--w-touch-h);
 }

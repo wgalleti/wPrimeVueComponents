@@ -1,0 +1,174 @@
+/* ============================================================
+   wPrimeVue Components — base
+   ============================================================
+   O que atravessa todos os componentes: densidade dos controles do
+   PrimeVue dentro da suíte e tags de status.
+   Valores só via tokens.css (`--w-*`). Classes com prefixo `w-`;
+   sobrescreva no CSS do app para customizar.
+   ============================================================ */
+
+/* ==========================================================
+   Densidade dos controles
+   ==========================================================
+   O app manda pela tríade `--control-h` / `--ui-font` / `--control-px`
+   (ex.: 38px / 14px / 12px; compacto 32px / 13px). Sem os tokens, os
+   fallbacks abaixo valem — nunca o 42px/16px do tema PrimeVue. Vale para o
+   input de busca, os filtros de coluna (na mesma toolbar), os campos do
+   formulário e os botões das barras (toolbar, cabeçalho, rodapé do form,
+   rail). Botão de linha usa
+   `--control-h-sm` para não esticar a tabela. */
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-form .p-inputtext,
+.w-crud-toolbar .p-select,
+.w-crud-form .p-select,
+.w-crud-form .p-multiselect,
+.w-crud-form .p-autocomplete,
+.w-crud-toolbar .p-inputnumber,
+.w-crud-form .p-inputnumber,
+.w-crud-form .p-password {
+  font-size: var(--w-ui-font);
+}
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-form .p-inputtext,
+.w-crud-toolbar .p-select,
+.w-crud-form .p-select,
+.w-crud-form .p-multiselect {
+  height: var(--w-control-h);
+}
+
+.w-crud-toolbar .p-inputtext,
+.w-crud-form .p-inputtext {
+  padding-block: 0;
+  padding-inline: var(--w-control-px);
+}
+
+/* Busca com ícone: a regra de padding acima apaga o espaço que o IconField
+   reserva para o ícone — devolve aqui, onde quer que o IconField esteja
+   (toolbar, busca do WTransferList/WTreeSelect dentro do form, subview). */
+.w-crud-toolbar .p-iconfield .p-inputtext,
+.w-crud-form .p-iconfield .p-inputtext {
+  padding-inline-start: calc(var(--w-control-px) * 2 + var(--w-space-4));
+}
+
+.w-crud-toolbar .p-select-label,
+.w-crud-form .p-select-label,
+.w-crud-form .p-multiselect-label {
+  display: flex;
+  align-items: center;
+  padding-block: 0;
+  padding-inline-start: var(--w-control-px);
+}
+
+.w-crud-form .p-textarea {
+  font-size: var(--w-ui-font);
+  padding: calc(var(--w-control-px) * 0.6) var(--w-control-px);
+}
+
+.w-crud-header-actions .p-button,
+.w-crud-toolbar .p-button,
+.w-crud-bulkbar .p-button,
+.w-crud-form-footer .p-button,
+.w-crud-rail .p-button {
+  height: var(--w-control-h);
+  font-size: var(--w-ui-font);
+}
+
+.w-crud-header-actions .p-button.p-button-icon-only,
+.w-crud-toolbar .p-button.p-button-icon-only,
+.w-crud-bulkbar .p-button.p-button-icon-only,
+.w-crud-rail .p-button.p-button-icon-only {
+  width: var(--w-control-h);
+  padding-inline: 0;
+}
+
+.w-crud-actions .p-button.p-button-icon-only,
+.w-crud-card-actions .p-button.p-button-icon-only {
+  width: var(--w-control-h-sm);
+  height: var(--w-control-h-sm);
+}
+
+/* ==========================================================
+   Tags de status — .w-tag
+   ==========================================================
+   Cor de status sai dos tokens do app (`--success`, `--danger`, `--warning`,
+   `--info` e os `-soft`), não da paleta fixa do PrimeVue (que no escuro usa
+   red-300/red-500 e não acompanha o tema). Aplicada sobre o `<Tag>` para
+   manter a estrutura `.p-tag` que os consumidores já estilizam. */
+
+.p-tag.w-tag {
+  font-size: var(--w-text-xs);
+}
+
+.p-tag.w-tag--success {
+  background: var(--w-success-soft);
+  color: var(--w-success);
+}
+
+.p-tag.w-tag--danger {
+  background: var(--w-danger-soft);
+  color: var(--w-danger);
+}
+
+.p-tag.w-tag--warn,
+.p-tag.w-tag--warning {
+  background: var(--w-warning-soft);
+  color: var(--w-warning);
+}
+
+.p-tag.w-tag--info {
+  background: var(--w-info-soft);
+  color: var(--w-info);
+}
+
+.p-tag.w-tag--primary {
+  background: var(--w-primary-soft);
+  color: var(--w-primary);
+}
+
+.p-tag.w-tag--secondary,
+.p-tag.w-tag--contrast {
+  background: var(--w-surface-3);
+  color: var(--w-fg-muted);
+}
+
+/* ==========================================================
+   Células — o que o WCrudColumnRenderer emite por tipo de coluna
+   ========================================================== */
+
+/* Valor sem status (ex.: `false` neutro numa coluna boolean): texto abafado. */
+.w-cell-neutral,
+.w-cell-empty {
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+.w-cell-date {
+  font-size: var(--w-text-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg-muted);
+}
+
+.w-cell-number {
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-cell-image {
+  width: var(--w-cell-image);
+  height: var(--w-cell-image);
+  border-radius: var(--w-radius);
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--w-border);
+}
+
+/* Colunas de largura fixa (seleção, expansor, ações de linha). */
+.p-datatable .w-col-narrow {
+  width: var(--w-col-narrow);
+}
+
+.p-datatable .w-col-actions {
+  width: var(--w-col-actions);
+}

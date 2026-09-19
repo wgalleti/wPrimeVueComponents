@@ -1,6 +1,15 @@
 // Styles — importar no app: import '@wgalleti/primevue-components/style.css'
+// A ordem importa para o cascade: tokens → base → domínios. Tudo vira um só
+// `style.css` no build (cssCodeSplit: false).
+import './assets/tokens.css'
+import './assets/base.css'
 import './assets/crud.css'
+import './assets/form.css'
+import './assets/ui.css'
+import './assets/viz.css'
+import './assets/tabs.css'
 import './assets/markdown.css'
+import './assets/touch.css'
 
 // Plugin
 export { WPrimeVuePlugin } from './plugin'
