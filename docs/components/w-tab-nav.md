@@ -28,7 +28,7 @@ Sem configuração, o grupo cai numa de **6 séries** (escolha estável por hash
 mesmo módulo tem sempre a mesma série), e a cor da série N é resolvida em cascata:
 
 ```
-var(--w-tab-group-N, var(--viz-N, <oklch da suite>))     N = 1..6
+var(--w-tab-group-N, var(--w-viz-N))     N = 1..6  (--w-viz-N lê --viz-N do app e cai num OKLCH da suíte)
 ```
 
 1. `--w-tab-group-N` — token específico do app para as abas;
@@ -60,7 +60,7 @@ acentos no app sem tocar na suite.
 
 ### Alvos de toque
 
-Os botões "Opções de <aba>" (⋮) e "Fechar <aba>" (X) têm caixa clicável de **28×28px**
+Os botões "Opções de `<aba>`" (⋮) e "Fechar `<aba>`" (X) têm caixa clicável de **28×28px**
 (`--w-tabnav-btn`, mínimo de alvo no desktop) com o ícone pequeno dentro; a faixa segue
 com 40px (`--w-tabnav-h`) porque o item centraliza a caixa.
 
