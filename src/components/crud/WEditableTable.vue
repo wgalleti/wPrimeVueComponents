@@ -131,13 +131,16 @@ function unwrapOptions(column: EditableColumnDef): Record<string, unknown>[] {
   return (isRef(options) ? options.value : options) as Record<string, unknown>[]
 }
 
-function columnAlign(column: EditableColumnDef): 'left' | 'center' | 'right' {
-  if (column.align) return column.align
-  return column.editor === 'number' ? 'right' : 'left'
-}
-
 function isNumericColumn(column: EditableColumnDef): boolean {
   return column.editor === 'number' || column.footer === 'sum' || column.decimals != null
+}
+
+// Toda coluna numérica alinha à direita — editável ou calculada. Antes só a
+// com editor `number` alinhava, e a calculada ao lado (com `decimals`/`sum`)
+// ficava à esquerda, desalinhada do próprio total.
+function columnAlign(column: EditableColumnDef): 'left' | 'center' | 'right' {
+  if (column.align) return column.align
+  return isNumericColumn(column) ? 'right' : 'left'
 }
 
 function columnClass(column: EditableColumnDef): string[] {

@@ -121,6 +121,9 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .w-chart {
+  /* `width: 100%` porque num pai flex/grid o canvas nascia com 0px e o
+     ECharts não desenhava nada ("Can't get DOM width"). */
+  width: 100%;
   height: var(--w-chart-h, var(--chart-h, 18rem));
   min-width: 0;
 }

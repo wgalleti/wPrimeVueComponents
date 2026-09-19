@@ -74,8 +74,11 @@
   padding-inline: var(--control-px, 0.75rem);
 }
 
-/* Busca com ícone: o IconField reserva espaço à esquerda pelo próprio token. */
-.w-crud-toolbar .p-iconfield .p-inputtext {
+/* Busca com ícone: a regra de padding acima apaga o espaço que o IconField
+   reserva para o ícone — devolve aqui, onde quer que o IconField esteja
+   (toolbar, busca do WTransferList/WTreeSelect dentro do form, subview). */
+.w-crud-toolbar .p-iconfield .p-inputtext,
+.w-crud-form .p-iconfield .p-inputtext {
   padding-inline-start: calc(var(--control-px, 0.75rem) * 2 + 1rem);
 }
 
@@ -463,11 +466,26 @@
   margin-top: 0.25rem;
 }
 
-/* Column alignment helpers (apply via header-class / body-class) */
+/* Alinhamento de coluna (header-class + body-class via ColumnDef.align).
+   O corpo alinha por `text-align`; o cabeçalho é flex, então alinha pelo
+   `justify-content` do conteúdo. `text-right`/`text-center` seguem aceitas
+   para app que já as sobrescrevia. */
+.w-col-right,
+.p-datatable .w-col-right {
+  text-align: right;
+}
+
+.w-col-center,
+.p-datatable .w-col-center {
+  text-align: center;
+}
+
+.p-datatable-header-cell.w-col-right .p-datatable-column-header-content,
 .p-datatable-header-cell.text-right .p-datatable-column-header-content {
   justify-content: flex-end;
 }
 
+.p-datatable-header-cell.w-col-center .p-datatable-column-header-content,
 .p-datatable-header-cell.text-center .p-datatable-column-header-content {
   justify-content: center;
 }
@@ -732,7 +750,7 @@
 
 .w-fk-option__desc {
   font-size: var(--text-xs, 0.75rem);
-  color: var(--fg-muted, #64748b);
+  color: var(--fg-muted, var(--p-text-muted-color));
   font-variant-numeric: tabular-nums;
 }
 
@@ -3956,7 +3974,7 @@
   padding: 0 var(--space-3, 0.75rem);
   height: var(--control-h-sm, 2rem);
   border-radius: var(--radius-md, 0.625rem);
-  background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--surface, #fff));
+  background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--surface, var(--p-content-background)));
   transition:
     background-color var(--motion, 220ms) var(--ease, ease),
     box-shadow var(--motion, 220ms) var(--ease, ease);
@@ -3967,7 +3985,7 @@
   font-weight: var(--fw-semibold, 600);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--fg, #000));
+  color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--fg, var(--p-text-color)));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3982,15 +4000,15 @@
   height: 1.25rem;
   padding: 0 var(--space-2, 0.5rem);
   border-radius: var(--radius-sm, 0.375rem);
-  background: color-mix(in srgb, var(--w-kanban-accent) 26%, var(--surface, #fff));
-  color: color-mix(in srgb, var(--w-kanban-accent) 82%, var(--fg, #000));
+  background: color-mix(in srgb, var(--w-kanban-accent) 26%, var(--surface, var(--p-content-background)));
+  color: color-mix(in srgb, var(--w-kanban-accent) 82%, var(--fg, var(--p-text-color)));
   font-size: var(--text-2xs, 0.6875rem);
   font-variant-numeric: tabular-nums;
 }
 
 /* Realce de drop: a pílula acende e a lista ganha moldura tracejada. */
 .w-kanban-board__column--over .w-kanban-board__header {
-  background: color-mix(in srgb, var(--w-kanban-accent) 24%, var(--surface, #fff));
+  background: color-mix(in srgb, var(--w-kanban-accent) 24%, var(--surface, var(--p-content-background)));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
 }
 
@@ -4032,7 +4050,7 @@
 
 .w-kanban-board__card:hover {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--w-kanban-accent) 40%, var(--border, #e5e7eb));
+  border-color: color-mix(in srgb, var(--w-kanban-accent) 40%, var(--border, var(--p-content-border-color)));
   box-shadow: var(--shadow-md, 0 4px 10px rgba(0, 0, 0, 0.08));
 }
 
@@ -4101,7 +4119,7 @@
 
 .w-kanban-board--dragging .w-kanban-board__empty {
   border-color: color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
-  color: color-mix(in srgb, var(--w-kanban-accent) 70%, var(--fg-muted, #666));
+  color: color-mix(in srgb, var(--w-kanban-accent) 70%, var(--fg-muted, var(--p-text-muted-color)));
 }
 
 @media (prefers-reduced-motion: reduce) {
