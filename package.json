@@ -74,7 +74,9 @@
     "style:check": "node scripts/check-style.mjs",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "playground:build": "PLAYGROUND_BASE=/wPrimeVueComponents/playground/ yarn --cwd playground build",
+    "site:build": "yarn docs:build && yarn playground:build && node scripts/merge-site.mjs"
   },
   "peerDependencies": {
     "axios": "^1.0.0",

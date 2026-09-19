@@ -1,5 +1,7 @@
 # Playground
 
+> A versão publicada está em [/playground/](/wPrimeVueComponents/playground/){target="_blank"} — mesmos cenários, sem instalar nada. Esta página é sobre rodar o playground localmente.
+
 Aplicacao de teste local para desenvolvimento e validacao dos componentes.
 
 ## Estrutura

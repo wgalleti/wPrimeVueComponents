@@ -3,6 +3,9 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
 export default defineConfig({
+  // No GitHub Pages o playground é publicado como sub-site das docs
+  // (/wPrimeVueComponents/playground/); em dev continua na raiz.
+  base: process.env.PLAYGROUND_BASE ?? '/',
   plugins: [vue()],
   resolve: {
     // Instância única: o código da lib (aliased para ../src) e o app do playground
