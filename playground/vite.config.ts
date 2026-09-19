@@ -9,6 +9,9 @@ export default defineConfig({
     // devem compartilhar o MESMO vue/primevue, senão os inject (Toast/Confirm) quebram.
     dedupe: ['vue', 'primevue'],
     alias: [
+      // O workbench compila em runtime o HTML dos slots dos sidecars (que usam
+      // <WStepSection>, <WSectionPanel>…): precisa do build do Vue com compilador.
+      { find: /^vue$/, replacement: 'vue/dist/vue.esm-bundler.js' },
       // Lib internal @ alias must come first (more specific path)
       { find: /^@\//, replacement: resolve(__dirname, '../src') + '/' },
       { find: '@wgalleti/primevue-components', replacement: resolve(__dirname, '../src') },

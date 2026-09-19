@@ -217,3 +217,25 @@ estão maduros nos dois temas.
 3. **Exceção declarada** para `w-map-select` (sobreposição em mapa de satélite: branco/preto e
    sombra fixos são legítimos) — declarar no topo do bloco, como a skill pede para impressão.
 4. **Tailwind nos SFCs**: zero (regra do CLAUDE.md) — migrar os 9 pontos de A6 para classes `.w-*`.
+
+---
+
+## Fechamento (2026-09-19)
+
+Ondas 1.5–4 executadas no mesmo dia. Estado de cada apontamento:
+
+| # | Item | Estado |
+|---|---|---|
+| 1–5 | Bloqueia | corrigidos (`fix(styles)` 1443586) |
+| 6, 7, 12, 18 | ritmo, tipografia, `.dark`, `999px` | resolvidos por construção com `tokens.css` + gate |
+| 8 | `WDateRange` largura | `width: 100%` como todo campo composto |
+| 9 | colunas numéricas `WEditableTable` | alinhadas (calculadas inclusive) |
+| 10 | faixa atrás do switch | removida; o switch alinha pela base da linha, na altura do controle vizinho |
+| 11 | tag cheia em 100% das linhas | a tag já era *soft* (12% + texto no tom) — sem mudança; o ruído é do dado, não da tag |
+| 13 | sidecars vazios | o workbench passou a renderizar os `slots` dos exemplos (compilados em runtime); `WActionBar` usa `<Button>` |
+| 14 | `WProgressFlow` em cards | sem moldura, trilho fino entre marcadores (verde até onde foi), atual cheio + rótulo semibold; horizontal com rótulo abaixo do marcador |
+| 15 | `WTransferList` espelhado | texto sempre à esquerda, só o chevron troca de lado |
+| 16 | caps inconsistentes | regra: caps só no tamanho *eyebrow* (`--w-text-2xs`, `--w-tracking-caps`); KPI label e caps do markdown alinhados |
+| 17 | três ícones de título | uma caixa tonal só (`--w-icon-box`, `--w-primary-soft`) em `WSectionHeader`, `WDetailHeader`, `WKpiCard` e KPI do CRUD |
+| — | densidade como escolha do usuário | `html[data-density="compact"]` pronto em `tokens.css` |
+| — | gate no CI | `yarn style:check` |
