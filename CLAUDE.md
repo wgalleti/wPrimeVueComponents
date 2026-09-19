@@ -104,6 +104,9 @@ yarn build
 
 # Type check
 yarn type-check
+
+# Site publicado (docs + playground em /playground/) — é o que o Pages faz
+yarn site:build
 ```
 
 ## Checklist de componente novo (OBRIGATÓRIO antes do commit)

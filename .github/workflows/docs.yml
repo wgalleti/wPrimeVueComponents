@@ -1,4 +1,4 @@
-name: Deploy Docs
+name: Deploy Site (docs + playground)
 
 on:
   push:
@@ -26,12 +26,18 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            playground/yarn.lock
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build docs
-        run: yarn docs:build
+      - name: Install playground dependencies
+        run: yarn --cwd playground install --frozen-lockfile
+
+      - name: Build site (docs + playground em /playground/)
+        run: yarn site:build
 
       - uses: actions/upload-pages-artifact@v3
         with:

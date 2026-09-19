@@ -19,6 +19,8 @@ export default defineConfig({
       { text: 'Componentes', link: '/components/w-crud-view' },
       { text: 'Composables', link: '/composables/use-crud-manager' },
       { text: 'CSS', link: '/css/classes' },
+      // Sub-site publicado junto (scripts/merge-site.mjs); fora do router do VitePress.
+      { text: 'Playground', link: '/wPrimeVueComponents/playground/', target: '_blank' },
     ],
 
     sidebar: [
@@ -28,6 +30,7 @@ export default defineConfig({
           { text: 'O que e?', link: '/guide/what-is' },
           { text: 'Primeiros Passos', link: '/guide/getting-started' },
           { text: 'Plugin', link: '/guide/plugin' },
+          { text: 'Playground local', link: '/guide/playground' },
         ],
       },
       {

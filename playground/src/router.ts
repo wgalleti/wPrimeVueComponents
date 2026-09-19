@@ -1,7 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 
 export const router = createRouter({
-  history: createWebHistory(),
+  // Publicado em GitHub Pages (servidor estático, sem fallback para SPA):
+  // hash history mantém os links profundos funcionando. Em dev, history normal.
+  history: import.meta.env.PROD
+    ? createWebHashHistory(import.meta.env.BASE_URL)
+    : createWebHistory(),
   routes: [
     {
       path: '/',

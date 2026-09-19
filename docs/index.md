@@ -13,6 +13,10 @@ hero:
       text: Componentes
       link: /components/w-crud-view
     - theme: alt
+      text: Playground
+      link: /wPrimeVueComponents/playground/
+      target: _blank
+    - theme: alt
       text: GitHub
       link: https://github.com/wgalleti/wPrimeVueComponents
 

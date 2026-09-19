@@ -20,6 +20,10 @@ const links = [
   { label: 'Markdown & Kanban', to: '/markdown-kanban', icon: 'pi pi-objects-column' },
 ]
 
+// Publicado junto das docs (Pages), o playground vive em <docs>/playground/ —
+// a documentação é o pai. Em dev não há docs ao lado.
+const docsUrl = import.meta.env.PROD ? new URL('..', `${location.origin}${import.meta.env.BASE_URL}`).href : ''
+
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
 function toggleTheme() {
@@ -69,6 +73,14 @@ function toggleTheme() {
 
       <!-- Footer -->
       <div class="px-3 py-3 border-t border-surface-100 dark:border-surface-800">
+        <a
+          v-if="docsUrl"
+          :href="docsUrl"
+          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-color hover:text-color hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors duration-150"
+        >
+          <i class="pi pi-book text-sm" />
+          Documentação
+        </a>
         <button
           class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-muted-color hover:text-color hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors duration-150"
           @click="toggleTheme"
