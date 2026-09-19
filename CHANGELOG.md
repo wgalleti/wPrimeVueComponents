@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.0.0...v1.1.0) (2026-09-19)
+
+### Funcionalidades
+
+* **docs:** publish the playground with the docs on GitHub Pages ([4bb7044](https://github.com/wgalleti/wPrimeVueComponents/commit/4bb704422a62edc56f4c540848b3129de649f49e))
+* **tabs:** shouldRemount keeps the view alive on same-screen path changes ([4ef988e](https://github.com/wgalleti/wPrimeVueComponents/commit/4ef988e1896ce29c659169ad4fc82ee08e086f57))
+
+### Correções
+
+* **docs:** unescaped angle brackets broke the vitepress build ([bf3a4c8](https://github.com/wgalleti/wPrimeVueComponents/commit/bf3a4c8563340836cda483d31b60a6d4366096a5))
 ## [1.0.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.2...v1.0.0) (2026-09-19)
 
 Primeira versão estável. O que a marca: um vocabulário único de tokens (`--w-*`, `tokens.css`)
