@@ -109,7 +109,7 @@ function removeAll() {
           class="w-transfer__item"
           @click="add(item)"
         >
-          <span>{{ labelOf(item) }}</span>
+          <span class="w-transfer__item-label">{{ labelOf(item) }}</span>
           <i class="pi pi-angle-right" />
         </li>
         <li v-if="!available.length" class="w-transfer__empty">Nenhum item</li>
@@ -155,8 +155,8 @@ function removeAll() {
           class="w-transfer__item"
           @click="remove(item)"
         >
-          <i class="pi pi-angle-left" />
-          <span>{{ labelOf(item) }}</span>
+          <i class="pi pi-angle-left w-transfer__item-icon--lead" />
+          <span class="w-transfer__item-label">{{ labelOf(item) }}</span>
         </li>
         <li v-if="!chosen.length" class="w-transfer__empty">Nenhum item</li>
       </ul>

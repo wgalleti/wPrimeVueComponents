@@ -68,9 +68,19 @@
   min-width: 0;
 }
 
+/* Mesma caixa tonal do WSectionHeader e do WKpiCard: um só tratamento para
+   "ícone de título" na suíte. */
 .w-detail-header-icon {
-  font-size: var(--w-text-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-icon-box);
+  height: var(--w-icon-box);
+  flex-shrink: 0;
+  border-radius: var(--w-radius-lg);
+  background: var(--w-primary-soft);
   color: var(--w-primary);
+  font-size: var(--w-text-lg);
 }
 
 .w-detail-header-content {
@@ -220,7 +230,7 @@
   height: var(--w-icon-box);
   flex-shrink: 0;
   border-radius: var(--w-radius-lg);
-  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  background: var(--w-primary-soft);
   color: var(--w-primary);
 }
 
@@ -404,7 +414,7 @@
   width: var(--w-icon-box);
   height: var(--w-icon-box);
   border-radius: var(--w-radius-lg);
-  background: color-mix(in srgb, var(--w-primary) 10%, transparent);
+  background: var(--w-primary-soft);
   color: var(--w-primary);
   font-size: var(--w-text-lg);
 }
@@ -416,7 +426,7 @@
 }
 
 .w-kpi-card__label {
-  font-size: var(--w-text-xs);
+  font-size: var(--w-text-2xs);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
@@ -505,59 +515,98 @@
   color: var(--w-fg-muted);
 }
 
+/* Etapas sem moldura: o que diz "você está aqui" é o marcador cheio e o
+   rótulo em destaque, não uma caixa por passo. Um trilho fino liga os
+   marcadores — verde até onde já foi, neutro daí em diante. */
 .w-progress-flow {
+  --w-progress-marker: 2rem;
   display: flex;
   gap: var(--w-space-3);
 }
 
 .w-progress-flow--horizontal {
-  align-items: stretch;
-  flex-wrap: wrap;
+  width: 100%;
+  align-items: flex-start;
 }
 
 .w-progress-flow--vertical {
   flex-direction: column;
+  gap: var(--w-space-4);
 }
 
 .w-progress-flow__step {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--w-space-3);
   min-width: 0;
 }
 
+/* Na régua horizontal o rótulo fica ABAIXO do marcador: o trilho corre na
+   altura dos marcadores, entre um e outro, sem cruzar texto quando falta
+   largura. */
 .w-progress-flow--horizontal .w-progress-flow__step {
   flex: 1 1 0;
-  min-width: 12rem;
-  padding: var(--w-space-3) var(--w-space-4);
-  border: 1px solid var(--w-border);
-  border-radius: var(--w-radius-xl);
-  background: var(--w-surface);
+  flex-direction: column;
+  gap: var(--w-space-2);
+  padding-right: var(--w-space-3);
+}
+
+.w-progress-flow--horizontal .w-progress-flow__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--w-progress-marker) / 2);
+  left: calc(var(--w-progress-marker) + var(--w-space-2));
+  right: var(--w-space-2);
+  height: 1px;
+  background: var(--w-border);
+}
+
+.w-progress-flow--horizontal .w-progress-flow__content {
+  padding-top: 0;
+}
+
+/* Trilho vertical: do fim do marcador até o marcador do próximo. */
+.w-progress-flow--vertical .w-progress-flow__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--w-progress-marker) + var(--w-space-1));
+  bottom: calc(-1 * var(--w-space-4) + var(--w-space-1));
+  left: calc(var(--w-progress-marker) / 2);
+  width: 1px;
+  background: var(--w-border);
+}
+
+.w-progress-flow__step--done:not(:last-child)::after {
+  background: var(--w-success);
 }
 
 .w-progress-flow__marker {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: var(--w-progress-marker);
+  height: var(--w-progress-marker);
   flex-shrink: 0;
   border-radius: var(--w-radius-full);
   border: 1px solid var(--w-border);
   color: var(--w-fg-muted);
-  background: transparent;
+  background: var(--w-surface);
   font-size: var(--w-text-sm);
-  font-weight: var(--w-fw-bold);
+  font-weight: var(--w-fw-semibold);
+  font-variant-numeric: tabular-nums;
 }
 
 .w-progress-flow__content {
   min-width: 0;
+  padding-top: calc((var(--w-progress-marker) - 1.25em) / 2);
 }
 
 .w-progress-flow__label {
   font-size: var(--w-text-base);
-  font-weight: var(--w-fw-semibold);
-  color: var(--w-fg);
+  font-weight: var(--w-fw-medium);
+  line-height: 1.25em;
+  color: var(--w-fg-muted);
 }
 
 .w-progress-flow__description {
@@ -568,14 +617,23 @@
 
 .w-progress-flow__step--current .w-progress-flow__marker {
   border-color: var(--w-primary);
-  background: color-mix(in srgb, var(--w-primary) 12%, transparent);
-  color: var(--w-primary);
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+}
+
+.w-progress-flow__step--current .w-progress-flow__label {
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
 }
 
 .w-progress-flow__step--done .w-progress-flow__marker {
   border-color: var(--w-success);
   background: var(--w-success-soft);
   color: var(--w-success);
+}
+
+.w-progress-flow__step--done .w-progress-flow__label {
+  color: var(--w-fg);
 }
 
 /* ==========================================================

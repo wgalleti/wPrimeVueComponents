@@ -31,6 +31,7 @@ function onUpdate(v: unknown) {
 
 <template>
   <DatePicker
+    class="w-date-range"
     :model-value="modelValue ?? undefined"
     selection-mode="range"
     :placeholder="placeholder"

@@ -268,6 +268,85 @@
 }
 
 /* ==========================================================
+   WDatePicker / WDateRange — .w-datepicker, .w-date-range
+   ========================================================== */
+
+/* Todo campo composto da suíte ocupa a linha inteira do grid — largura de
+   conteúdo quebra o alinhamento das colunas do form. */
+.w-datepicker,
+.w-date-range,
+.w-date-range.p-datepicker {
+  width: 100%;
+}
+
+.w-date-range .p-inputtext {
+  width: 100%;
+}
+
+.w-datepicker .p-iconfield {
+  width: 100%;
+}
+
+.w-datepicker-icon {
+  cursor: pointer;
+  color: var(--w-fg-muted);
+  transition: color var(--w-motion-fast);
+}
+
+.w-datepicker-icon:hover {
+  color: var(--w-primary);
+}
+
+.w-datepicker-icon-disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.w-datepicker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-2);
+}
+
+.w-datepicker-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--w-space-2);
+  border-top: 1px solid var(--w-border);
+  padding-top: var(--w-space-2);
+}
+
+/* Sub-linhas do modal da FK (WAutoCompleteFK `subRows`): mini-grid por linha
+   expandida — o caso "lote + análises" da recomendação. */
+.w-fk-subrows {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--w-text-sm);
+}
+
+.w-fk-subrows th {
+  padding: var(--w-space-1) var(--w-space-3);
+  text-align: right;
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg-muted);
+  white-space: nowrap;
+}
+
+.w-fk-subrows th:first-child,
+.w-fk-subrows td:first-child {
+  text-align: left;
+}
+
+.w-fk-subrows td {
+  padding: var(--w-space-1) var(--w-space-3);
+  text-align: right;
+  border-top: 1px solid var(--w-border);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ==========================================================
    WMoneyInput — .w-money-input
    ========================================================== */
 
@@ -352,6 +431,16 @@
 
 .w-transfer__item:hover {
   background: var(--w-surface-2);
+}
+
+/* Texto sempre à esquerda nos dois painéis — o espelhamento é bonito no mock
+   e custa leitura na lista real; só o chevron troca de lado. */
+.w-transfer__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .w-transfer__item i {
