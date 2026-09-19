@@ -16,39 +16,36 @@ Pacote: **`@wgalleti/primevue-components`** — publicado manualmente (sem CI).
 
 ## Fluxo de release
 
-O build e a verificação de tipos rodam automaticamente antes de publicar
-(`prepublishOnly` + o script `release`). Os atalhos `release:*` fazem o bump
-de versão, criam o commit/tag e publicam em um único comando:
+Dois comandos. O primeiro só mexe localmente; o segundo publica tudo.
 
 ```bash
-# Correção de bug → 0.3.3 -> 0.3.4
-yarn release:patch
+# 1. Bump + CHANGELOG + commit "chore(release): X.Y.Z" + tag vX.Y.Z (commit-and-tag-version,
+#    versão deduzida dos commits: fix → patch, feat → minor, BREAKING CHANGE → major)
+yarn release            # ou release:patch / release:minor / release:major para forçar
+yarn release:dry        # só mostra o que faria
 
-# Nova funcionalidade retrocompatível → 0.3.3 -> 0.4.0
-yarn release:minor
-
-# Quebra de API pública → 0.3.3 -> 1.0.0
-yarn release:major
+# 2. npm publish (prepublishOnly roda type-check + test + build) → git push --follow-tags
+#    → deploy do site no GitHub Pages (docs + playground), acompanhado até o fim
+yarn release:publish
 ```
 
-Cada atalho executa:
-1. `yarn version --<tipo>` — bump em `package.json`, commit e tag git locais.
-2. `yarn release` — `type-check` → `build` → `npm publish` (com `access: public`).
-
-Depois, envie commit e tag para o repositório:
-
-```bash
-git push --follow-tags
-```
+O deploy do site é o workflow `.github/workflows/docs.yml`, que dispara no push da
+main; `yarn site:deploy` (chamado pelo `release:publish`) encontra a rodada do commit,
+espera terminar e **falha se o deploy falhar** — o pacote npm já saiu, então corrija e
+rode `yarn site:deploy` de novo. Para testar o site antes: `yarn site:build` +
+`yarn docs:preview` (docs em `/wPrimeVueComponents/`, playground em `/playground/`).
 
 ## Release manual (passo a passo)
 
 Se preferir controlar cada etapa:
 
 ```bash
-yarn version --new-version X.Y.Z   # bump + commit + tag
-yarn release                       # type-check + build + npm publish
-git push --follow-tags
+yarn commit-and-tag-version --release-as X.Y.Z --skip.commit --skip.tag   # bump + CHANGELOG
+# revise o CHANGELOG.md, depois:
+git add package.json CHANGELOG.md && git commit -m "chore(release): X.Y.Z" && git tag -a vX.Y.Z -m vX.Y.Z
+npm publish --registry https://registry.npmjs.org/
+git push --follow-tags origin main
+yarn site:deploy
 ```
 
 Ou, sem usar os scripts:
