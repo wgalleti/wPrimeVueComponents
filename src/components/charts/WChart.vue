@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--fg-subtle, currentColor);
-  font-size: var(--ui-font, inherit);
+  color: var(--w-fg-subtle);
+  font-size: var(--w-ui-font);
 }
 </style>

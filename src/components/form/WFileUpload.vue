@@ -77,7 +77,7 @@ function fmtSize(bytes: number): string {
 </script>
 
 <template>
-  <div class="w-fileupload" style="display: flex; flex-direction: column; gap: 0.5rem">
+  <div class="w-fileupload">
     <div>
       <Button
         type="button"
@@ -94,30 +94,16 @@ function fmtSize(bytes: number): string {
       type="file"
       :accept="accept"
       :multiple="multiple"
-      style="display: none"
+      class="w-fileupload__input"
       @change="onChange"
     />
-    <ul
-      v-if="files.length"
-      style="
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      "
-    >
-      <li
-        v-for="(f, i) in files"
-        :key="`${f.name}-${i}`"
-        style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem"
-      >
-        <i class="pi pi-file" style="opacity: 0.6" />
-        <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+    <ul v-if="files.length" class="w-fileupload__list">
+      <li v-for="(f, i) in files" :key="`${f.name}-${i}`" class="w-fileupload__item">
+        <i class="pi pi-file w-fileupload__icon" />
+        <span class="w-fileupload__name">
           {{ f.name }}
         </span>
-        <span style="opacity: 0.6">{{ fmtSize(f.size) }}</span>
+        <span class="w-fileupload__size">{{ fmtSize(f.size) }}</span>
         <Button
           type="button"
           icon="pi pi-times"
@@ -132,7 +118,7 @@ function fmtSize(bytes: number): string {
       </li>
     </ul>
     <slot v-else name="empty">
-      <span style="font-size: 0.8rem; opacity: 0.6">Nenhum arquivo selecionado</span>
+      <span class="w-fileupload__empty">Nenhum arquivo selecionado</span>
     </slot>
   </div>
 </template>

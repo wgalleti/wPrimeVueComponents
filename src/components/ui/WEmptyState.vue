@@ -26,7 +26,7 @@ const emit = defineEmits<{
       :label="actionLabel"
       :icon="actionIcon"
       size="small"
-      class="mt-3"
+      class="w-empty-state-action"
       @click="emit('action')"
     />
   </div>

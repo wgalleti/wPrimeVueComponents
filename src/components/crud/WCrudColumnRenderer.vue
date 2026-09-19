@@ -34,13 +34,13 @@ function boolSeverity(
 </script>
 
 <template>
-  <span v-if="value == null" class="text-muted-color text-xs">&mdash;</span>
+  <span v-if="value == null" class="w-cell-empty">&mdash;</span>
 
   <template v-else-if="column.type === 'image'">
     <img
       :src="String(value)"
       :alt="column.header"
-      class="size-9 rounded-lg object-cover ring-1 ring-surface-200 dark:ring-surface-700"
+      class="w-cell-image"
     />
   </template>
 
@@ -56,22 +56,22 @@ function boolSeverity(
     />
   </template>
 
-  <span v-else-if="column.type === 'date'" class="text-muted-color tabular-nums text-[0.8125rem]">
+  <span v-else-if="column.type === 'date'" class="w-cell-date">
     {{ formatDate(value as string) }}
   </span>
 
   <span
     v-else-if="column.type === 'datetime'"
-    class="text-muted-color tabular-nums text-[0.8125rem]"
+    class="w-cell-date"
   >
     {{ formatDateTime(value as string) }}
   </span>
 
-  <span v-else-if="column.type === 'currency'" class="font-semibold tabular-nums text-[0.8125rem]">
+  <span v-else-if="column.type === 'currency'" class="w-cell-number">
     {{ formatCurrency(value as number) }}
   </span>
 
-  <span v-else-if="column.type === 'number'" class="font-semibold tabular-nums text-[0.8125rem]">
+  <span v-else-if="column.type === 'number'" class="w-cell-number">
     {{
       column.format
         ? column.format(value, rowData)
