@@ -38,6 +38,17 @@
   height: var(--w-control-h);
 }
 
+/* Addon do InputGroup (o "R$" do WMoneyInput): tem altura própria no tema
+   (42px) e ficava descolado do input de 38px — segue o mesmo controle. */
+.w-crud-toolbar .p-inputgroupaddon,
+.w-crud-form .p-inputgroupaddon {
+  height: var(--w-control-h);
+  min-width: var(--w-control-h);
+  padding-block: 0;
+  padding-inline: var(--w-control-px);
+  font-size: var(--w-ui-font);
+}
+
 .w-crud-toolbar .p-inputtext,
 .w-crud-form .p-inputtext {
   padding-block: 0;
