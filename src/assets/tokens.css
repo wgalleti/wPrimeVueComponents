@@ -1,0 +1,159 @@
+/* ============================================================
+   wPrimeVue Components — Tokens (a fonte única de valor)
+   ============================================================
+   Todo valor de cor, espaço, raio, tipografia, sombra e movimento que o CSS
+   da suíte usa sai daqui, pelo prefixo `--w-`. Nenhum componente escreve
+   literal nem lê `--p-*` direto: pede o papel (`--w-fg-muted`), não o tom.
+
+   Cada token resolve em três camadas, nesta ordem:
+
+     1. o token do APP com o nome curto (`--fg-muted`, `--space-2`,
+        `--control-h`…) — é o vocabulário da folha de tokens dos projetos e
+        continua sendo honrado; quem já define esses nomes no `:root` não
+        precisa mudar nada;
+     2. o token do PrimeVue (`--p-text-muted-color`…) — acompanha o preset e
+        o tema escuro do app sem a suíte fazer nada;
+     3. o valor fixo da suíte — só para o que o PrimeVue não tem (escala de
+        espaço, tipografia, movimento).
+
+   Para ajustar, sobrescreva DEPOIS de importar o CSS da suíte:
+
+     :root { --w-space-2: 0.625rem }            (o token da suíte, direto)
+     :root { --fg-muted: #5a6573 }              (o nome curto do app — igual)
+     html[data-density='compact'] { --control-h: 32px }   (escopo por atributo
+        no <html>: resolve, porque o `:root` abaixo lê o valor do próprio html)
+
+   Escopo abaixo do <html> (`.compact { --control-h: … }`) NÃO propaga para o
+   `--w-*` — a cadeia é resolvida no `:root`. Nesse caso, sobrescreva o token
+   da suíte no elemento: `.compact { --w-control-h: 2rem }`.
+
+   Cor de STATUS sempre por aqui (`--w-success`…), nunca `--p-green-500`:
+   os `--p-<cor>-500` não trocam com o tema.
+   ============================================================ */
+
+:root {
+  /* ---- Superfície e texto ------------------------------------------------ */
+  --w-surface: var(--surface, var(--p-content-background));
+  --w-surface-2: var(--surface-2, var(--p-content-hover-background));
+  --w-surface-3: var(--surface-3, var(--p-content-hover-background));
+  --w-fg: var(--fg, var(--p-text-color));
+  --w-fg-muted: var(--fg-muted, var(--p-text-muted-color));
+  --w-fg-subtle: var(--fg-subtle, var(--p-text-muted-color));
+  --w-border: var(--border, var(--p-content-border-color));
+  --w-border-strong: var(--border-strong, var(--p-content-border-color));
+
+  /* ---- Marca ------------------------------------------------------------- */
+  --w-primary: var(--primary, var(--p-primary-color));
+  --w-primary-fg: var(--primary-fg, var(--p-primary-contrast-color));
+  --w-primary-soft: var(--primary-soft, color-mix(in srgb, var(--w-primary) 10%, transparent));
+  --w-accent: var(--accent, var(--w-primary));
+
+  /* ---- Status (uma função por cor; o soft é o fundo da mesma cor) -------- */
+  --w-success: var(--success, var(--p-green-500));
+  --w-success-soft: var(--success-soft, color-mix(in srgb, var(--w-success) 12%, transparent));
+  --w-danger: var(--danger, var(--p-red-500));
+  --w-danger-soft: var(--danger-soft, color-mix(in srgb, var(--w-danger) 12%, transparent));
+  --w-warning: var(--warning, var(--p-yellow-500));
+  --w-warning-soft: var(--warning-soft, color-mix(in srgb, var(--w-warning) 12%, transparent));
+  --w-info: var(--info, var(--p-sky-500));
+  --w-info-soft: var(--info-soft, color-mix(in srgb, var(--w-info) 12%, transparent));
+
+  /* ---- Série categórica (gráficos, grupos de abas) — nunca cor de status.
+     OKLCH de croma contido: cor de acento, não de texto. Sem roxo nem rosa
+     (rosa colide com --w-danger). ------------------------------------------ */
+  --w-viz-1: var(--viz-1, oklch(62% 0.14 250)); /* azul */
+  --w-viz-2: var(--viz-2, oklch(64% 0.13 150)); /* verde */
+  --w-viz-3: var(--viz-3, oklch(66% 0.14 45)); /* laranja */
+  --w-viz-4: var(--viz-4, oklch(64% 0.12 195)); /* ciano */
+  --w-viz-5: var(--viz-5, oklch(68% 0.12 95)); /* âmbar */
+  --w-viz-6: var(--viz-6, oklch(60% 0.12 20)); /* terracota */
+
+  /* ---- Espaço ------------------------------------------------------------ */
+  --w-space-05: var(--space-05, 0.125rem); /* hairline: rótulo↔subtítulo, ícones colados */
+  --w-space-1: var(--space-1, 0.25rem);
+  --w-space-15: var(--space-15, 0.375rem); /* entre controles de uma mesma barra */
+  --w-space-2: var(--space-2, 0.5rem);
+  --w-space-3: var(--space-3, 0.75rem);
+  --w-space-4: var(--space-4, 1rem);
+  --w-space-5: var(--space-5, 1.25rem);
+  --w-space-6: var(--space-6, 1.5rem);
+  --w-space-8: var(--space-8, 2rem);
+
+  /* ---- Tipografia -------------------------------------------------------- */
+  --w-text-2xs: var(--text-2xs, 0.6875rem);
+  --w-text-xs: var(--text-xs, 0.75rem);
+  --w-text-sm: var(--text-sm, 0.8125rem);
+  --w-text-base: var(--text-base, 0.875rem);
+  --w-text-md: var(--text-md, 0.9375rem);
+  --w-text-lg: var(--text-lg, 1.0625rem);
+  --w-text-xl: var(--text-xl, 1.25rem);
+  --w-text-2xl: var(--text-2xl, 1.5rem);
+  --w-fw-regular: var(--fw-regular, 400);
+  --w-fw-medium: var(--fw-medium, 500);
+  --w-fw-semibold: var(--fw-semibold, 600);
+  --w-fw-bold: var(--fw-bold, 700);
+  --w-leading-tight: var(--leading-tight, 1.2);
+  --w-leading-snug: var(--leading-snug, 1.35);
+  --w-leading-normal: var(--leading-normal, 1.5);
+  --w-font-mono: var(--font-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
+  --w-tracking-caps: var(--tracking-caps, 0.04em);
+
+  /* ---- Raio -------------------------------------------------------------- */
+  --w-radius-xs: var(--radius-xs, 0.25rem);
+  --w-radius-sm: var(--radius-sm, 0.375rem);
+  --w-radius: var(--radius, 0.5rem);
+  --w-radius-md: var(--radius-md, 0.625rem);
+  --w-radius-lg: var(--radius-lg, 0.75rem);
+  --w-radius-xl: var(--radius-xl, 1rem);
+  --w-radius-full: var(--radius-full, 999px);
+
+  /* ---- Sombra ------------------------------------------------------------ */
+  --w-shadow-xs: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
+  --w-shadow-md: var(--shadow-md, 0 4px 10px rgba(0, 0, 0, 0.08));
+  --w-shadow-lg: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.18));
+  --w-overlay-shadow: var(--p-overlay-popover-shadow, var(--w-shadow-md));
+
+  /* ---- Densidade dos controles ------------------------------------------- */
+  --w-control-h: var(--control-h, 2.375rem);
+  --w-control-h-sm: var(--control-h-sm, 2rem);
+  --w-control-px: var(--control-px, 0.75rem);
+  --w-ui-font: var(--ui-font, var(--w-text-base));
+  --w-touch-h: var(--touch-h, 2.75rem);
+  --w-field-gap: var(--field-gap, 0.375rem);
+  --w-cell-py: var(--cell-py, 0.625rem);
+  --w-card-pad: var(--card-pad, 1.25rem);
+
+  /* ---- Medidas de elemento (o que se repete entre componentes) ----------- */
+  --w-icon-box: var(--icon-box, 2.5rem); /* caixa tonal de ícone: KPI, cabeçalho de seção, trigger da FK */
+  --w-icon-btn: var(--icon-btn, 1.75rem); /* botão só-ícone pequeno: limpar FK, remover linha, fechar aba */
+  --w-empty-icon: var(--empty-icon, 4rem); /* ícone do estado vazio */
+  --w-badge-h: var(--badge-h, 1.25rem); /* contador/badge inline */
+  --w-search-w: var(--search-w, 18rem); /* campo de busca das toolbars */
+  --w-cell-image: var(--cell-image, 2.25rem); /* miniatura em célula de tabela */
+  --w-dialog-sm: var(--dialog-sm, 30rem); /* diálogo curto: confirmação, mensagem */
+  --w-col-narrow: var(--col-narrow, 3rem); /* coluna de seleção/expansor */
+  --w-col-actions: var(--col-actions, 6rem); /* coluna de ações de linha */
+
+  /* ---- Movimento --------------------------------------------------------- */
+  --w-motion-fast: var(--motion-fast, 140ms);
+  --w-motion: var(--motion, 220ms);
+  --w-motion-slow: var(--motion-slow, 380ms);
+  --w-ease: var(--ease, ease);
+  --w-ease-spring: var(--ease-spring, cubic-bezier(0.34, 1.4, 0.64, 1));
+
+  /* ---- Derivados da suíte (já existiam; agora sobre o vocabulário --w-) -- */
+  /* Faixa do zebrado: tint do primário, relativo ao fundo. É color-mix com
+     transparente (não tom sólido) porque a mesma tabela aparece sobre fundos
+     diferentes — card e expansão de outra tabela. Sem variante dark: o app
+     troca o valor de --primary entre os temas. */
+  --w-zebra: color-mix(in srgb, var(--w-primary) 7%, transparent);
+  /* Realce da linha sob o cursor: o mesmo azul, um degrau acima. */
+  --w-row-hover: color-mix(in srgb, var(--w-primary) 14%, transparent);
+}
+
+/* Faixas de largura da suíte — media query não aceita var(); os cortes ficam
+   aqui como documentação e no CSS como literal, mas o valor é UM só:
+     <= 599px  celular          1 coluna
+     <= 839px  tablet retrato   1 painel por vez
+     <= 1199px tablet paisagem  2 painéis
+   (840px é a fronteira medium/expanded do Material — não use 768.) */

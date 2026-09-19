@@ -110,24 +110,16 @@ function abrirMenu(event: MouseEvent, tab: RouteTab): void {
 
 /**
  * Paleta de grupos: 6 séries, cada uma lida de `--w-tab-group-N` (N = 1..6) com
- * fallback nos tokens categóricos do app (`--viz-N`) e, por último, num OKLCH de
- * croma contido — cor de acento, não de texto. É o app quem manda: pode redefinir
- * as seis (ou igualar todas a `--primary`) sem tocar na suite. Um grupo sem
- * `color` explícita cai numa delas de forma estável (hash do nome), então a mesma
- * cor volta a cada sessão. Sem roxo nem rosa: rosa colide com `--danger`.
+ * fallback na série categórica da suíte (`--w-viz-N`, que por sua vez lê o
+ * `--viz-N` do app e cai num OKLCH de croma contido — ver tokens.css). É o app
+ * quem manda: pode redefinir as seis (ou igualar todas a `--primary`) sem tocar
+ * na suite. Um grupo sem `color` explícita cai numa delas de forma estável
+ * (hash do nome), então a mesma cor volta a cada sessão.
  */
-const PALETA_GRUPOS = [
-  'oklch(62% 0.14 250)', // 1 azul
-  'oklch(64% 0.13 150)', // 2 verde
-  'oklch(66% 0.14 45)', // 3 laranja
-  'oklch(64% 0.12 195)', // 4 ciano
-  'oklch(68% 0.12 95)', // 5 âmbar
-  'oklch(60% 0.12 20)', // 6 terracota
-]
+const SERIES_DE_GRUPO = 6
 
-/** Cor da série N (1..6): token do app → série categórica → OKLCH da suite. */
 function corDaSerie(n: number): string {
-  return `var(--w-tab-group-${n}, var(--viz-${n}, ${PALETA_GRUPOS[n - 1]}))`
+  return `var(--w-tab-group-${n}, var(--w-viz-${n}))`
 }
 
 function hashTexto(texto: string): number {
@@ -140,7 +132,7 @@ function hashTexto(texto: string): number {
 function corDoGrupo(tab: RouteTab): string | undefined {
   if (tab.color) return tab.color
   if (!tab.group) return undefined
-  return corDaSerie((hashTexto(tab.group) % PALETA_GRUPOS.length) + 1)
+  return corDaSerie((hashTexto(tab.group) % SERIES_DE_GRUPO) + 1)
 }
 
 function estiloGrupo(tab: RouteTab): Record<string, string> | undefined {

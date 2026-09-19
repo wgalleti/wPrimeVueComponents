@@ -1,0 +1,886 @@
+/* ============================================================
+   wPrimeVue Components — visualização
+   ============================================================
+   WMapSelect (Leaflet) e WKanbanBoard. Valores só via tokens.css
+   (`--w-*`), com a exceção declarada no bloco do mapa.
+   ============================================================ */
+
+/* ==========================================================
+   WMapSelect — .w-map-select
+   ==========================================================
+   EXCEÇÃO DECLARADA (estilo-e-tokens, regra 13): o que fica SOBRE a imagem
+   de satélite não tem tema. Um tile de mapa é a mesma foto no claro e no
+   escuro, então o texto do painel de vidro, o fundo do tooltip e a sombra
+   do card de detalhe são literais de propósito — branco, rgba de vidro,
+   sombra fixa. Tudo o mais (painel lateral, lista, rodapé) usa os tokens.
+   Os z-index (500/600/900) são a escala interna do Leaflet (panes 400–700,
+   controles 800), isolados pelo `isolation: isolate` do root. */
+
+/* Contexto de empilhamento próprio: o Leaflet trabalha com z-index alto por
+   conta própria (panes 400–700, controles 800) e o painel de vidro sobe para
+   900. Sem isolar, esses números competem com a moldura do app (topbar,
+   popovers, máscaras) e o mapa aparece na frente do menu. Com `isolation`, o
+   maior z-index de dentro nunca ultrapassa o `z-index: 0` do próprio mapa. */
+.w-map-select {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
+
+.w-map-select--disabled {
+  opacity: 0.7;
+}
+
+/* Nada seleciona (selectionMode efetivo 'none' — o default do readonly): o
+   polígono deixa de anunciar clique. O cursor de mão prometia uma seleção que
+   não existe; com `selectionMode` explícito, mesmo no readonly, ele volta. */
+.w-map-select--unselectable .leaflet-interactive {
+  cursor: inherit;
+}
+
+.w-map-select__body {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  min-width: 0;
+}
+
+.w-map-select__map {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-md);
+  background: var(--w-surface-3);
+  overflow: hidden;
+}
+
+.w-map-select__canvas {
+  width: 100%;
+  height: var(--w-map-h, 460px);
+}
+
+.w-map-select__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--w-space-2);
+  padding: var(--w-space-6);
+  text-align: center;
+  background: var(--w-surface-2);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-sm);
+}
+
+.w-map-select__fallback i {
+  font-size: var(--w-text-xl);
+  color: var(--w-fg-subtle);
+}
+
+/* Selo "Satélite": vive SOBRE a imagem, então usa tinta própria (escura fixa),
+   não o token de superfície — que no tema claro sumiria no fundo do mapa. */
+.w-map-select__badge {
+  position: absolute;
+  right: var(--w-space-3);
+  top: var(--w-space-3);
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  height: var(--w-icon-btn);
+  padding: 0 var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  background: rgba(15, 31, 48, 0.72);
+  color: #fff;
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+.w-map-select__badge i {
+  font-size: var(--w-text-2xs);
+}
+
+.w-map-select__panel {
+  width: 300px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--w-border);
+  margin-left: var(--w-space-4);
+  padding-left: var(--w-space-4);
+}
+
+.w-map-select__panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-2);
+  padding-bottom: var(--w-space-3);
+}
+
+.w-map-select__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+}
+
+.w-map-select__count {
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--w-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Atalho textual, não ação primária: sem moldura de botão. */
+.w-map-select__clear {
+  margin-left: auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--w-primary);
+  font-family: inherit;
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-medium);
+  cursor: pointer;
+}
+
+.w-map-select__clear:disabled {
+  color: var(--w-fg-subtle);
+  cursor: default;
+}
+
+.w-map-select__list {
+  flex: 1;
+  min-height: 0;
+  max-height: var(--w-map-list-h, 23.75rem);
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--w-space-3);
+}
+
+.w-map-select__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding: var(--w-space-2) var(--w-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--w-radius);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--w-motion-fast) var(--w-ease);
+}
+
+.w-map-select__item:hover:not(:disabled) {
+  background: var(--w-surface-3);
+}
+
+.w-map-select__item:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.w-map-select__box {
+  display: grid;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+  border: 1px solid var(--w-border-strong);
+  border-radius: var(--w-radius-xs);
+  background: var(--w-surface);
+}
+
+.w-map-select__item--on .w-map-select__box {
+  border-color: transparent;
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+}
+
+.w-map-select__box i {
+  font-size: var(--w-text-2xs);
+}
+
+.w-map-select__item-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.w-map-select__item-name {
+  display: block;
+  font-size: var(--w-ui-font);
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg);
+}
+
+.w-map-select__item-sub {
+  display: block;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.w-map-select__item-nogeo {
+  flex: none;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-subtle);
+}
+
+.w-map-select__item-area {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.w-map-select__empty {
+  padding: var(--w-space-4) var(--w-space-2);
+  text-align: center;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+.w-map-select__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  margin-top: var(--w-space-3);
+  padding-top: var(--w-space-3);
+  border-top: 1px solid var(--w-border);
+}
+
+.w-map-select__area {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--w-space-2);
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-map-select__area strong {
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  line-height: 1;
+  color: var(--w-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cartão de detalhe: vive SOBRE a imagem de satélite, então usa superfície
+   opaca própria (o vidro do painel some contra um talhão claro). O conteúdo é
+   do slot — aqui só a caixa, o recorte e a posição. */
+.w-map-select__detail {
+  position: absolute;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-1);
+  max-width: min(22rem, calc(100% - 1.5rem));
+  max-height: calc(100% - 1.5rem);
+  overflow: auto;
+  padding: var(--w-space-3);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-md);
+  background: var(--w-surface);
+  color: var(--w-fg);
+  font-size: var(--w-text-sm);
+  box-shadow: 0 10px 30px rgba(15, 31, 48, 0.28);
+  /* Ancorado no ponto: sobe acima do cursor com uma folga para a seta do mouse. */
+  transform: translate(-50%, calc(-100% - 14px));
+}
+
+/* No hover o cartão não pode receber o ponteiro: ele nasce embaixo do cursor e
+   roubaria o `mouseout` do polígono — o cartão piscaria sem parar. */
+.w-map-select__detail--hover {
+  pointer-events: none;
+}
+
+.w-map-select__detail--abaixo {
+  transform: translate(-50%, 14px);
+}
+
+.w-map-select__detail--canto {
+  left: var(--w-space-3);
+  bottom: var(--w-space-3);
+  top: auto;
+  transform: none;
+}
+
+.w-map-select__detail-nome {
+  font-weight: var(--w-fw-semibold);
+}
+
+.w-map-select__detail-sub {
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+}
+
+/* Rótulo do polígono: texto puro sobre a imagem de satélite. Sem caixa, sem
+   borda — a legibilidade vem do contorno de sombra, não de um fundo opaco. */
+.leaflet-tooltip.w-map-select__tip {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: inherit;
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-bold);
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.92);
+}
+
+.leaflet-tooltip.w-map-select__tip::before {
+  display: none;
+}
+
+.leaflet-tooltip.w-map-select__tip--on {
+  color: #fff;
+}
+
+/* `tooltips="auto"`: o rótulo que não cabe no polígono sai de cena. `display`
+   em vez de `opacity` — o Leaflet segue reposicionando o nó, mas ele não pinta
+   nem custa layout. */
+.leaflet-tooltip.w-map-select__tip--fora {
+  display: none;
+}
+
+/* Régua de medição do rótulo: mesmo CSS do tooltip, fora do fluxo e invisível.
+   `visibility` (não `display`) porque um nó sem caixa não tem o que medir. */
+.leaflet-tooltip.w-map-select__tip--medida {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+}
+
+@media (max-width: 839px) {
+  .w-map-select__body {
+    flex-direction: column;
+  }
+
+  .w-map-select__panel {
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid var(--w-border);
+    margin-left: 0;
+    margin-top: var(--w-space-3);
+    padding-left: 0;
+    padding-top: var(--w-space-3);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * WMapSelect · layout="sobreposto"
+ *
+ * A MARCAÇÃO é a mesma do 'lado-a-lado' — só o posicionamento muda. O painel e
+ * o rodapé continuam irmãos do mapa (não filhos do container do Leaflet), então
+ * flutuam por cima sem que o Leaflet enxergue um evento sequer: nada de
+ * `L.DomEvent.disableClickPropagation`, e arrastar/dar zoom por baixo segue
+ * funcionando onde o vidro não cobre.
+ *
+ * Como as regras do sobreposto têm um nível a mais de especificidade
+ * (`.w-map-select--overlay .w-map-select__x`), elas ganham das regras-base e do
+ * @media 839px acima sem depender da ordem do arquivo.
+ *
+ * Escapes para o consumidor:
+ *   --w-map-panel-w  largura do painel flutuante
+ *   --w-map-inset    respiro entre os flutuantes e a borda do mapa
+ *   --w-map-foot-h   altura da barra de resumo — MEDIDA em runtime pelo
+ *                    componente (o valor aqui é só o antes-de-medir); é ela que
+ *                    reserva o espaço do painel e levanta a atribuição.
+ * ------------------------------------------------------------------------- */
+
+.w-map-select--overlay {
+  --w-map-panel-w: 20rem;
+  --w-map-inset: 0.75rem;
+  --w-map-foot-h: 3.25rem;
+  position: relative;
+}
+
+.w-map-select--overlay .w-map-select__body {
+  position: relative;
+  flex-direction: row;
+}
+
+/* Sem barra de resumo não há o que reservar: o `measureFooter` não roda (o
+   elemento não existe) e o valor ficaria no chute inicial, levantando a
+   atribuição do Leaflet sobre nada. */
+.w-map-select--overlay.w-map-select--readonly {
+  --w-map-foot-h: 0rem;
+}
+
+/* O vidro. Legibilidade sobre satélite é o ponto crítico: o véu sozinho (92% do
+   surface do tema) já garante AA — a lavoura clara e a mata escura sangram só
+   ~8%. O blur é enfeite; o que não pode faltar é o véu. */
+.w-map-select--overlay .w-map-select__panel,
+.w-map-select--overlay .w-map-select__footer {
+  /* Sobre imagem os cinzas de apoio perdem contraste: sobem um degrau,
+     derivados do --fg do tema para continuarem certos no claro E no escuro. */
+  --fg-muted: color-mix(in srgb, var(--w-fg) 74%, transparent);
+  --fg-subtle: color-mix(in srgb, var(--w-fg) 56%, transparent);
+  position: absolute;
+  z-index: 900; /* acima dos controles do Leaflet, que param em 800 */
+  margin: 0;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-md);
+  box-shadow: var(--w-shadow-lg);
+  color: var(--w-fg);
+  /* 1ª declaração = fallback sólido para quem não tem color-mix; a 2ª só vale
+     onde ele existe (o navegador descarta a que não entende). */
+  background: var(--w-surface);
+  background: color-mix(in srgb, var(--w-surface) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* Sem backdrop-filter o véu vira sólido. Texto sobre imagem crua é o único
+   resultado inaceitável — antes opaco que ilegível. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .w-map-select--overlay .w-map-select__panel,
+  .w-map-select--overlay .w-map-select__footer {
+    background: var(--w-surface);
+  }
+}
+
+.w-map-select--overlay .w-map-select__panel {
+  top: var(--w-map-inset);
+  right: var(--w-map-inset);
+  /* para acima da barra de resumo — os dois nunca se cruzam */
+  bottom: calc(var(--w-map-inset) * 2 + var(--w-map-foot-h));
+  width: var(--w-map-panel-w);
+  max-width: calc(100% - var(--w-map-inset) * 2);
+  padding: var(--w-space-2) var(--w-space-3) var(--w-space-3);
+}
+
+.w-map-select--overlay .w-map-select__footer {
+  left: var(--w-map-inset);
+  right: var(--w-map-inset);
+  bottom: var(--w-map-inset);
+  padding: var(--w-space-2) var(--w-space-3);
+}
+
+/* O painel tem altura definida (top + bottom): a lista rola dentro dele em vez
+   do teto fixo do lado-a-lado. */
+.w-map-select--overlay .w-map-select__list {
+  max-height: none;
+  padding-bottom: 0;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+/* Recolher: ícone puro, sem moldura de botão (é gatilho, não ação). */
+.w-map-select__collapse {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  height: 1.5rem;
+  min-width: 1.5rem;
+  justify-content: center;
+  margin-bottom: var(--w-space-1);
+  padding: 0;
+  border: 0;
+  border-radius: var(--w-radius-full);
+  background: transparent;
+  color: var(--w-fg-muted);
+  font-family: inherit;
+  cursor: pointer;
+  transition: color var(--w-motion-fast) var(--w-ease);
+}
+
+.w-map-select__collapse:hover {
+  color: var(--w-fg);
+}
+
+.w-map-select__collapse:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+.w-map-select__collapse i {
+  font-size: var(--w-text-sm);
+}
+
+/* Recolhido o painel É a pílula: busca e lista saem por display:none, então
+   saem junto da ordem de tabulação e da árvore de acessibilidade. */
+.w-map-select--collapsed .w-map-select__panel {
+  bottom: auto;
+  width: auto;
+  padding: 0;
+  border-radius: var(--w-radius-full);
+}
+
+.w-map-select--collapsed .w-map-select__panel-head,
+.w-map-select--collapsed .w-map-select__list {
+  display: none;
+}
+
+.w-map-select--collapsed .w-map-select__collapse {
+  height: 2.25rem;
+  margin: 0;
+  padding: 0 var(--w-space-3);
+  color: var(--w-fg);
+}
+
+.w-map-select__collapse-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--w-badge-h);
+  height: var(--w-badge-h);
+  padding: 0 var(--w-space-1);
+  border-radius: var(--w-radius-full);
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Expandido o contador já está escrito por extenso no painel. */
+.w-map-select--overlay:not(.w-map-select--collapsed) .w-map-select__collapse-count {
+  display: none;
+}
+
+/* O selo "Satélite" mora onde agora fica o painel: passa para a esquerda, ao
+   lado (não embaixo) do zoom do Leaflet. */
+.w-map-select--overlay .w-map-select__badge {
+  right: auto;
+  left: 3.5rem;
+}
+
+/* Controle nativo do Leaflet não pode ficar embaixo do flutuante. A atribuição
+   nasce no canto inferior DIREITO — bem embaixo do painel: ela sobe acima da
+   barra de resumo e troca para a esquerda, a única faixa que nada cobre.
+   (No celular, com a gaveta aberta, ela fica encoberta; ao recolher, reaparece
+   — é o compromisso normal de mapa em tela cheia.) */
+.w-map-select--overlay .leaflet-bottom {
+  margin-bottom: calc(var(--w-map-foot-h) + var(--w-map-inset) + var(--w-space-1));
+}
+
+.w-map-select--overlay .leaflet-bottom.leaflet-right {
+  right: auto;
+  left: 0;
+}
+
+@media (max-width: 839px) {
+  /* Celular em campo: a gaveta ocupa a largura toda embaixo, empilhada acima da
+     barra de resumo. O mapa continua inteiro e o polegar alcança a lista. */
+  .w-map-select--overlay {
+    --w-map-inset: 0.5rem;
+  }
+
+  .w-map-select--overlay .w-map-select__panel {
+    top: auto;
+    left: var(--w-map-inset);
+    right: var(--w-map-inset);
+    width: auto;
+    max-width: none;
+    max-height: 55%;
+  }
+
+  /* Recolhida, a gaveta volta a ser pílula encostada à direita. */
+  .w-map-select--overlay.w-map-select--collapsed .w-map-select__panel {
+    left: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * WDatePicker
+ * ------------------------------------------------------------------------- */
+.w-datepicker {
+  width: 100%;
+}
+
+.w-datepicker .p-iconfield {
+  width: 100%;
+}
+
+.w-datepicker-icon {
+  cursor: pointer;
+  color: var(--w-fg-muted);
+  transition: color var(--w-motion-fast);
+}
+
+.w-datepicker-icon:hover {
+  color: var(--w-primary);
+}
+
+.w-datepicker-icon-disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.w-datepicker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-2);
+}
+
+.w-datepicker-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--w-space-2);
+  border-top: 1px solid var(--w-border);
+  padding-top: var(--w-space-2);
+}
+
+/* Sub-linhas do modal da FK (WAutoCompleteFK `subRows`): mini-grid por linha
+   expandida — o caso "lote + análises" da recomendação. */
+.w-fk-subrows {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--w-text-sm);
+}
+
+.w-fk-subrows th {
+  padding: var(--w-space-1) var(--w-space-3);
+  text-align: right;
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg-muted);
+  white-space: nowrap;
+}
+
+.w-fk-subrows th:first-child,
+.w-fk-subrows td:first-child {
+  text-align: left;
+}
+
+.w-fk-subrows td {
+  padding: var(--w-space-1) var(--w-space-3);
+  text-align: right;
+  border-top: 1px solid var(--w-border);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ==========================================================
+   WKanbanBoard — .w-kanban-board
+   ==========================================================
+   Leitura do board: a cor vive no CABEÇALHO (pílula tintada com o acento da
+   coluna) e o corpo fica transparente — agrupa por espaço, não por caixa. O
+   card é a única superfície branca, com rodapé de metadados separado por fio.
+   Cada coluna publica seu acento em `--w-kanban-accent` (fallback neutro). */
+
+.w-kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--w-space-4);
+  align-items: start;
+}
+
+@media (max-width: 1199px) {
+  .w-kanban-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .w-kanban-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.w-kanban-board--loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.w-kanban-board__column {
+  --w-kanban-accent: var(--w-border-strong);
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-3);
+  min-width: 0;
+}
+
+/* Cabeçalho-pílula: o tint identifica a coluna sem pintar o fundo inteiro. */
+.w-kanban-board__header {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding: 0 var(--w-space-3);
+  height: var(--w-control-h-sm);
+  border-radius: var(--w-radius-md);
+  background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--w-surface));
+  transition:
+    background-color var(--w-motion) var(--w-ease),
+    box-shadow var(--w-motion) var(--w-ease);
+}
+
+.w-kanban-board__title {
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--w-fg));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.w-kanban-board__count {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--w-badge-h);
+  height: var(--w-badge-h);
+  padding: 0 var(--w-space-2);
+  border-radius: var(--w-radius-sm);
+  background: color-mix(in srgb, var(--w-kanban-accent) 26%, var(--w-surface));
+  color: color-mix(in srgb, var(--w-kanban-accent) 82%, var(--w-fg));
+  font-size: var(--w-text-2xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Realce de drop: a pílula acende e a lista ganha moldura tracejada. */
+.w-kanban-board__column--over .w-kanban-board__header {
+  background: color-mix(in srgb, var(--w-kanban-accent) 24%, var(--w-surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
+}
+
+.w-kanban-board__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-2);
+  padding: var(--w-space-1);
+  margin: calc(var(--w-space-1) * -1);
+  border-radius: var(--w-radius-lg);
+  overflow-y: auto;
+  transition:
+    background-color var(--w-motion) var(--w-ease),
+    box-shadow var(--w-motion) var(--w-ease);
+}
+
+.w-kanban-board--dragging .w-kanban-board__list {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 22%, transparent);
+}
+
+.w-kanban-board__column--over .w-kanban-board__list {
+  background: color-mix(in srgb, var(--w-kanban-accent) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
+}
+
+.w-kanban-board__card {
+  border-radius: var(--w-radius-md);
+  background: var(--w-surface);
+  border: 1px solid var(--w-border);
+  box-shadow: var(--w-shadow-xs);
+  padding: var(--w-space-3);
+  cursor: grab;
+  transition:
+    transform var(--w-motion-fast) var(--w-ease),
+    box-shadow var(--w-motion-fast) var(--w-ease),
+    border-color var(--w-motion-fast) var(--w-ease),
+    opacity var(--w-motion-fast) var(--w-ease);
+}
+
+.w-kanban-board__card:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--w-kanban-accent) 40%, var(--w-border));
+  box-shadow: var(--w-shadow-md);
+}
+
+.w-kanban-board__card:active {
+  cursor: grabbing;
+  transform: none;
+}
+
+.w-kanban-board__card:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+/* O card arrastado fica como "vaga" — o conteúdo real está no cursor. */
+.w-kanban-board__card--dragging {
+  opacity: 0.4;
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+.w-kanban-board__card--static {
+  cursor: default;
+}
+
+.w-kanban-board__card--static:hover {
+  transform: none;
+  box-shadow: var(--w-shadow-xs);
+  border-color: var(--w-border);
+}
+
+.w-kanban-board__card-fallback {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg);
+}
+
+/* Linha indicadora da posição de drop. */
+.w-kanban-board__indicator {
+  flex-shrink: 0;
+  height: 2px;
+  margin: -1px 0;
+  border-radius: var(--w-radius-full);
+  background: var(--w-kanban-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--w-kanban-accent) 16%, transparent);
+  animation: w-kanban-indicator var(--w-motion-fast) var(--w-ease);
+}
+
+@keyframes w-kanban-indicator {
+  from {
+    opacity: 0;
+    transform: scaleX(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.w-kanban-board__empty {
+  padding: var(--w-space-5) var(--w-space-3);
+  border: 1px dashed var(--w-border-strong);
+  border-radius: var(--w-radius-md);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-subtle);
+  text-align: center;
+}
+
+.w-kanban-board--dragging .w-kanban-board__empty {
+  border-color: color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
+  color: color-mix(in srgb, var(--w-kanban-accent) 70%, var(--w-fg-muted));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-kanban-board__card,
+  .w-kanban-board__header,
+  .w-kanban-board__list {
+    transition: none;
+  }
+
+  .w-kanban-board__card:hover {
+    transform: none;
+  }
+
+  .w-kanban-board__indicator {
+    animation: none;
+  }
+}
