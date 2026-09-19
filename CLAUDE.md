@@ -121,10 +121,20 @@ Rode `yarn docs:check` antes do commit — o gate (também no CI) valida sidecar
 
 Lembrete: o deploy das docs roda a cada push na main — componente sem doc = buraco imediato no site publicado. No 0.12.0 isso aconteceu (5 componentes sem doc/sidebar); não repetir.
 
+## Padrão de CSS (OBRIGATÓRIO — `yarn style:check` no CI)
+
+- **Todo valor sai de `src/assets/tokens.css`** pelo prefixo `--w-*` (cor, espaço, tipografia, raio, sombra, movimento, densidade, medidas de elemento). Nenhum CSS de componente escreve literal, lê `--p-*` direto ou o nome curto do app (`--fg`, `--space-2`) — `tokens.css` faz a ponte `app → PrimeVue → default`.
+- **CSS mora em `src/assets/<domínio>.css`** (`base`, `crud`, `form`, `ui`, `viz`, `tabs`, `markdown`, `touch` por último) — não em `<style>` do SFC, salvo bloco `scoped` pequeno e também só com tokens. Novo componente: classe `.w-<nome>` (BEM com `__` e `--`) no arquivo do domínio.
+- **Zero utilitária Tailwind e zero `style=""` com literal nos templates**; `:style` só com `var(--w-*)` ou knob por instância (`--w-col-span`).
+- **Sem variante `.dark` à mão** — o tema vem pelo token.
+- **Literal só com exceção declarada**: comentário no fim da linha dizendo por quê (hoje: o que fica sobre a foto de satélite no `WMapSelect` e o palco do `WImageCropper`).
+- Breakpoints: só 599 / 839 / 1199px.
+- Valor que se repete em dois componentes é token que falta nomear — promova em `tokens.css` em vez de copiar.
+
 ## Do NOT
 - Criar instância axios interna — sempre usar a injetada
 - Usar PrimeVue `useStyle()` — styling é responsabilidade do projeto consumidor
-- Importar Tailwind classes hardcoded — usar PrimeVue passthrough tokens
+- Importar Tailwind classes hardcoded nem `style=""` com literal — classe `.w-*` + tokens `--w-*` (ver "Padrão de CSS")
 - Usar `__all__` ou wildcard exports
 - Adicionar dependências pesadas sem discutir antes
 - Quebrar a API pública sem bump de major version
