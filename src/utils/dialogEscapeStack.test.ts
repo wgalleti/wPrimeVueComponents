@@ -72,10 +72,14 @@ function montarPilha(opts: { appendToOculto?: boolean } = {}) {
   return { w, fundo, topo }
 }
 
-/** O Dialog liga o keydown e o z-index no `onEnter` do Transition — roda no próximo frame. */
+/**
+ * O Dialog liga o keydown e o z-index no `onEnter` do Transition, que roda num
+ * frame seguinte — sob carga (suíte inteira) esse frame atrasa, então espera
+ * em passos curtos até um teto folgado em vez de um tempo fixo.
+ */
 async function ticks() {
   await nextTick()
-  await new Promise((r) => setTimeout(r, 30))
+  for (let i = 0; i < 6; i++) await new Promise((r) => setTimeout(r, 25))
 }
 
 describe('patchDialogEscapeStack', () => {
