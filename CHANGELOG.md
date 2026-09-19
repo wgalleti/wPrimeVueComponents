@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.0...v1.1.1) (2026-09-19)
+
+### Correções
+
+* **form:** icon-field padding follows the side the icon is on ([ffa9490](https://github.com/wgalleti/wPrimeVueComponents/commit/ffa9490de1ee57144dd5c6b001a687c3125bfd5c))
 ## [1.1.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.0.0...v1.1.0) (2026-09-19)
 
 ### Funcionalidades
