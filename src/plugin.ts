@@ -11,6 +11,7 @@ import {
   WTreeSelect,
 } from './components'
 import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
+import { patchDialogEscapeStack } from './utils/dialogEscapeStack'
 
 export const WPrimeVuePlugin: Plugin = {
   install(app: App, options: WPluginOptions) {
@@ -37,6 +38,10 @@ export const WPrimeVuePlugin: Plugin = {
     }
     app.provide(W_DATA_PROVIDER_KEY, dataProvider)
     app.provide(W_CONFIG_KEY, config)
+
+    if (options.patchDialogEscape !== false) {
+      patchDialogEscapeStack()
+    }
 
     if (options.registerComponents !== false) {
       app.component('WCrudView', WCrudView)
