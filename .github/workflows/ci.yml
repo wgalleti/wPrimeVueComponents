@@ -29,6 +29,9 @@ jobs:
       - name: Docs checklist (sidecar, ApiTable, sidebar, export)
         run: yarn docs:check
 
+      - name: Style gate (tokens --w-*, sem literal, sem utilitária)
+        run: yarn style:check
+
       - name: Lint
         run: yarn lint
 

@@ -1173,7 +1173,7 @@ function confirmDelete(item: Record<string, unknown>) {
           ref="modalSearchInput"
           v-model="modalSearch"
           placeholder="Pesquisar..."
-          class="w-full"
+          fluid
           autofocus
           @keydown="onModalSearchKeydown"
         />

@@ -583,10 +583,7 @@ onMounted(() => {
         <!-- Table -->
         <div v-if="isView('table')" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->
-          <div
-            v-if="isMultiSelect && crud.selectedItems.value.length"
-            class="w-crud-bulkbar"
-          >
+          <div v-if="isMultiSelect && crud.selectedItems.value.length" class="w-crud-bulkbar">
             <span class="w-crud-bulkbar__count">
               {{ crud.selectedItems.value.length }} selecionado(s)
             </span>
@@ -745,7 +742,11 @@ onMounted(() => {
                     />
                     <Popover ref="chooser">
                       <div class="w-crud-chooser">
-                        <div v-for="col in baseColumns" :key="col.field" class="w-crud-chooser__item">
+                        <div
+                          v-for="col in baseColumns"
+                          :key="col.field"
+                          class="w-crud-chooser__item"
+                        >
                           <Checkbox
                             :model-value="!columnState.hidden.includes(col.field)"
                             :input-id="`wcrud-col-${col.field}`"

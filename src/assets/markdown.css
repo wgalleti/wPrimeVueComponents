@@ -11,7 +11,7 @@
 
 .w-markdown-view {
   font-size: var(--w-text-sm);
-  line-height: 1.7;
+  line-height: var(--w-leading-relaxed);
   color: var(--w-fg);
   overflow-wrap: break-word;
 }
@@ -70,7 +70,7 @@
   font-size: var(--w-text-sm);
   color: var(--w-fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
 }
 
 /* Âncora: só aparece no hover do título, nunca rouba a leitura. */
@@ -131,8 +131,7 @@
 .w-markdown-view a {
   color: var(--w-primary);
   text-decoration: none;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--w-primary) 30%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--w-primary) 30%, transparent);
   transition: border-color var(--w-motion-fast) var(--w-ease);
 }
 
@@ -243,7 +242,7 @@
   margin-left: auto;
   margin-right: var(--w-icon-btn);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
 }
 
@@ -251,7 +250,7 @@
   margin: 0;
   padding: var(--w-space-3) var(--w-space-4);
   overflow-x: auto;
-  line-height: 1.6;
+  line-height: var(--w-leading-normal);
 }
 
 .md-code__pre code {
@@ -391,7 +390,7 @@
   font-weight: var(--w-fw-medium);
   color: var(--w-fg-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--w-tracking-caps);
   white-space: nowrap;
 }
 
@@ -504,7 +503,7 @@
   font-weight: var(--w-fw-medium);
   font-size: var(--w-text-2xs);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
 }
 
 .md-alert__head i {
@@ -599,7 +598,7 @@
 .md-steps ol > li::after {
   content: '';
   position: absolute;
-  left: calc(var(--w-space-3) - 0.5px);
+  left: calc(var(--w-space-3) - 0.5px); /* meio pixel: centra o traço sobre a borda */
   top: 1.75rem;
   bottom: var(--w-space-1);
   width: 1px;
@@ -761,7 +760,7 @@
   color: var(--w-fg-muted);
   font-weight: var(--w-fw-medium);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--w-tracking-caps);
 }
 
 .w-md-toc__busca {
@@ -832,7 +831,7 @@
   padding: var(--w-space-1) 0;
   color: var(--w-fg-muted);
   text-decoration: none;
-  line-height: 1.45;
+  line-height: var(--w-leading-snug);
   transition: color var(--w-motion-fast) var(--w-ease);
 }
 
@@ -1009,7 +1008,7 @@
   color: var(--w-fg);
   font-family: var(--w-font-mono);
   font-size: var(--w-text-sm);
-  line-height: 1.6;
+  line-height: var(--w-leading-normal);
 }
 
 .w-markdown-editor__textarea::placeholder {
