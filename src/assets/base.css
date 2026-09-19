@@ -55,12 +55,20 @@
   padding-inline: var(--w-control-px);
 }
 
-/* Busca com ícone: a regra de padding acima apaga o espaço que o IconField
+/* Campo com ícone: a regra de padding acima apaga o espaço que o IconField
    reserva para o ícone — devolve aqui, onde quer que o IconField esteja
-   (toolbar, busca do WTransferList/WTreeSelect dentro do form, subview). */
-.w-crud-toolbar .p-iconfield .p-inputtext,
-.w-crud-form .p-iconfield .p-inputtext {
+   (toolbar, busca do WTransferList/WTreeSelect dentro do form, subview), e
+   do LADO em que o ícone está: busca tem o ícone antes do input; o WDatePicker
+   tem o calendário depois — reservar sempre à esquerda deixava um vão em
+   branco antes da data. */
+.w-crud-toolbar .p-iconfield > .p-inputicon:first-child ~ .p-inputtext,
+.w-crud-form .p-iconfield > .p-inputicon:first-child ~ .p-inputtext {
   padding-inline-start: calc(var(--w-control-px) * 2 + var(--w-space-4));
+}
+
+.w-crud-toolbar .p-iconfield > .p-inputtext:has(~ .p-inputicon),
+.w-crud-form .p-iconfield > .p-inputtext:has(~ .p-inputicon) {
+  padding-inline-end: calc(var(--w-control-px) * 2 + var(--w-space-4));
 }
 
 .w-crud-toolbar .p-select-label,
