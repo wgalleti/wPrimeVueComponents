@@ -64,5 +64,6 @@ Detalhes de `useCrudManager`, `ColumnDef`, `FieldDef` (todos os tipos e props): 
 - Registre o `WPrimeVuePlugin` **depois** de `PrimeVue`, `ToastService` e `ConfirmationService` — os componentes usam Toast/Confirm.
 - O `axios` passado ao plugin deve já ter `baseURL` e auth configurados.
 - Importe o CSS **uma vez**: `import '@wgalleti/primevue-components/style.css'`.
+- Esc fechando **todos** os dialogs empilhados (form + FK inline, confirm sobre dialog): o plugin já corrige isso no `install()` (`patchDialogEscape`, default `true`) — apague qualquer patch local em `Dialog.methods.onKeyDown` que o projeto tenha feito à mão.
 - "No PrimeVue Toast provided" / inject quebrado em **monorepo com a lib aliased pra source**: adicione `resolve.dedupe: ['vue', 'primevue']` no `vite.config`. (Instalação normal via npm não precisa.)
 - Resposta da API precisa ser `{ data, page, page_size, rows }`. Erros no formato DRF (`{ detail }`, `{ campo: [erros] }`).

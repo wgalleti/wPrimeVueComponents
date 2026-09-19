@@ -66,6 +66,19 @@ interface WPluginOptions {
    * Default: 'BRL'
    */
   currency?: string
+
+  /**
+   * Registra os componentes W* globalmente.
+   * Default: true
+   */
+  registerComponents?: boolean
+
+  /**
+   * Corrige o Dialog/Drawer do PrimeVue 4 para o Esc fechar so o overlay
+   * do topo (nativo fecha todos os empilhados).
+   * Default: true
+   */
+  patchDialogEscape?: boolean
 }
 ```
 
@@ -106,6 +119,24 @@ Sem registro global, importe diretamente:
 import { WCrudView } from '@wgalleti/primevue-components'
 </script>
 ```
+
+## Esc em dialogs empilhados
+
+No PrimeVue 4.x cada `Dialog`/`Drawer` aberto registra o proprio `keydown` no `document` e fecha no Escape **sem checar se e o do topo**. Com dois modais abertos — form do CRUD + criacao inline de FK, `ConfirmDialog` sobre um dialog — um Esc fecha os dois de uma vez.
+
+O plugin aplica, no `install()`, um patch nos metodos de teclado do `Dialog` e do `Drawer`: com mais de um overlay visivel, so o do topo (maior z-index da mascara) responde ao Esc; os demais esperam a vez. Um overlay so mantem o comportamento nativo. Dialogs pendurados no pane de uma aba **oculta** (`WDialog` + `useRouteTabs`) nao entram na pilha nem reagem ao Esc.
+
+Como `primevue` e peer dependency, o patch cobre tambem os dialogs do proprio projeto — nao so os da lib. Para desligar (ou aplicar por conta propria):
+
+```typescript
+app.use(WPrimeVuePlugin, { axios: api, patchDialogEscape: false })
+
+// manual, antes do mount — idempotente
+import { patchDialogEscapeStack } from '@wgalleti/primevue-components'
+patchDialogEscapeStack()
+```
+
+> O PrimeVue 5 corrige isso nativamente; o patch vira no-op na migracao.
 
 ## Heranca de Fontes (Tipografia)
 
