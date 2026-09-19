@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.0.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.2...v1.0.0) (2026-09-19)
+
+Primeira versão estável. O que a marca: um vocabulário único de tokens (`--w-*`, `tokens.css`)
+para todo o CSS da suíte, com retrocompatibilidade para quem já define os nomes curtos do app;
+gate de estilo no CI (`yarn style:check`); e o Esc em dialogs empilhados resolvido no plugin.
+Guia de migração: `docs/migration.md` › "Migrando para o CSS por tokens".
+
+### ⚠ BREAKING CHANGES
+
+* **styles:** overriding the short app tokens on an element below
+  <html> (e.g. `.compact { --control-h: 32px }`) no longer reaches the
+  suite — override the suite token there instead (`--w-control-h`). The
+  :root and html[data-*] forms keep working. Breakpoints moved to 599/839/
+  1199px.
+
+### Funcionalidades
+
+* **styles:** single --w- token vocabulary, stylesheets split by domain ([af019a2](https://github.com/wgalleti/wPrimeVueComponents/commit/af019a22e6fa252ba6c77a6f59ae005f5cef4549))
+* **ui:** apply the visual findings of the css audit ([0e8be53](https://github.com/wgalleti/wPrimeVueComponents/commit/0e8be53b52aa6d91ce0813f7b79048af32897cc6))
+
+### Correções
+
+* **form:** input-group addon follows the control height ([21cd282](https://github.com/wgalleti/wPrimeVueComponents/commit/21cd2828d0a89a58fd57c02c72e84d3d25f2752d))
+* **plugin:** esc closes only the top dialog in stacked overlays ([e641104](https://github.com/wgalleti/wPrimeVueComponents/commit/e641104bb86eac21a10730a8051414413c77e54d))
+* **styles:** resolve the five blocking findings of the css audit ([1443586](https://github.com/wgalleti/wPrimeVueComponents/commit/1443586a8b06ce7a03ae6756cfbb5677aed0cb19))
+
+### Refatorações
+
+* **components:** semantic w- classes replace utilities and inline styles ([eedefb7](https://github.com/wgalleti/wPrimeVueComponents/commit/eedefb7e5a86d5e81d16facc6598074ca6f69db0))
+
+### Documentação
+
+* **css:** token contract, migration notes and the css standard rules ([a4928a4](https://github.com/wgalleti/wPrimeVueComponents/commit/a4928a4c0aeb8ee91b04d956f61b47bc4b4c93b1))
+* **css:** wave 1 audit report of tokens, literals and rendered screens ([0b97bff](https://github.com/wgalleti/wPrimeVueComponents/commit/0b97bfffdc006f75af1402484f797d42ff116dc6))
+* **plugin:** document patchDialogEscape and the stacked-dialog fix ([6ca26d2](https://github.com/wgalleti/wPrimeVueComponents/commit/6ca26d2c44e655879d16fa614c554d7b6a6ebb50))
 ## [0.32.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v0.32.1...v0.32.2) (2026-09-18)
 
 ### Correções
