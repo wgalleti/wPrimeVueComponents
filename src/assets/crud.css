@@ -525,6 +525,12 @@
   min-height: var(--w-control-h);
 }
 
+/* O switch nunca encolhe: com rótulo de duas linhas o item flex cedia largura
+   e a pista ficava com 26px — meio knob. Largura é do tema, não da linha. */
+.w-crud-form-switch > .p-toggleswitch {
+  flex: none;
+}
+
 .w-crud-form-switch-label {
   font-size: var(--w-text-base);
   font-weight: var(--w-fw-medium);
