@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.2...v1.1.3) (2026-09-20)
+
+### Correções
+
+* **form:** toggle switch keeps its width beside a two-line label ([9e5898c](https://github.com/wgalleti/wPrimeVueComponents/commit/9e5898c89e6df6177be107e39554bf70d5450d53))
 ## [1.1.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.1...v1.1.2) (2026-09-20)
 
 ### Correções
