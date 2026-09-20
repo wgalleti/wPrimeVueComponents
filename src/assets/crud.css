@@ -434,10 +434,12 @@
 }
 
 /* Form fields grid — nº de colunas controlado por --w-form-cols
-   (prop `columns` do WFormRenderer / `fieldGroup.columns`; default 2) */
+   (prop `columns` do WFormRenderer / `fieldGroup.columns`; default 2).
+   minmax(0, 1fr): uma coluna nunca cresce pelo conteúdo (um segmented
+   `nowrap` alargava a sua e espremia as FKs vizinhas até uma letra). */
 .w-crud-form-fields {
   display: grid;
-  grid-template-columns: repeat(var(--w-form-cols), 1fr);
+  grid-template-columns: repeat(var(--w-form-cols), minmax(0, 1fr));
   gap: var(--w-space-4) var(--w-space-4);
 }
 
@@ -449,6 +451,20 @@
 
 .w-crud-form-col-half {
   grid-column: span var(--w-col-span, 1); /* knob por campo, via :style */
+}
+
+/* Tablet em pé: no máximo duas colunas — quatro em 800px dá 170px por
+   campo, curto para uma FK. O span de cada campo é limitado junto. */
+@media (max-width: 839px) {
+  .w-crud-form-fields {
+    grid-template-columns: repeat(min(var(--w-form-cols), 2), minmax(0, 1fr));
+  }
+
+  .w-crud-form-col-full,
+  .w-crud-form-col-half,
+  .w-crud-form-switch {
+    grid-column: span min(var(--w-col-span, 1), 2); /* knob por campo, via :style */
+  }
 }
 
 /* Mobile: uma coluna, campos empilhados */

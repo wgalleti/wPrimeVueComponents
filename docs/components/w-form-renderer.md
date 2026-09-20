@@ -58,6 +58,19 @@ continuar apontando para ele:
 
 O `WCrudFormDialog` usa `WFormRenderer` internamente — a API externa do dialog nao mudou.
 
+## Grade de colunas e largura da tela
+
+`columns` (ou `fieldGroup.columns`) define a grade no desktop; cada campo ocupa `colSpan`
+colunas. As colunas têm sempre a mesma largura — o conteúdo de um campo (um `segmented`
+largo, por exemplo) nunca alarga a sua coluna às custas das vizinhas. A grade segue a régua
+599 / 839px sozinha, sem a tela pedir:
+
+| Largura | Colunas | `colSpan` |
+|---|---|---|
+| ≥ 840px | `columns` | como declarado |
+| 600–839px (tablet em pé) | no máximo 2 | limitado a 2 |
+| ≤ 599px (celular) | 1 | campos empilhados |
+
 ## Tipos de Campo Suportados
 
 Todos os tipos do `FieldDef` sao suportados:
