@@ -6,7 +6,7 @@ export type {
   UseApiReturn,
 } from './api'
 
-export type { ColumnDef, ColumnType } from './column'
+export type { ColumnDef, ColumnFilter, ColumnType, TagSeverity } from './column'
 
 export type {
   FieldDef,

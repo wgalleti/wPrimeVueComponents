@@ -168,6 +168,9 @@ export interface FieldDef {
   max?: number
   minFractionDigits?: number
   maxFractionDigits?: number
+  /** `type: 'number'` — `false` desliga o separador de milhar: ano, código, número de
+   *  documento (2020, não 2.020). Default `true`. */
+  useGrouping?: boolean
   prefix?: string
   suffix?: string
   /** For 'currency' fields — render WMoneyInput (digit entry filled from the

@@ -64,3 +64,48 @@ describe('WCrudColumnRenderer — type boolean', () => {
     expect(montar(col, null).text()).toBe('—')
   })
 })
+
+describe('WCrudColumnRenderer — enum/status com tagValue e tagSeverity', () => {
+  const rotulos: Record<string, string> = { draft: 'Rascunho', published: 'Publicado' }
+  const col: ColumnDef = {
+    field: 'status',
+    header: 'Status',
+    tagValue: (v) => rotulos[String(v)] ?? String(v),
+    tagSeverity: (v) => (v === 'published' ? 'success' : 'secondary'),
+  }
+
+  it('coluna sem type vira tag com o rótulo e a cor da opção', () => {
+    const w = montar(col, 'published')
+    expect(w.text()).toBe('Publicado')
+    expect(w.find('.p-tag').classes()).toContain('w-tag--success')
+    const w2 = montar(col, 'draft')
+    expect(w2.find('.p-tag').classes()).toContain('w-tag--secondary')
+  })
+
+  it('só tagSeverity: o rótulo cai no format e depois no valor cru', () => {
+    const w = montar({ field: 'fase', header: 'Fase', tagSeverity: () => 'info' }, 'A')
+    expect(w.text()).toBe('A')
+    expect(w.find('.p-tag').classes()).toContain('w-tag--info')
+  })
+
+  it('valor nulo continua como traço', () => {
+    expect(montar(col, null).text()).toBe('—')
+  })
+})
+
+describe('WCrudColumnRenderer — format vence o formatador do tipo', () => {
+  it('currency com format renderiza o texto próprio', () => {
+    const col: ColumnDef = {
+      field: 'preco',
+      header: 'Valor',
+      type: 'currency',
+      format: (v, row) => (row?.pago ? `R$ ${v}` : 'Grátis'),
+    }
+    expect(montar(col, 0, { pago: false }).text()).toBe('Grátis')
+  })
+
+  it('date sem format segue formatando pela suíte', () => {
+    const col: ColumnDef = { field: 'data', header: 'Data', type: 'date' }
+    expect(montar(col, '2026-09-21').text()).toBe('21/09/2026')
+  })
+})

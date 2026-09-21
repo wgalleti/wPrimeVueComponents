@@ -190,6 +190,34 @@ Renderizacao customizada de um campo do formulario:
 </template>
 ```
 
+### `image-{field}`
+
+Upload proprio para um campo `type: 'image'`. Diferente do `field-{field}`, o renderer
+mantem o rotulo, a largura (`colSpan`), o `hint` e o erro do campo — o slot so troca o
+controle (ex.: upload direto para um storage em vez do `WImageCropper`):
+
+```vue
+<template #image-foto="{ field, formData }">
+  <MeuUpload :model-value="formData.foto" @update:model-value="(v) => crud.setFormField('foto', v)" />
+</template>
+```
+
+### `after-fields` e `aside`
+
+Os mesmos slots do [WCrudFormDialog](./w-crud-form-dialog): `after-fields` entra depois
+dos campos (previa, aviso dependente do preenchimento) e `aside` vira o painel lateral,
+com o form em duas colunas — a foto do cadastro ao lado dos campos, o documento filho que
+acompanha o preenchimento. A largura do painel vem da prop `aside-width` (default: metade
+do dialog). Ambos recebem `{ formData, isEditing }`.
+
+```vue
+<WCrudView :crud="crud" title="Professores" dialog-width="760px" aside-width="16rem">
+  <template #aside="{ formData }">
+    <FotoDoProfessor :path="formData.foto" />
+  </template>
+</WCrudView>
+```
+
 ## Tabela e cards
 
 A visão alterna entre `table` (linha) e `cards` pelo botão da toolbar; `defaultView` decide a
