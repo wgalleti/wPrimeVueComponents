@@ -231,3 +231,73 @@ describe('WCrudView — filtros de coluna moram na toolbar do grid', () => {
     w.unmount()
   })
 })
+
+describe('WCrudView — slots do form dialog repassados pela tela', () => {
+  function montarComSlots(slots: Record<string, () => unknown>, props: Record<string, unknown> = {}) {
+    const provider: Partial<DataProvider> = {
+      list: vi.fn().mockResolvedValue({ data: [], page: 1, page_size: 20, rows: 0 }),
+    }
+    let crudRef: ReturnType<typeof useCrudManager<Linha>> | null = null
+    const Host = defineComponent({
+      setup() {
+        const crud = useCrudManager<Linha>({
+          endpoint: '/itens',
+          columns: [{ field: 'nome', header: 'Nome' }],
+          form: [
+            { field: 'nome', label: 'Nome', type: 'text' },
+            { field: 'foto', label: 'Foto', type: 'image' },
+          ],
+        })
+        crudRef = crud
+        return () => h(WCrudView, { crud, title: 'Itens', ...props }, slots)
+      },
+    })
+    const w = mount(Host, {
+      attachTo: document.body,
+      global: {
+        plugins: [PrimeVue],
+        directives: { tooltip: Tooltip },
+        provide: {
+          [W_DATA_PROVIDER_KEY as symbol]: provider as DataProvider,
+          [W_CONFIG_KEY as symbol]: { defaultPageSize: 20, locale: 'pt-BR', currency: 'BRL' },
+        },
+        stubs: { teleport: true },
+      },
+    })
+    return { w, crud: crudRef! }
+  }
+
+  it('sem #aside o form do dialog fica em uma coluna', async () => {
+    const { w, crud } = montarComSlots({})
+    await flushPromises()
+    crud.openCreateDialog()
+    await w.vm.$nextTick()
+    const form = w.find('form.w-crud-form')
+    expect(form.exists()).toBe(true)
+    expect(form.classes()).not.toContain('w-crud-form--with-aside')
+    // Campo `image` sem slot próprio cai no upload padrão da suíte.
+    expect(form.find('[role="group"] .w-imgcropper').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('#image-<campo>, #after-fields e #aside chegam ao dialog, com a largura do painel', async () => {
+    const { w, crud } = montarComSlots(
+      {
+        'image-foto': () => h('p', { class: 'upload-proprio' }, 'meu upload'),
+        'after-fields': () => h('p', { class: 'previa' }, 'prévia'),
+        aside: () => h('p', { class: 'painel' }, 'lateral'),
+      },
+      { asideWidth: '18rem' },
+    )
+    await flushPromises()
+    crud.openCreateDialog()
+    await w.vm.$nextTick()
+    const form = w.find('form.w-crud-form')
+    expect(form.classes()).toContain('w-crud-form--with-aside')
+    expect((form.element as HTMLElement).style.getPropertyValue('--w-form-aside')).toBe('18rem')
+    expect(form.find('.w-crud-form-main .upload-proprio').text()).toBe('meu upload')
+    expect(form.find('.w-crud-form-main .previa').text()).toBe('prévia')
+    expect(form.find('.w-crud-form-aside .painel').text()).toBe('lateral')
+    w.unmount()
+  })
+})

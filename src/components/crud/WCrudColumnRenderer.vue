@@ -22,6 +22,29 @@ function boolLabel(column: ColumnDef, value: unknown, rowData: Record<string, un
   return value ? (column.trueLabel ?? 'Ativo') : (column.falseLabel ?? 'Inativo')
 }
 
+// --- Enum/status em qualquer tipo de coluna ---------------------------
+// `tagValue`/`tagSeverity` numa coluna que não é boolean (status, tipo, fase)
+// também viram tag: o rótulo vem do `tagValue` (ou `format`, ou o valor cru) e a
+// cor do `tagSeverity` (default `secondary`).
+
+function isTagColumn(column: ColumnDef) {
+  return Boolean(column.tagValue || column.tagSeverity)
+}
+
+function tagLabel(column: ColumnDef, value: unknown, rowData: Record<string, unknown>) {
+  if (column.tagValue) return column.tagValue(value, rowData)
+  if (column.format) return column.format(value, rowData)
+  return String(value)
+}
+
+function tagSeverity(
+  column: ColumnDef,
+  value: unknown,
+  rowData: Record<string, unknown>,
+): TagSeverity {
+  return (column.tagSeverity?.(value, rowData) as TagSeverity | undefined) ?? 'secondary'
+}
+
 function boolSeverity(
   column: ColumnDef,
   value: unknown,
@@ -52,16 +75,25 @@ function boolSeverity(
     />
   </template>
 
+  <Tag
+    v-else-if="isTagColumn(column)"
+    :value="tagLabel(column, value, rowData)"
+    :severity="tagSeverity(column, value, rowData) as any"
+    :class="['w-tag', `w-tag--${tagSeverity(column, value, rowData)}`]"
+  />
+
+  <!-- `format` é o render próprio da célula e vence o formatador do tipo — é o que
+       deixa uma coluna `currency` dizer "Grátis" ou uma `date` mostrar "hoje". -->
   <span v-else-if="column.type === 'date'" class="w-cell-date">
-    {{ formatDate(value as string) }}
+    {{ column.format ? column.format(value, rowData) : formatDate(value as string) }}
   </span>
 
   <span v-else-if="column.type === 'datetime'" class="w-cell-date">
-    {{ formatDateTime(value as string) }}
+    {{ column.format ? column.format(value, rowData) : formatDateTime(value as string) }}
   </span>
 
   <span v-else-if="column.type === 'currency'" class="w-cell-number">
-    {{ formatCurrency(value as number) }}
+    {{ column.format ? column.format(value, rowData) : formatCurrency(value as number) }}
   </span>
 
   <span v-else-if="column.type === 'number'" class="w-cell-number">

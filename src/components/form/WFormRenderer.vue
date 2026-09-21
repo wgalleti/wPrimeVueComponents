@@ -784,6 +784,7 @@ defineExpose({ validateAll, clearErrors })
                 :max="field.max"
                 :min-fraction-digits="field.minFractionDigits"
                 :max-fraction-digits="field.maxFractionDigits"
+                :use-grouping="field.useGrouping !== false"
                 :suffix="field.suffix"
                 :prefix="field.prefix"
                 :placeholder="field.placeholder"

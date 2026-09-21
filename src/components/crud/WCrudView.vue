@@ -49,6 +49,9 @@ const props = withDefaults(
     /** Nº de colunas do grid do form dialog (default: `formColumns` da config
      *  do useCrudManager, senão 2). */
     formColumns?: number
+    /** Largura da coluna do slot `#aside` do form dialog (track do grid: `'24rem'`,
+     *  `'2fr'`…). Default: metade do dialog. Só vale com o slot preenchido. */
+    asideWidth?: string
     autoInit?: boolean
     showKpi?: boolean
     kpiIcon?: string
@@ -1172,6 +1175,7 @@ onMounted(() => {
         :width="dialogWidth"
         :form-columns="formColumns ?? crud.config.formColumns"
         :keyboard-nav="crud.config.keyboardNav"
+        :aside-width="asideWidth"
         @update:visible="
           (v) => {
             crud.dialogVisible.value = v
@@ -1187,6 +1191,23 @@ onMounted(() => {
           #[`field-${field.field}`]="scope"
         >
           <slot :name="`field-${field.field}`" v-bind="scope" />
+        </template>
+        <!-- Os slots do form dialog que a tela também pode preencher: upload próprio
+             de um campo `image`, conteúdo depois dos campos e o painel lateral. Só
+             são repassados quando a tela os fornece — `#aside` vazio ligaria o layout
+             de duas colunas sem nada dentro. -->
+        <template
+          v-for="field in crud.config.form.filter((f) => f.type === 'image')"
+          :key="`img-${field.field}`"
+          #[`image-${field.field}`]="scope"
+        >
+          <slot :name="`image-${field.field}`" v-bind="scope" />
+        </template>
+        <template v-if="$slots['after-fields']" #after-fields="scope">
+          <slot name="after-fields" v-bind="scope" />
+        </template>
+        <template v-if="$slots.aside" #aside="scope">
+          <slot name="aside" v-bind="scope" />
         </template>
       </WCrudFormDialog>
     </slot>

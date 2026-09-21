@@ -57,6 +57,7 @@ interface FieldDef {
   max?: number
   minFractionDigits?: number
   maxFractionDigits?: number
+  useGrouping?: boolean // number: false desliga o separador de milhar (ano, código)
   prefix?: string
   suffix?: string
 

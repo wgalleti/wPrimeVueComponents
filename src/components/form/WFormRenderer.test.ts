@@ -396,3 +396,20 @@ describe('WFormRenderer — rótulo programático (WCAG 1.3.1 / 3.3.2)', () => {
     expect(w.find('input.custom').attributes('id')).toMatch(/-nome$/)
   })
 })
+
+describe('FieldDef type: number — useGrouping', () => {
+  it('agrupa milhar por padrão e deixa de agrupar com useGrouping: false', async () => {
+    const w = montar(
+      [
+        { field: 'quantidade', label: 'Quantidade', type: 'number' },
+        { field: 'ano', label: 'Ano', type: 'number', useGrouping: false },
+      ],
+      { quantidade: 2020, ano: 2020 },
+    )
+    await w.vm.$nextTick()
+    const inputs = w.findAll('input.p-inputnumber-input')
+    expect((inputs[0].element as HTMLInputElement).value).toBe('2.020')
+    expect((inputs[1].element as HTMLInputElement).value).toBe('2020')
+    w.unmount()
+  })
+})

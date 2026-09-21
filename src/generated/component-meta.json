@@ -408,6 +408,13 @@
           "description": "Nº de colunas do grid do form dialog (default: `formColumns` da config\ndo useCrudManager, senão 2)."
         },
         {
+          "name": "asideWidth",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Largura da coluna do slot `#aside` do form dialog (track do grid: `'24rem'`,\n`'2fr'`…). Default: metade do dialog. Só vale com o slot preenchido."
+        },
+        {
           "name": "autoInit",
           "type": "boolean | undefined",
           "required": false,
@@ -622,6 +629,16 @@
         {
           "name": "form-dialog",
           "type": "{ crud: CrudManagerReturn<any>; dialogWidth: string; }",
+          "description": ""
+        },
+        {
+          "name": "after-fields",
+          "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "aside",
+          "type": "{ formData: Record<string, unknown>; isEditing: boolean; }",
           "description": ""
         },
         {

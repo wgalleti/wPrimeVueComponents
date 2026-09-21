@@ -28,10 +28,14 @@ export interface ColumnDef {
   style?: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
+  /** Render próprio da célula. Vence o formatador do tipo (`currency`, `date`, `datetime`, `number`). */
   format?: (value: unknown, rowData?: Record<string, unknown>) => string
   visible?: boolean
   decimals?: number
+  /** Rótulo da tag. Em qualquer tipo de coluna (status, tipo, fase): a presença de
+   *  `tagValue` ou `tagSeverity` já renderiza a célula como tag. */
   tagValue?: (value: unknown, rowData?: Record<string, unknown>) => string
+  /** Cor da tag (nomes do PrimeVue). Default `secondary` fora do boolean. */
   tagSeverity?: (value: unknown, rowData?: Record<string, unknown>) => string
   /** `type: 'boolean'` — rótulo do `true` (default 'Ativo'). `tagValue` tem prioridade. */
   trueLabel?: string
