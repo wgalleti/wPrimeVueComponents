@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.3...v1.2.0) (2026-09-21)
+
+### Funcionalidades
+
+* **crud:** WCrudView repassa aside, image-* e after-fields; tag em qualquer coluna ([c98d2e4](https://github.com/wgalleti/wPrimeVueComponents/commit/c98d2e48756e6568c3071741d3ba227867501007))
 ## [1.1.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.2...v1.1.3) (2026-09-20)
 
 ### Correções
