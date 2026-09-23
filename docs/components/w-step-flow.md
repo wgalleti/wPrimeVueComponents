@@ -86,6 +86,20 @@ flow (`StepFlowContext.orientation`), então **não há prop nova no consumidor*
   quem importa é o título). Abaixo de 768px ele volta, porque cada etapa tem a linha inteira.
 - Teclado: os cabeçalhos são botões (continuam todos no Tab) e ← → / Home / End andam pela régua.
 
+### Régua longa — `labels="active"`
+
+Com muitas etapas (a partir de umas seis), os títulos lado a lado só cabem cortados ("Pro…",
+"Ide…") e a pessoa não sabe onde está. `labels="active"` mostra **só o título da etapa aberta**;
+as outras ficam na badge, com o título no tooltip nativo e no botão para o leitor de tela.
+Quem estica é a linha conectora, então as badges se espalham por igual e o título aberto nunca
+é cortado.
+
+```vue
+<WStepFlow v-model="etapa" orientation="horizontal" labels="active">…</WStepFlow>
+```
+
+Vale só na régua (a partir de 840px). Empilhado e na vertical, todos os títulos aparecem.
+
 ## Detalhes
 
 - **Qual etapa abre depois** é decisão da tela (é por isso que o estado mora no consumidor).
@@ -104,6 +118,7 @@ flow (`StepFlowContext.orientation`), então **não há prop nova no consumidor*
 |---|---|
 | `.w-step-flow--vertical` / `.w-step-flow--horizontal` | Container, por orientação |
 | `.w-step-section--horizontal` | Etapa dentro do flow horizontal |
+| `.w-step-flow--labels-active` | Container com `labels="active"` |
 | `.w-step-section--open` / `.w-step-section--done` | Etapa ativa / já percorrida (horizontal) |
 | `.w-step-section__head` / `.w-step-section__panel` | Trecho da régua / corpo da etapa ativa |
 | `.w-step-section__badge--done` / `.w-step-section__line--done` | Marcação do percorrido |

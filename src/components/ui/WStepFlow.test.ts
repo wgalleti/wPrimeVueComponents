@@ -195,6 +195,45 @@ describe('WStepFlow — régua horizontal', () => {
   })
 })
 
+describe('WStepFlow — labels na régua', () => {
+  const regua = (labels?: string) =>
+    montar({ modelValue: 2, orientation: 'horizontal', ...(labels ? { labels } : {}) })
+
+  it('padrão all: nenhum modificador e nenhum tooltip', () => {
+    const w = regua()
+    expect(w.find('.w-step-flow').classes()).not.toContain('w-step-flow--labels-active')
+    expect(cabecalhos(w).map((b) => b.attributes('title'))).toEqual([
+      undefined,
+      undefined,
+      undefined,
+    ])
+  })
+
+  it('active: modificador no container e título no tooltip só das fechadas', () => {
+    const w = regua('active')
+    expect(w.find('.w-step-flow').classes()).toContain('w-step-flow--labels-active')
+    expect(cabecalhos(w).map((b) => b.attributes('title'))).toEqual([
+      'Contexto',
+      undefined,
+      'Resumo',
+    ])
+  })
+
+  it('active: o título continua no botão (leitor de tela)', () => {
+    const w = regua('active')
+    expect(cabecalhos(w).map((b) => b.find('.w-step-section__title').text())).toEqual([
+      'Contexto',
+      'Sementes',
+      'Resumo',
+    ])
+  })
+
+  it('active na vertical não põe tooltip', () => {
+    const w = montar({ modelValue: 2, labels: 'active' })
+    expect(cabecalhos(w).every((b) => b.attributes('title') === undefined)).toBe(true)
+  })
+})
+
 describe('WStepSection — avulso (sem WStepFlow)', () => {
   it('abre e fecha sozinho, começando aberto', async () => {
     const w = mount(WStepSection, { props: { step: 1, title: 'Etapa' }, slots: { default: 'x' } })
