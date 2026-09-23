@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.3.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.2.0...v1.3.0) (2026-09-23)
+
+### Funcionalidades
+
+* **ui:** WStepFlow labels="active" mostra só o título da etapa aberta na régua ([cf021b6](https://github.com/wgalleti/wPrimeVueComponents/commit/cf021b660cfba148acae636605fff94e1cc8ffa3))
 ## [1.2.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.1.3...v1.2.0) (2026-09-21)
 
 ### Funcionalidades
