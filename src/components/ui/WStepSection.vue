@@ -45,6 +45,11 @@ const hasLine = computed(() => flow !== null)
  * continua exatamente como era.
  */
 const done = computed(() => horizontal.value && flow != null && props.step < flow.active.value)
+/** Régua que só mostra o título da etapa aberta: a fechada leva o título no
+ *  tooltip nativo (o texto continua no botão, escondido só visualmente). */
+const tooltip = computed(() =>
+  horizontal.value && flow?.labels?.value === 'active' && !open.value ? props.title : undefined,
+)
 
 function toggle() {
   if (isDisabled.value) return
@@ -119,6 +124,7 @@ function toggle() {
         :aria-expanded="open"
         :aria-current="open ? 'step' : undefined"
         :disabled="isDisabled"
+        :title="tooltip"
         @click="toggle"
       >
         <span

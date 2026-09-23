@@ -13,6 +13,12 @@ import type { ComputedRef, InjectionKey } from 'vue'
 /** Como o flow arruma as etapas: coluna (padrão) ou régua no topo. */
 export type StepFlowOrientation = 'vertical' | 'horizontal'
 
+/**
+ * Que títulos a régua horizontal mostra: todos (padrão) ou só o da etapa aberta.
+ * `active` é para régua longa, em que os títulos lado a lado só caberiam cortados.
+ */
+export type StepFlowLabels = 'all' | 'active'
+
 export interface StepFlowContext {
   /** Etapa aberta. `0` = todas fechadas. */
   active: ComputedRef<number>
@@ -25,6 +31,8 @@ export interface StepFlowContext {
    * Fora de um flow a etapa assume `vertical` (card colapsável avulso).
    */
   orientation: ComputedRef<StepFlowOrientation>
+  /** Títulos da régua horizontal. Na vertical não muda nada. */
+  labels?: ComputedRef<StepFlowLabels>
 }
 
 export const W_STEP_FLOW_KEY: InjectionKey<StepFlowContext> = Symbol('w-step-flow')

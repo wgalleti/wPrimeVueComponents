@@ -40,5 +40,22 @@ export default defineComponentMeta({
 <WStepSection :step="3" title="Resumo para o TS" />`,
       },
     },
+    {
+      name: 'Régua longa (só o título ativo)',
+      description:
+        'labels="active": com muitas etapas, só a aberta mostra o título; as outras ficam no número, com o título no tooltip. As linhas esticam e o título aberto não é cortado.',
+      props: { modelValue: 4, orientation: 'horizontal', labels: 'active' },
+      slots: {
+        default: `<WStepSection :step="1" title="Finalidade" />
+<WStepSection :step="2" title="Proprietários" />
+<WStepSection :step="3" title="Identificação" />
+<WStepSection :step="4" title="Situação jurídica">
+  <p>Corpo da etapa ativa, na largura inteira…</p>
+</WStepSection>
+<WStepSection :step="5" title="Operação" />
+<WStepSection :step="6" title="Mídia" />
+<WStepSection :step="7" title="Revisão" />`,
+      },
+    },
   ],
 })

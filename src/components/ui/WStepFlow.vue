@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue'
-import { W_STEP_FLOW_KEY, type StepFlowOrientation } from '@/utils/stepFlow'
+import { W_STEP_FLOW_KEY, type StepFlowLabels, type StepFlowOrientation } from '@/utils/stepFlow'
 
 /**
  * Etapas numeradas e colapsáveis (a espinha do editor de documento).
@@ -21,12 +21,20 @@ const props = withDefaults(
      * para o empilhamento vertical (a régua não cabe).
      */
     orientation?: StepFlowOrientation
+    /**
+     * Títulos da régua horizontal: `all` mostra todos lado a lado; `active` só o
+     * da etapa aberta — as outras ficam no número, com o título no tooltip e
+     * para o leitor de tela. Use `active` quando a régua é longa e os títulos
+     * sairiam cortados. Empilhado (abaixo de 840px) e na vertical, todos aparecem.
+     */
+    labels?: StepFlowLabels
     /** Trava o clique no cabeçalho de todas as etapas. */
     disabled?: boolean
   }>(),
   {
     modelValue: 0,
     orientation: 'vertical',
+    labels: 'all',
     disabled: false,
   },
 )
@@ -36,13 +44,14 @@ const emit = defineEmits<{ 'update:modelValue': [step: number] }>()
 const active = computed(() => props.modelValue)
 const disabled = computed(() => props.disabled)
 const orientation = computed(() => props.orientation)
+const labels = computed(() => props.labels)
 
 function toggle(step: number) {
   if (props.disabled) return
   emit('update:modelValue', props.modelValue === step ? 0 : step)
 }
 
-provide(W_STEP_FLOW_KEY, { active, toggle, disabled, orientation })
+provide(W_STEP_FLOW_KEY, { active, toggle, disabled, orientation, labels })
 
 const root = ref<HTMLElement | null>(null)
 
@@ -77,7 +86,12 @@ function onKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div ref="root" class="w-step-flow" :class="`w-step-flow--${orientation}`" @keydown="onKeydown">
+  <div
+    ref="root"
+    class="w-step-flow"
+    :class="[`w-step-flow--${orientation}`, { 'w-step-flow--labels-active': labels === 'active' }]"
+    @keydown="onKeydown"
+  >
     <slot />
   </div>
 </template>

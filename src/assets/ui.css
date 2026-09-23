@@ -1069,6 +1069,52 @@
   .w-step-section__line--done {
     background: var(--w-border-strong);
   }
+
+  /* `labels="active"` — régua longa: só a etapa aberta mostra o título; as
+     outras ficam na badge. Quem estica é a linha conectora (não o título), então
+     as badges se espalham por igual e o título aberto nunca é cortado. */
+  .w-step-flow--labels-active > .w-step-section--horizontal > .w-step-section__head {
+    flex: 1 1 auto;
+  }
+
+  .w-step-flow--labels-active > .w-step-section:first-child > .w-step-section__head {
+    flex: none;
+  }
+
+  .w-step-flow--labels-active .w-step-section__trigger {
+    flex: none;
+  }
+
+  .w-step-flow--labels-active .w-step-section__line {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: var(--w-space-3);
+  }
+
+  .w-step-flow--labels-active .w-step-section--horizontal .w-step-section__title {
+    overflow: visible;
+  }
+
+  /* Fechada: título fora da vista, mas no botão (leitor de tela e tooltip). */
+  .w-step-flow--labels-active
+    .w-step-section--horizontal:not(.w-step-section--open)
+    .w-step-section__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .w-step-flow--labels-active
+    .w-step-section--horizontal:not(.w-step-section--open)
+    :is(.w-step-section__count, .w-step-section__summary) {
+    display: none;
+  }
 }
 
 /* Na régua o resumo só entra quando sobra espaço de verdade: entre 840px e
