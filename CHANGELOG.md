@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.3.0...v1.4.0) (2026-09-26)
+
+### Funcionalidades
+
+* **charts:** `WChart` ganha `clickable` e o evento `select` (`ChartSelectEvent`: `{ seriesName, seriesIndex, name, dataIndex, value, data }`) no clique de um item de série. Com `clickable`, a option recebe `cursor: 'pointer'` e `emphasis.focus: 'self'` onde a série não declara os seus. Sem a prop, nada muda: nenhuma emissão e a option passa intacta. O listener é solto no re-init (tema/renderer) e no unmount.
+* **ui:** `WKpiCard` ganha `to` (vira `RouterLink`), evento `click` (com listener, vira botão de teclado: `role="button"`, Tab, Enter/Espaço), `spark` (sparkline SVG decorativa na cor da severidade) e `size: 'default' | 'compact'`. `KpiItem` ganha `to`, `spark`, `size` e `severity: 'neutral'`; `WKpiGrid` repassa os três, ganha `size` (para a grade toda) e emite `item-click` (`KpiItemClickEvent`: `{ item, index }`). Conteúdo interativo dentro de card clicável precisa de `@click.stop`.
+* **ui:** `WMeter` — realizado × meta com percentual, barra (`role="meter"`), marcador de ritmo (`expected`, "esperado hoje") e cor automática pelo ritmo (`meterSeverity`, exportado). Sem meta, mostra o valor e "sem meta".
+* **formatters:** `useFormatters` ganha `formatCurrencyCompact` (`R$ 1,2 mi`) e `formatNumberCompact` (`12,5 mil`).
+* **tokens:** `--w-icon-box-sm`, `--w-spark-h`, `--w-meter-h`.
+
+### Correções
+
+* **abas:** `useRouteTabs` não restaura do storage a aba cuja rota sumiu, virou `redirect` ou deixou de passar em `isTabRoute` — antes ela voltava como aba que nunca fica ativa (rota aposentada entre versões).
+
+### Mudança visível
+
+* **ui:** `WKpiGrid dense` agora também deixa os cards `compact` (antes só apertava o vão). Para manter os cards cheios numa grade densa, use `<WKpiGrid dense size="default">` (ou `size: 'default'` no item). Precedência: `item.size` → `size` da grade → `dense` → `default`.
+
+Commits: [28a6a52](https://github.com/wgalleti/wPrimeVueComponents/commit/28a6a52401a12fab5cd8211ee414f2b34f0b55d1) · [57af7f3](https://github.com/wgalleti/wPrimeVueComponents/commit/57af7f3e341e0163e7c531370c9daac61828ea88)
+
 ## [1.3.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.2.0...v1.3.0) (2026-09-23)
 
 ### Funcionalidades
