@@ -14,6 +14,12 @@ function criarRouter(): Router {
       { path: '/clientes', name: 'clientes', component: Tela },
       { path: '/notas/:id', name: 'nota-editor', component: Tela, props: true },
       { path: '/livre', name: 'livre', component: Tela },
+      { path: '/antiga', redirect: '/clientes' },
+      {
+        path: '/modulo',
+        redirect: '/modulo/painel',
+        children: [{ path: 'painel', name: 'modulo-painel', component: Tela }],
+      },
     ],
   })
 }
@@ -338,6 +344,28 @@ describe('useRouteTabs — persistência', () => {
     expect(api.activeKey.value).toBe('/notas/2')
     expect(api.isLive('/notas/2')).toBe(true)
     expect(api.isLive('/clientes')).toBe(false) // shell: só hidrata ao ativar
+  })
+
+  it('aba salva que virou redirect, sumiu ou saiu de isTabRoute não volta', async () => {
+    dados['w-route-tabs'] = JSON.stringify({
+      v: 1,
+      activeKey: '/clientes',
+      tabs: [
+        { key: '/clientes', fullPath: '/clientes', title: 'clientes', closable: true },
+        { key: '/antiga', fullPath: '/antiga?x=1', title: 'antiga', closable: true },
+        { key: '/sumiu', fullPath: '/sumiu', title: 'sumiu', closable: true },
+        { key: '/livre', fullPath: '/livre', title: 'livre', closable: true },
+        { key: '/modulo/painel', fullPath: '/modulo/painel', title: 'painel', closable: true },
+      ],
+    })
+    api = useRouteTabs({
+      router: (router = criarRouter()),
+      storage: criarStorage(dados),
+      isTabRoute: (r) => r.path !== '/livre',
+    })
+    await router.push('/notas/1')
+    // filha de pai com `redirect` continua: só o último registro conta
+    expect(api.tabs.value.map((t) => t.key)).toEqual(['/clientes', '/modulo/painel', '/notas/1'])
   })
 
   it('storageKey mudou (outro usuário, sem reload) → zera e restaura as certas', async () => {

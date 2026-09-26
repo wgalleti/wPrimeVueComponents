@@ -145,9 +145,24 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
       if (state?.v !== 1 || !Array.isArray(state.tabs)) return
       tabs.value = state.tabs
         .filter((t) => t && typeof t.key === 'string' && typeof t.fullPath === 'string')
+        .filter((t) => stillATab(t.fullPath))
         .map((t) => ({ ...t, hydrated: false, remount: 0 }))
     } catch {
       /* estado corrompido = começar sem abas */
+    }
+  }
+
+  /** Aba salva cuja rota sumiu, virou redirecionamento ou deixou de ser aba (a URL
+   *  mudou entre versões) não volta: viraria uma aba que nunca fica ativa. */
+  function stillATab(fullPath: string): boolean {
+    try {
+      const resolved = router.resolve(fullPath)
+      // Só o último registro redireciona de fato; pai de layout com `redirect` é comum.
+      const last = resolved.matched[resolved.matched.length - 1]
+      if (!last || last.redirect) return false
+      return isTabRoute(resolved as unknown as RouteLocationNormalizedLoaded)
+    } catch {
+      return false
     }
   }
 
