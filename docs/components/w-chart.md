@@ -41,6 +41,20 @@ const option = computed(() =>
 )
 ```
 
+## Clique no item
+
+Com `clickable`, o item de dado ganha cursor de mão e realce sob o mouse
+(`emphasis.focus: 'self'`, só onde a série não declara o seu) e o clique emite `select`
+com `{ seriesName, seriesIndex, name, dataIndex, value, data }`. Sem `clickable` nada é
+emitido e a option passa intacta.
+
+Linha sem marcador (`showSymbol: false`) não tem item clicável: declare
+`triggerLineEvent: true` na série para o clique na linha emitir `select`.
+
+```vue
+<WChart :option="option" clickable @select="({ name }) => filtrarPorMes(name)" />
+```
+
 Impressão (PDF quase mono):
 
 ```vue

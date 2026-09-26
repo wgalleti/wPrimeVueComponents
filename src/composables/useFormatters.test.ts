@@ -20,6 +20,14 @@ describe('useFormatters — moeda/numero/percentual (default pt-BR)', () => {
     expect(f.formatNumber(null)).toBe('—')
   })
 
+  it('formatCurrencyCompact / formatNumberCompact: notação compacta pt-BR', () => {
+    expect(f.formatCurrencyCompact(1234567).replace(spaces, ' ')).toBe('R$ 1,2 mi')
+    expect(f.formatCurrencyCompact(2000000).replace(spaces, ' ')).toBe('R$ 2 mi')
+    expect(f.formatCurrencyCompact(950.5).replace(spaces, ' ')).toBe('R$ 950,50')
+    expect(f.formatNumberCompact(12500).replace(spaces, ' ')).toBe('12,5 mil')
+    expect(f.formatCurrencyCompact(null)).toBe('—')
+  })
+
   it('formatPercent: sufixo % com 2 casas', () => {
     expect(f.formatPercent(15)).toBe('15,00%')
     expect(f.formatPercent(null)).toBe('—')

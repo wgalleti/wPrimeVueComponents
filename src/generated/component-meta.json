@@ -52,9 +52,22 @@
           "required": false,
           "default": "\"\"",
           "description": "Altura CSS do gráfico (default: token `--chart-h`, senão 18rem)."
+        },
+        {
+          "name": "clickable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Item de dado clicável: cursor de mão, realce do item sob o mouse e o\nevento `select` no clique. Desligado, o gráfico não emite nada."
         }
       ],
-      "events": [],
+      "events": [
+        {
+          "name": "select",
+          "type": "[event: ChartSelectEvent]",
+          "description": ""
+        }
+      ],
       "slots": [
         {
           "name": "empty",
@@ -2070,9 +2083,36 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "to",
+          "type": "string | kt | Tt | undefined",
+          "required": false,
+          "default": null,
+          "description": "Destino ao clicar: o card vira um RouterLink (exige vue-router instalado).\nSem `to`, um listener de `@click` torna o card um botão de teclado."
+        },
+        {
+          "name": "spark",
+          "type": "number[] | undefined",
+          "required": false,
+          "default": null,
+          "description": "Série da sparkline (ordem cronológica). Desenhada na cor da severidade,\ndecorativa (aria-hidden) — o número que importa é o `value`. Pontos\nNaN/null são descartados."
+        },
+        {
+          "name": "size",
+          "type": "\"default\" | \"compact\" | undefined",
+          "required": false,
+          "default": "\"default\"",
+          "description": "`compact`: menos respiro, ícone menor ao lado do rótulo, valor menor."
         }
       ],
-      "events": [],
+      "events": [
+        {
+          "name": "click",
+          "type": "[event: MouseEvent | KeyboardEvent]",
+          "description": ""
+        }
+      ],
       "slots": [
         {
           "name": "icon",
@@ -2123,10 +2163,23 @@
           "type": "boolean | undefined",
           "required": false,
           "default": "false",
+          "description": "Grade densa: vão menor entre os cards e, sem `size` na grade nem no\nitem, cards no tamanho `compact`."
+        },
+        {
+          "name": "size",
+          "type": "\"default\" | \"compact\" | undefined",
+          "required": false,
+          "default": null,
+          "description": "Tamanho de todos os cards. Precedência: `item.size` → `size` da grade →\n`dense` (compact) → default."
+        }
+      ],
+      "events": [
+        {
+          "name": "item-click",
+          "type": "[event: KpiItemClickEvent]",
           "description": ""
         }
       ],
-      "events": [],
       "slots": [
         {
           "name": "item",
@@ -2496,6 +2549,95 @@
       ],
       "slots": []
     },
+    "WMeter": {
+      "file": "src/components/ui/WMeter.vue",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "value",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Realizado até agora."
+        },
+        {
+          "name": "goal",
+          "type": "number | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Meta do período. `null`/0: sem barra, só o valor e \"sem meta\"."
+        },
+        {
+          "name": "expected",
+          "type": "number | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Ritmo: onde o valor deveria estar hoje. Vira o marcador na barra."
+        },
+        {
+          "name": "format",
+          "type": "\"number\" | \"currency\" | \"percent\" | undefined",
+          "required": false,
+          "default": "\"number\"",
+          "description": "Formato de valor, meta e ritmo."
+        },
+        {
+          "name": "notation",
+          "type": "\"compact\" | \"standard\" | undefined",
+          "required": false,
+          "default": "\"compact\"",
+          "description": "`compact`: `R$ 1,2 mi`; `standard`: `R$ 1.234.567,00`."
+        },
+        {
+          "name": "hint",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "severity",
+          "type": "MeterSeverity | undefined",
+          "required": false,
+          "default": null,
+          "description": "Cor da barra. Sem valor, sai do ritmo: success no ritmo (ou meta batida,\nsem ritmo), warning até 10% abaixo do ritmo, danger abaixo disso; sem\nritmo e abaixo da meta, primary; sem meta, neutral."
+        },
+        {
+          "name": "size",
+          "type": "\"default\" | \"compact\" | undefined",
+          "required": false,
+          "default": "\"default\"",
+          "description": "`compact`: menos respiro e valor menor (grade densa de metas)."
+        },
+        {
+          "name": "to",
+          "type": "string | kt | Tt | undefined",
+          "required": false,
+          "default": null,
+          "description": "Destino ao clicar: vira RouterLink (exige vue-router instalado)."
+        }
+      ],
+      "events": [
+        {
+          "name": "click",
+          "type": "[event: MouseEvent | KeyboardEvent]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "hint",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WPageHeader": {
       "file": "src/components/ui/WPageHeader.vue",
       "props": [
@@ -2763,6 +2905,13 @@
           "required": false,
           "default": "\"vertical\"",
           "description": "`vertical` empilha as etapas numa coluna (cada uma é um card).\n`horizontal` põe os cabeçalhos lado a lado numa régua e abre só o corpo da\netapa ativa embaixo, na largura inteira — abaixo de 768px cai sozinho\npara o empilhamento vertical (a régua não cabe)."
+        },
+        {
+          "name": "labels",
+          "type": "StepFlowLabels | undefined",
+          "required": false,
+          "default": "\"all\"",
+          "description": "Títulos da régua horizontal: `all` mostra todos lado a lado; `active` só o\nda etapa aberta — as outras ficam no número, com o título no tooltip e\npara o leitor de tela. Use `active` quando a régua é longa e os títulos\nsairiam cortados. Empilhado (abaixo de 840px) e na vertical, todos aparecem."
         },
         {
           "name": "disabled",

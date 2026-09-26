@@ -48,7 +48,7 @@ export type { RowAction } from './action'
 export type { CrudLabels } from './labels'
 export { DEFAULT_CRUD_LABELS } from './labels'
 
-export type { KpiItem } from './kpi'
+export type { KpiItem, KpiItemClickEvent } from './kpi'
 
 export type { CrudManagerConfig, CrudManagerReturn } from './manager'
 

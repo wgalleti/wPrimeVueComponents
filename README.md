@@ -225,6 +225,7 @@ Veja [WFormRenderer](./docs/components/w-form-renderer.md) para exemplos complet
 - [WActionBar](./docs/components/w-action-bar.md)
 - [WKpiCard](./docs/components/w-kpi-card.md)
 - [WKpiGrid](./docs/components/w-kpi-grid.md)
+- [WMeter](./docs/components/w-meter.md)
 - [WProgressFlow](./docs/components/w-progress-flow.md)
 - [WStepFlow / WStepSection](./docs/components/w-step-flow.md)
 - [WEditableTable](./docs/components/w-editable-table.md)
