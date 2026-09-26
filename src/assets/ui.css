@@ -515,6 +515,251 @@
   color: var(--w-fg-muted);
 }
 
+/* Tom do card (sparkline): a mesma cor da severidade que pinta o ícone. */
+.w-kpi-card,
+.w-meter {
+  --w-card-tone: var(--w-primary);
+  --w-card-tone-soft: var(--w-primary-soft);
+}
+
+.w-kpi-card--success,
+.w-meter--success {
+  --w-card-tone: var(--w-success);
+  --w-card-tone-soft: var(--w-success-soft);
+}
+
+.w-kpi-card--warning,
+.w-meter--warning {
+  --w-card-tone: var(--w-warning);
+  --w-card-tone-soft: var(--w-warning-soft);
+}
+
+.w-kpi-card--danger,
+.w-meter--danger {
+  --w-card-tone: var(--w-danger);
+  --w-card-tone-soft: var(--w-danger-soft);
+}
+
+.w-kpi-card--info,
+.w-meter--info {
+  --w-card-tone: var(--w-info);
+  --w-card-tone-soft: var(--w-info-soft);
+}
+
+.w-kpi-card--neutral,
+.w-meter--neutral {
+  --w-card-tone: var(--w-fg-muted);
+  --w-card-tone-soft: var(--w-surface-2);
+}
+
+/* Card que é ação (to / @click): RouterLink ou role="button". O link não
+   herda sublinhado nem cor de link; hover e foco pela borda e sombra. */
+.w-kpi-card--interactive,
+.w-meter--interactive {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color var(--w-motion-fast) var(--w-ease),
+    box-shadow var(--w-motion-fast) var(--w-ease);
+}
+
+.w-kpi-card--interactive:hover,
+.w-meter--interactive:hover {
+  border-color: var(--w-border-strong);
+  box-shadow: var(--w-shadow-md);
+}
+
+.w-kpi-card--interactive:focus-visible,
+.w-meter--interactive:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+.w-kpi-card__spark {
+  display: block;
+  width: 100%;
+  height: var(--w-spark-h);
+  margin-top: auto;
+  overflow: visible;
+  color: var(--w-card-tone);
+}
+
+.w-kpi-card__spark-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.w-kpi-card__spark-area {
+  fill: var(--w-card-tone-soft);
+  stroke: none;
+}
+
+/* Compacto: menos respiro, ícone menor na mesma linha do rótulo. */
+.w-kpi-card--compact {
+  gap: var(--w-space-2);
+  padding: var(--w-space-3);
+}
+
+.w-kpi-card--compact .w-kpi-card__header {
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--w-space-2);
+}
+
+.w-kpi-card--compact .w-kpi-card__icon {
+  flex-shrink: 0;
+  width: var(--w-icon-box-sm);
+  height: var(--w-icon-box-sm);
+  border-radius: var(--w-radius-md);
+  font-size: var(--w-text-sm);
+}
+
+.w-kpi-card--compact .w-kpi-card__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.w-kpi-card--compact .w-kpi-card__trend {
+  margin-left: auto;
+}
+
+.w-kpi-card--compact .w-kpi-card__value {
+  font-size: var(--w-text-xl);
+}
+
+.w-kpi-card--compact .w-kpi-card__hint {
+  font-size: var(--w-text-xs);
+}
+
+/* WMeter — realizado × meta. O cartão é o mesmo do KPI; a barra é um trilho
+   no tom suave da severidade com o preenchimento escalado (scaleX, anima por
+   transform) e o ritmo como um traço vertical fino. */
+.w-meter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-2);
+  min-height: 100%;
+  padding: var(--w-card-pad);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+}
+
+.w-meter__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--w-space-2);
+}
+
+.w-meter__label {
+  min-width: 0;
+  font-size: var(--w-text-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--w-tracking-caps);
+  color: var(--w-fg-muted);
+  font-weight: var(--w-fw-semibold);
+}
+
+.w-meter__percent {
+  flex-shrink: 0;
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-card-tone);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-meter__figures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--w-space-1);
+}
+
+.w-meter__value {
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  line-height: var(--w-leading-tight);
+  color: var(--w-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.w-meter__goal,
+.w-meter__no-goal {
+  font-size: var(--w-text-sm);
+  color: var(--w-fg-muted);
+}
+
+.w-meter__no-goal {
+  color: var(--w-fg-subtle);
+}
+
+.w-meter__track {
+  position: relative;
+  height: var(--w-meter-h);
+  border-radius: var(--w-radius-full);
+  background: var(--w-card-tone-soft);
+}
+
+.w-meter__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--w-card-tone);
+  transform: scaleX(var(--w-meter-fill));
+  transform-origin: left center;
+  transition: transform var(--w-motion-slow) var(--w-ease);
+}
+
+/* Ritmo: traço um pouco mais alto que o trilho, na cor do texto (contrasta
+   com o preenchimento e com o trilho nos dois temas). */
+.w-meter__pace {
+  position: absolute;
+  top: calc(var(--w-space-05) * -2);
+  bottom: calc(var(--w-space-05) * -2);
+  left: calc(var(--w-meter-pace) * 100%);
+  width: 2px;
+  border-radius: var(--w-radius-full);
+  background: var(--w-fg);
+  transform: translateX(-50%);
+}
+
+.w-meter__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.w-meter__hint {
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+.w-meter--compact {
+  gap: var(--w-space-1);
+  padding: var(--w-space-3);
+}
+
+.w-meter--compact .w-meter__value {
+  font-size: var(--w-text-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-kpi-card--interactive,
+  .w-meter--interactive,
+  .w-meter__fill {
+    transition: none;
+  }
+}
+
 /* Etapas sem moldura: o que diz "você está aqui" é o marcador cheio e o
    rótulo em destaque, não uma caixa por passo. Um trilho fino liga os
    marcadores — verde até onde já foi, neutro daí em diante. */

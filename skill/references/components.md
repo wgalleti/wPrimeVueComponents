@@ -56,7 +56,7 @@ Autocomplete inline + modal de pesquisa (tabela paginada, CRUD embutido opcional
 
 ## UI (layout/apresentação)
 
-`WPageHeader`, `WDetailHeader`, `WSectionHeader`, `WFormSection`, `WActionBar`, `WEmptyState`, `WStatusTag` (mapeia status→cor/label), `WInfoCard`, `WKpiCard`/`WKpiGrid`, `WProgressFlow`. Use-os para padronizar cabeçalhos, KPIs e estados vazios em vez de montar com Tailwind cru.
+`WPageHeader`, `WDetailHeader`, `WSectionHeader`, `WFormSection`, `WActionBar`, `WEmptyState`, `WStatusTag` (mapeia status→cor/label), `WInfoCard`, `WKpiCard`/`WKpiGrid` (com `to`, `@click`/`@item-click`, sparkline `spark` e `size="compact"`), `WMeter` (realizado × meta com marcador de ritmo), `WProgressFlow`. Use-os para padronizar cabeçalhos, KPIs, metas e estados vazios em vez de montar com Tailwind cru. `WChart clickable @select` para drill-down no item do gráfico.
 
 ## Composables úteis
 

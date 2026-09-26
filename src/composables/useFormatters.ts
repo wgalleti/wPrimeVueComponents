@@ -46,6 +46,20 @@ function getCurrencyFormatter(locale: string, currency: string): Intl.NumberForm
   return fmt
 }
 
+function getCompactFormatter(locale: string, currency?: string): Intl.NumberFormat {
+  const key = `${locale}-compact-${currency ?? ''}`
+  let fmt = numberFormatters.get(key)
+  if (!fmt) {
+    fmt = new Intl.NumberFormat(locale, {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+      ...(currency ? { style: 'currency' as const, currency } : {}),
+    })
+    numberFormatters.set(key, fmt)
+  }
+  return fmt
+}
+
 export function useFormatters() {
   const config = inject<WPluginConfig>(W_CONFIG_KEY, {
     defaultPageSize: 20,
@@ -81,8 +95,23 @@ export function useFormatters() {
     return `${getNumberFormatter(locale, 2).format(value)}%`
   }
 
+  /** Moeda em notação compacta: `R$ 1,2 mi`, `R$ 350 mil`. Abaixo de mil, o formato cheio. */
+  function formatCurrencyCompact(value: number | null | undefined): string {
+    if (value == null) return '—'
+    if (Math.abs(value) < 1000) return formatCurrency(value)
+    return getCompactFormatter(locale, currencyCode).format(value)
+  }
+
+  /** Número em notação compacta: `12,5 mil`, `1,2 mi`. Abaixo de mil, até uma casa. */
+  function formatNumberCompact(value: number | null | undefined): string {
+    if (value == null) return '—'
+    return getCompactFormatter(locale).format(value)
+  }
+
   return {
     formatCurrency,
+    formatCurrencyCompact,
+    formatNumberCompact,
     formatNumber,
     formatDate,
     formatDateTime,

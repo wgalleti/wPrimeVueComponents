@@ -179,6 +179,19 @@ interface KpiItem {
   label: string
   value: string | number
   color?: string
+  severity?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'
+  hint?: string
+  loading?: boolean
+  trend?: { value: string; direction?: 'up' | 'down' | 'neutral' }
+  to?: RouteLocationRaw // o card vira RouterLink
+  spark?: number[] // sparkline na cor da severidade
+  size?: 'default' | 'compact' // sem valor, segue o `dense` do WKpiGrid
+}
+
+/** Payload do `item-click` do WKpiGrid. */
+interface KpiItemClickEvent {
+  item: KpiItem
+  index: number
 }
 ```
 

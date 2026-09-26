@@ -129,6 +129,12 @@
     --icon-box,
     2.5rem
   ); /* caixa tonal de ícone: KPI, cabeçalho de seção, trigger da FK */
+  --w-icon-box-sm: var(
+    --icon-box-sm,
+    1.75rem
+  ); /* caixa tonal de ícone na variante compacta (KPI, meta) */
+  --w-spark-h: var(--spark-h, 2rem); /* altura da sparkline do KPI */
+  --w-meter-h: var(--meter-h, 0.5rem); /* trilho da barra de meta (WMeter) */
   --w-icon-btn: var(
     --icon-btn,
     1.75rem

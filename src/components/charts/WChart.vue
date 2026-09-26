@@ -14,6 +14,9 @@ import {
   buildLoadingOptions,
   buildPrintTheme,
   loadEcharts,
+  toChartSelectEvent,
+  withClickable,
+  type ChartSelectEvent,
   type WChartOption,
 } from '@/utils/chart'
 
@@ -34,6 +37,11 @@ const props = withDefaults(
     print?: boolean
     /** Altura CSS do gráfico (default: token `--chart-h`, senão 18rem). */
     height?: string
+    /**
+     * Item de dado clicável: cursor de mão, realce do item sob o mouse e o
+     * evento `select` no clique. Desligado, o gráfico não emite nada.
+     */
+    clickable?: boolean
   }>(),
   {
     loading: false,
@@ -42,8 +50,14 @@ const props = withDefaults(
     renderer: 'canvas',
     print: false,
     height: '',
+    clickable: false,
   },
 )
+
+const emit = defineEmits<{
+  /** Clique num item de dado (só com `clickable`). */
+  select: [event: ChartSelectEvent]
+}>()
 
 const container = ref<HTMLElement | null>(null)
 const chart = shallowRef<EChartsType | null>(null)
@@ -55,7 +69,21 @@ let themeObserver: MutationObserver | null = null
 
 const applyOption = () => {
   if (!chart.value) return
-  chart.value.setOption(props.option as never, true)
+  const option = props.clickable ? withClickable(props.option) : props.option
+  chart.value.setOption(option as never, true)
+}
+
+const onChartClick = (params: unknown) => {
+  if (!props.clickable) return
+  const event = toChartSelectEvent(params)
+  if (event) emit('select', event)
+}
+
+/** Solta o listener e descarta a instância (re-init e unmount). */
+const disposeChart = () => {
+  chart.value?.off('click', onChartClick)
+  chart.value?.dispose()
+  chart.value = null
 }
 
 const applyLoading = () => {
@@ -73,16 +101,18 @@ const build = async () => {
     return
   }
   unavailable.value = false
-  chart.value?.dispose()
+  disposeChart()
   chart.value = core.init(container.value, props.print ? buildPrintTheme() : buildChartTheme(), {
     renderer: props.print ? 'svg' : props.renderer,
   })
+  chart.value.on('click', onChartClick)
   applyOption()
   applyLoading()
 }
 
 watch(() => props.option, applyOption, { deep: true })
 watch(() => props.loading, applyLoading)
+watch(() => props.clickable, applyOption)
 watch([() => props.print, () => props.renderer], () => void build())
 
 onMounted(() => {
@@ -100,8 +130,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   themeObserver?.disconnect()
-  chart.value?.dispose()
-  chart.value = null
+  disposeChart()
 })
 </script>
 

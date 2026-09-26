@@ -201,3 +201,77 @@ export function donutOption({
     ],
   }
 }
+
+// ---------------------------------------------------------------------------
+// Clique no item (WChart `clickable` + evento `select`)
+// ---------------------------------------------------------------------------
+
+/** Payload do evento `select` do WChart — o item de dado clicado. */
+export interface ChartSelectEvent {
+  /** Nome da série (`series[i].name`). */
+  seriesName?: string
+  /** Índice da série na option. */
+  seriesIndex?: number
+  /** Nome do item — a categoria do eixo ou o `name` da fatia. */
+  name: string
+  /** Índice do item dentro da série. */
+  dataIndex: number
+  /** Valor do item (número, ou array em séries com mais de uma dimensão). */
+  value: unknown
+  /** O item de dado como veio na option (objeto com campos próprios, se for o caso). */
+  data: unknown
+}
+
+/** Subconjunto do parâmetro do evento `click` do ECharts que o WChart lê. */
+interface EchartsClickParams {
+  componentType?: string
+  seriesName?: string
+  seriesIndex?: number
+  name?: string
+  dataIndex?: number
+  value?: unknown
+  data?: unknown
+}
+
+/**
+ * Traduz o clique do ECharts no payload do `select`. Só item de série conta —
+ * clique em marcador (markPoint/markLine), legenda ou título devolve `null`.
+ */
+export function toChartSelectEvent(params: unknown): ChartSelectEvent | null {
+  if (!params || typeof params !== 'object') return null
+  const p = params as EchartsClickParams
+  if (p.componentType && p.componentType !== 'series') return null
+  if (typeof p.dataIndex !== 'number') return null
+  return {
+    seriesName: p.seriesName,
+    seriesIndex: p.seriesIndex,
+    name: p.name ?? '',
+    dataIndex: p.dataIndex,
+    value: p.value,
+    data: p.data,
+  }
+}
+
+/**
+ * Option com a afordância de clique: cursor de mão e realce do item sob o
+ * mouse (`emphasis.focus: 'self'` esmaece os outros). O que a série já declara
+ * vence — só completa o que falta. Não muta a option recebida.
+ */
+export function withClickable(option: WChartOption): WChartOption {
+  const series = option.series
+  if (!series) return option
+  const completa = (s: unknown) => {
+    if (!s || typeof s !== 'object') return s
+    const serie = s as Record<string, unknown>
+    const emphasis = (serie.emphasis as Record<string, unknown> | undefined) ?? {}
+    return {
+      ...serie,
+      cursor: serie.cursor ?? 'pointer',
+      emphasis: { focus: 'self', ...emphasis },
+    }
+  }
+  return {
+    ...option,
+    series: Array.isArray(series) ? series.map(completa) : completa(series),
+  }
+}

@@ -40,6 +40,7 @@ export {
   WInfoCard,
   WKpiCard,
   WKpiGrid,
+  WMeter,
   WSectionAccordion,
   WSectionHeader,
   WSectionPanel,
@@ -117,6 +118,7 @@ export type {
   RowAction,
   CrudLabels,
   KpiItem,
+  KpiItemClickEvent,
   CrudManagerConfig,
   CrudManagerReturn,
   SubviewCrudConfig,
@@ -159,8 +161,10 @@ export {
   mapApiFieldToColumnDef,
   mapApiFieldsToColumnDefs,
 } from './utils/fieldMapper'
-export type { ChartTheme, DonutOptionInput, WChartOption } from './utils/chart'
+export type { ChartSelectEvent, ChartTheme, DonutOptionInput, WChartOption } from './utils/chart'
 export { buildChartTheme, buildPrintTheme, donutOption } from './utils/chart'
+export type { MeterSeverity } from './utils/meter'
+export { meterSeverity } from './utils/meter'
 export type { ToCsvOptions } from './utils/csv'
 export { toCsv, downloadCsv } from './utils/csv'
 export { patchDialogEscapeStack, isTopOverlay, visibleOverlays } from './utils/dialogEscapeStack'

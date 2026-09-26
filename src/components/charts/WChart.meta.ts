@@ -18,6 +18,19 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Clicável',
+      description: 'clickable: cursor de mão, realce e evento select no clique do item.',
+      props: {
+        clickable: true,
+        option: {
+          tooltip: { trigger: 'axis' },
+          xAxis: { type: 'category', data: ['jan', 'fev', 'mar', 'abr'] },
+          yAxis: { type: 'value' },
+          series: [{ name: 'Vendas', type: 'bar', data: [12, 18, 9, 24] }],
+        },
+      },
+    },
+    {
       name: 'Linha',
       props: {
         option: {

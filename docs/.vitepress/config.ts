@@ -84,6 +84,7 @@ export default defineConfig({
               { text: 'WKpiCard', link: '/components/w-kpi-card' },
               { text: 'WKpiGrid', link: '/components/w-kpi-grid' },
               { text: 'WMapSelect', link: '/components/w-map-select' },
+              { text: 'WMeter', link: '/components/w-meter' },
               { text: 'WMarkdownView', link: '/components/w-markdown-view' },
               { text: 'WMarkdownToc', link: '/components/w-markdown-toc' },
               { text: 'WProgressFlow', link: '/components/w-progress-flow' },

@@ -11,6 +11,8 @@ const instancia = {
   hideLoading: vi.fn(),
   resize: vi.fn(),
   dispose: vi.fn(),
+  on: vi.fn(),
+  off: vi.fn(),
 }
 const init = vi.fn(() => instancia)
 
@@ -32,7 +34,7 @@ vi.stubGlobal(
     observe() {}
     unobserve() {}
     disconnect() {}
-  }
+  },
 )
 
 beforeEach(() => {
@@ -100,5 +102,83 @@ describe('WChart — estado vazio', () => {
     })
     await flushPromises()
     expect(w.find('.w-chart__empty strong').text()).toBe('vazio custom')
+  })
+})
+
+describe('WChart — clique no item (clickable + select)', () => {
+  const CLIQUE = {
+    componentType: 'series',
+    seriesName: 'Vendas',
+    seriesIndex: 0,
+    name: 'mar',
+    dataIndex: 2,
+    value: 3,
+    data: 3,
+  }
+
+  /** O handler que o WChart registrou no `on('click')` da instância. */
+  const handler = () => {
+    const call = instancia.on.mock.calls.find((c: unknown[]) => c[0] === 'click') as
+      [string, (p: unknown) => void] | undefined
+    if (!call) throw new Error('listener de click não registrado')
+    return call[1]
+  }
+
+  it('clickable: emite select com o item clicado', async () => {
+    const w = montar({ clickable: true })
+    await flushPromises()
+    handler()(CLIQUE)
+    expect(w.emitted('select')).toEqual([
+      [
+        {
+          seriesName: 'Vendas',
+          seriesIndex: 0,
+          name: 'mar',
+          dataIndex: 2,
+          value: 3,
+          data: 3,
+        },
+      ],
+    ])
+  })
+
+  it('sem clickable não emite (retrocompatível)', async () => {
+    const w = montar()
+    await flushPromises()
+    handler()(CLIQUE)
+    expect(w.emitted('select')).toBeUndefined()
+  })
+
+  it('ignora clique fora de item de série (marcador, legenda)', async () => {
+    const w = montar({ clickable: true })
+    await flushPromises()
+    handler()({ ...CLIQUE, componentType: 'markPoint' })
+    expect(w.emitted('select')).toBeUndefined()
+  })
+
+  it('clickable completa cursor e emphasis sem sobrescrever a série', async () => {
+    const option = {
+      series: [
+        { type: 'bar', data: [1] },
+        { type: 'line', data: [2], cursor: 'crosshair', emphasis: { focus: 'series' } },
+      ],
+    }
+    montar({ option, clickable: true })
+    await flushPromises()
+    const [aplicada] = instancia.setOption.mock.calls.at(-1) as [{ series: unknown[] }]
+    expect(aplicada.series[0]).toMatchObject({ cursor: 'pointer', emphasis: { focus: 'self' } })
+    expect(aplicada.series[1]).toMatchObject({ cursor: 'crosshair', emphasis: { focus: 'series' } })
+    expect(option.series[0]).not.toHaveProperty('cursor')
+  })
+
+  it('solta o listener no unmount e no re-init', async () => {
+    const w = montar({ clickable: true })
+    await flushPromises()
+    await w.setProps({ renderer: 'svg' })
+    await flushPromises()
+    expect(instancia.off).toHaveBeenCalledWith('click', expect.any(Function))
+    expect(instancia.on).toHaveBeenCalledTimes(2)
+    w.unmount()
+    expect(instancia.off).toHaveBeenCalledTimes(2)
   })
 })

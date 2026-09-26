@@ -9,7 +9,9 @@ import { useFormatters } from '@wgalleti/primevue-components'
 
 const {
   formatCurrency,
+  formatCurrencyCompact,
   formatNumber,
+  formatNumberCompact,
   formatDate,
   formatDateTime,
   formatPercent,
@@ -38,6 +40,16 @@ formatCurrency(null)     // "—"
 formatNumber(1234.567)      // "1.234,57"
 formatNumber(1234.567, 0)   // "1.235"
 formatNumber(null)          // "—"
+```
+
+### `formatCurrencyCompact(value)` / `formatNumberCompact(value)`
+
+Notação compacta do locale (painéis, metas). Moeda abaixo de mil sai no formato cheio.
+
+```ts
+formatCurrencyCompact(1234567) // "R$ 1,2 mi"
+formatCurrencyCompact(950.5)   // "R$ 950,50"
+formatNumberCompact(12500)     // "12,5 mil"
 ```
 
 ### `formatDate(value, format?)`
