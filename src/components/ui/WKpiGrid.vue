@@ -71,6 +71,7 @@ const gridClass = computed(() => [
         :to="item.to"
         :spark="item.spark"
         :size="cardSize(item)"
+        :active="item.active"
         v-on="cardListeners(item, index)"
       />
     </template>

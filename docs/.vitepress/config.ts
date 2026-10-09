@@ -75,6 +75,7 @@ export default defineConfig({
           {
             text: 'UI',
             items: [
+              { text: 'WAttentionList', link: '/components/w-attention-list' },
               { text: 'WChart', link: '/components/w-chart' },
               { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WDialog', link: '/components/w-dialog' },

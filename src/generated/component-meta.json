@@ -1727,6 +1727,58 @@
         }
       ]
     },
+    "WAttentionList": {
+      "file": "src/components/ui/WAttentionList.vue",
+      "props": [
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "subtitle",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "items",
+          "type": "AttentionItem[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": ""
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nada pedindo atenção agora.\"",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "item-click",
+          "type": "[event: AttentionItemClickEvent]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "actions",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        }
+      ]
+    },
     "WCheckList": {
       "file": "src/components/ui/WCheckList.vue",
       "props": [
@@ -2012,13 +2064,13 @@
       ],
       "events": [
         {
-          "name": "move",
-          "type": "[event: KanbanMoveEvent<Record<string, unknown>>]",
+          "name": "item-click",
+          "type": "[item: Item]",
           "description": ""
         },
         {
-          "name": "item-click",
-          "type": "[item: Item]",
+          "name": "move",
+          "type": "[event: KanbanMoveEvent<Record<string, unknown>>]",
           "description": ""
         }
       ],
@@ -2099,7 +2151,7 @@
         },
         {
           "name": "to",
-          "type": "string | kt | Tt | undefined",
+          "type": "string | et | X | undefined",
           "required": false,
           "default": null,
           "description": "Destino ao clicar: o card vira um RouterLink (exige vue-router instalado).\nSem `to`, um listener de `@click` torna o card um botão de teclado."
@@ -2117,6 +2169,13 @@
           "required": false,
           "default": "\"default\"",
           "description": "`compact`: menos respiro, ícone menor ao lado do rótulo, valor menor."
+        },
+        {
+          "name": "active",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": "Card usado como filtro e aplicado agora: destaca e anuncia `aria-pressed`."
         }
       ],
       "events": [
@@ -2630,7 +2689,7 @@
         },
         {
           "name": "to",
-          "type": "string | kt | Tt | undefined",
+          "type": "string | et | X | undefined",
           "required": false,
           "default": null,
           "description": "Destino ao clicar: vira RouterLink (exige vue-router instalado)."

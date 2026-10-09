@@ -25,6 +25,7 @@ export type {
 } from './editableTable'
 
 export type { CheckListItem, CheckListLevel } from './checkList'
+export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from './attentionList'
 
 export type { KanbanColumn, KanbanMoveEvent } from './kanban'
 

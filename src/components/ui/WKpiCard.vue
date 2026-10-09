@@ -31,6 +31,8 @@ const props = withDefaults(
     spark?: number[]
     /** `compact`: menos respiro, ícone menor ao lado do rótulo, valor menor. */
     size?: 'default' | 'compact'
+    /** Card usado como filtro e aplicado agora: destaca e anuncia `aria-pressed`. */
+    active?: boolean
   }>(),
   { size: 'default' },
 )
@@ -54,8 +56,13 @@ const compact = computed(() => props.size === 'compact')
     class="w-kpi-card"
     :class="[
       severity ? `w-kpi-card--${severity}` : '',
-      { 'w-kpi-card--compact': compact, 'w-kpi-card--interactive': root().interactive },
+      {
+        'w-kpi-card--compact': compact,
+        'w-kpi-card--interactive': root().interactive,
+        'w-kpi-card--active': active,
+      },
     ]"
+    :aria-pressed="root().is === 'div' ? (active ? 'true' : 'false') : undefined"
   >
     <template v-if="loading">
       <div class="w-kpi-card__loading">
