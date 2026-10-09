@@ -1587,6 +1587,7 @@
   --w-attention-tone: var(--w-fg-muted);
   --w-attention-tone-soft: var(--w-surface-2);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--w-space-3);
   width: 100%;
@@ -1651,7 +1652,9 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  flex: 1;
+  /* Em contêiner estreito o texto mantém uma largura legível e o número desce de linha,
+     em vez de espremer o rótulo letra a letra. */
+  flex: 1 1 var(--w-attention-text-min);
 }
 
 .w-attention-list__label {
@@ -1663,6 +1666,13 @@
 .w-attention-list__hint {
   font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
+}
+
+.w-attention-list__end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  margin-left: auto;
 }
 
 .w-attention-list__value {

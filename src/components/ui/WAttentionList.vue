@@ -76,12 +76,14 @@ function attrs(item: AttentionItem, index: number) {
             <span class="w-attention-list__label">{{ item.label }}</span>
             <span v-if="item.hint" class="w-attention-list__hint">{{ item.hint }}</span>
           </span>
-          <span v-if="item.value != null" class="w-attention-list__value">{{ item.value }}</span>
-          <i
-            v-if="tag(item) !== 'div'"
-            class="pi pi-chevron-right w-attention-list__chevron"
-            aria-hidden="true"
-          />
+          <span v-if="item.value != null || tag(item) !== 'div'" class="w-attention-list__end">
+            <span v-if="item.value != null" class="w-attention-list__value">{{ item.value }}</span>
+            <i
+              v-if="tag(item) !== 'div'"
+              class="pi pi-chevron-right w-attention-list__chevron"
+              aria-hidden="true"
+            />
+          </span>
         </component>
       </li>
     </ul>
