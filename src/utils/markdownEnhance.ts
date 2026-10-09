@@ -213,7 +213,9 @@ function cor(estilo: CSSStyleDeclaration, nome: string, padrao: string): string 
 /** `color(srgb r g b [/ a])` → `rgb()`/`rgba()`; hex/rgb/hsl passam intactos; vazio → null. */
 export function normalizarCor(valor: string): string | null {
   if (!valor) return null
-  const m = /^color\(srgb\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)(?:\s*\/\s*([\d.%]+))?\)$/.exec(valor)
+  const m = /^color\(srgb\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)(?:\s*\/\s*([\d.%]+))?\)$/.exec(
+    valor,
+  )
   if (!m) return valor
   const canal = (v: string) => Math.round(Math.min(1, Math.max(0, Number(v))) * 255)
   const [, r, g, b, a] = m

@@ -153,7 +153,10 @@ export function useSubviewCrud<T extends Record<string, unknown> = Record<string
     // Duplicidade: comparada contra as OUTRAS linhas — editar a própria linha sem
     // mexer na chave não pode acusar conflito consigo mesma.
     const chave = chaveUnica(item)
-    if (chave !== undefined && anterior.some((linha, i) => i !== indice && chaveUnica(linha) === chave)) {
+    if (
+      chave !== undefined &&
+      anterior.some((linha, i) => i !== indice && chaveUnica(linha) === chave)
+    ) {
       toast.error(uniqueMessage)
       return null
     }

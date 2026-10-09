@@ -110,7 +110,10 @@ describe('WSectionPanel — cabeçalho', () => {
   })
 
   it('fora do acordeão tem estado próprio e começa aberta', async () => {
-    const w = mount(WSectionPanel, { props: { value: 'x', title: 'X' }, slots: { default: 'corpo' } })
+    const w = mount(WSectionPanel, {
+      props: { value: 'x', title: 'X' },
+      slots: { default: 'corpo' },
+    })
     expect(w.classes()).toContain('w-section-panel--open')
     await w.find('.w-section-panel__trigger').trigger('click')
     expect(w.classes()).not.toContain('w-section-panel--open')

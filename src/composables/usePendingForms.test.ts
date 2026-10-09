@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { effectScope, nextTick, ref } from 'vue'
-import { __resetPendingForms, listPendingForms, setPendingForm, usePendingForm } from './usePendingForms'
+import {
+  __resetPendingForms,
+  listPendingForms,
+  setPendingForm,
+  usePendingForm,
+} from './usePendingForms'
 
 describe('usePendingForms', () => {
   beforeEach(() => __resetPendingForms())

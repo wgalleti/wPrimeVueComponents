@@ -158,7 +158,9 @@ describe('createPublishedVersion', () => {
 
 describe('isChunkError', () => {
   it('reconhece as mensagens dos navegadores', () => {
-    expect(isChunkError(new TypeError('Failed to fetch dynamically imported module: /assets/x.js'))).toBe(true)
+    expect(
+      isChunkError(new TypeError('Failed to fetch dynamically imported module: /assets/x.js')),
+    ).toBe(true)
     expect(isChunkError(new TypeError('Importing a module script failed.'))).toBe(true)
     expect(isChunkError(new Error('outra coisa'))).toBe(false)
   })

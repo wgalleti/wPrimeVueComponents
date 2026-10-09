@@ -31,7 +31,9 @@ const controlado = computed(() => props.modelValue !== undefined)
 const disabled = computed(() => props.disabled)
 
 function isOpen(value: string) {
-  return controlado.value ? (props.modelValue as string[]).includes(value) : !fechadas.value.has(value)
+  return controlado.value
+    ? (props.modelValue as string[]).includes(value)
+    : !fechadas.value.has(value)
 }
 
 function toggle(value: string) {

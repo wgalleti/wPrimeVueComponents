@@ -8,7 +8,10 @@ describe('wBuildIdentity', () => {
 
   it('sem versão (ou "dev"), usa o carimbo do build', () => {
     const agora = () => new Date('2026-10-09T12:00:00.000Z')
-    expect(resolveBuildId('', agora)).toEqual({ build: 'local-2026-10-09T12:00:00.000Z', version: null })
+    expect(resolveBuildId('', agora)).toEqual({
+      build: 'local-2026-10-09T12:00:00.000Z',
+      version: null,
+    })
     expect(resolveBuildId('dev', agora).version).toBeNull()
   })
 

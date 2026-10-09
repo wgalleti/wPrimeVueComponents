@@ -8,11 +8,13 @@ export default defineComponentMeta({
   examples: [
     {
       name: 'Com contagem',
-      description: 'Fora de um WSectionAccordion a seção é um card colapsável avulso (estado local).',
+      description:
+        'Fora de um WSectionAccordion a seção é um card colapsável avulso (estado local).',
       props: {
         value: 'itens',
         title: 'Itens',
-        description: 'Produtos, lotes e quantidades. Fechar a nota dá entrada de cada item no estoque.',
+        description:
+          'Produtos, lotes e quantidades. Fechar a nota dá entrada de cada item no estoque.',
         icon: 'pi pi-list',
         count: 4,
       },

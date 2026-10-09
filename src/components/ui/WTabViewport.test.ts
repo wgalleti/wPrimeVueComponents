@@ -132,7 +132,11 @@ describe('WTabViewport — rotas aninhadas', () => {
       moduleRoot: (r) => (r.path.startsWith('/config') ? '/config' : r.path),
       isTabRoute: (r) => r.path !== '/',
     })
-    const w = mount(WTabViewport, { props: { tabs: api }, global: { plugins: [router] }, attachTo: document.body })
+    const w = mount(WTabViewport, {
+      props: { tabs: api },
+      global: { plugins: [router] },
+      attachTo: document.body,
+    })
 
     await router.push('/config/financeiro')
     await flushPromises()

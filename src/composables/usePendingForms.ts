@@ -47,7 +47,11 @@ export function setPendingForm(chave: string, pendente: boolean): void {
  */
 export function usePendingForm(sujo: MaybeRefOrGetter<boolean>, chave?: string): void {
   const id = chave ?? `w-form-${++sequencia}`
-  watch(() => Boolean(toValue(sujo)), (valor) => setPendingForm(id, valor), { immediate: true })
+  watch(
+    () => Boolean(toValue(sujo)),
+    (valor) => setPendingForm(id, valor),
+    { immediate: true },
+  )
   if (getCurrentScope()) onScopeDispose(() => setPendingForm(id, false))
 }
 

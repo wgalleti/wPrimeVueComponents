@@ -117,7 +117,11 @@ export function createPublishedVersion(deps: PublishedVersionDeps): PublishedVer
     },
     onRouteChange(to, from, href) {
       // Primeira navegação e a mesma tela mudando a própria URL não são troca de tela.
-      if (!from.matched?.length || (to.name !== undefined && to.name === from.name) || to.path === from.path) {
+      if (
+        !from.matched?.length ||
+        (to.name !== undefined && to.name === from.name) ||
+        to.path === from.path
+      ) {
         return true
       }
       void check() // não atrasa a navegação: decide com o que já sabe
@@ -167,7 +171,10 @@ export interface InstallPublishedVersionOptions {
  * Liga a detecção ao roteador e aos eventos da página. Chame antes das outras guardas
  * (a que liga overlay de carregamento, por exemplo), para não deixar overlay preso.
  */
-export function installPublishedVersion(router: RouterLike, options: InstallPublishedVersionOptions): PublishedVersion | null {
+export function installPublishedVersion(
+  router: RouterLike,
+  options: InstallPublishedVersionOptions,
+): PublishedVersion | null {
   if (options.enabled === false || typeof window === 'undefined') return null
 
   const base = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/'

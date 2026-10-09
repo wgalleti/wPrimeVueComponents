@@ -22,17 +22,24 @@ export interface BuildIdentityOptions {
   fileName?: string
 }
 
-export function resolveBuildId(version: string | undefined, now: () => Date = () => new Date()): {
+export function resolveBuildId(
+  version: string | undefined,
+  now: () => Date = () => new Date(),
+): {
   build: string
   version: string | null
 } {
   const versao = (version ?? '').trim()
   const temVersao = Boolean(versao) && versao !== 'dev'
-  return { build: temVersao ? versao : `local-${now().toISOString()}`, version: temVersao ? versao : null }
+  return {
+    build: temVersao ? versao : `local-${now().toISOString()}`,
+    version: temVersao ? versao : null,
+  }
 }
 
 export function wBuildIdentity(options: BuildIdentityOptions = {}) {
-  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {}
+  const env =
+    (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {}
   const identidade = resolveBuildId(options.version ?? env.VITE_APP_VERSION)
   return {
     name: 'w-build-identity',
