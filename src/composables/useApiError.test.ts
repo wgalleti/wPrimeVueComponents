@@ -8,8 +8,14 @@ describe('extractApiError', () => {
     expect(extractApiError(undefined, 'Falhou')).toBe('Falhou')
   })
 
-  it('sem response.data usa message (ou fallback)', () => {
-    expect(extractApiError({ message: 'Network Error' })).toBe('Network Error')
+  it('sem corpo JSON usa o fallback, nunca a mensagem técnica do transporte', () => {
+    expect(extractApiError({ message: 'Network Error' })).toBe('Erro inesperado')
+    expect(
+      extractApiError(
+        { message: 'Request failed with status code 404', response: { data: '<html>' } },
+        'Link inválido',
+      ),
+    ).toBe('Link inválido')
     expect(extractApiError({}, 'Falhou')).toBe('Falhou')
   })
 

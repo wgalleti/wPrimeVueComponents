@@ -41,13 +41,12 @@ export function extractApiError(error: unknown, fallback = 'Erro inesperado'): s
 
   const axiosError = error as {
     response?: { data?: Record<string, unknown> }
-    message?: string
   }
   const data = axiosError.response?.data
 
-  if (!data || typeof data !== 'object') {
-    return axiosError.message || fallback
-  }
+  // Sem corpo JSON (rede fora, página HTML de erro do proxy): a mensagem do transporte é
+  // técnica e em inglês ("Request failed with status code 502") — quem lê é o usuário.
+  if (!data || typeof data !== 'object') return fallback
 
   const detail = data.detail ?? data
   return extractMessage(detail) || fallback
