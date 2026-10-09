@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
-import { createMemoryHistory, createRouter, useRoute, type Router } from 'vue-router'
+import { createMemoryHistory, createRouter, RouterView, useRoute, type Router } from 'vue-router'
 import WTabViewport from './WTabViewport.vue'
 import { useRouteTabs } from '@/composables/useRouteTabs'
 import { useTabHost } from '@/types/routeTabs'
@@ -100,5 +100,44 @@ describe('WTabViewport — pool de panes', () => {
     expect(api.tabs.value[0].title).toBe('titulo:/a')
     const runtimeHost = w.find('.w-tab-viewport__pane').element
     expect(runtimeHost).toBeTruthy()
+  })
+})
+
+describe('WTabViewport — rotas aninhadas', () => {
+  it('mostra o layout do módulo e a tela filha dentro dele', async () => {
+    const Layout = defineComponent({
+      name: 'Layout',
+      setup() {
+        return () => h('section', { class: 'layout' }, [h(RouterView)])
+      },
+    })
+    router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/', component: Tela },
+        {
+          path: '/config',
+          component: Layout,
+          children: [
+            { path: '', component: Tela },
+            { path: 'financeiro', component: Tela },
+          ],
+        },
+      ],
+    })
+    api = useRouteTabs({
+      router,
+      storage: null,
+      mode: 'module',
+      moduleRoot: (r) => (r.path.startsWith('/config') ? '/config' : r.path),
+      isTabRoute: (r) => r.path !== '/',
+    })
+    const w = mount(WTabViewport, { props: { tabs: api }, global: { plugins: [router] }, attachTo: document.body })
+
+    await router.push('/config/financeiro')
+    await flushPromises()
+
+    const pane = w.find('.w-tab-viewport__pane')
+    expect(pane.find('.layout .tela').text()).toBe('rota:/config/financeiro')
   })
 })
