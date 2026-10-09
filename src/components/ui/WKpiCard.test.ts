@@ -149,3 +149,13 @@ describe('WKpiCard — regressões da revisão', () => {
     expect(hasListener(null, 'click')).toBe(false)
   })
 })
+
+describe('WKpiCard — ativo como filtro', () => {
+  it('marca a classe e anuncia aria-pressed quando é botão', () => {
+    const w = mount(WKpiCard, {
+      props: { label: 'Ativos', value: 10, active: true, onClick: () => {} },
+    })
+    expect(w.classes()).toContain('w-kpi-card--active')
+    expect(w.attributes('aria-pressed')).toBe('true')
+  })
+})

@@ -50,6 +50,7 @@ export {
   WStepFlow,
   WStepSection,
   WCheckList,
+  WAttentionList,
   WMapSelect,
   WMarkdownView,
   WMarkdownEditor,
@@ -115,6 +116,9 @@ export type {
   EditableRow,
   CheckListItem,
   CheckListLevel,
+  AttentionItem,
+  AttentionItemClickEvent,
+  AttentionSeverity,
   // TabItem faltava aqui — a doc do WTabBar ensina importar da raiz.
   TabItem,
   RouteTab,

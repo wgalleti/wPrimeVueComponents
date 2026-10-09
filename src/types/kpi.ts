@@ -22,6 +22,8 @@ export interface KpiItem {
   spark?: number[]
   /** Tamanho do card; sem valor, segue o `dense` do WKpiGrid. */
   size?: 'default' | 'compact'
+  /** O card é o filtro aplicado à lista (borda na cor do tom, `aria-pressed`). */
+  active?: boolean
 }
 
 /** Payload do `item-click` do WKpiGrid. */
