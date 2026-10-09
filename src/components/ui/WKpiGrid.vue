@@ -42,7 +42,9 @@ const instance = getCurrentInstance()
 const hasItemClick = () => hasListener(instance?.vnode.props, 'item-click')
 
 const cardListeners = (item: KpiItem, index: number) =>
-  hasItemClick() ? { click: () => emit('item-click', { item, index }) } : {}
+  hasItemClick() && item.interactive !== false
+    ? { click: () => emit('item-click', { item, index }) }
+    : {}
 
 const cardSize = (item: KpiItem) => item.size ?? props.size ?? (props.dense ? 'compact' : 'default')
 

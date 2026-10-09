@@ -26,6 +26,11 @@ export interface KpiItem {
   size?: 'default' | 'compact'
   /** O card é o filtro aplicado à lista (borda na cor do tom, `aria-pressed`). */
   active?: boolean
+  /**
+   * `false` deixa o card estático mesmo com listener de `item-click` no WKpiGrid — para o
+   * número que só informa numa grade em que os outros cards são filtros.
+   */
+  interactive?: boolean
 }
 
 /** Payload do `item-click` do WKpiGrid. */

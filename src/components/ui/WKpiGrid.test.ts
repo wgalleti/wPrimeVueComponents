@@ -69,4 +69,14 @@ describe('WKpiGrid — repasse', () => {
       expect(w.find('.w-kpi-card').attributes('role')).toBe('button')
     }
   })
+
+  it('card com interactive: false fica estático mesmo com listener', () => {
+    const w = grid(
+      { items: [{ ...items[0], interactive: false }, items[1]] },
+      { onItemClick: () => undefined },
+    )
+    const cards = w.findAll('.w-kpi-card')
+    expect(cards[0].attributes('role')).toBeUndefined()
+    expect(cards[1].attributes('role')).toBe('button')
+  })
 })
