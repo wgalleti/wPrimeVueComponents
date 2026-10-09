@@ -133,6 +133,26 @@
   font-size: var(--w-text-2xl);
 }
 
+.w-empty-state--compact {
+  padding: var(--w-space-2) 0;
+}
+
+.w-empty-state-illustration {
+  width: min(var(--w-empty-illustration), 100%);
+  margin-bottom: var(--w-space-4);
+}
+
+.w-empty-state--compact .w-empty-state-illustration {
+  width: min(var(--w-empty-illustration-compact), 100%);
+}
+
+.w-empty-state-illustration > svg,
+.w-empty-state-illustration > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .w-empty-state-title {
   font-size: var(--w-text-md);
   font-weight: var(--w-fw-semibold);

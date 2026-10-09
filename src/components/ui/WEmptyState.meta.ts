@@ -3,7 +3,7 @@ import { defineComponentMeta } from '@/types/componentMeta'
 export default defineComponentMeta({
   category: 'UI',
   icon: 'pi pi-inbox',
-  summary: 'Estado vazio com ícone, título, descrição e ação opcional.',
+  summary: 'Estado vazio com ícone (ou ilustração do produto), título, descrição e ação opcional.',
   examples: [
     {
       name: 'Sem registros',
@@ -21,6 +21,14 @@ export default defineComponentMeta({
         description: 'Comece adicionando seu primeiro cliente.',
         actionLabel: 'Novo cliente',
         actionIcon: 'pi pi-plus',
+      },
+    },
+    {
+      name: 'Compacto',
+      props: {
+        icon: 'pi pi-calendar',
+        title: 'Sem aulas hoje',
+        compact: true,
       },
     },
     {
