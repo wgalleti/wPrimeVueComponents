@@ -953,10 +953,12 @@
   background: var(--w-row-hover);
 }
 
+.w-editable-table__table th.w-editable-table__cell--right,
 .w-editable-table__cell--right {
   text-align: right;
 }
 
+.w-editable-table__table th.w-editable-table__cell--center,
 .w-editable-table__cell--center {
   text-align: center;
 }
