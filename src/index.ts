@@ -109,6 +109,7 @@ export type {
   ColumnType,
   TagSeverity,
   FieldDef,
+  FkCrudConfig,
   FieldType,
   SelectOption,
   EditableColumnDef,
@@ -173,6 +174,7 @@ export {
 } from './types'
 
 // Utils
+export { convertFormRecord, getFieldDefaults, validateFormRecord } from './utils/formRecord'
 export type { ApiFieldMeta } from './utils/fieldMapper'
 export {
   mapApiFieldToFieldDef,
