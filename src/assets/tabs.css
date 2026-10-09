@@ -327,7 +327,7 @@
   /* O respiro da página mora DENTRO do scroll: o viewport precisa da altura exata da área
      da aba (o app não põe padding nem scroll no contêiner dele), senão o pane cresce com o
      conteúdo e o dialog centraliza no meio da página rolada — ou é cortado na tela curta. */
-  padding: var(--w-tab-viewport-padding, 0);
+  padding: var(--w-tab-viewport-padding);
 }
 
 /* Mask de dialog ancorado no pane cobre SÓ a aba — a barra de abas, o menu e

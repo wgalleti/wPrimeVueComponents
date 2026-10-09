@@ -160,6 +160,7 @@
   --w-chart-h: 18rem; /* altura do WChart */
   --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
+  --w-tab-viewport-padding: 0; /* respiro da página dentro do scroll da aba; o app define o seu */
 
   /* ---- Movimento --------------------------------------------------------- */
   --w-motion-fast: var(--motion-fast, 140ms);
