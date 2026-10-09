@@ -75,8 +75,21 @@ export {
   useRouteTabs,
   useBreakpoint,
   BREAKPOINTS,
+  usePendingForm,
+  setPendingForm,
+  listPendingForms,
+  createPublishedVersion,
+  installPublishedVersion,
+  isChunkError,
+  MIN_CHECK_INTERVAL_MS,
+  RECENT_READ_MS,
 } from './composables'
-export type { DateValueFormat } from './composables'
+export type {
+  DateValueFormat,
+  PublishedVersion,
+  PublishedVersionDeps,
+  InstallPublishedVersionOptions,
+} from './composables'
 
 // Data providers
 export { createAxiosDataProvider, createSupabaseDataProvider } from './data-providers'

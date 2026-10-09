@@ -28,6 +28,8 @@ export default defineConfig({
         components: resolve(__dirname, 'src/components/index.ts'),
         composables: resolve(__dirname, 'src/composables/index.ts'),
         types: resolve(__dirname, 'src/types/index.ts'),
+        // Plugins Vite (Node) para o app consumidor: `@wgalleti/primevue-components/vite`.
+        vite: resolve(__dirname, 'src/vite/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,

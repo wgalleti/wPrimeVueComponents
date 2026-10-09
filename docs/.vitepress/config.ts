@@ -108,6 +108,8 @@ export default defineConfig({
           { text: 'useFormKeyboardNav', link: '/composables/use-form-keyboard-nav' },
           { text: 'useBreakpoint', link: '/composables/use-breakpoint' },
           { text: 'useRouteTabs', link: '/composables/use-route-tabs' },
+          { text: 'usePendingForm', link: '/composables/use-pending-form' },
+          { text: 'Versão publicada', link: '/composables/published-version' },
         ],
       },
       {
