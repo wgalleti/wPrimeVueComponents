@@ -19,4 +19,10 @@ export {
   MIN_CHECK_INTERVAL_MS,
   RECENT_READ_MS,
 } from './usePublishedVersion'
-export type { PublishedVersion, PublishedVersionDeps, InstallPublishedVersionOptions } from './usePublishedVersion'
+export type {
+  PublishedVersion,
+  PublishedVersionDeps,
+  InstallPublishedVersionOptions,
+  RouteLike,
+  RouterLike,
+} from './usePublishedVersion'
