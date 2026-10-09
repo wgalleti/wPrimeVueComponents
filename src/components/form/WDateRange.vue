@@ -13,6 +13,8 @@ withDefaults(
     maxDate?: Date
     showButtonBar?: boolean
     disabled?: boolean
+    /** `id` do input — para o `<label for>` do formulário. */
+    inputId?: string
   }>(),
   {
     modelValue: null,
@@ -39,6 +41,7 @@ function onUpdate(v: unknown) {
     :max-date="maxDate"
     :show-button-bar="showButtonBar"
     :disabled="disabled"
+    :input-id="inputId"
     date-format="dd/mm/yy"
     fluid
     @update:model-value="onUpdate"
