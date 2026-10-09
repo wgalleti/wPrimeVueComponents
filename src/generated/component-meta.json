@@ -1139,6 +1139,13 @@
           "required": false,
           "default": "false",
           "description": ""
+        },
+        {
+          "name": "inputId",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "`id` do input — para o `<label for>` do formulário."
         }
       ],
       "events": [
