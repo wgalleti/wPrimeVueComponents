@@ -58,7 +58,7 @@ function attrs(item: AttentionItem, index: number) {
     </header>
 
     <ul v-if="items.length" class="w-attention-list__items">
-      <li v-for="(item, index) in items" :key="item.key ?? index">
+      <li v-for="(item, index) in items" :key="`${item.key ?? ''}#${index}`">
         <component
           :is="tag(item)"
           v-bind="attrs(item, index)"
