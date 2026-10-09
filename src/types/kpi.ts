@@ -5,6 +5,8 @@
 import type { RouteLocationRaw } from 'vue-router'
 
 export interface KpiItem {
+  /** Identificador estável (filtro aplicado, rota); volta no `item-click`. */
+  key?: string
   icon: string
   label: string
   value: string | number
