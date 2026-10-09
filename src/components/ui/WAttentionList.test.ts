@@ -25,6 +25,17 @@ describe('WAttentionList', () => {
     expect(w.emitted('item-click')?.[0]).toEqual([{ item: itens[0], index: 0 }])
   })
 
+  it('linha sem key (nem to) continua só informação mesmo com listener', () => {
+    const w = mount(WAttentionList, {
+      props: {
+        items: [{ icon: 'pi pi-info', label: 'Jiu-Jitsu', value: '9 faixas' }],
+        onItemClick: () => {},
+      },
+    })
+    expect(w.findAll('button')).toHaveLength(0)
+    expect(w.find('.w-attention-list__chevron').exists()).toBe(false)
+  })
+
   it('lista vazia mostra a mensagem', () => {
     const w = mount(WAttentionList, { props: { items: [], emptyMessage: 'Tudo em dia' } })
     expect(w.find('.w-attention-list__empty').text()).toBe('Tudo em dia')
