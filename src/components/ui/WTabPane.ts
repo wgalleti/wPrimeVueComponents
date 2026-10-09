@@ -8,7 +8,7 @@ import {
   type PropType,
   type Ref,
 } from 'vue'
-import { routeLocationKey } from 'vue-router'
+import { RouterView, routeLocationKey } from 'vue-router'
 import {
   W_TAB_HOST_KEY,
   type RouteTab,
@@ -28,6 +28,10 @@ import {
  *
  * Os registros (guards/hooks) são desfeitos via `onScopeDispose` no escopo de
  * QUEM registrou — assim um `reload()` (remount) não acumula guard morto.
+ *
+ * Renderiza um `RouterView` preso ao snapshot da aba (prop `route`), na mesma
+ * profundidade em que o viewport está: com rotas aninhadas, o layout do módulo
+ * aparece e o `RouterView` dele mostra a tela filha — também congelada.
  */
 export default defineComponent({
   name: 'WTabPane',
@@ -70,6 +74,6 @@ export default defineComponent({
     )
 
     return () =>
-      runtime.component ? h(runtime.component, { ...runtime.props, key: props.tab.remount }) : null
+      runtime.component ? h(RouterView, { route: runtime.route, key: props.tab.remount }) : null
   },
 })
