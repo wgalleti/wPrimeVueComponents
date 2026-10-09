@@ -79,6 +79,13 @@ interface WPluginOptions {
    * Default: true
    */
   patchDialogEscape?: boolean
+
+  /**
+   * Padrão do app para a navegação por teclado no formulário do CRUD (foca o 1º
+   * campo, Enter avança). A tela que declara `keyboardNav` vence.
+   * Default: false
+   */
+  keyboardNav?: boolean
 }
 ```
 

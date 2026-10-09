@@ -47,5 +47,36 @@ export function useAppConfirm() {
     })
   }
 
-  return { confirmDelete, confirmAction }
+  /**
+   * Pergunta antes de descartar alteração não salva. Resolve `true` para descartar; fechar o
+   * diálogo sem escolher conta como continuar editando.
+   */
+  function confirmDiscard(
+    message = 'Há alterações não salvas. Descartar e fechar?',
+    header = 'Alterações não salvas',
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      let respondido = false
+      const responder = (descartar: boolean) => {
+        if (respondido) return
+        respondido = true
+        resolve(descartar)
+      }
+      confirm.require({
+        appendTo: appendTo(),
+        message,
+        header,
+        icon: 'pi pi-exclamation-triangle',
+        rejectLabel: 'Continuar editando',
+        rejectProps: { severity: 'secondary', text: true },
+        acceptLabel: 'Descartar',
+        acceptProps: { severity: 'danger' },
+        accept: () => responder(true),
+        reject: () => responder(false),
+        onHide: () => responder(false),
+      })
+    })
+  }
+
+  return { confirmDelete, confirmAction, confirmDiscard }
 }

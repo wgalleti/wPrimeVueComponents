@@ -31,6 +31,7 @@ export const WPrimeVuePlugin: Plugin = {
       dateTimeFormat: options.dateTimeFormat ?? 'DD/MM/YYYY HH:mm',
       locale: options.locale ?? 'pt-BR',
       currency: options.currency ?? 'BRL',
+      keyboardNav: options.keyboardNav ?? false,
     }
 
     if (options.axios) {

@@ -10,6 +10,7 @@ import { useAppToast } from './useAppToast'
 import { useAppConfirm } from './useAppConfirm'
 import { extractApiError } from './useApiError'
 import { usePendingForm } from './usePendingForms'
+import { useTabHost } from '@/types/routeTabs'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
 import {
   convertFormRecord,
@@ -64,7 +65,12 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
   const labels: CrudLabels = { ...DEFAULT_CRUD_LABELS, ...config.labels }
   const toast = useAppToast()
-  const { confirmDelete: confirmDeleteDialog } = useAppConfirm()
+  const { confirmDelete: confirmDeleteDialog, confirmDiscard } = useAppConfirm()
+  // Padrão do app (plugin) para o teclado no formulário; a tela que declara vence.
+  const configResolvida: CrudManagerConfig<T> = {
+    ...config,
+    keyboardNav: config.keyboardNav ?? pluginConfig?.keyboardNav ?? false,
+  }
 
   // ---------------------------------------------------------------------------
   // State
@@ -398,6 +404,8 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     () => dialogVisible.value && !viewMode.value && JSON.stringify(formData) !== retratoAoAbrir,
   )
   usePendingForm(isDirty)
+  // Dentro de uma aba de rota, fechar a aba com o diálogo alterado pergunta antes.
+  useTabHost()?.registerCloseGuard(() => !isDirty.value || confirmDiscard())
 
   // ---------------------------------------------------------------------------
   // Save
@@ -642,6 +650,6 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     clearSelection,
     setColumnFilter,
     clearColumnFilters,
-    config,
+    config: configResolvida,
   }
 }
