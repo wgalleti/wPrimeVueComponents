@@ -13,6 +13,8 @@ import { useCrudManager } from './useCrudManager'
 import { W_DATA_PROVIDER_KEY, W_CONFIG_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { CrudManagerConfig } from '@/types/manager'
+import { listPendingForms } from './usePendingForms'
+import { nextTick } from 'vue'
 
 type AnyRecord = Record<string, unknown>
 const tick = () => new Promise((r) => setTimeout(r, 0))
@@ -283,5 +285,36 @@ describe('useCrudManager — fetchDetailOnEdit', () => {
     )
     await crud.openEditDialog({ id: 1 })
     expect(crud.dialogVisible.value).toBe(false)
+  })
+})
+
+describe('useCrudManager — alteração não salva', () => {
+  it('isDirty só depois de mudar o formulário aberto, e entra no registro de pendentes', async () => {
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [{ field: 'nome', label: 'Nome', type: 'text' }] },
+      { list: okList() },
+    )
+    crud.openCreateDialog()
+    expect(crud.isDirty.value).toBe(false)
+
+    crud.setFormField('nome', 'Kimono')
+    await nextTick()
+    expect(crud.isDirty.value).toBe(true)
+    expect(listPendingForms()).toHaveLength(1)
+
+    crud.dialogVisible.value = false
+    await nextTick()
+    expect(crud.isDirty.value).toBe(false)
+    expect(listPendingForms()).toHaveLength(0)
+  })
+
+  it('modo leitura nunca fica pendente', () => {
+    const crud = setup(
+      { endpoint: '/p', columns: [], form: [{ field: 'nome', label: 'Nome', type: 'text' }] },
+      { list: okList() },
+    )
+    crud.openViewDialog({ id: 1, nome: 'A' })
+    crud.setFormField('nome', 'B')
+    expect(crud.isDirty.value).toBe(false)
   })
 })

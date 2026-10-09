@@ -45,6 +45,10 @@ Só com **tudo** verdadeiro: versão nova lida há menos de 5 minutos, online e 
 [formulário pendente](./use-pending-form). A checagem dispara em paralelo à navegação (não
 atrasa) e no máximo uma vez por minuto.
 
+O chunk ausente também espera rede: offline, a falha é da conexão e não do deploy.
+
+O `useCrudManager` já registra o próprio diálogo com alteração não salva (`isDirty`).
+
 Não recarrega: na primeira navegação, quando a mesma tela muda a própria URL (filtro na query),
 com resposta que não é `200` + JSON (página de manutenção durante o deploy) e depois de um
 rollback (a versão volta a bater).

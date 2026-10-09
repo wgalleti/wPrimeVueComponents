@@ -79,6 +79,8 @@ export interface CrudManagerReturn<T> {
   saving: Ref<boolean>
   search: Ref<string>
   dialogVisible: Ref<boolean>
+  /** Diálogo aberto (fora do modo leitura) com valor diferente do que abriu. */
+  isDirty: ComputedRef<boolean>
   editingItem: Ref<T | null>
   formData: Record<string, unknown>
   pagination: PaginationState

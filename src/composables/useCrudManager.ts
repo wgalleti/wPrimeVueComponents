@@ -1,4 +1,4 @@
-import { ref, reactive, computed, inject } from 'vue'
+import { ref, reactive, computed, inject, watch } from 'vue'
 import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
@@ -9,6 +9,7 @@ import { DEFAULT_CRUD_LABELS } from '@/types/labels'
 import { useAppToast } from './useAppToast'
 import { useAppConfirm } from './useAppConfirm'
 import { extractApiError } from './useApiError'
+import { usePendingForm } from './usePendingForms'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
 import {
   convertFormRecord,
@@ -382,6 +383,22 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     dialogVisible.value = true
   }
 
+  // Alteração não salva: retrato do formulário no momento em que o diálogo abre (todos os
+  // `open*` preenchem o formData antes de mostrar). Alimenta o registro de pendentes — aviso
+  // de saída da página e bloqueio da recarga por versão nova.
+  let retratoAoAbrir = ''
+  watch(
+    dialogVisible,
+    (aberto) => {
+      if (aberto) retratoAoAbrir = JSON.stringify(formData)
+    },
+    { flush: 'sync' },
+  )
+  const isDirty = computed(
+    () => dialogVisible.value && !viewMode.value && JSON.stringify(formData) !== retratoAoAbrir,
+  )
+  usePendingForm(isDirty)
+
   // ---------------------------------------------------------------------------
   // Save
   // ---------------------------------------------------------------------------
@@ -590,6 +607,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     saving,
     search,
     dialogVisible,
+    isDirty,
     editingItem,
     formData,
     pagination,
