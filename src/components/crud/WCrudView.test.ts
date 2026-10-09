@@ -233,7 +233,10 @@ describe('WCrudView — filtros de coluna moram na toolbar do grid', () => {
 })
 
 describe('WCrudView — slots do form dialog repassados pela tela', () => {
-  function montarComSlots(slots: Record<string, () => unknown>, props: Record<string, unknown> = {}) {
+  function montarComSlots(
+    slots: Record<string, () => unknown>,
+    props: Record<string, unknown> = {},
+  ) {
     const provider: Partial<DataProvider> = {
       list: vi.fn().mockResolvedValue({ data: [], page: 1, page_size: 20, rows: 0 }),
     }

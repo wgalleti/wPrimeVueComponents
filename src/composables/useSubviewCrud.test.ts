@@ -66,9 +66,7 @@ describe('useSubviewCrud', () => {
   })
 
   it('editar preserva o que não está no form (id, derivados)', () => {
-    const { crud, linhas } = montar([
-      { id: 'abc', produto: 'STARFIX', dose: 4, quantidade: 33.6 },
-    ])
+    const { crud, linhas } = montar([{ id: 'abc', produto: 'STARFIX', dose: 4, quantidade: 33.6 }])
 
     crud.openEditDialog(linhas.value[0], 0)
     crud.setFormField('dose', 6)

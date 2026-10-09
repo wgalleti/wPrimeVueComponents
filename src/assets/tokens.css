@@ -142,7 +142,10 @@
   --w-empty-icon: var(--empty-icon, 4rem); /* ícone do estado vazio */
   --w-empty-illustration: var(--empty-illustration, 15rem); /* arte do estado vazio */
   --w-empty-illustration-compact: var(--empty-illustration-compact, 11rem);
-  --w-attention-text-min: var(--attention-text-min, 9rem); /* texto do ponto de atenção antes de o número descer */
+  --w-attention-text-min: var(
+    --attention-text-min,
+    9rem
+  ); /* texto do ponto de atenção antes de o número descer */
   --w-badge-h: var(--badge-h, 1.25rem); /* contador/badge inline */
   --w-search-w: var(--search-w, 18rem); /* campo de busca das toolbars */
   --w-cell-image: var(--cell-image, 2.25rem); /* miniatura em célula de tabela */

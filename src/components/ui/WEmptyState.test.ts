@@ -5,7 +5,9 @@ import WEmptyState from './WEmptyState.vue'
 
 describe('WEmptyState', () => {
   it('mostra o ícone, o título e a descrição', () => {
-    const w = mount(WEmptyState, { props: { icon: 'pi pi-users', title: 'Nada', description: 'Sem alunos' } })
+    const w = mount(WEmptyState, {
+      props: { icon: 'pi pi-users', title: 'Nada', description: 'Sem alunos' },
+    })
     expect(w.find('.w-empty-state-icon i').classes()).toContain('pi-users')
     expect(w.find('.w-empty-state-title').text()).toBe('Nada')
     expect(w.find('.w-empty-state-description').text()).toBe('Sem alunos')
