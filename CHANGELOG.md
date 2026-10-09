@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.4.0...v1.5.0) (2026-10-09)
+
+### Funcionalidades
+
+* **app:** versão publicada — `wBuildIdentity` (plugin do Vite) embute o identificador do build e publica o mesmo valor em `version.json`; `usePublishedVersion` recarrega a aba aberta na troca de tela ou na volta à aba quando há versão nova, nunca com formulário pendente (`usePendingForms`), offline ou com leitura velha. Chunk removido pelo deploy recarrega uma vez por build.
+* **crud:** diálogo do CRUD alterado conta como formulário pendente; `keyboardNav` vira padrão do plugin (CRUD com teclado no app todo) e a aba com diálogo sujo pede confirmação ao fechar (`confirmDiscard` no `useAppConfirm`).
+* **ui:** `WAttentionList` — os pontos de atenção de uma tela operacional (ícone, rótulo, dica, valor, severidade), com `to` (vira `RouterLink`) ou `item-click` (só a linha com `key` vira botão de teclado) e `active` para o filtro aplicado. `KpiItem` ganha `key` estável, `active` e `interactive: false` (card estático numa grade de cards que filtram).
+* **ui:** `WEmptyState` ganha slot de ilustração do produto e a variante `compact`.
+* **form:** `WDateRange` ganha `inputId`, para o `<label for>` do formulário.
+* **abas:** `--w-tab-viewport-padding` — o respiro da página fica dentro do scroll da aba (`.w-tab-viewport__scroll`); o app não põe padding nem scroll no contêiner das abas.
+* Exportados na raiz: `FkCrudConfig`, `convertFormRecord`, `validateFormRecord` e `getFieldDefaults` — o formulário fora do CRUD converte datas e valida obrigatórios como o `useCrudManager`.
+
+### Correções
+
+* **abas:** layout de rota aninhado (a ficha com sub-rotas) renderiza dentro do painel da aba.
+* **app:** confirmação disparada por uma aba oculta aparece por cima da página; o roteador é tipado pelo que a versão publicada usa (vue-router 5 como base dos testes).
+* **ui:** linhas de atenção com a mesma `key` aparecem todas; o rótulo não some em coluna estreita; linha sem `key` nem `to` é só informação (sem seta, foco nem cursor de mão).
+* **crud:** cabeçalho numérico do `WEditableTable` alinha com os valores.
+
+### Mudança visível
+
+* **composables:** `extractApiError` sem corpo JSON (rede, 502 do proxy) devolve a mensagem de quem chamou, não mais o texto do axios ("Request failed with status code 502").
+
 ## [1.4.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.3.0...v1.4.0) (2026-09-26)
 
 ### Funcionalidades
