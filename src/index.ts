@@ -89,6 +89,8 @@ export type {
   PublishedVersion,
   PublishedVersionDeps,
   InstallPublishedVersionOptions,
+  RouteLike,
+  RouterLike,
 } from './composables'
 
 // Data providers

@@ -1,4 +1,3 @@
-import type { RouteLocationNormalized, Router } from 'vue-router'
 import { listPendingForms } from './usePendingForms'
 
 /**
@@ -7,6 +6,22 @@ import { listPendingForms } from './usePendingForms'
  * nunca com formulário pendente, offline ou com leitura velha do arquivo de versão.
  * Chunk removido pelo deploy vira uma recarga única por build.
  */
+
+/** O que a detecção lê de uma rota (vue-router 4 e 5 servem). */
+export interface RouteLike {
+  name?: unknown
+  path: string
+  fullPath?: string
+  matched?: readonly unknown[]
+}
+
+/** Só o que a instalação usa do roteador — sem acoplar à versão do vue-router. */
+export interface RouterLike {
+  beforeEach: (guard: (to: RouteLike & { fullPath: string }, from: RouteLike) => boolean) => unknown
+  afterEach: (hook: () => void) => unknown
+  onError: (handler: (erro: unknown, to: RouteLike) => void) => unknown
+  resolve: (to: string) => { href: string }
+}
 
 export const MIN_CHECK_INTERVAL_MS = 60_000
 export const RECENT_READ_MS = 5 * 60_000
@@ -39,7 +54,7 @@ export interface PublishedVersion {
   check: () => Promise<void>
   canReload: () => boolean
   onTabVisible: () => Promise<void>
-  onRouteChange: (to: Pick<RouteLocationNormalized, 'name' | 'path'>, from: Pick<RouteLocationNormalized, 'name' | 'path' | 'matched'>, href: string) => boolean
+  onRouteChange: (to: RouteLike, from: RouteLike, href: string) => boolean
   onChunkError: (href?: string) => boolean
   readonly hasNewVersion: boolean
 }
@@ -51,6 +66,7 @@ export function createPublishedVersion(deps: PublishedVersionDeps): PublishedVer
   let ultimaTentativa = Number.NEGATIVE_INFINITY
   let emVoo: Promise<void> | null = null
   let recarregando = false
+  let avisado = false
 
   async function ler(): Promise<void> {
     try {
@@ -111,11 +127,15 @@ export function createPublishedVersion(deps: PublishedVersionDeps): PublishedVer
       return false
     },
     onChunkError(href) {
-      if (!deps.storage) return false
+      // Sem rede, o chunk falhou pela rede e não pelo deploy: recarregar trocaria o app
+      // por a página offline do navegador e gastaria a única recarga deste build.
+      if (!deps.online() || !deps.storage) return false
       try {
         if (deps.storage.getItem(CHUNK_RELOAD_KEY) === deps.currentBuild) return false
         if (deps.pending().length > 0) {
-          deps.warn()
+          // O mesmo erro chega pelo preload e pelo roteador: avisa uma vez.
+          if (!avisado) deps.warn()
+          avisado = true
           return false
         }
         deps.storage.setItem(CHUNK_RELOAD_KEY, deps.currentBuild)
@@ -147,7 +167,7 @@ export interface InstallPublishedVersionOptions {
  * Liga a detecção ao roteador e aos eventos da página. Chame antes das outras guardas
  * (a que liga overlay de carregamento, por exemplo), para não deixar overlay preso.
  */
-export function installPublishedVersion(router: Router, options: InstallPublishedVersionOptions): PublishedVersion | null {
+export function installPublishedVersion(router: RouterLike, options: InstallPublishedVersionOptions): PublishedVersion | null {
   if (options.enabled === false || typeof window === 'undefined') return null
 
   const base = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/'
