@@ -5,12 +5,14 @@ import { createApp } from 'vue'
 vi.mock('./useAppToast', () => ({
   useAppToast: () => ({ success: vi.fn(), error: vi.fn(), info: vi.fn(), warn: vi.fn() }),
 }))
+const confirmDiscard = vi.fn()
 vi.mock('./useAppConfirm', () => ({
-  useAppConfirm: () => ({ confirmDelete: vi.fn() }),
+  useAppConfirm: () => ({ confirmDelete: vi.fn(), confirmDiscard }),
 }))
 
 import { useCrudManager } from './useCrudManager'
 import { W_DATA_PROVIDER_KEY, W_CONFIG_KEY } from '@/types/plugin'
+import { W_TAB_HOST_KEY, type TabHostContext } from '@/types/routeTabs'
 import type { DataProvider } from '@/types/dataProvider'
 import type { CrudManagerConfig } from '@/types/manager'
 import { listPendingForms } from './usePendingForms'
@@ -22,8 +24,10 @@ const tick = () => new Promise((r) => setTimeout(r, 0))
 function setup<T extends AnyRecord = AnyRecord>(
   config: CrudManagerConfig<T>,
   provider: Partial<DataProvider>,
+  extra: { keyboardNav?: boolean; tabHost?: Partial<TabHostContext> } = {},
 ) {
   const app = createApp({ render: () => null })
+  if (extra.tabHost) app.provide(W_TAB_HOST_KEY, extra.tabHost as TabHostContext)
   app.provide(W_DATA_PROVIDER_KEY, provider as DataProvider)
   app.provide(W_CONFIG_KEY, {
     defaultPageSize: 20,
@@ -31,6 +35,7 @@ function setup<T extends AnyRecord = AnyRecord>(
     dateTimeFormat: 'DD/MM/YYYY HH:mm',
     locale: 'pt-BR',
     currency: 'BRL',
+    keyboardNav: extra.keyboardNav ?? false,
   })
   return app.runWithContext(() => useCrudManager<T>(config))
 }
@@ -279,10 +284,7 @@ describe('useCrudManager — fetchDetailOnEdit', () => {
 
   it('erro na busca do detail não abre o diálogo', async () => {
     const get = vi.fn().mockRejectedValue(new Error('boom'))
-    const crud = setup(
-      { endpoint: '/p', columns: [], form: [], fetchDetailOnEdit: true },
-      { get },
-    )
+    const crud = setup({ endpoint: '/p', columns: [], form: [], fetchDetailOnEdit: true }, { get })
     await crud.openEditDialog({ id: 1 })
     expect(crud.dialogVisible.value).toBe(false)
   })
@@ -316,5 +318,38 @@ describe('useCrudManager — alteração não salva', () => {
     crud.openViewDialog({ id: 1, nome: 'A' })
     crud.setFormField('nome', 'B')
     expect(crud.isDirty.value).toBe(false)
+  })
+})
+
+describe('useCrudManager — padrão do app e aba', () => {
+  const form = [{ field: 'nome', label: 'Nome', type: 'text' as const }]
+
+  it('keyboardNav vem do plugin, e a tela que declara vence', () => {
+    expect(
+      setup({ endpoint: '/p', columns: [], form }, { list: okList() }, { keyboardNav: true }).config
+        .keyboardNav,
+    ).toBe(true)
+    expect(
+      setup(
+        { endpoint: '/p', columns: [], form, keyboardNav: false },
+        { list: okList() },
+        { keyboardNav: true },
+      ).config.keyboardNav,
+    ).toBe(false)
+  })
+
+  it('fechar a aba com o diálogo alterado pergunta antes; sem alteração, fecha direto', async () => {
+    let guarda: (() => boolean | Promise<boolean>) | undefined
+    const tabHost = { registerCloseGuard: (g: () => boolean | Promise<boolean>) => (guarda = g) }
+    const crud = setup({ endpoint: '/p', columns: [], form }, { list: okList() }, { tabHost })
+
+    expect(await guarda!()).toBe(true)
+
+    crud.openCreateDialog()
+    crud.setFormField('nome', 'Kimono')
+    await nextTick()
+    confirmDiscard.mockResolvedValueOnce(false)
+    expect(await guarda!()).toBe(false)
+    expect(confirmDiscard).toHaveBeenCalled()
   })
 })

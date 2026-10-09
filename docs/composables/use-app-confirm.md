@@ -60,3 +60,13 @@ E o `ConfirmationService`:
 import ConfirmationService from 'primevue/confirmationservice'
 app.use(ConfirmationService)
 ```
+
+### `confirmDiscard(message?, header?)`
+
+Promessa que resolve `true` para descartar a alteração não salva. Fechar o diálogo sem escolher
+conta como "continuar editando" (`false`). É o que o `useCrudManager` usa para vetar o fechamento
+da aba de rota com o formulário alterado.
+
+```ts
+host?.registerCloseGuard(() => !sujo.value || confirmDiscard())
+```
