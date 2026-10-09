@@ -7,7 +7,10 @@ export function useAppConfirm() {
   // (some e volta com ela); fora de abas, o body de sempre. O ConfirmDialog
   // global continua único — só a âncora muda, por confirmação.
   const tabHost = useTabHost()
-  const appendTo = () => tabHost?.hostEl.value ?? 'body'
+  // Aba oculta (fechar outras, limite de abas, X numa aba que não é a visível): o painel dela
+  // está escondido, então a confirmação vai para o body — senão ninguém a vê e a aba não fecha.
+  const appendTo = () =>
+    tabHost && !tabHost.active.value ? 'body' : (tabHost?.hostEl.value ?? 'body')
 
   function confirmDelete(
     onAccept: () => void,
