@@ -64,6 +64,23 @@ Os botões "Opções de `<aba>`" (⋮) e "Fechar `<aba>`" (X) têm caixa clicáv
 (`--w-tabnav-btn`, mínimo de alvo no desktop) com o ícone pequeno dentro; a faixa segue
 com 40px (`--w-tabnav-h`) porque o item centraliza a caixa.
 
+### Altura e respiro da área da aba
+
+O `WTabViewport` precisa da **altura exata** da área da aba: o pane é a âncora dos dialogs
+e menus da tela (`appendTo` local) e o scroll mora num wrapper interno. Ponha o viewport
+num contêiner flex em coluna, sem `padding` nem `overflow` próprios — com scroll no
+contêiner, o pane cresce com o conteúdo e o dialog centraliza no meio da página rolada (ou
+é cortado numa tela curta). O respiro da página vai no token:
+
+| Var | Default | Papel |
+|---|---|---|
+| `--w-tab-viewport-padding` | `0` | `padding` da área rolável de cada aba |
+
+```css
+.app-layout__main { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+:root { --w-tab-viewport-padding: var(--spacing-xl); }
+```
+
 ### Animação de entrada da página
 
 Cada pane entra com fade + leve deslocamento (o `v-show` alterna `display`, e a animação
