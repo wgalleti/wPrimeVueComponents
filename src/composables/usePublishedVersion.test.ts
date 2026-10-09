@@ -110,6 +110,19 @@ describe('createPublishedVersion', () => {
     expect(depoisDaRecarga.versao.onChunkError('/turmas')).toBe(false)
   })
 
+  it('offline, chunk ausente não recarrega nem gasta a recarga do build', () => {
+    c.ficarOffline()
+    expect(c.versao.onChunkError('/turmas')).toBe(false)
+    expect(c.chamadas.goTo).toEqual([])
+  })
+
+  it('com pendente, o aviso do chunk ausente sai uma vez só', () => {
+    c.pendentes.push('form')
+    c.versao.onChunkError('/turmas')
+    c.versao.onChunkError('/turmas')
+    expect(c.chamadas.warn).toBe(1)
+  })
+
   it('armazenamento bloqueado: chunk ausente não recarrega', () => {
     const bloqueado = cenario({ storage: null })
     expect(bloqueado.versao.onChunkError('/turmas')).toBe(false)

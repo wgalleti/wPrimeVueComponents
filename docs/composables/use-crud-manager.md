@@ -56,6 +56,7 @@ const crud = useCrudManager({
 | `saving` | `Ref<boolean>` | Salvando registro |
 | `search` | `Ref<string>` | Termo de busca atual |
 | `dialogVisible` | `Ref<boolean>` | Dialog aberto/fechado |
+| `isDirty` | `ComputedRef<boolean>` | Dialog aberto (fora do modo leitura) com valor diferente do que abriu; entra sozinho no registro de [pendentes](./use-pending-form) |
 | `editingItem` | `Ref<T \| null>` | Item sendo editado |
 | `formData` | `Record<string, unknown>` | Dados reativos do formulario |
 | `pagination` | `PaginationState` | Estado da paginacao |
