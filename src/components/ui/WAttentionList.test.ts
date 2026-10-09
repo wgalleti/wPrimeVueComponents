@@ -40,4 +40,13 @@ describe('WAttentionList', () => {
     const w = mount(WAttentionList, { props: { items: [], emptyMessage: 'Tudo em dia' } })
     expect(w.find('.w-attention-list__empty').text()).toBe('Tudo em dia')
   })
+
+  it('linhas com a mesma key (o mesmo filtro) renderizam todas', () => {
+    const repetidas: AttentionItem[] = [
+      { key: 'baixo', icon: 'pi pi-box', label: 'Kimono A1' },
+      { key: 'baixo', icon: 'pi pi-box', label: 'Faixa preta' },
+    ]
+    const w = mount(WAttentionList, { props: { items: repetidas, onItemClick: () => {} } })
+    expect(w.findAll('button').map((b) => b.text())).toEqual(['Kimono A1', 'Faixa preta'])
+  })
 })
