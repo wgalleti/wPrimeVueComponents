@@ -57,5 +57,10 @@ export const router = createRouter({
       name: 'markdown-kanban',
       component: () => import('./views/MarkdownKanbanView.vue'),
     },
+    {
+      path: '/painel-operacional',
+      name: 'painel-operacional',
+      component: () => import('./views/PainelOperacionalView.vue'),
+    },
   ],
 })
