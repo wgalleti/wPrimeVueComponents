@@ -28,15 +28,17 @@ const instance = getCurrentInstance()
 // Avaliado no render: o listener do pai pode entrar depois do mount.
 const clicavel = () => hasListener(instance?.vnode.props, 'item-click')
 
+// Linha com ação: `to`, ou `key` com listener. Sem nenhum dos dois é só informação — sem seta,
+// sem foco, sem cursor de mão.
 function tag(item: AttentionItem) {
   if (item.to != null && item.to !== '') return RouterLink
-  return clicavel() ? 'button' : 'div'
+  return clicavel() && item.key != null ? 'button' : 'div'
 }
 
 function attrs(item: AttentionItem, index: number) {
   if (item.to != null && item.to !== '')
     return { to: item.to, onClick: () => emit('item-click', { item, index }) }
-  if (!clicavel()) return {}
+  if (tag(item) !== 'button') return {}
   return {
     type: 'button',
     'aria-pressed': item.active ? 'true' : 'false',

@@ -1,8 +1,9 @@
 # WAttentionList
 
 Pontos de atenção de uma tela operacional: o que pede ação, com a contagem e o atalho para o
-filtro ou a tela. A ordem é de quem chama — ponha o que pede ação primeiro no topo. Sem listener
-de `item-click` nem `to`, as linhas são só leitura.
+filtro ou a tela. A ordem é de quem chama — ponha o que pede ação primeiro no topo. A linha vira ação
+quando tem `to` ou, com listener de `item-click`, quando tem `key`; as demais são só leitura
+(sem seta nem foco).
 
 | `severity` | Uso |
 |---|---|

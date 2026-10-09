@@ -5,7 +5,7 @@ export type AttentionSeverity = 'danger' | 'warning' | 'info' | 'success' | 'neu
 
 /** Uma linha do WAttentionList. */
 export interface AttentionItem {
-  /** Identificador estável (filtro, rota); sem ele, o índice. */
+  /** Identificador estável; com listener de `item-click`, só a linha com `key` vira ação. */
   key?: string
   icon: string
   label: string
