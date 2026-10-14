@@ -2101,6 +2101,11 @@
           "name": "empty-column",
           "type": "{ column: KanbanColumn<Record<string, unknown>>; }",
           "description": "Coluna sem itens."
+        },
+        {
+          "name": "column-footer",
+          "type": "{ column: KanbanColumn<Record<string, unknown>>; items: Item[]; }",
+          "description": "Rodapé da coluna (ex.: total, \"+ adicionar\"). Fica depois da lista, fora da área\nde drop; aparece também com a coluna vazia ou com `loading`."
         }
       ]
     },

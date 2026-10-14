@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## Unreleased (proposta: 1.6.0)
+
+### Funcionalidades
+
+* **ui:** `WKanbanBoard` ganha o slot `column-footer` (escopo `{ column, items }`), renderizado ao fim de cada coluna depois dos cards e do `empty-column`, fora da área de drop e visível com a coluna vazia ou com `loading`. Sem o slot, nada muda.
+
 ## [1.5.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.4.0...v1.5.0) (2026-10-09)
 
 ### Funcionalidades
