@@ -50,6 +50,11 @@ defineSlots<{
   'column-action'?(props: { column: KanbanColumn }): unknown
   /** Coluna sem itens. */
   'empty-column'?(props: { column: KanbanColumn }): unknown
+  /**
+   * Rodapé da coluna (ex.: total, "+ adicionar"). Fica depois da lista, fora da área
+   * de drop; aparece também com a coluna vazia ou com `loading`.
+   */
+  'column-footer'?(props: { column: KanbanColumn; items: Item[] }): unknown
 }>()
 
 const dragging = ref<{ item: Item; from: string; key: unknown } | null>(null)
@@ -231,6 +236,10 @@ function showIndicatorAt(column: KanbanColumn, index: number): boolean {
           <slot name="empty-column" :column="column">Nenhum item</slot>
         </div>
       </div>
+
+      <footer v-if="$slots['column-footer']" class="w-kanban-board__footer">
+        <slot name="column-footer" :column="column" :items="column.items" />
+      </footer>
     </section>
   </div>
 </template>

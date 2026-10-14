@@ -785,6 +785,14 @@
   }
 }
 
+.w-kanban-board__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding: 0 var(--w-space-1);
+  min-width: 0;
+}
+
 .w-kanban-board__empty {
   padding: var(--w-space-5) var(--w-space-3);
   border: 1px dashed var(--w-border-strong);

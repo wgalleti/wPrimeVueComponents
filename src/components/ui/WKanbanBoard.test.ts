@@ -99,6 +99,56 @@ describe('WKanbanBoard — render', () => {
   })
 })
 
+describe('WKanbanBoard — column-footer', () => {
+  const footer = `<template #column-footer="{ column, items }">{{ column.value }}={{ items.length }}</template>`
+
+  it('sem o slot não renderiza rodapé', () => {
+    expect(montar().find('.w-kanban-board__footer').exists()).toBe(false)
+  })
+
+  it('renderiza um rodapé por coluna com { column, items }, inclusive na vazia', () => {
+    const w = mount(WKanbanBoard, {
+      props: { columns: colunas() },
+      slots: { 'column-footer': footer },
+    })
+    const rodapes = w.findAll('.w-kanban-board__footer')
+    expect(rodapes.map((r) => r.text())).toEqual(['todo=2', 'doing=2', 'done=0'])
+  })
+
+  it('fica depois da lista e fora dela (fora da área de drop)', () => {
+    const w = mount(WKanbanBoard, {
+      props: { columns: colunas() },
+      slots: { 'column-footer': footer },
+    })
+    const coluna = w.findAll('.w-kanban-board__column')[0]
+    const filhos = Array.from(coluna.element.children)
+    const lista = coluna.find('.w-kanban-board__list').element
+    const rodape = coluna.find('.w-kanban-board__footer').element
+    expect(lista.contains(rodape)).toBe(false)
+    expect(filhos.indexOf(rodape)).toBeGreaterThan(filhos.indexOf(lista))
+  })
+
+  it('aparece com loading e com o empty-column', () => {
+    const w = mount(WKanbanBoard, {
+      props: { columns: colunas(), loading: true },
+      slots: { 'column-footer': footer, 'empty-column': 'vazio' },
+    })
+    expect(w.findAll('.w-kanban-board__footer')).toHaveLength(3)
+    expect(w.find('.w-kanban-board__empty').text()).toBe('vazio')
+  })
+
+  it('soltar sobre o rodapé não emite move', async () => {
+    const w = mount(WKanbanBoard, {
+      props: { columns: colunas() },
+      slots: { 'column-footer': footer },
+    })
+    const dt = dataTransfer()
+    await w.findAll('.w-kanban-board__card')[0].trigger('dragstart', { dataTransfer: dt })
+    await w.findAll('.w-kanban-board__footer')[2].trigger('drop', { dataTransfer: dt })
+    expect(w.emitted('move')).toBeUndefined()
+  })
+})
+
 describe('WKanbanBoard — item-click', () => {
   it('clique no card emite item-click com o item', async () => {
     const w = montar()

@@ -7,6 +7,11 @@ muta os arrays. Mover programático (por uma UI própria) também é responsabil
 Cada coluna aceita `accent` (token de cor) que tinge cabeçalho, realce de drop e linha de
 inserção, além de slot de ação por coluna.
 
+O slot `column-footer` (escopo `{ column, items }`) desenha o rodapé de cada coluna — total,
+"+ adicionar" —, depois dos cards e do `empty-column`. Fica **fora da área de drop** (soltar um
+card sobre ele não move nada) e aparece também com a coluna vazia ou com `loading` (nesse caso o
+board inteiro fica sem ponteiro, como os demais controles).
+
 ## API
 
 <ApiTable name="WKanbanBoard" />
@@ -34,4 +39,15 @@ async function onMove(ev: KanbanMoveEvent) {
 <template>
   <WKanbanBoard :columns="columns" @move="onMove" />
 </template>
+```
+
+### Rodapé por coluna
+
+```vue
+<WKanbanBoard :columns="columns" @move="onMove">
+  <template #column-footer="{ column, items }">
+    <Button label="Adicionar" icon="pi pi-plus" text size="small" @click="criarEm(column.value)" />
+    <span>{{ items.length }} itens</span>
+  </template>
+</WKanbanBoard>
 ```
