@@ -42,4 +42,16 @@ describe('WInlineCell', () => {
     expect(w.emitted('open')).toHaveLength(1)
     expect(w.emitted('close')).toHaveLength(1)
   })
+
+  it('o nome acessível leva o valor atual e aria-expanded acompanha o popover', async () => {
+    const w = montar({ valueText: 'Alta' })
+    const botao = w.get('button.w-inline-cell__trigger')
+    expect(botao.attributes('aria-label')).toBe('Prazo de #3: Alta')
+    expect(botao.attributes('aria-expanded')).toBe('false')
+    const pop = w.findComponent({ name: 'Popover' })
+    await pop.vm.$emit('show')
+    expect(botao.attributes('aria-expanded')).toBe('true')
+    await pop.vm.$emit('hide')
+    expect(botao.attributes('aria-expanded')).toBe('false')
+  })
 })
