@@ -10,7 +10,10 @@ type EchartsCore = typeof import('echarts/core')
 
 let echartsPromise: Promise<EchartsCore | null> | null = null
 
-/** Núcleo do ECharts com barra/linha/pizza + tooltip/legenda/título registrados. */
+/**
+ * Núcleo do ECharts com barra/linha/pizza + tooltip/legenda/título registrados, e o `LabelLayout`: sem ele o
+ * `labelLayout` da série (`hideOverlap`, `moveOverlap`) é ignorado em silêncio e o rótulo de valor encosta no vizinho.
+ */
 export function loadEcharts(): Promise<EchartsCore | null> {
   if (!echartsPromise) {
     echartsPromise = Promise.all([
@@ -18,8 +21,9 @@ export function loadEcharts(): Promise<EchartsCore | null> {
       import('echarts/charts'),
       import('echarts/components'),
       import('echarts/renderers'),
+      import('echarts/features'),
     ])
-      .then(([core, charts, components, renderers]) => {
+      .then(([core, charts, components, renderers, features]) => {
         core.use([
           charts.BarChart,
           charts.LineChart,
@@ -31,6 +35,7 @@ export function loadEcharts(): Promise<EchartsCore | null> {
           components.TooltipComponent,
           renderers.CanvasRenderer,
           renderers.SVGRenderer,
+          features.LabelLayout,
         ])
         return core
       })

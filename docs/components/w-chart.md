@@ -7,7 +7,8 @@ PDFs gerados por Chromium headless/Gotenberg).
 
 O ECharts é dependência da suite, mas entra por `import()` dinâmico: quem nunca renderiza
 um gráfico não paga pela biblioteca. Tipos registrados (tree-shaken): barra, linha e
-pizza/donut — tipo novo entra na suite, nunca na tela.
+pizza/donut, mais o `LabelLayout` (o `labelLayout` da série — `hideOverlap` esconde o rótulo
+que encostaria no vizinho, `moveOverlap` afasta) — tipo novo entra na suite, nunca na tela.
 
 ## API
 

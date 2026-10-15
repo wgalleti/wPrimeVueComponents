@@ -16,7 +16,10 @@ const instancia = {
 }
 const init = vi.fn(() => instancia)
 
-vi.mock('echarts/core', () => ({ use: vi.fn(), init }))
+// o registro acontece uma vez por módulo (a promise do loader fica em cache): guarda o que entrou, fora do clearAllMocks
+const registrados: unknown[] = []
+const use = vi.fn((recursos: unknown[]) => registrados.push(...recursos))
+vi.mock('echarts/core', () => ({ use, init }))
 vi.mock('echarts/charts', () => ({ BarChart: {}, LineChart: {}, PieChart: {} }))
 vi.mock('echarts/components', () => ({
   DatasetComponent: {},
@@ -26,6 +29,8 @@ vi.mock('echarts/components', () => ({
   TooltipComponent: {},
 }))
 vi.mock('echarts/renderers', () => ({ CanvasRenderer: {}, SVGRenderer: {} }))
+const LabelLayout = {}
+vi.mock('echarts/features', () => ({ LabelLayout }))
 
 // jsdom não tem ResizeObserver
 vi.stubGlobal(
@@ -48,6 +53,12 @@ function montar(props: Record<string, unknown> = {}) {
 }
 
 describe('WChart — ciclo de vida', () => {
+  it('registra o LabelLayout (sem ele o labelLayout da série não age)', async () => {
+    montar()
+    await flushPromises()
+    expect(registrados).toContain(LabelLayout)
+  })
+
   it('inicializa o ECharts e aplica a option', async () => {
     montar()
     await flushPromises()
