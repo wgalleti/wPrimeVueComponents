@@ -12,6 +12,10 @@ O slot `column-footer` (escopo `{ column, items }`) desenha o rodapé de cada co
 card sobre ele não move nada) e aparece também com a coluna vazia ou com `loading` (nesse caso o
 board inteiro fica sem ponteiro, como os demais controles).
 
+O cabeçalho tem altura **mínima** (`--w-control-h-sm`): um `column-header` com mais de uma linha
+(título e contador) aumenta a faixa em vez de escapar dela. A lista reserva a calha da barra de
+rolagem (`scrollbar-gutter: stable`), então os cards têm a mesma largura em todas as colunas.
+
 ## API
 
 <ApiTable name="WKanbanBoard" />

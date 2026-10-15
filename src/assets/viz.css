@@ -648,8 +648,8 @@
   display: flex;
   align-items: center;
   gap: var(--w-space-2);
-  padding: 0 var(--w-space-3);
-  height: var(--w-control-h-sm);
+  padding: var(--w-space-1) var(--w-space-3);
+  min-height: var(--w-control-h-sm);
   border-radius: var(--w-radius-md);
   background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--w-surface));
   transition:
@@ -697,6 +697,8 @@
   margin: calc(var(--w-space-1) * -1);
   border-radius: var(--w-radius-lg);
   overflow-y: auto;
+  /* A calha da barra fica reservada em toda coluna: o card tem a mesma largura com ou sem rolagem. */
+  scrollbar-gutter: stable;
   transition:
     background-color var(--w-motion) var(--w-ease),
     box-shadow var(--w-motion) var(--w-ease);
@@ -794,6 +796,8 @@
 }
 
 .w-kanban-board__empty {
+  flex-shrink: 0;
+  box-sizing: border-box;
   padding: var(--w-space-5) var(--w-space-3);
   border: 1px dashed var(--w-border-strong);
   border-radius: var(--w-radius-md);

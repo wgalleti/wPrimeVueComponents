@@ -229,4 +229,17 @@ describe('WKanbanBoard — move', () => {
     expect(cols[0].items).toHaveLength(2)
     expect(cols[1].items).toHaveLength(2)
   })
+
+  it('column-header customizado fica dentro do cabeçalho, com a ação ao lado', () => {
+    const w = mount(WKanbanBoard, {
+      props: { columns: colunas() },
+      slots: {
+        'column-header': '<div class="meu-cab">A<br>2 de 9</div>',
+        'column-action': '<button class="acao">+</button>',
+      },
+    })
+    const header = w.findAll('.w-kanban-board__header')[0]
+    expect(header.find('.meu-cab').exists()).toBe(true)
+    expect(header.find('.acao').exists()).toBe(true)
+  })
 })
