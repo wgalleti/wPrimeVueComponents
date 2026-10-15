@@ -24,6 +24,12 @@ const props = withDefaults(
     maxHeight?: string
     /** 'tab' alterna escrever/visualizar; 'split' mostra lado a lado. */
     previewMode?: 'tab' | 'split'
+    /** `id` do `<textarea>`, para o `<label for>` do formulário. */
+    inputId?: string
+    /** Nome acessível do `<textarea>` quando não há `<label for>` (o placeholder não é rótulo). */
+    ariaLabel?: string
+    /** `id` do elemento que rotula o `<textarea>` (`aria-labelledby`). */
+    ariaLabelledby?: string
   }>(),
   {
     disabled: false,
@@ -273,8 +279,11 @@ const tools: ToolDef[] = [
     <div class="w-markdown-editor__body" :style="{ minHeight, maxHeight }">
       <textarea
         v-if="showTextarea"
+        :id="inputId"
         ref="textareaRef"
         class="w-markdown-editor__textarea"
+        :aria-label="ariaLabel"
+        :aria-labelledby="ariaLabelledby"
         :value="modelValue"
         :disabled="disabled"
         :placeholder="placeholder"
