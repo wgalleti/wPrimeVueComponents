@@ -19,6 +19,26 @@ function ultimoEmit(w: ReturnType<typeof montar>): string {
   return emitted![emitted!.length - 1][0] as string
 }
 
+describe('WMarkdownEditor — rótulo', () => {
+  it('repassa inputId, ariaLabel e ariaLabelledby ao textarea', () => {
+    const w = montar('', {
+      inputId: 'texto-intro',
+      ariaLabel: 'Texto da introdução',
+      ariaLabelledby: 'rotulo-intro',
+    })
+    const t = w.find('textarea')
+    expect(t.attributes('id')).toBe('texto-intro')
+    expect(t.attributes('aria-label')).toBe('Texto da introdução')
+    expect(t.attributes('aria-labelledby')).toBe('rotulo-intro')
+  })
+
+  it('sem as props, o textarea não ganha id nem aria-*', () => {
+    const t = montar().find('textarea')
+    expect(t.attributes('id')).toBeUndefined()
+    expect(t.attributes('aria-label')).toBeUndefined()
+  })
+})
+
 describe('WMarkdownEditor — edição', () => {
   it('digitar no textarea emite update:modelValue', async () => {
     const w = montar()

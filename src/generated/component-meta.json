@@ -1388,6 +1388,27 @@
           "required": false,
           "default": "\"tab\"",
           "description": "'tab' alterna escrever/visualizar; 'split' mostra lado a lado."
+        },
+        {
+          "name": "inputId",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "`id` do `<textarea>`, para o `<label for>` do formulário."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Nome acessível do `<textarea>` quando não há `<label for>` (o placeholder não é rótulo)."
+        },
+        {
+          "name": "ariaLabelledby",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "`id` do elemento que rotula o `<textarea>` (`aria-labelledby`)."
         }
       ],
       "events": [
