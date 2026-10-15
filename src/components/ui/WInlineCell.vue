@@ -25,6 +25,7 @@ const emit = defineEmits<{ open: []; close: [] }>()
 const popover = ref<InstanceType<typeof Popover> | null>(null)
 const trigger = ref<HTMLButtonElement | null>(null)
 const expanded = ref(false)
+const editor = ref<HTMLElement | null>(null)
 
 const accessibleName = computed(() =>
   props.valueText ? `${props.label}: ${props.valueText}` : props.label,
@@ -44,15 +45,16 @@ async function onShow() {
   expanded.value = true
   emit('open')
   await nextTick()
-  const content = document.querySelector<HTMLElement>('.p-popover .w-inline-cell__editor')
-  const first = content?.querySelector<HTMLElement>(`${FOCUSABLE}:not([disabled])`)
+  const first = editor.value?.querySelector<HTMLElement>(`${FOCUSABLE}:not([disabled])`)
   first?.focus()
 }
 
 function onHide() {
   expanded.value = false
   emit('close')
-  trigger.value?.focus()
+  // Só devolve o foco se ninguém o pegou: clicar noutra célula com este popover aberto não rouba o foco dela.
+  const active = document.activeElement
+  if (!active || active === document.body || editor.value?.contains(active)) trigger.value?.focus()
 }
 
 defineExpose({ close })
@@ -75,7 +77,7 @@ defineExpose({ close })
     <span v-else class="w-inline-cell__static"><slot /></span>
 
     <Popover v-if="editable" ref="popover" @show="onShow" @hide="onHide">
-      <div class="w-inline-cell__editor">
+      <div ref="editor" class="w-inline-cell__editor">
         <slot name="editor" :close="close" />
       </div>
     </Popover>
