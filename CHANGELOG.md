@@ -2,12 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-## Unreleased (proposta: 1.7.2)
+## [1.7.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.1...v1.7.2) (2026-10-15)
 
 ### Correções
 
-* **form:** `WMarkdownEditor` ganha `inputId`, `ariaLabel` e `ariaLabelledby`, repassados ao `<textarea>`. Sem eles o campo não tinha nome acessível (o placeholder não é rótulo) e o `<label for>` do formulário não chegava ao textarea.
-
+* **form:** WMarkdownEditor forwards inputId and aria labels to the textarea ([82cebc9](https://github.com/wgalleti/wPrimeVueComponents/commit/82cebc9319b8af6d38309e08a55455ded5b39eaa))
 ## [1.7.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.0...v1.7.1) (2026-10-15)
 
 ### Correções
