@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.7.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.0...v1.7.1) (2026-10-15)
+
+### Correções
+
+* **charts:** `WChart` passa a registrar o `LabelLayout` (`echarts/features`). Sem ele, o `labelLayout` da série (`hideOverlap`, `moveOverlap`) era ignorado em silêncio e os valores escritos nas barras se sobrepunham em gráfico estreito. Para o `hideOverlap` esconder também o rótulo que só encosta no vizinho, dê ao rótulo `padding` com `backgroundColor` (mesmo `'transparent'`): sem fundo, a caixa medida não inclui a margem. ([0d42268](https://github.com/wgalleti/wPrimeVueComponents/commit/0d42268ef5755b60397ed504d68033dbd88d24db))
+
 ## [1.7.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.6.0...v1.7.0) (2026-10-15)
 
 ### Funcionalidades
