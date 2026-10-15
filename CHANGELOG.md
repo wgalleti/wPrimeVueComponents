@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## Unreleased (proposta: 1.7.0)
+
+### Funcionalidades
+
+* **ui:** `WAvatar` — avatar de pessoa com foto ou iniciais sobre uma cor estável do nome (paleta `--w-viz-*`); sem nome nem foto mostra o ícone de pessoa vazio.
+* **ui:** `WInlineCell` — célula editável no lugar: o valor é um botão que abre um popover com o editor (slot `editor` com `close`); sem `editable` vira texto puro. Não grava nada.
+
 ## [1.6.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.5.0...v1.6.0) (2026-10-14)
 
 ### Funcionalidades

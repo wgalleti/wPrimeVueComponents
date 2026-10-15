@@ -76,11 +76,13 @@ export default defineConfig({
             text: 'UI',
             items: [
               { text: 'WAttentionList', link: '/components/w-attention-list' },
+              { text: 'WAvatar', link: '/components/w-avatar' },
               { text: 'WChart', link: '/components/w-chart' },
               { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WDialog', link: '/components/w-dialog' },
               { text: 'WEmptyState', link: '/components/w-empty-state' },
               { text: 'WInfoCard', link: '/components/w-info-card' },
+              { text: 'WInlineCell', link: '/components/w-inline-cell' },
               { text: 'WKanbanBoard', link: '/components/w-kanban-board' },
               { text: 'WKpiCard', link: '/components/w-kpi-card' },
               { text: 'WKpiGrid', link: '/components/w-kpi-grid' },

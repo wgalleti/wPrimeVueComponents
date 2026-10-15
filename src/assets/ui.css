@@ -1690,3 +1690,111 @@
   font-size: var(--w-text-sm);
   color: var(--w-fg-muted);
 }
+
+/* ==========================================================
+   WAvatar — .w-avatar
+   ========================================================== */
+
+.w-avatar {
+  --w-avatar-size: var(--w-icon-box);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--w-avatar-size);
+  height: var(--w-avatar-size);
+  border-radius: var(--w-radius-full);
+  overflow: hidden;
+  background: var(--w-avatar-tone, var(--w-surface-3));
+  color: var(--w-primary-fg);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  line-height: 1;
+  user-select: none;
+}
+
+.w-avatar--sm {
+  --w-avatar-size: var(--w-icon-box-sm);
+}
+
+.w-avatar--tone-1 {
+  --w-avatar-tone: var(--w-viz-1);
+}
+.w-avatar--tone-2 {
+  --w-avatar-tone: var(--w-viz-2);
+}
+.w-avatar--tone-3 {
+  --w-avatar-tone: var(--w-viz-3);
+}
+.w-avatar--tone-4 {
+  --w-avatar-tone: var(--w-viz-4);
+}
+.w-avatar--tone-5 {
+  --w-avatar-tone: var(--w-viz-5);
+}
+.w-avatar--tone-6 {
+  --w-avatar-tone: var(--w-viz-6);
+}
+
+.w-avatar--empty {
+  background: transparent;
+  border: 1px dashed var(--w-border-strong);
+  color: var(--w-fg-subtle);
+}
+
+.w-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ==========================================================
+   WInlineCell — .w-inline-cell
+   ========================================================== */
+
+.w-inline-cell {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.w-inline-cell__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--w-space-05) var(--w-space-1);
+  border: 1px solid transparent;
+  border-radius: var(--w-radius-md);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color var(--w-motion-fast) var(--w-ease),
+    border-color var(--w-motion-fast) var(--w-ease);
+}
+
+.w-inline-cell__trigger:hover {
+  background: var(--w-surface-2);
+  border-color: var(--w-border);
+}
+
+.w-inline-cell__trigger:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+.w-inline-cell__static {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  min-width: 0;
+  padding: var(--w-space-05) var(--w-space-1);
+}
+
+.w-inline-cell__editor {
+  min-width: var(--w-search-w);
+}
