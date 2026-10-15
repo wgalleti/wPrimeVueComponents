@@ -1786,6 +1786,34 @@
         }
       ]
     },
+    "WAvatar": {
+      "file": "src/components/ui/WAvatar.vue",
+      "props": [
+        {
+          "name": "name",
+          "type": "string | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Nome da pessoa; vira as iniciais, a cor e o texto alternativo."
+        },
+        {
+          "name": "src",
+          "type": "string | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Foto; quando existe, vence as iniciais."
+        },
+        {
+          "name": "size",
+          "type": "\"md\" | \"sm\" | undefined",
+          "required": false,
+          "default": "\"md\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
     "WCheckList": {
       "file": "src/components/ui/WCheckList.vue",
       "props": [
@@ -2022,6 +2050,49 @@
       ],
       "events": [],
       "slots": []
+    },
+    "WInlineCell": {
+      "file": "src/components/ui/WInlineCell.vue",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "default": null,
+          "description": "Nome do que a célula edita; é o `aria-label` do botão (ex.: \"Prioridade de #3\")."
+        },
+        {
+          "name": "editable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "open",
+          "type": "[]",
+          "description": ""
+        },
+        {
+          "name": "close",
+          "type": "[]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "default",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "editor",
+          "type": "{ close: () => void; }",
+          "description": ""
+        }
+      ]
     },
     "WKanbanBoard": {
       "file": "src/components/ui/WKanbanBoard.vue",
@@ -3132,12 +3203,12 @@
       ],
       "events": [
         {
-          "name": "activate",
+          "name": "close",
           "type": "[tab: RouteTab]",
           "description": ""
         },
         {
-          "name": "close",
+          "name": "activate",
           "type": "[tab: RouteTab]",
           "description": ""
         },
