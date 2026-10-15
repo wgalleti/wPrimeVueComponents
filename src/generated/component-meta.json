@@ -2062,6 +2062,13 @@
           "description": "Nome do que a célula edita; é o `aria-label` do botão (ex.: \"Prioridade de #3\")."
         },
         {
+          "name": "valueText",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"\"",
+          "description": "Valor atual em texto (ex.: \"Alta\"); entra no nome acessível do botão: \"Prioridade de #3: Alta\"."
+        },
+        {
           "name": "editable",
           "type": "boolean | undefined",
           "required": false,

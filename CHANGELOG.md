@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [commit
 
 * **ui:** `WAvatar` — avatar de pessoa com foto ou iniciais sobre uma cor estável do nome (paleta `--w-viz-*`); sem nome nem foto mostra o ícone de pessoa vazio.
 * **ui:** `WInlineCell` — célula editável no lugar: o valor é um botão que abre um popover com o editor (slot `editor` com `close`); sem `editable` vira texto puro. Não grava nada.
+  Acessível por padrão: `value-text` entra no nome do botão ("Prazo de #3: Alta"), `aria-expanded` acompanha o popover, o foco vai ao primeiro controle do editor ao abrir e volta ao botão ao fechar.
 
 ## [1.6.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.5.0...v1.6.0) (2026-10-14)
 
