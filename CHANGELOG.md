@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.8.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.2...v1.8.0) (2026-10-17)
+
+### Funcionalidades
+
+* **ui:** WGroupedSelectList, a grouped table with multiple selection ([de530c2](https://github.com/wgalleti/wPrimeVueComponents/commit/de530c2cbb648ae547f134f9899d0edd01033a0c))
 ## [1.7.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.1...v1.7.2) (2026-10-15)
 
 ### Correções
