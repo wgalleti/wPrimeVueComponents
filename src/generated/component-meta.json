@@ -2044,6 +2044,155 @@
         }
       ]
     },
+    "WGroupedSelectList": {
+      "file": "src/components/ui/WGroupedSelectList.vue",
+      "props": [
+        {
+          "name": "items",
+          "type": "Record<string, unknown>[]",
+          "required": true,
+          "default": null,
+          "description": "Linhas já filtradas; a ordem dos grupos é a da primeira aparição."
+        },
+        {
+          "name": "columns",
+          "type": "ColumnDef[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "dataKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": "Campo que identifica a linha (o valor entra em `selection`)."
+        },
+        {
+          "name": "groupBy",
+          "type": "string | ((item: Record<string, unknown>) => string)",
+          "required": true,
+          "default": null,
+          "description": "Campo (ou função) que dá a chave do grupo da linha."
+        },
+        {
+          "name": "groupLabel",
+          "type": "((groupKey: string, items: Record<string, unknown>[]) => string) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Rótulo do grupo; default a própria chave."
+        },
+        {
+          "name": "selectable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Trava global: false desabilita todo checkbox, sem badge, e esconde \"selecionar todos\"."
+        },
+        {
+          "name": "isSelectable",
+          "type": "((item: Record<string, unknown>) => boolean) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Diz se a linha pode ser selecionada; default todas. Linha travada já selecionada pode ser desmarcada."
+        },
+        {
+          "name": "disabledReason",
+          "type": "((item: Record<string, unknown>) => string | null | undefined) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Texto do badge nas linhas não selecionáveis."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Com linhas já na tela elas continuam visíveis, com uma barra de carregamento; o placeholder só aparece sem linhas."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum registro.\"",
+          "description": ""
+        },
+        {
+          "name": "selectAllLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Selecionar todos os resultados\"",
+          "description": ""
+        },
+        {
+          "name": "clearSelectionLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Limpar seleção\"",
+          "description": ""
+        },
+        {
+          "name": "collapsible",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "false remove o botão de recolher dos grupos."
+        },
+        {
+          "name": "selection",
+          "type": "GroupedSelectKey[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Chaves das linhas selecionadas (v-model:selection). Sem v-model do pai o estado é local."
+        },
+        {
+          "name": "collapsed",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Chaves dos grupos recolhidos (v-model:collapsed)."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:selection",
+          "type": "[value: GroupedSelectKey[]]",
+          "description": ""
+        },
+        {
+          "name": "update:collapsed",
+          "type": "[value: string[]]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "summary",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "empty",
+          "type": "{}",
+          "description": ""
+        },
+        {
+          "name": "group-header",
+          "type": "{ groupKey: string; label: string; items: Record<string, unknown>[]; selectedCount: number; selectableCount: number; collapsed: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "group-meta",
+          "type": "{ groupKey: string; label: string; items: Record<string, unknown>[]; selectedCount: number; selectableCount: number; collapsed: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "row-actions",
+          "type": "{ data: Record<string, unknown>; }",
+          "description": ""
+        }
+      ]
+    },
     "WInfoCard": {
       "file": "src/components/ui/WInfoCard.vue",
       "props": [
@@ -2620,6 +2769,11 @@
           "description": ""
         },
         {
+          "name": "update:collapsed",
+          "type": "[collapsed: boolean]",
+          "description": ""
+        },
+        {
           "name": "feature-click",
           "type": "[feature: MapSelectFeature]",
           "description": ""
@@ -2632,11 +2786,6 @@
         {
           "name": "feature-leave",
           "type": "[]",
-          "description": ""
-        },
-        {
-          "name": "update:collapsed",
-          "type": "[collapsed: boolean]",
           "description": ""
         }
       ],
