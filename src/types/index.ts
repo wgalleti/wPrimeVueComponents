@@ -27,6 +27,8 @@ export type {
 export type { CheckListItem, CheckListLevel } from './checkList'
 export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from './attentionList'
 
+export type { GroupedSelectGroupScope, GroupedSelectKey } from './groupedSelectList'
+
 export type { KanbanColumn, KanbanMoveEvent } from './kanban'
 
 export type { MarkdownHeading, MarkdownRenderResult } from './markdown'

@@ -53,6 +53,7 @@ export {
   WCheckList,
   WInlineCell,
   WAttentionList,
+  WGroupedSelectList,
   WMapSelect,
   WMarkdownView,
   WMarkdownEditor,
@@ -122,6 +123,8 @@ export type {
   AttentionItem,
   AttentionItemClickEvent,
   AttentionSeverity,
+  GroupedSelectGroupScope,
+  GroupedSelectKey,
   // TabItem faltava aqui — a doc do WTabBar ensina importar da raiz.
   TabItem,
   RouteTab,
