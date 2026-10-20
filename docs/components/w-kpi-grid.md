@@ -18,11 +18,33 @@ número na cor da severidade).
 ## Colunas
 
 - `columns` numérico (2–6): grade fixa, sempre esse número de colunas.
-- `columns="auto"`: quantas couberem, com piso de coluna no token `--w-kpi-min`
-  (padrão `13rem`, ~208 px — onde um valor monetário de ~14 caracteres cabe no tamanho cheio).
-  Abaixo do piso a grade perde uma coluna em vez de esmagar o número: num contêiner de
-  730–750 px (janela de 820–900 px com barra lateral), 4 KPIs ficam em 3 + 1; a partir de
-  ~870 px, em 4. O app ajusta o piso pelo nome curto (`--kpi-min`) no `:root`.
+- `columns="auto"`: a grade escolhe, pela **própria largura**, um número de colunas que
+  fecha as linhas — nunca um card sozinho na última linha:
+
+  | Itens | Colunas, da mais larga para a mais estreita |
+  | ----- | ------------------------------------------- |
+  | 2     | 2 → 1                                       |
+  | 3     | 3 → 1                                       |
+  | 4     | 4 → 2×2 → 1                                 |
+  | 5     | 5 → 3 + 2 → 1                               |
+  | 6     | 6 → 3×2 → 2×3 → 1                           |
+  | 7     | 7 → 4 + 3 → 3 + 3 + 1 → 1                   |
+  | 8     | 8 → 4×2 → 2×4 → 1                           |
+
+  Regra: se todos cabem, uma linha; senão o maior divisor do número de itens que cabe;
+  sem divisor, o número que cabe sem deixar um item sozinho (menos linhas, depois menos
+  vagas); sem isso, uma coluna quando só cabem duas — ou quantas cabem (7 itens em três
+  colunas é o único órfão). Uma coluna "cabe" com 13rem (~208 px, onde um valor monetário
+  de ~14 caracteres cabe no tamanho cheio) mais o vão: 2 colunas a partir de 26.75rem
+  (428 px) de grade, 3 a partir de 40.5rem (648 px), 4 a partir de 54.25rem (868 px).
+  Num contêiner de 730–750 px (janela de 820–900 px com barra lateral), 4 KPIs ficam
+  2×2. Os cortes são fixos (`@container` não aceita `var()`; régua em `tokens.css`).
+  Acima de 8 itens não há degrau: a grade preenche com quantos couberem pelo piso
+  `--w-kpi-min`, que o app ainda ajusta pelo nome curto (`--kpi-min`).
+- No `auto` a raiz é contêiner de largura (`container-type: inline-size`) e as colunas
+  moram no trilho `.w-kpi-grid__track`: a grade ocupa a largura do pai e não se
+  dimensiona pelo conteúdo — num pai que encolhe ao conteúdo (flex sem crescimento),
+  dê largura a ela. Nas colunas fixas o trilho é `display: contents` e nada muda.
 
 Em qualquer modo o valor do card desce de tamanho quando o **card** estreita (ver
 [WKpiCard › Largura estreita](./w-kpi-card#largura-estreita)) — inclusive com `columns`

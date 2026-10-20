@@ -137,7 +137,7 @@
   --w-kpi-min: var(
     --kpi-min,
     13rem
-  ); /* piso da coluna do WKpiGrid columns="auto": cabe um valor monetário de ~14 caracteres no 2xl */
+  ); /* piso da coluna do WKpiGrid columns="auto" acima de 8 itens; até 8, os degraus fixos abaixo */
   --w-meter-h: var(--meter-h, 0.5rem); /* trilho da barra de meta (WMeter) */
   --w-icon-btn: var(
     --icon-btn,
@@ -220,3 +220,22 @@ html[data-density='compact'] {
      <= 11.5rem  xl   (compacto: xl)
      <= 9.5rem   lg   (compacto: lg)
      <= 7.5rem   lg   (compacto: md) */
+
+/* Degraus do WKpiGrid columns="auto" — @container na raiz da grade, valores fixos.
+   Corte de f colunas = f × 13rem (piso: "US$ 40.726.705" no 2xl) + (f − 1) × 0.75rem
+   (vão --w-space-3; a grade densa usa os mesmos cortes, com folga de 0.25rem/vão):
+     2: 26.75rem  3: 40.5rem  4: 54.25rem  5: 68rem  6: 81.75rem  7: 95.5rem  8: 109.25rem
+   Colunas por itens (linha) × colunas que cabem (coluna):
+            cabem 1 2 3 4 5 6 7 8
+     2 itens      1 2 2 2 2 2 2 2
+     3            1 1 3 3 3 3 3 3
+     4            1 2 2 4 4 4 4 4
+     5            1 1 3 3 5 5 5 5
+     6            1 2 3 3 3 6 6 6
+     7            1 1 3 4 4 4 7 7
+     8            1 2 2 4 4 4 4 8
+   Regra: cabem todos → uma linha; senão o maior divisor dos itens que cabe; sem
+   divisor, o número que cabe sem deixar 1 item sozinho na última linha (menos
+   linhas, depois menos vagas); sem isso, 1 coluna se cabem 2, ou quantas cabem
+   (único caso de órfão: 7 itens em 3 colunas). Acima de 8 itens: auto-fit pelo
+   --w-kpi-min, que é o único ponto em que o app ainda mexe no piso. */

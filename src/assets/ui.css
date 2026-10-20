@@ -400,11 +400,82 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow).
-   O piso (--w-kpi-min) é a largura em que um valor monetário típico cabe no 2xl:
-   abaixo dele a grade perde uma coluna em vez de esmagar o número. */
+/* Trilho: nas colunas fixas some do layout (os cards seguem itens da grade da raiz,
+   e a regra de celular de form.css continua valendo). */
+.w-kpi-grid__track {
+  display: contents;
+}
+
+/* Auto: a raiz é o contêiner e o trilho é a grade. O número de colunas sai da
+   largura da raiz e do número de itens (data-count, até 8): só colunas que fecham
+   a linha — 4 itens: 4, 2×2 ou 1; nunca 3 + 1. Régua, tabela e regra em tokens.css
+   (@container não aceita var()). Efeito colateral do inline-size: a grade não se
+   dimensiona pelo conteúdo; num pai que encolhe ao conteúdo, dê largura a ela. */
 .w-kpi-grid--auto {
+  display: block;
+  container: w-kpi-grid / inline-size;
+}
+
+/* Sem data-count (mais de 8 itens): quantos couberem pelo piso --w-kpi-min. */
+.w-kpi-grid--auto > .w-kpi-grid__track {
+  display: grid;
+  gap: inherit;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--w-kpi-min)), 1fr));
+}
+
+.w-kpi-grid--auto[data-count] > .w-kpi-grid__track {
+  --w-kpi-cols: 1;
+  grid-template-columns: repeat(var(--w-kpi-cols), minmax(0, 1fr));
+}
+
+@container w-kpi-grid (min-width: 26.75rem) {
+  .w-kpi-grid[data-count='2'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='4'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='6'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
+    --w-kpi-cols: 2;
+  }
+}
+
+@container w-kpi-grid (min-width: 40.5rem) {
+  .w-kpi-grid[data-count='3'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='5'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='6'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='7'] > .w-kpi-grid__track {
+    --w-kpi-cols: 3;
+  }
+}
+
+@container w-kpi-grid (min-width: 54.25rem) {
+  .w-kpi-grid[data-count='4'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='7'] > .w-kpi-grid__track,
+  .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
+    --w-kpi-cols: 4;
+  }
+}
+
+@container w-kpi-grid (min-width: 68rem) {
+  .w-kpi-grid[data-count='5'] > .w-kpi-grid__track {
+    --w-kpi-cols: 5;
+  }
+}
+
+@container w-kpi-grid (min-width: 81.75rem) {
+  .w-kpi-grid[data-count='6'] > .w-kpi-grid__track {
+    --w-kpi-cols: 6;
+  }
+}
+
+@container w-kpi-grid (min-width: 95.5rem) {
+  .w-kpi-grid[data-count='7'] > .w-kpi-grid__track {
+    --w-kpi-cols: 7;
+  }
+}
+
+@container w-kpi-grid (min-width: 109.25rem) {
+  .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
+    --w-kpi-cols: 8;
+  }
 }
 
 .w-kpi-grid--dense {
