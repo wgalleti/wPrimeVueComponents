@@ -2495,7 +2495,7 @@
           "type": "2 | 3 | 4 | 5 | 6 | \"auto\" | undefined",
           "required": false,
           "default": "4",
-          "description": "Número fixo de colunas (2–6) ou 'auto' para preencher a largura com quantos\nKPIs couberem (responsivo, sem overflow). Use 'auto' em dashboards que devem\naproveitar o máximo da tela."
+          "description": "Número fixo de colunas (2–6) ou 'auto': a grade escolhe, pela própria\nlargura, um número de colunas que fecha as linhas (4 KPIs: 4, 2×2 ou 1 —\nnunca 3 + 1). Use 'auto' em dashboards que devem aproveitar a largura."
         },
         {
           "name": "dense",

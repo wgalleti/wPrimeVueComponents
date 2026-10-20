@@ -111,4 +111,35 @@ describe('WKpiGrid — colunas', () => {
     expect(auto.classes()).toContain('w-kpi-grid--auto')
     expect(auto.classes().some((c) => c.startsWith('w-kpi-grid--cols-'))).toBe(false)
   })
+
+  it('auto marca data-count até 8 itens; colunas fixas e mais de 8 ficam sem', () => {
+    const muitos = (n: number) =>
+      Array.from({ length: n }, (_, i) => ({ icon: 'pi pi-dollar', label: `K${i}`, value: i }))
+    expect(grid({ columns: 'auto' }).attributes('data-count')).toBe('2')
+    expect(grid({ columns: 'auto', items: muitos(8) }).attributes('data-count')).toBe('8')
+    expect(grid({ columns: 'auto', items: muitos(9) }).attributes('data-count')).toBeUndefined()
+    expect(grid({ columns: 4 }).attributes('data-count')).toBeUndefined()
+  })
+
+  it('data-count acompanha a lista', async () => {
+    const w = grid({ columns: 'auto' })
+    await w.setProps({ items: [...items, ...items] })
+    expect(w.attributes('data-count')).toBe('4')
+  })
+
+  it('cards (e o slot #item) moram no trilho, filho direto da raiz', () => {
+    for (const columns of [4, 'auto']) {
+      const track = grid({ columns }).find('.w-kpi-grid > .w-kpi-grid__track')
+      expect(track.findAll(':scope > .w-kpi-card')).toHaveLength(2)
+    }
+    const comSlot = mount(WKpiGrid, {
+      props: { items, columns: 'auto' },
+      slots: { item: '<span class="meu">{{ params.item.label }}</span>' },
+      global: { plugins: [PrimeVue] },
+    })
+    expect(comSlot.findAll('.w-kpi-grid__track > .meu').map((e) => e.text())).toEqual([
+      'Receita',
+      'Custo',
+    ])
+  })
 })
