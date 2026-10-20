@@ -152,6 +152,11 @@
   --w-dialog-sm: var(--dialog-sm, 30rem); /* diálogo curto: confirmação, mensagem */
   --w-col-narrow: var(--col-narrow, 3rem); /* coluna de seleção/expansor */
   --w-col-actions: var(--col-actions, 6rem); /* coluna de ações de linha */
+  --w-col-title-min: var(
+    --col-title-min,
+    12rem
+  ); /* piso da coluna fluida (título) da tabela editável — abaixo dela a grade rola */
+  --w-col-remove: var(--col-remove, 2.75rem); /* coluna da lixeira da tabela editável */
 
   /* ---- Knobs de componente (o consumidor ajusta por instância via :style) - */
   --w-form-cols: 2; /* colunas do grid do formulário */

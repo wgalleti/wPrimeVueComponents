@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import PrimeVue from 'primevue/config'
 import WEditableTable from './WEditableTable.vue'
 import type { EditableColumnDef, EditableRow } from '@/types/editableTable'
@@ -476,5 +477,193 @@ describe('WEditableTable — modo card (tablet em pé)', () => {
     const w = card({ expandable: true, expansionLabel: 'Insumos do lote' })
     expect(w.find('.w-editable-table__toggle-label').text()).toBe('Insumos do lote')
     expect(w.find('.w-editable-table__toggle').attributes('aria-label')).toBe('Insumos do lote')
+  })
+})
+
+describe('WEditableTable — rodapé no card segue o papel da coluna', () => {
+  const card = (props: Record<string, unknown> = {}) => montar({ cardMode: 'always', ...props })
+  const papeisRodape = (w: VueWrapper) =>
+    w.findAll('.w-editable-table__footer td').map((td) => td.attributes('data-card'))
+
+  it('coluna value fixa: o total sai como manchete', () => {
+    const cols = colunas.map((c) =>
+      c.field === 'volume_kg' ? { ...c, card: 'value' as const } : c,
+    )
+    expect(papeisRodape(card({ columns: cols }))).toEqual(['total-label', 'read', 'value'])
+  })
+
+  it('papel em função: manchete se alguma linha resolve value', () => {
+    const cols = colunas.map((c) =>
+      c.field === 'volume_kg'
+        ? {
+            ...c,
+            card: (row: EditableRow) =>
+              (row.produto === 'HO APORE' ? 'field' : 'value') as 'field' | 'value',
+          }
+        : c,
+    )
+    expect(papeisRodape(card({ columns: cols }))).toEqual(['total-label', 'read', 'value'])
+  })
+
+  it('papel em função sem nenhuma linha value: total compacto', () => {
+    const cols = colunas.map((c) =>
+      c.field === 'volume_kg' ? { ...c, card: () => 'field' as const } : c,
+    )
+    expect(papeisRodape(card({ columns: cols }))).toEqual(['total-label', 'read', 'read'])
+  })
+
+  it('o total value leva o rótulo da coluna', () => {
+    const cols = colunas.map((c) =>
+      c.field === 'volume_kg' ? { ...c, card: 'value' as const } : c,
+    )
+    const td = card({ columns: cols }).find('.w-editable-table__footer td[data-card="value"]')
+    expect(td.find('.w-editable-table__card-label').text()).toBe('Volume (kg)')
+    expect(td.text()).toContain('14.000')
+  })
+})
+
+describe('WEditableTable — value editável pelo slot', () => {
+  it('o campo do slot fica dentro da célula value', () => {
+    const cols = colunas.map((c) =>
+      c.field === 'volume_kg' ? { ...c, card: 'value' as const } : c,
+    )
+    const w = mount(WEditableTable, {
+      props: { modelValue: lotes, columns: cols, cardMode: 'always' },
+      slots: { 'cell-volume_kg': '<input class="campo-manual" />' },
+      global: { plugins: [PrimeVue] },
+    })
+    const td = w.findAll('.w-editable-table__row')[0].find('td[data-card="value"]')
+    expect(td.find('.campo-manual').exists()).toBe(true)
+  })
+})
+
+describe('WEditableTable — card pela largura do componente', () => {
+  type Callback = (entries: { contentRect: { width: number } }[]) => void
+  let callbacks: Callback[] = []
+  const desconectados = vi.fn()
+
+  function instalarResizeObserver() {
+    callbacks = []
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(cb: Callback) {
+          callbacks.push(cb)
+        }
+        observe() {}
+        disconnect() {
+          desconectados()
+        }
+      },
+    )
+    vi.stubGlobal('requestAnimationFrame', (fn: FrameRequestCallback) => {
+      fn(0)
+      return 1
+    })
+    vi.stubGlobal('cancelAnimationFrame', () => {})
+  }
+
+  async function largura(px: number) {
+    for (const cb of callbacks) cb([{ contentRect: { width: px } }])
+    await nextTick()
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('abaixo de 840px de largura do elemento vira card; acima, tabela', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await largura(700)
+    expect(w.find('.w-editable-table--cards').exists()).toBe(true)
+    expect(w.find('table').attributes('role')).toBe('presentation')
+    await largura(900)
+    expect(w.find('.w-editable-table--cards').exists()).toBe(false)
+  })
+
+  it('largura 0 (escondido) mantém o modo que estava', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await largura(700)
+    await largura(0)
+    expect(w.find('.w-editable-table--cards').exists()).toBe(true)
+  })
+
+  it('a janela não decide: matchMedia estreito com elemento largo continua tabela', async () => {
+    instalarResizeObserver()
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+    const w = montar()
+    await largura(900)
+    expect(w.find('.w-editable-table--cards').exists()).toBe(false)
+  })
+
+  // O re-render sai no microtask do mount, antes da pintura — daí o nextTick.
+  it('mede no mount, antes do observer: já nasce card sem piscar a grade', async () => {
+    vi.stubGlobal('ResizeObserver', undefined)
+    const original = HTMLElement.prototype.getBoundingClientRect
+    HTMLElement.prototype.getBoundingClientRect = () => ({ width: 700 }) as DOMRect
+    try {
+      const w = montar()
+      await nextTick()
+      expect(w.find('.w-editable-table--cards').exists()).toBe(true)
+    } finally {
+      HTMLElement.prototype.getBoundingClientRect = original
+    }
+  })
+
+  it('sem ResizeObserver (SSR, jsdom) fica a tabela', () => {
+    vi.stubGlobal('ResizeObserver', undefined)
+    expect(montar().find('.w-editable-table--cards').exists()).toBe(false)
+  })
+
+  it('desconecta o observer ao desmontar', () => {
+    instalarResizeObserver()
+    desconectados.mockClear()
+    montar().unmount()
+    expect(desconectados).toHaveBeenCalled()
+  })
+
+  it('cardMode never ignora a largura', async () => {
+    instalarResizeObserver()
+    const w = montar({ cardMode: 'never' })
+    await largura(500)
+    expect(w.find('.w-editable-table--cards').exists()).toBe(false)
+  })
+})
+
+describe('WEditableTable — piso da grade', () => {
+  it('na tabela, o piso soma larguras fixas e o token por coluna fluida', () => {
+    const cols: EditableColumnDef[] = [
+      { field: 'produto', header: 'Produto' },
+      { field: 'area', header: 'Área', width: 110 },
+      { field: 'lote', header: 'Lote', width: '8rem' },
+    ]
+    const style = montar({ columns: cols, removable: true, expandable: true })
+      .find('table')
+      .attributes('style')
+    expect(style).toContain(
+      '--w-editable-min: calc(var(--w-col-title-min) + 110px + 8rem + var(--w-icon-box) + var(--w-col-remove))',
+    )
+  })
+
+  it('no card não há piso', () => {
+    expect(montar({ cardMode: 'always' }).find('table').attributes('style')).toBeUndefined()
+  })
+
+  it('a tabela mora num wrapper de rolagem', () => {
+    expect(montar().find('.w-editable-table__scroll > table').exists()).toBe(true)
   })
 })

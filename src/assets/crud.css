@@ -894,6 +894,21 @@
   table-layout: fixed;
 }
 
+/* Piso da grade. Em layout fixo a coluna sem `width` fica com o que sobra — e
+   sobrava zero entre a régua do card e a largura em que tudo cabe (nome uma letra
+   por linha, input sobre o título). O piso (`--w-editable-min`, montado no
+   componente: larguras fixas + --w-col-title-min por coluna fluida) mantém o
+   título legível e o wrapper rola na horizontal em vez de esmagar. */
+.w-editable-table__scroll {
+  overflow-x: auto;
+}
+
+/* Só na tabela que declarou o próprio piso: a custom property herda, e a subtabela
+   da expansão (ou em card) não pode receber o piso da tabela de fora. */
+.w-editable-table__table[style*='--w-editable-min'] {
+  min-width: var(--w-editable-min);
+}
+
 .w-editable-table__table thead tr {
   background: var(--w-surface-2);
   border-top: 1px solid var(--w-border);
@@ -986,7 +1001,7 @@
 }
 
 .w-editable-table__action-col {
-  width: 2.75rem;
+  width: var(--w-col-remove);
   text-align: right;
 }
 
@@ -1074,7 +1089,13 @@
 }
 
 /* ==========================================================
-   WEditableTable — MODO CARD (tablet em pé, < 840px)
+   WEditableTable — MODO CARD (componente com menos de 840px de largura)
+
+   A régua é a largura do PRÓPRIO componente, medida por ResizeObserver no SFC,
+   que liga `.w-editable-table--cards` — não `@media` da janela: com a barra lateral
+   do app a janela passa de 840 bem antes de a tabela caber. Também não é
+   `@container`: o card troca marcação (rótulo na célula, role, largura inline),
+   então a decisão já precisa estar no JS, e o CSS só segue a classe.
 
    A mesma tabela, outro display: o `<table>` vira bloco, cada `<tbody>` (que já
    era UMA linha, por causa da expansão) vira um card e cada `<td>` vira uma
@@ -1088,6 +1109,12 @@
 
 .w-editable-table--cards .w-editable-table__table {
   display: block;
+}
+
+/* No card nada transborda na horizontal; `overflow-x: auto` arrastaria junto o
+   eixo y e cortaria o que encosta na borda do card. */
+.w-editable-table--cards .w-editable-table__scroll {
+  overflow: visible;
 }
 
 .w-editable-table--cards thead {
@@ -1203,6 +1230,23 @@
   line-height: var(--w-leading-snug);
   font-variant-numeric: tabular-nums;
   color: var(--w-fg);
+}
+
+/* `value` pode receber um campo pelo slot (InputNumber na linha em modo manual):
+   ele ocupa o lugar da manchete — largura cheia e o dígito no tamanho dela. Input
+   não herda fonte, por isso tamanho e peso vão explícitos no `.p-inputtext`. */
+.w-editable-table--cards td[data-card='value'] > *:not(.w-editable-table__card-label),
+.w-editable-table--cards td[data-card='value'] .p-inputnumber,
+.w-editable-table--cards td[data-card='value'] .p-inputtext {
+  width: 100%;
+  min-width: 0;
+}
+
+.w-editable-table--cards td[data-card='value'] .p-inputtext {
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  line-height: var(--w-leading-snug);
+  font-variant-numeric: tabular-nums;
 }
 
 .w-editable-table--cards td[data-card='value'] .w-editable-table__card-label {

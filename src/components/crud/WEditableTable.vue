@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, isRef, ref } from 'vue'
+import { computed, isRef, onBeforeUnmount, onMounted, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import WDatePicker from '@/components/form/WDatePicker.vue'
-import { useBreakpoint } from '@/composables/useBreakpoint'
+import { BREAKPOINTS } from '@/composables/useBreakpoint'
 import { useFormatters } from '@/composables/useFormatters'
 import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/editableTable'
 
@@ -21,8 +21,11 @@ import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/e
  * A subtabela de insumos do design é este mesmo componente dentro do slot
  * `#expansion` — não existe componente separado para "tabela filha".
  *
- * **Tablet em pé (`< 840px`): a tabela vira card**, uma linha por card, como o
- * `WCrudView` já faz com a listagem. E vira sem tela paralela: a marcação é a
+ * **Componente com menos de 840px de largura: a tabela vira card**, uma linha por
+ * card, como o `WCrudView` já faz com a listagem. A régua é a largura do PRÓPRIO
+ * componente, não a da janela: com a barra lateral do app, a janela passa de 840
+ * muito antes de a tabela caber, e era nessa faixa que a coluna do título caía a
+ * zero. E vira sem tela paralela: a marcação é a
  * MESMA — o `<table>` troca de display e cada `<tbody>` (que já era uma linha)
  * vira o card. É isso que mantém os slots `#cell-*`, os editores e a expansão
  * funcionando iguais nas duas larguras; duplicar a árvore para o tablet daria
@@ -54,8 +57,8 @@ const props = withDefaults(
     /** Campo usado como `key` das linhas. Sem ele, a chave é o índice. */
     rowKey?: string
     /**
-     * Quando a tabela vira card. `auto` (default) segue a régua: card abaixo de
-     * 840px, tabela acima. `never` mantém a tabela em qualquer largura (planilha
+     * Quando a tabela vira card. `auto` (default) segue a régua pela largura do
+     * próprio componente (não da janela): card abaixo de 840px, tabela acima. `never` mantém a tabela em qualquer largura (planilha
      * que só faz sentido em grade); `always` é para vitrine e teste.
      */
     cardMode?: 'auto' | 'never' | 'always'
@@ -85,10 +88,49 @@ const { formatNumber } = useFormatters()
 
 // --- Modo card -------------------------------------------------------------
 
-const { isRetrato } = useBreakpoint()
+// A régua é a largura do ELEMENTO (ResizeObserver), não a da janela. Tem de ser
+// JS e não só `@container`: o card troca marcação (rótulo dentro da célula,
+// `role`, largura inline), e o CSS só segue a classe `--cards` que sai daqui —
+// uma fonte só, JS e CSS nunca discordam.
+const raiz = ref<HTMLElement | null>(null)
+const estreito = ref(false)
+let observer: ResizeObserver | null = null
+let quadro = 0
+
+/** Largura 0 é componente escondido (aba inativa, `v-show`, KeepAlive): mantém
+ *  o modo que estava, senão a tabela piscaria para card ao voltar. */
+function medir(largura: number): boolean | null {
+  return largura > 0 ? largura < BREAKPOINTS.retrato : null
+}
+
+onMounted(() => {
+  if (!raiz.value) return
+  // Medida síncrona antes da primeira pintura: sem ela o tablet veria a grade
+  // por um quadro antes de virar card.
+  const inicial = medir(raiz.value.getBoundingClientRect().width)
+  if (inicial != null) estreito.value = inicial
+  if (typeof ResizeObserver === 'undefined') return
+  observer = new ResizeObserver((entries) => {
+    const proximo = medir(entries[entries.length - 1]?.contentRect.width ?? 0)
+    if (proximo == null || proximo === estreito.value) return
+    // Trocar a classe no próprio callback muda a altura do elemento observado e o
+    // navegador dispara "ResizeObserver loop…" no `window` — o app consumidor
+    // manda isso para o monitoramento. O quadro seguinte aplica sem laço.
+    cancelAnimationFrame(quadro)
+    quadro = requestAnimationFrame(() => {
+      estreito.value = proximo
+    })
+  })
+  observer.observe(raiz.value)
+})
+
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  cancelAnimationFrame(quadro)
+})
 
 const emCard = computed(
-  () => props.cardMode === 'always' || (props.cardMode !== 'never' && isRetrato.value),
+  () => props.cardMode === 'always' || (props.cardMode !== 'never' && estreito.value),
 )
 
 /** O título é da tabela, não da linha: o primeiro `card: 'title'` FIXO, senão a
@@ -160,8 +202,28 @@ function columnClass(column: EditableColumnDef): string[] {
  *  (é o `style` inline que fazia a coluna de 112px continuar de 112px). */
 function columnStyle(column: EditableColumnDef) {
   if (emCard.value || column.width == null) return undefined
-  return { width: typeof column.width === 'number' ? `${column.width}px` : column.width }
+  return { width: widthOf(column.width) }
 }
+
+function widthOf(width: string | number): string {
+  return typeof width === 'number' ? `${width}px` : width
+}
+
+/** Piso da grade: com `table-layout: fixed` a coluna sem `width` (o título) fica
+ *  com o que sobra — e sobrava zero entre 840px e a largura em que tudo cabe. O
+ *  `min-width` de célula não vale em layout fixo, então o piso é da TABELA: soma
+ *  das larguras fixas + `--w-col-title-min` por coluna fluida + expansor e
+ *  lixeira. Abaixo disso o wrapper rola na horizontal em vez de esmagar. */
+const tableStyle = computed(() => {
+  if (emCard.value) return undefined
+  const partes = props.columns.map((c) =>
+    c.width == null ? 'var(--w-col-title-min)' : widthOf(c.width),
+  )
+  if (props.expandable) partes.push('var(--w-icon-box)')
+  if (props.removable) partes.push('var(--w-col-remove)')
+  if (!partes.length) return undefined
+  return { '--w-editable-min': `calc(${partes.join(' + ')})` }
+})
 
 function isCellDisabled(column: EditableColumnDef, row: EditableRow, index: number): boolean {
   if (props.disabled) return true
@@ -231,6 +293,19 @@ function temRodape(column: EditableColumnDef): boolean {
   return typeof column.footer === 'function' || column.footer === 'sum'
 }
 
+/** Papel do total no card. O rodapé não tem linha, então segue a coluna: `value`
+ *  fixo → manchete; papel em função → manchete se ALGUMA linha resolve `value`
+ *  (a parte nunca sai maior que o todo); o resto → `read`, compacto. */
+function footerRole(column: EditableColumnDef): EditableCardRole | 'total-label' {
+  if (column.field === footerLabelField.value) return 'total-label'
+  if (!temRodape(column)) return 'hidden'
+  const card = column.card
+  if (card === 'value') return 'value'
+  if (typeof card === 'function' && props.modelValue.some((row) => card(row) === 'value'))
+    return 'value'
+  return 'read'
+}
+
 /** A primeira coluna sem rodapé próprio carrega o rótulo "Total". */
 const footerLabelField = computed(() => {
   const first = props.columns.find((c) => !c.footer || c.footer === 'none')
@@ -260,7 +335,7 @@ const headerGroupCells = computed(() => {
 </script>
 
 <template>
-  <div class="w-editable-table" :class="{ 'w-editable-table--cards': emCard }">
+  <div ref="raiz" class="w-editable-table" :class="{ 'w-editable-table--cards': emCard }">
     <div
       v-if="$slots.toolbar || $slots['toolbar-extra'] || addLabel"
       class="w-editable-table__toolbar"
@@ -285,188 +360,198 @@ const headerGroupCells = computed(() => {
          com o display trocado, a semântica de grade não vale mais e anunciar
          "tabela de 9 colunas" seria mentira. O rótulo de cada campo vira texto
          de verdade dentro da célula (não um `::before`), então nada se perde. -->
-    <table class="w-editable-table__table" :role="emCard ? 'presentation' : undefined">
-      <thead>
-        <tr v-if="hasHeaderGroups" class="w-editable-table__group-row">
-          <th v-if="expandable" class="w-editable-table__toggle-col" />
-          <th
-            v-for="cell in headerGroupCells"
-            :key="cell.key"
-            :colspan="cell.span"
-            class="w-editable-table__group"
-            :class="{ 'w-editable-table__group--label': cell.label }"
-          >
-            {{ cell.label }}
-          </th>
-          <th v-if="removable" class="w-editable-table__action-col" />
-        </tr>
-        <tr>
-          <th v-if="expandable" class="w-editable-table__toggle-col" />
-          <th
-            v-for="column in columns"
-            :key="column.field"
-            :class="columnClass(column)"
-            :style="columnStyle(column)"
-          >
-            {{ column.header }}
-          </th>
-          <th v-if="removable" class="w-editable-table__action-col" />
-        </tr>
-      </thead>
+    <!-- Wrapper de rolagem: na grade, abaixo do piso da tabela, rola em vez de
+         esmagar a coluna do título. -->
+    <div class="w-editable-table__scroll">
+      <table
+        class="w-editable-table__table"
+        :role="emCard ? 'presentation' : undefined"
+        :style="tableStyle"
+      >
+        <thead>
+          <tr v-if="hasHeaderGroups" class="w-editable-table__group-row">
+            <th v-if="expandable" class="w-editable-table__toggle-col" />
+            <th
+              v-for="cell in headerGroupCells"
+              :key="cell.key"
+              :colspan="cell.span"
+              class="w-editable-table__group"
+              :class="{ 'w-editable-table__group--label': cell.label }"
+            >
+              {{ cell.label }}
+            </th>
+            <th v-if="removable" class="w-editable-table__action-col" />
+          </tr>
+          <tr>
+            <th v-if="expandable" class="w-editable-table__toggle-col" />
+            <th
+              v-for="column in columns"
+              :key="column.field"
+              :class="columnClass(column)"
+              :style="columnStyle(column)"
+            >
+              {{ column.header }}
+            </th>
+            <th v-if="removable" class="w-editable-table__action-col" />
+          </tr>
+        </thead>
 
-      <tbody v-if="!modelValue.length">
-        <tr>
-          <td :colspan="columnCount" class="w-editable-table__empty" data-card="expansion">
-            <slot name="empty">{{ emptyMessage }}</slot>
-          </td>
-        </tr>
-      </tbody>
+        <tbody v-if="!modelValue.length">
+          <tr>
+            <td :colspan="columnCount" class="w-editable-table__empty" data-card="expansion">
+              <slot name="empty">{{ emptyMessage }}</slot>
+            </td>
+          </tr>
+        </tbody>
 
-      <tbody v-for="(row, index) in modelValue" :key="rowKeyOf(row, index)">
-        <!-- Zebra pelo índice, não por `:nth-child`: cada linha é um `<tbody>` próprio
+        <tbody v-for="(row, index) in modelValue" :key="rowKeyOf(row, index)">
+          <!-- Zebra pelo índice, não por `:nth-child`: cada linha é um `<tbody>` próprio
              (por causa da expansão), então a contagem do CSS não enxergaria a
              alternância. -->
-        <tr
-          class="w-editable-table__row"
-          :class="{ 'w-editable-table__row--alt': index % 2 === 1 }"
-        >
-          <td v-if="expandable" class="w-editable-table__toggle-col" data-card="expander">
-            <button
-              type="button"
-              class="w-editable-table__toggle"
-              :aria-expanded="isExpanded(index)"
-              :aria-label="expansionLabel"
-              @click="toggleRow(index)"
-            >
-              <i :class="isExpanded(index) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
-              <span v-if="emCard" class="w-editable-table__toggle-label">{{ expansionLabel }}</span>
-            </button>
-          </td>
-
-          <td
-            v-for="column in columns"
-            :key="column.field"
-            :class="columnClass(column)"
-            :style="columnStyle(column)"
-            :data-card="cardRole(column, row)"
+          <tr
+            class="w-editable-table__row"
+            :class="{ 'w-editable-table__row--alt': index % 2 === 1 }"
           >
-            <!-- O rótulo é o cabeçalho da coluna trazido para dentro da célula:
+            <td v-if="expandable" class="w-editable-table__toggle-col" data-card="expander">
+              <button
+                type="button"
+                class="w-editable-table__toggle"
+                :aria-expanded="isExpanded(index)"
+                :aria-label="expansionLabel"
+                @click="toggleRow(index)"
+              >
+                <i :class="isExpanded(index) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+                <span v-if="emCard" class="w-editable-table__toggle-label">{{
+                  expansionLabel
+                }}</span>
+              </button>
+            </td>
+
+            <td
+              v-for="column in columns"
+              :key="column.field"
+              :class="columnClass(column)"
+              :style="columnStyle(column)"
+              :data-card="cardRole(column, row)"
+            >
+              <!-- O rótulo é o cabeçalho da coluna trazido para dentro da célula:
                  no card não existe `thead`, e um campo sem nome ao lado não se
                  preenche. Só existe no card — na grade seria texto repetido. -->
-            <span v-if="emCard" class="w-editable-table__card-label">{{ cardLabel(column) }}</span>
-            <slot
-              :name="`cell-${column.field}`"
-              :row="row"
-              :index="index"
-              :value="row[column.field]"
-              :column="column"
-            >
-              <InputNumber
-                v-if="column.editor === 'number'"
-                :model-value="row[column.field] as number"
-                fluid
-                locale="pt-BR"
-                :min="column.min"
-                :max="column.max"
-                :min-fraction-digits="column.decimals != null ? column.decimals : undefined"
-                :max-fraction-digits="column.decimals != null ? column.decimals : undefined"
-                :suffix="column.suffix"
-                :placeholder="column.placeholder"
-                :disabled="isCellDisabled(column, row, index)"
-                :input-class="'w-editable-table__num'"
-                @update:model-value="(val) => setCell(index, column.field, val)"
-              />
+              <span v-if="emCard" class="w-editable-table__card-label">{{
+                cardLabel(column)
+              }}</span>
+              <slot
+                :name="`cell-${column.field}`"
+                :row="row"
+                :index="index"
+                :value="row[column.field]"
+                :column="column"
+              >
+                <InputNumber
+                  v-if="column.editor === 'number'"
+                  :model-value="row[column.field] as number"
+                  fluid
+                  locale="pt-BR"
+                  :min="column.min"
+                  :max="column.max"
+                  :min-fraction-digits="column.decimals != null ? column.decimals : undefined"
+                  :max-fraction-digits="column.decimals != null ? column.decimals : undefined"
+                  :suffix="column.suffix"
+                  :placeholder="column.placeholder"
+                  :disabled="isCellDisabled(column, row, index)"
+                  :input-class="'w-editable-table__num'"
+                  @update:model-value="(val) => setCell(index, column.field, val)"
+                />
 
-              <InputText
-                v-else-if="column.editor === 'text'"
-                :model-value="row[column.field] as string"
-                fluid
-                :placeholder="column.placeholder"
-                :disabled="isCellDisabled(column, row, index)"
-                @update:model-value="(val) => setCell(index, column.field, val)"
-              />
+                <InputText
+                  v-else-if="column.editor === 'text'"
+                  :model-value="row[column.field] as string"
+                  fluid
+                  :placeholder="column.placeholder"
+                  :disabled="isCellDisabled(column, row, index)"
+                  @update:model-value="(val) => setCell(index, column.field, val)"
+                />
 
-              <Select
-                v-else-if="column.editor === 'select'"
-                :model-value="row[column.field]"
-                fluid
-                :options="unwrapOptions(column)"
-                :option-label="column.optionLabel || 'label'"
-                :option-value="column.optionValue || 'value'"
-                :placeholder="column.placeholder"
-                :disabled="isCellDisabled(column, row, index)"
-                @update:model-value="(val) => setCell(index, column.field, val)"
-              />
+                <Select
+                  v-else-if="column.editor === 'select'"
+                  :model-value="row[column.field]"
+                  fluid
+                  :options="unwrapOptions(column)"
+                  :option-label="column.optionLabel || 'label'"
+                  :option-value="column.optionValue || 'value'"
+                  :placeholder="column.placeholder"
+                  :disabled="isCellDisabled(column, row, index)"
+                  @update:model-value="(val) => setCell(index, column.field, val)"
+                />
 
-              <!-- Data: o mesmo campo dos formulários (máscara, calendário, F2 = hoje),
+                <!-- Data: o mesmo campo dos formulários (máscara, calendário, F2 = hoje),
                    guardando `YYYY-MM-DD` na linha. Sem o "limpar" — numa grade, célula
                    de data vazia é linha sem vencimento, que ninguém quer criar sem querer. -->
-              <WDatePicker
-                v-else-if="column.editor === 'date'"
-                :model-value="row[column.field] as string | null"
-                :min-date="column.minDate"
-                :max-date="column.maxDate"
-                :placeholder="column.placeholder"
-                :disabled="isCellDisabled(column, row, index)"
-                :show-clear="false"
-                @update:model-value="(val) => setCell(index, column.field, val)"
-              />
+                <WDatePicker
+                  v-else-if="column.editor === 'date'"
+                  :model-value="row[column.field] as string | null"
+                  :min-date="column.minDate"
+                  :max-date="column.maxDate"
+                  :placeholder="column.placeholder"
+                  :disabled="isCellDisabled(column, row, index)"
+                  :show-clear="false"
+                  @update:model-value="(val) => setCell(index, column.field, val)"
+                />
 
-              <span v-else class="w-editable-table__text">{{ displayValue(column, row) }}</span>
-            </slot>
-          </td>
+                <span v-else class="w-editable-table__text">{{ displayValue(column, row) }}</span>
+              </slot>
+            </td>
 
-          <td v-if="removable" class="w-editable-table__action-col" data-card="actions">
-            <button
-              type="button"
-              class="w-editable-table__remove"
-              aria-label="Remover linha"
-              @click="removeRow(row, index)"
-            >
-              <i class="pi pi-trash" />
-            </button>
-          </td>
-        </tr>
+            <td v-if="removable" class="w-editable-table__action-col" data-card="actions">
+              <button
+                type="button"
+                class="w-editable-table__remove"
+                aria-label="Remover linha"
+                @click="removeRow(row, index)"
+              >
+                <i class="pi pi-trash" />
+              </button>
+            </td>
+          </tr>
 
-        <tr v-if="expandable && isExpanded(index)" class="w-editable-table__expansion">
-          <td :colspan="columnCount" data-card="expansion">
-            <slot name="expansion" :row="row" :index="index" />
-          </td>
-        </tr>
-      </tbody>
+          <tr v-if="expandable && isExpanded(index)" class="w-editable-table__expansion">
+            <td :colspan="columnCount" data-card="expansion">
+              <slot name="expansion" :row="row" :index="index" />
+            </td>
+          </tr>
+        </tbody>
 
-      <tfoot v-if="hasFooter">
-        <tr class="w-editable-table__footer">
-          <td v-if="expandable" class="w-editable-table__toggle-col" data-card="hidden" />
-          <!-- No card o rodapé vira o card de totais: só entram as colunas que
+        <tfoot v-if="hasFooter">
+          <tr class="w-editable-table__footer">
+            <td v-if="expandable" class="w-editable-table__toggle-col" data-card="hidden" />
+            <!-- No card o rodapé vira o card de totais: só entram as colunas que
                somam (e o rótulo "Total" como manchete). Coluna sem soma viraria
-               um rótulo com valor vazio. -->
-          <td
-            v-for="column in columns"
-            :key="column.field"
-            :class="columnClass(column)"
-            :style="columnStyle(column)"
-            :data-card="
-              column.field === footerLabelField
-                ? 'total-label'
-                : temRodape(column)
-                  ? 'read'
-                  : 'hidden'
-            "
-          >
-            <span v-if="emCard && temRodape(column)" class="w-editable-table__card-label">
-              {{ cardLabel(column) }}
-            </span>
-            <slot :name="`footer-${column.field}`" :rows="modelValue" :column="column">
-              <span v-if="column.field === footerLabelField" class="w-editable-table__footer-label">
-                {{ footerLabel }}
+               um rótulo com valor vazio. O total segue o papel da coluna
+               (`footerRole`): de coluna `value`, sai no tamanho da manchete. -->
+            <td
+              v-for="column in columns"
+              :key="column.field"
+              :class="columnClass(column)"
+              :style="columnStyle(column)"
+              :data-card="footerRole(column)"
+            >
+              <span v-if="emCard && temRodape(column)" class="w-editable-table__card-label">
+                {{ cardLabel(column) }}
               </span>
-              <span v-else>{{ footerValue(column) }}</span>
-            </slot>
-          </td>
-          <td v-if="removable" class="w-editable-table__action-col" data-card="hidden" />
-        </tr>
-      </tfoot>
-    </table>
+              <slot :name="`footer-${column.field}`" :rows="modelValue" :column="column">
+                <span
+                  v-if="column.field === footerLabelField"
+                  class="w-editable-table__footer-label"
+                >
+                  {{ footerLabel }}
+                </span>
+                <span v-else>{{ footerValue(column) }}</span>
+              </slot>
+            </td>
+            <td v-if="removable" class="w-editable-table__action-col" data-card="hidden" />
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </template>

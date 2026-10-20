@@ -77,9 +77,9 @@ export default defineComponentMeta({
       },
     },
     {
-      name: 'Card (tablet em pé)',
+      name: 'Card (componente estreito)',
       description:
-        'Abaixo de 840px a MESMA tabela vira card. `card` por coluna dá a hierarquia: título, contexto, número principal (`value`), campo e leitura (texto, sem caixa).',
+        'Com o componente abaixo de 840px de largura (não a janela), a MESMA tabela vira card. `card` por coluna dá a hierarquia: título, contexto, número principal (`value`), campo e leitura (texto, sem caixa).',
       props: {
         modelValue: lotes,
         cardMode: 'always',
