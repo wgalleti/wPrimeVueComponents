@@ -22,6 +22,19 @@ describe('WKpiGrid — repasse', () => {
     expect(cards[1].classes()).not.toContain('w-kpi-card--compact')
   })
 
+  it('repassa tint do item ao card', () => {
+    const lista: KpiItem[] = [
+      { icon: 'pi pi-home', label: 'A', value: 1, tint: 'value', severity: 'danger' },
+      { icon: 'pi pi-home', label: 'B', value: 2 },
+    ]
+    const cards = mount(WKpiGrid, {
+      props: { items: lista },
+      global: { plugins: [PrimeVue] },
+    }).findAll('.w-kpi-card')
+    expect(cards[0].classes()).toContain('w-kpi-card--tint-value')
+    expect(cards[1].classes()).not.toContain('w-kpi-card--tint-value')
+  })
+
   it('sem listener de item-click os cards ficam estáticos', () => {
     const cards = grid().findAll('.w-kpi-card')
     expect(cards.every((c) => c.element.tagName === 'ARTICLE')).toBe(true)

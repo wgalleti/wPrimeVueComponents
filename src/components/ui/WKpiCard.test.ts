@@ -46,6 +46,18 @@ describe('WKpiCard — render', () => {
   })
 })
 
+describe('WKpiCard — tint', () => {
+  it('por padrão o tom pinta só o ícone', () => {
+    expect(montar({ severity: 'danger' }).classes()).not.toContain('w-kpi-card--tint-value')
+  })
+
+  it("tint='value' aplica a classe que pinta o valor", () => {
+    const w = montar({ severity: 'danger', tint: 'value' })
+    expect(w.classes()).toContain('w-kpi-card--tint-value')
+    expect(w.classes()).toContain('w-kpi-card--danger')
+  })
+})
+
 describe('WKpiCard — clique e teclado', () => {
   it('com @click vira botão focável e emite no clique', async () => {
     const onClick = () => undefined

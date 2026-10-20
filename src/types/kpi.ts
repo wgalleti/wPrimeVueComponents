@@ -26,6 +26,8 @@ export interface KpiItem {
   size?: 'default' | 'compact'
   /** O card é o filtro aplicado à lista (borda na cor do tom, `aria-pressed`). */
   active?: boolean
+  /** O tom da severidade pinta só o ícone (`icon`, padrão) ou também o valor (`value`). */
+  tint?: 'icon' | 'value'
   /**
    * `false` deixa o card estático mesmo com listener de `item-click` no WKpiGrid — para o
    * número que só informa numa grade em que os outros cards são filtros.

@@ -578,6 +578,11 @@
   --w-card-tone-soft: var(--w-surface-2);
 }
 
+/* tint="value": o número também na cor do tom (o ícone continua tingido). */
+.w-kpi-card--tint-value .w-kpi-card__value {
+  color: var(--w-card-tone);
+}
+
 /* Card que é ação (to / @click): RouterLink ou role="button". O link não
    herda sublinhado nem cor de link; hover e foco pela borda e sombra. */
 .w-kpi-card--interactive,

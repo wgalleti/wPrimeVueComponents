@@ -33,6 +33,17 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Valor no tom',
+      props: {
+        label: 'Pedidos atrasados',
+        value: 7,
+        icon: 'pi pi-exclamation-triangle',
+        severity: 'danger',
+        tint: 'value',
+        hint: 'prazo de entrega vencido',
+      },
+    },
+    {
       name: 'Compacto',
       props: {
         label: 'Leads novos',
