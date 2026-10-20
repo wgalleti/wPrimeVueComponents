@@ -400,19 +400,28 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow) */
+/* Auto: preenche a largura com quantos KPIs couberem e quebra sozinho (sem overflow).
+   O piso (--w-kpi-min) é a largura em que um valor monetário típico cabe no 2xl:
+   abaixo dele a grade perde uma coluna em vez de esmagar o número. */
 .w-kpi-grid--auto {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.625rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--w-kpi-min)), 1fr));
 }
 
 .w-kpi-grid--dense {
   gap: var(--w-space-2);
 }
 
+/* O card é o contêiner do próprio valor: o número desce de tamanho pela largura
+   do card (degraus no fim do bloco), não da janela. Efeito colateral do
+   inline-size: o card não se dimensiona pelo conteúdo — ele ocupa a célula
+   (grade, flex com crescimento, bloco); num pai que encolhe ao conteúdo, dê
+   largura ao card. */
 .w-kpi-card {
+  container: w-kpi-card / inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--w-space-3);
+  min-width: 0;
   min-height: 100%;
   padding: var(--w-card-pad);
   border: 1px solid var(--w-border);
@@ -459,6 +468,10 @@
   line-height: var(--w-leading-tight);
   letter-spacing: -0.02em;
   color: var(--w-fg);
+  /* Último recurso, depois dos degraus: valor longo demais quebra de linha em vez
+     de passar da borda. Nunca overflow: hidden nem reticências — número cortado
+     é número errado. (O espaço do `Intl` depois de "R$" é inseparável.) */
+  overflow-wrap: anywhere;
 }
 
 .w-kpi-card__hint {
@@ -664,6 +677,27 @@
 
 .w-kpi-card--compact .w-kpi-card__hint {
   font-size: var(--w-text-xs);
+}
+
+/* Degraus do valor pela largura do card (régua e cortes documentados em
+   tokens.css; @container não aceita var()). Mesma especificidade do compacto e
+   depois dele no arquivo: o degrau vence o tamanho da variante. */
+@container w-kpi-card (max-width: 11.5rem) {
+  .w-kpi-card .w-kpi-card__value {
+    font-size: var(--w-text-xl);
+  }
+}
+
+@container w-kpi-card (max-width: 9.5rem) {
+  .w-kpi-card .w-kpi-card__value {
+    font-size: var(--w-text-lg);
+  }
+}
+
+@container w-kpi-card (max-width: 7.5rem) {
+  .w-kpi-card--compact .w-kpi-card__value {
+    font-size: var(--w-text-md);
+  }
 }
 
 /* WMeter — realizado × meta. O cartão é o mesmo do KPI; a barra é um trilho
