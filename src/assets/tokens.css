@@ -134,6 +134,10 @@
     1.75rem
   ); /* caixa tonal de ícone na variante compacta (KPI, meta) */
   --w-spark-h: var(--spark-h, 2rem); /* altura da sparkline do KPI */
+  --w-kpi-min: var(
+    --kpi-min,
+    13rem
+  ); /* piso da coluna do WKpiGrid columns="auto": cabe um valor monetário de ~14 caracteres no 2xl */
   --w-meter-h: var(--meter-h, 0.5rem); /* trilho da barra de meta (WMeter) */
   --w-icon-btn: var(
     --icon-btn,
@@ -207,3 +211,12 @@ html[data-density='compact'] {
      <= 839px  tablet retrato   1 painel por vez
      <= 1199px tablet paisagem  2 painéis
    (840px é a fronteira medium/expanded do Material — não use 768.) */
+
+/* Degraus do valor do WKpiCard — @container também não aceita var(); a régua é
+   a caixa de conteúdo do PRÓPRIO card (sem o padding), e o tamanho desce um
+   token de fonte por degrau. Medido com "US$ 40.726.705" (14 caracteres, ~0,5em
+   por caractere, com folga para fonte de sistema mais larga):
+     > 11.5rem   2xl  (compacto: xl)
+     <= 11.5rem  xl   (compacto: xl)
+     <= 9.5rem   lg   (compacto: lg)
+     <= 7.5rem   lg   (compacto: md) */

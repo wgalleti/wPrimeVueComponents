@@ -93,3 +93,22 @@ describe('WKpiGrid — repasse', () => {
     expect(cards[1].attributes('role')).toBe('button')
   })
 })
+
+/* jsdom não faz layout nem avalia @container (e o vitest não carrega CSS): o que dá
+   para travar aqui é a ligação de classes. A largura real se confere no navegador. */
+describe('WKpiGrid — colunas', () => {
+  const items: KpiItem[] = [
+    { icon: 'pi pi-dollar', label: 'Receita', value: 'US$ 40.726.705' },
+    { icon: 'pi pi-dollar', label: 'Custo', value: 'US$ 12.004.300' },
+  ]
+  const grid = (props: Record<string, unknown> = {}) =>
+    mount(WKpiGrid, { props: { items, ...props }, global: { plugins: [PrimeVue] } })
+
+  it('columns numérico continua com a grade fixa; auto usa a classe auto', () => {
+    expect(grid().classes()).toContain('w-kpi-grid--cols-4')
+    expect(grid({ columns: 3 }).classes()).toContain('w-kpi-grid--cols-3')
+    const auto = grid({ columns: 'auto' })
+    expect(auto.classes()).toContain('w-kpi-grid--auto')
+    expect(auto.classes().some((c) => c.startsWith('w-kpi-grid--cols-'))).toBe(false)
+  })
+})
