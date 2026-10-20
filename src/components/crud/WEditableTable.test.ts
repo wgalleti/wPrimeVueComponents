@@ -361,6 +361,32 @@ describe('WEditableTable — modo card (tablet em pé)', () => {
     expect(papeis(w)).toEqual(['title', 'meta', 'read'])
   })
 
+  it('value: o número principal ganha o papel, rótulo e valor formatado — sem input', () => {
+    const w = card({
+      columns: [
+        { field: 'produto', header: 'Produto' },
+        { field: 'volume_kg', header: 'Volume (kg)', decimals: 0, card: 'value' },
+      ],
+    })
+    expect(papeis(w)).toEqual(['title', 'value'])
+    const td = w.findAll('.w-editable-table__row')[0].find('td[data-card="value"]')
+    expect(td.find('.w-editable-table__card-label').text()).toBe('Volume (kg)')
+    expect(td.find('.w-editable-table__text').text()).toBe('8.400')
+    expect(td.find('input').exists()).toBe(false)
+  })
+
+  it('read continua só leitura: texto, sem input', () => {
+    const w = card({
+      columns: [
+        { field: 'produto', header: 'Produto' },
+        { field: 'volume_kg', header: 'Volume (kg)', decimals: 0, card: 'read' },
+      ],
+    })
+    const td = w.findAll('.w-editable-table__row')[0].find('td[data-card="read"]')
+    expect(td.find('.w-editable-table__text').exists()).toBe(true)
+    expect(td.find('input').exists()).toBe(false)
+  })
+
   it('o rótulo da coluna entra na célula (no card não há cabeçalho para ler)', () => {
     const w = card()
     expect(w.findAll('.w-editable-table__card-label').map((s) => s.text())).toContain('Área (ha)')
