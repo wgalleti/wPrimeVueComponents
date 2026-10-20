@@ -91,14 +91,20 @@ const emCard = computed(
   () => props.cardMode === 'always' || (props.cardMode !== 'never' && isRetrato.value),
 )
 
-/** A primeira coluna é o título do card quando ninguém reivindicou o papel. */
+/** O título é da tabela, não da linha: o primeiro `card: 'title'` FIXO, senão a
+ *  primeira coluna. Papel em função não reivindica o título. */
 const campoTitulo = computed(
   () => props.columns.find((c) => c.card === 'title')?.field ?? props.columns[0]?.field,
 )
 
-function cardRole(column: EditableColumnDef): EditableCardRole {
-  if (column.card) return column.card
-  return column.field === campoTitulo.value ? 'title' : 'field'
+/** Papel da célula no card. `column.card` pode ser fixo ou `(row) => papel`
+ *  (a coluna que é input numa linha e valor calculado na outra). Chamada por
+ *  linha × coluna no render — sem estado, só lê a linha. Um segundo `title`
+ *  (fixo duplicado ou vindo da função) cai em `field`: uma manchete por card. */
+function cardRole(column: EditableColumnDef, row: EditableRow): EditableCardRole {
+  const declared = typeof column.card === 'function' ? column.card(row) : column.card
+  const role = declared ?? (column.field === campoTitulo.value ? 'title' : 'field')
+  return role === 'title' && column.field !== campoTitulo.value ? 'field' : role
 }
 
 /** No card não há linha de grupo acima do cabeçalho: o grupo entra no rótulo
@@ -342,7 +348,7 @@ const headerGroupCells = computed(() => {
             :key="column.field"
             :class="columnClass(column)"
             :style="columnStyle(column)"
-            :data-card="cardRole(column)"
+            :data-card="cardRole(column, row)"
           >
             <!-- O rótulo é o cabeçalho da coluna trazido para dentro da célula:
                  no card não existe `thead`, e um campo sem nome ao lado não se

@@ -24,7 +24,7 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 | `decimals` / `suffix` | `number` / `string` | Exibição e soma, em pt-BR |
 | `disabled` | `boolean \| (row, index) => boolean` | Trava a coluna ou só algumas linhas |
 | `group` | `string` | Rótulo de grupo no cabeçalho: colunas **vizinhas** com o mesmo `group` ganham um título único (colspan) numa linha acima delas |
-| `card` | `'title' \| 'actions' \| 'meta' \| 'value' \| 'field' \| 'read' \| 'hidden'` | Papel da coluna no [modo card](#modo-card-tablet-em-pe) |
+| `card` | `'title' \| 'actions' \| 'meta' \| 'value' \| 'field' \| 'read' \| 'hidden'` ou `(row) => papel` | Papel da coluna no [modo card](#modo-card-tablet-em-pe) — fixo ou [por linha](#papel-por-linha) |
 
 ### Slots
 
@@ -118,9 +118,9 @@ tamanho.
 | `title` | Manchete, no topo (uma por linha; sobrando, a primeira vence) |
 | `actions` | Ao lado do título, à direita (o `WCrudSubview` já marca a coluna de ações assim) |
 | `meta` | Contexto compacto sob o título, duas por linha |
-| `value` | O número principal do card (saldo, total da linha): largura cheia, abaixo do contexto, rótulo pequeno em cima e o número grande em negrito, `tabular-nums`. Só leitura — use em coluna sem `editor` |
+| `value` | O número principal do card (saldo, total da linha): largura cheia, abaixo do contexto, rótulo pequeno em cima e o número grande em negrito, `tabular-nums`. Só leitura naquela linha — coluna que edita em umas linhas e é calculada em outras usa o [papel por linha](#papel-por-linha) |
 | `field` | Rótulo à esquerda, controle à direita, largura cheia e alvo de toque |
-| `read` | Derivado: mesma régua do `field` — rótulo e número na mesma coluna, o número alinhado à direita com o do campo de cima, como texto: sem caixa, fundo ou borda. Só leitura — use em coluna sem `editor`. No rodapé de totais fica compacto, duas por linha |
+| `read` | Derivado: mesma régua do `field` — rótulo e número na mesma coluna, o número alinhado à direita com o do campo de cima, como texto: sem caixa, fundo ou borda. Só leitura naquela linha — mesma ressalva do `value`. No rodapé de totais fica compacto, duas por linha |
 | `hidden` | Fora do card (a coluna continua na tabela larga) |
 
 ```ts
@@ -132,6 +132,26 @@ const columns: EditableColumnDef[] = [
   { field: 'volume_kg', header: 'Volume (kg)', width: 80, decimals: 0, card: 'read' },
 ]
 ```
+
+### Papel por linha {#papel-por-linha}
+
+`card` também aceita uma função `(row) => papel`, para a coluna que muda de natureza conforme a
+linha — o valor que é `InputNumber` na linha em modo manual e número calculado nas demais:
+
+```ts
+{
+  field: 'valor',
+  header: 'Valor (R$)',
+  decimals: 2,
+  card: (row) => (row.modo === 'manual' ? 'field' : 'value'),
+}
+```
+
+A função roda por linha × coluna no render: pura e barata, só lê a linha. Use-a para `meta`,
+`value`, `field`, `read` e `hidden`. **`title` e `actions` são da tabela, não da linha** —
+declare-os fixos: o título é decidido uma vez (o primeiro `card: 'title'` fixo, senão a primeira
+coluna) e qualquer outra coluna que resolva `'title'`, fixa duplicada ou vinda da função, cai em
+`field`.
 
 ## Detalhes
 
