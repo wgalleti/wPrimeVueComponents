@@ -9,7 +9,7 @@ export type EditableRow = Record<string, unknown>
  *  e guarda `YYYY-MM-DD` na linha — o mesmo formato que a API recebe. */
 export type EditableColumnEditor = 'number' | 'text' | 'select' | 'date' | 'none'
 
-/** Papel da coluna quando a tabela vira card (tablet em pé). Ver `EditableColumnDef.card`. */
+/** Papel da coluna quando a tabela vira card (componente com menos de 840px). Ver `EditableColumnDef.card`. */
 export type EditableCardRole = 'title' | 'actions' | 'meta' | 'value' | 'field' | 'read' | 'hidden'
 
 /**
@@ -20,7 +20,8 @@ export type EditableCardRole = 'title' | 'actions' | 'meta' | 'value' | 'field' 
 export interface EditableColumnDef {
   field: string
   header: string
-  /** Largura fixa da coluna (`'120px'`, `120` → px, `'12rem'`). Sem isso a coluna é fluida. */
+  /** Largura fixa da coluna (`'120px'`, `120` → px, `'12rem'`). Sem isso a coluna é fluida,
+   *  com piso de `--w-col-title-min`: abaixo da soma, a grade rola na horizontal. */
   width?: string | number
   /** Alinhamento do conteúdo. Default: `right` para `editor: 'number'`, senão `left`. */
   align?: 'left' | 'center' | 'right'
@@ -52,7 +53,8 @@ export interface EditableColumnDef {
    *  Colunas sem grupo ficam com a célula de cima vazia. */
   group?: string
   /**
-   * Papel da coluna no **modo card** (tablet em pé, `< 840px`).
+   * Papel da coluna no **modo card** (o próprio componente com menos de 840px de
+   * largura — não a janela).
    *
    * Sem declarar nada a tabela já vira card: a primeira coluna é o `title` e as
    * demais viram `field`. Declare para dar hierarquia ao card — o que se lê de
@@ -63,8 +65,9 @@ export interface EditableColumnDef {
    * - `meta` — contexto compacto sob o título, duas por linha (talhão, saldo)
    * - `value` — o número principal do card (saldo, total da linha): largura
    *   cheia, logo abaixo do contexto, rótulo pequeno em cima e o número grande,
-   *   em negrito. Só leitura NAQUELA linha — para a coluna que edita em umas
-   *   linhas e é calculada em outras, use a função (ver abaixo)
+   *   em negrito. Pode receber um campo pelo slot `#cell-*` (ex.: `InputNumber`):
+   *   ele ocupa o lugar da manchete, largura cheia e no tamanho dela. O total do
+   *   rodapé de uma coluna `value` também sai como manchete
    * - `field` — rótulo à esquerda e o controle à direita, largura cheia
    * - `read` — derivado: mesma régua do `field` (rótulo e número na mesma coluna),
    *   mas como TEXTO, sem caixa nem borda — borda é o que se edita; o que só se
@@ -84,6 +87,10 @@ export interface EditableColumnDef {
    * `actions` são da TABELA, não da linha: declare-os fixos. O título é decidido
    * uma vez (o primeiro `card: 'title'` fixo, senão a primeira coluna); qualquer
    * outra coluna que resolva `'title'` — fixa duplicada ou função — cai em `field`.
+   *
+   * **Rodapé**: o total não tem linha, então segue a coluna — `value` fixo sai como
+   * manchete; com função, sai como manchete se ALGUMA linha resolve `value` (a parte
+   * nunca fica maior que o todo); senão, compacto (`read`).
    */
   card?: EditableCardRole | ((row: EditableRow) => EditableCardRole)
 }
