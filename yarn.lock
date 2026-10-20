@@ -3525,10 +3525,10 @@ markdown-it-sup@^2.0.0:
   resolved "https://registry.yarnpkg.com/markdown-it-sup/-/markdown-it-sup-2.0.0.tgz#683b9390929f3024fcd5291799c466ce3d367f44"
   integrity sha512-5VgmdKlkBd8sgXuoDoxMpiU+BiEt3I49GItBzzw7Mxq9CxvnhE/k09HFli09zgfFDRixDQDfDxi0mgBCXtaTvA==
 
-markdown-it@^15.0.0:
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-15.0.0.tgz#dc199771f75b01d792316e5b524855b3973868e2"
-  integrity sha512-Lf8ajvVNdRpzSNB4VegxNy7gjs8gU35l4b4+ET49LrQC5PKYwLZ72u60LeJ9gv3qiaesuYjJWCyVeQmv/QWKQw==
+markdown-it@^15.0.2:
+  version "15.0.2"
+  resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-15.0.2.tgz#5bc092394e9693519f6d5f499d3575469fec62f3"
+  integrity sha512-q4IGxMv56jCqT4OCRCADBoDP3LO4MhmTXjFbphHPXs4g3j9Xg5RDnxqN8IF/3vIWEU+VCnUq+7JUg/cfy2E6Qw==
   dependencies:
     argparse "^3.0.0"
     entities "^8.0.0"
