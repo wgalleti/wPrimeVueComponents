@@ -375,6 +375,51 @@ describe('WEditableTable — modo card (tablet em pé)', () => {
     expect(td.find('input').exists()).toBe(false)
   })
 
+  /** Papel da coluna na posição `col`, linha a linha. */
+  const papelPorLinha = (w: VueWrapper, col: number) =>
+    w.findAll('.w-editable-table__row').map((tr) => tr.findAll('td')[col].attributes('data-card'))
+
+  it('papel por linha: a mesma coluna é value numa linha e field na outra', () => {
+    const w = card({
+      modelValue: [
+        { produto: 'HO APORE', modo: 'calculado', valor: 8400 },
+        { produto: 'BMX GUEPARDO', modo: 'manual', valor: 5600 },
+      ],
+      columns: [
+        { field: 'produto', header: 'Produto' },
+        {
+          field: 'valor',
+          header: 'Valor',
+          decimals: 0,
+          card: (row: EditableRow) => (row.modo === 'manual' ? 'field' : 'value'),
+        },
+      ],
+    })
+    expect(papelPorLinha(w, 1)).toEqual(['value', 'field'])
+    expect(papelPorLinha(w, 0)).toEqual(['title', 'title'])
+  })
+
+  it('papel fixo continua o mesmo em todas as linhas', () => {
+    const w = card({
+      columns: [
+        { field: 'produto', header: 'Produto' },
+        { field: 'volume_kg', header: 'Volume (kg)', decimals: 0, card: 'value' },
+      ],
+    })
+    expect(papelPorLinha(w, 1)).toEqual(['value', 'value'])
+  })
+
+  it('uma manchete por card: o título que sobra (fixo ou da função) cai em field', () => {
+    const w = card({
+      columns: [
+        { field: 'produto', header: 'Produto', card: 'title' },
+        { field: 'area', header: 'Área (ha)', card: 'title' },
+        { field: 'volume_kg', header: 'Volume (kg)', card: () => 'title' },
+      ],
+    })
+    expect(papeis(w)).toEqual(['title', 'field', 'field'])
+  })
+
   it('read continua só leitura: texto, sem input', () => {
     const w = card({
       columns: [

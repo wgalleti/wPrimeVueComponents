@@ -63,7 +63,8 @@ export interface EditableColumnDef {
    * - `meta` — contexto compacto sob o título, duas por linha (talhão, saldo)
    * - `value` — o número principal do card (saldo, total da linha): largura
    *   cheia, logo abaixo do contexto, rótulo pequeno em cima e o número grande,
-   *   em negrito. Só leitura — use em coluna sem `editor`
+   *   em negrito. Só leitura NAQUELA linha — para a coluna que edita em umas
+   *   linhas e é calculada em outras, use a função (ver abaixo)
    * - `field` — rótulo à esquerda e o controle à direita, largura cheia
    * - `read` — derivado: mesma régua do `field` (rótulo e número na mesma coluna),
    *   mas como TEXTO, sem caixa nem borda — borda é o que se edita; o que só se
@@ -74,6 +75,15 @@ export interface EditableColumnDef {
    * lê na mesma sequência da tabela. Posição fixa só para `title`, `actions`, `meta`
    * (contexto, logo abaixo do título), `value` (logo abaixo do contexto) e a
    * expansão, que fecha o card.
+   *
+   * **Papel por linha**: passe uma função `(row) => papel` quando a mesma coluna
+   * muda de natureza conforme a linha — ex.: o valor é `InputNumber` na linha em
+   * modo manual (`'field'`) e número calculado nas demais (`'value'`). É chamada
+   * por linha × coluna no render: mantenha-a pura e barata (só ler a linha).
+   * Use a função para `meta`, `value`, `field`, `read` (e `hidden`). `title` e
+   * `actions` são da TABELA, não da linha: declare-os fixos. O título é decidido
+   * uma vez (o primeiro `card: 'title'` fixo, senão a primeira coluna); qualquer
+   * outra coluna que resolva `'title'` — fixa duplicada ou função — cai em `field`.
    */
-  card?: EditableCardRole
+  card?: EditableCardRole | ((row: EditableRow) => EditableCardRole)
 }
