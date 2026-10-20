@@ -538,7 +538,7 @@ describe('WEditableTable — value editável pelo slot', () => {
 })
 
 describe('WEditableTable — card pela largura do componente', () => {
-  type Callback = (entries: { contentRect: { width: number } }[]) => void
+  type Callback = (entries: { target?: Element; contentRect: { width: number } }[]) => void
   let callbacks: Callback[] = []
   const desconectados = vi.fn()
 
@@ -567,6 +567,15 @@ describe('WEditableTable — card pela largura do componente', () => {
     for (const cb of callbacks) cb([{ contentRect: { width: px } }])
     await nextTick()
   }
+
+  /** Largura resolvida do piso, entregue como entrada da sonda. */
+  async function piso(w: VueWrapper, px: number) {
+    const target = w.find('.w-editable-table__probe > div').element
+    for (const cb of callbacks) cb([{ target, contentRect: { width: px } }])
+    await nextTick()
+  }
+
+  const emCard = (w: VueWrapper) => w.find('.w-editable-table--cards').exists()
 
   afterEach(() => {
     vi.unstubAllGlobals()
@@ -642,6 +651,88 @@ describe('WEditableTable — card pela largura do componente', () => {
     await largura(500)
     expect(w.find('.w-editable-table--cards').exists()).toBe(false)
   })
+
+  // O caso medido no app: janela de 1024, componente com 855, grade pedindo 960.
+  it('acima de 840 mas abaixo do piso da grade vira card', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await piso(w, 960)
+    await largura(855)
+    expect(emCard(w)).toBe(true)
+  })
+
+  it('no card a sonda segue com a largura do piso (a volta à grade não oscila)', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await largura(700)
+    expect(emCard(w)).toBe(true)
+    expect(w.find('table').attributes('style')).toBeUndefined()
+    expect(w.find('.w-editable-table__probe > div').attributes('style')).toContain('width: calc(')
+  })
+
+  it('acima do piso continua tabela', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await piso(w, 960)
+    await largura(1000)
+    expect(emCard(w)).toBe(false)
+  })
+
+  it('piso 0 (não medido) não vale como "cabe": fica a régua de 840', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await piso(w, 0)
+    await largura(855)
+    expect(emCard(w)).toBe(false)
+    await largura(800)
+    expect(emCard(w)).toBe(true)
+  })
+
+  it('volta para a grade só com folga acima do limite (sem oscilar na borda)', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await piso(w, 960)
+    await largura(950)
+    expect(emCard(w)).toBe(true)
+    // A barra de rolagem da página some com o card mais baixo: +20px não basta.
+    await largura(970)
+    expect(emCard(w)).toBe(true)
+    await largura(990)
+    expect(emCard(w)).toBe(false)
+    // Na grade, a entrada no card é no limite exato.
+    await largura(970)
+    expect(emCard(w)).toBe(false)
+    await largura(959)
+    expect(emCard(w)).toBe(true)
+  })
+
+  it('piso que cresce (mais colunas, densidade) com a largura parada vira card', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await largura(900)
+    await piso(w, 800)
+    expect(emCard(w)).toBe(false)
+    await piso(w, 960)
+    expect(emCard(w)).toBe(true)
+  })
+
+  it('cardMode never abaixo do piso fica na grade, com o wrapper de rolagem e sem sonda', async () => {
+    instalarResizeObserver()
+    const w = montar({ cardMode: 'never' })
+    await largura(855)
+    expect(emCard(w)).toBe(false)
+    expect(w.find('.w-editable-table__scroll > table').attributes('style')).toContain(
+      '--w-editable-min',
+    )
+    expect(w.find('.w-editable-table__probe').exists()).toBe(false)
+  })
+
+  it('cardMode always é card mesmo largo e acima do piso', async () => {
+    instalarResizeObserver()
+    const w = montar({ cardMode: 'always' })
+    await largura(1400)
+    expect(emCard(w)).toBe(true)
+  })
 })
 
 describe('WEditableTable — piso da grade', () => {
@@ -657,6 +748,14 @@ describe('WEditableTable — piso da grade', () => {
     expect(style).toContain(
       '--w-editable-min: calc(var(--w-col-title-min) + 110px + 8rem + var(--w-icon-box) + var(--w-col-remove))',
     )
+  })
+
+  it('a sonda tem a largura do piso; em cardMode always não há sonda', () => {
+    const sonda = montar({ columns: [{ field: 'produto', header: 'Produto' }] }).find(
+      '.w-editable-table__probe > div',
+    )
+    expect(sonda.attributes('style')).toContain('width: calc(var(--w-col-title-min))')
+    expect(montar({ cardMode: 'always' }).find('.w-editable-table__probe').exists()).toBe(false)
   })
 
   it('no card não há piso', () => {

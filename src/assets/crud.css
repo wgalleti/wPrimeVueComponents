@@ -898,9 +898,21 @@
    sobrava zero entre a régua do card e a largura em que tudo cabe (nome uma letra
    por linha, input sobre o título). O piso (`--w-editable-min`, montado no
    componente: larguras fixas + --w-col-title-min por coluna fluida) mantém o
-   título legível e o wrapper rola na horizontal em vez de esmagar. */
+   título legível. Em `cardMode: auto` o componente mais estreito que o piso já
+   vira card; a rolagem horizontal é a última defesa (`never`, piso não medido). */
 .w-editable-table__scroll {
   overflow-x: auto;
+}
+
+/* Sonda do piso (só em `cardMode: auto`): o filho tem a largura do piso, que o
+   navegador resolve e o ResizeObserver lê em px para decidir grade × card. O
+   envelope de altura 0 com overflow escondido impede que a caixa, mais larga que
+   o componente, faça a página rolar. */
+.w-editable-table__probe {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 /* Só na tabela que declarou o próprio piso: a custom property herda, e a subtabela
@@ -1089,7 +1101,7 @@
 }
 
 /* ==========================================================
-   WEditableTable — MODO CARD (componente com menos de 840px de largura)
+   WEditableTable — MODO CARD (componente mais estreito que 840px ou que o piso da grade)
 
    A régua é a largura do PRÓPRIO componente, medida por ResizeObserver no SFC,
    que liga `.w-editable-table--cards` — não `@media` da janela: com a barra lateral
