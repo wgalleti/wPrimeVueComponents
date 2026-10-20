@@ -21,8 +21,8 @@ import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/e
  * A subtabela de insumos do design é este mesmo componente dentro do slot
  * `#expansion` — não existe componente separado para "tabela filha".
  *
- * **Componente com menos de 840px de largura: a tabela vira card**, uma linha por
- * card, como o `WCrudView` já faz com a listagem. A régua é a largura do PRÓPRIO
+ * **Componente mais estreito que 840px ou que o piso da grade: a tabela vira
+ * card**, uma linha por card, como o `WCrudView` já faz com a listagem. A régua é a largura do PRÓPRIO
  * componente, não a da janela: com a barra lateral do app, a janela passa de 840
  * muito antes de a tabela caber, e era nessa faixa que a coluna do título caía a
  * zero. E vira sem tela paralela: a marcação é a
@@ -57,9 +57,10 @@ const props = withDefaults(
     /** Campo usado como `key` das linhas. Sem ele, a chave é o índice. */
     rowKey?: string
     /**
-     * Quando a tabela vira card. `auto` (default) segue a régua pela largura do
-     * próprio componente (não da janela): card abaixo de 840px, tabela acima. `never` mantém a tabela em qualquer largura (planilha
-     * que só faz sentido em grade); `always` é para vitrine e teste.
+     * Quando a tabela vira card. `auto` (default) segue a largura do próprio
+     * componente (não da janela): card abaixo de 840px ou do piso da grade, o que
+     * for maior; tabela acima. `never` mantém a tabela em qualquer largura (planilha
+     * que só faz sentido em grade, rola na horizontal); `always` é para vitrine e teste.
      */
     cardMode?: 'auto' | 'never' | 'always'
     /** Rótulo do abridor da expansão no card — lá não existe coluna de seta. */
@@ -93,35 +94,61 @@ const { formatNumber } = useFormatters()
 // `role`, largura inline), e o CSS só segue a classe `--cards` que sai daqui —
 // uma fonte só, JS e CSS nunca discordam.
 const raiz = ref<HTMLElement | null>(null)
+const sonda = ref<HTMLElement | null>(null)
 const estreito = ref(false)
+let largura = 0
+let piso = 0
 let observer: ResizeObserver | null = null
 let quadro = 0
 
-/** Largura 0 é componente escondido (aba inativa, `v-show`, KeepAlive): mantém
- *  o modo que estava, senão a tabela piscaria para card ao voltar. */
-function medir(largura: number): boolean | null {
-  return largura > 0 ? largura < BREAKPOINTS.retrato : null
+/** Folga na volta do card para a grade. Trocar de modo muda a altura e pode pôr
+ *  ou tirar a barra de rolagem vertical da página (~15px de largura): sem folga,
+ *  rente ao limite, a troca alteraria a própria medida que a decidiu. */
+const HISTERESE = 24
+
+/** Card quando a largura do componente não comporta a grade: abaixo da régua
+ *  (840) OU do piso da tabela, o que for maior. Piso 0 é "não sei" (jsdom, sem
+ *  colunas), nunca "cabe": vale só a régua. Largura 0 é componente escondido (aba
+ *  inativa, `v-show`, KeepAlive): mantém o modo, senão a tabela piscaria para card
+ *  ao voltar. As duas medidas independem do modo — a sonda tem a largura do piso
+ *  em qualquer modo —, e a folga cobre o que o modo mexe na página. */
+function decidir(): boolean | null {
+  if (largura <= 0) return null
+  const limite = Math.max(BREAKPOINTS.retrato, piso)
+  return estreito.value ? largura < limite + HISTERESE : largura < limite
+}
+
+function aplicar(proximo: boolean | null) {
+  if (proximo == null || proximo === estreito.value) return
+  // Trocar a classe no próprio callback muda a altura do elemento observado e o
+  // navegador dispara "ResizeObserver loop…" no `window` — o app consumidor
+  // manda isso para o monitoramento. O quadro seguinte aplica sem laço.
+  cancelAnimationFrame(quadro)
+  quadro = requestAnimationFrame(() => {
+    estreito.value = proximo
+  })
 }
 
 onMounted(() => {
   if (!raiz.value) return
   // Medida síncrona antes da primeira pintura: sem ela o tablet veria a grade
   // por um quadro antes de virar card.
-  const inicial = medir(raiz.value.getBoundingClientRect().width)
+  largura = raiz.value.getBoundingClientRect().width
+  piso = sonda.value?.getBoundingClientRect().width ?? 0
+  const inicial = decidir()
   if (inicial != null) estreito.value = inicial
   if (typeof ResizeObserver === 'undefined') return
   observer = new ResizeObserver((entries) => {
-    const proximo = medir(entries[entries.length - 1]?.contentRect.width ?? 0)
-    if (proximo == null || proximo === estreito.value) return
-    // Trocar a classe no próprio callback muda a altura do elemento observado e o
-    // navegador dispara "ResizeObserver loop…" no `window` — o app consumidor
-    // manda isso para o monitoramento. O quadro seguinte aplica sem laço.
-    cancelAnimationFrame(quadro)
-    quadro = requestAnimationFrame(() => {
-      estreito.value = proximo
-    })
+    // Dois alvos no mesmo observer: o componente e a sonda do piso (que muda com
+    // colunas, densidade ou fonte). Cada entrada atualiza a sua medida.
+    for (const entry of entries) {
+      if (sonda.value && entry.target === sonda.value) piso = entry.contentRect.width
+      else largura = entry.contentRect.width
+    }
+    aplicar(decidir())
   })
   observer.observe(raiz.value)
+  if (sonda.value) observer.observe(sonda.value)
 })
 
 onBeforeUnmount(() => {
@@ -213,17 +240,23 @@ function widthOf(width: string | number): string {
  *  com o que sobra — e sobrava zero entre 840px e a largura em que tudo cabe. O
  *  `min-width` de célula não vale em layout fixo, então o piso é da TABELA: soma
  *  das larguras fixas + `--w-col-title-min` por coluna fluida + expansor e
- *  lixeira. Abaixo disso o wrapper rola na horizontal em vez de esmagar. */
-const tableStyle = computed(() => {
-  if (emCard.value) return undefined
+ *  lixeira. Não depende do modo: a sonda o mede também no card, para decidir a
+ *  volta à grade. */
+const pisoCss = computed(() => {
   const partes = props.columns.map((c) =>
     c.width == null ? 'var(--w-col-title-min)' : widthOf(c.width),
   )
   if (props.expandable) partes.push('var(--w-icon-box)')
   if (props.removable) partes.push('var(--w-col-remove)')
-  if (!partes.length) return undefined
-  return { '--w-editable-min': `calc(${partes.join(' + ')})` }
+  return partes.length ? `calc(${partes.join(' + ')})` : undefined
 })
+
+/** Na grade o piso vira `min-width` da tabela. Em `auto` ele raramente age (a
+ *  largura abaixo dele já virou card); é a última defesa em `never` ou quando o
+ *  piso não deu para medir — o wrapper rola em vez de esmagar o título. */
+const tableStyle = computed(() =>
+  emCard.value || !pisoCss.value ? undefined : { '--w-editable-min': pisoCss.value },
+)
 
 function isCellDisabled(column: EditableColumnDef, row: EditableRow, index: number): boolean {
   if (props.disabled) return true
@@ -356,12 +389,22 @@ const headerGroupCells = computed(() => {
       <slot name="toolbar-extra" />
     </div>
 
+    <!-- Sonda do piso: uma caixa com a largura do piso, em qualquer modo, que o
+         navegador resolve (rem, tokens, calc do app) e o ResizeObserver lê em px.
+         Fica fora do wrapper de rolagem e presa num envelope de altura 0 com
+         `overflow: hidden` — solta, a caixa mais larga que o componente faria a
+         página rolar na horizontal. -->
+    <div v-if="cardMode === 'auto'" class="w-editable-table__probe" aria-hidden="true">
+      <!-- Sem colunas o piso é 0 ("não sei"), não a largura do componente. -->
+      <div ref="sonda" :style="{ width: pisoCss ?? '0' }" />
+    </div>
+
     <!-- No card o `<table>` deixa de ser tabela para quem lê por leitor de tela:
          com o display trocado, a semântica de grade não vale mais e anunciar
          "tabela de 9 colunas" seria mentira. O rótulo de cada campo vira texto
          de verdade dentro da célula (não um `::before`), então nada se perde. -->
-    <!-- Wrapper de rolagem: na grade, abaixo do piso da tabela, rola em vez de
-         esmagar a coluna do título. -->
+    <!-- Wrapper de rolagem: última defesa na grade (`never`, piso não medido) —
+         abaixo do piso da tabela, rola em vez de esmagar a coluna do título. -->
     <div class="w-editable-table__scroll">
       <table
         class="w-editable-table__table"

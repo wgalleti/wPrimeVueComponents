@@ -732,7 +732,7 @@
           "type": "\"auto\" | \"never\" | \"always\" | undefined",
           "required": false,
           "default": "\"auto\"",
-          "description": "Quando a tabela vira card. `auto` (default) segue a régua pela largura do\npróprio componente (não da janela): card abaixo de 840px, tabela acima. `never` mantém a tabela em qualquer largura (planilha\nque só faz sentido em grade); `always` é para vitrine e teste."
+          "description": "Quando a tabela vira card. `auto` (default) segue a largura do próprio\ncomponente (não da janela): card abaixo de 840px ou do piso da grade, o que\nfor maior; tabela acima. `never` mantém a tabela em qualquer largura (planilha\nque só faz sentido em grade, rola na horizontal); `always` é para vitrine e teste."
         },
         {
           "name": "expansionLabel",
