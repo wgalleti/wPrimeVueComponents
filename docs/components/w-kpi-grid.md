@@ -12,7 +12,8 @@ Grid responsivo para renderizar varios KPIs com layout consistente.
 <WKpiGrid :items="kpis" :columns="3" />
 ```
 
-Cada `KpiItem` repassa ao `WKpiCard` também `to`, `spark` e `size`.
+Cada `KpiItem` repassa ao `WKpiCard` também `to`, `spark`, `size` e `tint` (`'value'` pinta o
+número na cor da severidade).
 
 ## Densa e tamanho
 

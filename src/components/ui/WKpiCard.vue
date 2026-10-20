@@ -33,8 +33,13 @@ const props = withDefaults(
     size?: 'default' | 'compact'
     /** Card usado como filtro e aplicado agora: destaca e anuncia `aria-pressed`. */
     active?: boolean
+    /**
+     * O que o tom da severidade pinta: `icon` (padrão) só o ícone; `value` também o
+     * número — para o KPI cujo valor já é o alerta (atraso, saldo negativo).
+     */
+    tint?: 'icon' | 'value'
   }>(),
-  { size: 'default' },
+  { size: 'default', tint: 'icon' },
 )
 
 const emit = defineEmits<{
@@ -60,6 +65,7 @@ const compact = computed(() => props.size === 'compact')
         'w-kpi-card--compact': compact,
         'w-kpi-card--interactive': root().interactive,
         'w-kpi-card--active': active,
+        'w-kpi-card--tint-value': tint === 'value',
       },
     ]"
     :aria-pressed="root().is === 'div' ? (active ? 'true' : 'false') : undefined"

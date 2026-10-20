@@ -61,3 +61,19 @@ série vazia não desenha; um valor só ou todos iguais viram uma reta.
 
 `size="compact"`: menos respiro, ícone menor na linha do rótulo e valor menor. No
 `WKpiGrid`, `size` (da grade) ou `dense` aplicam o compacto a todos os cards.
+
+## Valor no tom
+
+Por padrão o tom da `severity` pinta só o ícone (e a sparkline). Com `tint="value"` o
+número também sai na cor do tom — para o KPI cujo valor já é o alerta (atraso, saldo
+negativo). A cor vem dos tokens de severidade, então acompanha o tema claro e o escuro.
+
+```vue
+<WKpiCard
+  label="Pedidos atrasados"
+  :value="7"
+  icon="pi pi-exclamation-triangle"
+  severity="danger"
+  tint="value"
+/>
+```
