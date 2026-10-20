@@ -24,7 +24,7 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 | `decimals` / `suffix` | `number` / `string` | Exibição e soma, em pt-BR |
 | `disabled` | `boolean \| (row, index) => boolean` | Trava a coluna ou só algumas linhas |
 | `group` | `string` | Rótulo de grupo no cabeçalho: colunas **vizinhas** com o mesmo `group` ganham um título único (colspan) numa linha acima delas |
-| `card` | `'title' \| 'actions' \| 'meta' \| 'field' \| 'read' \| 'hidden'` | Papel da coluna no [modo card](#modo-card-tablet-em-pe) |
+| `card` | `'title' \| 'actions' \| 'meta' \| 'value' \| 'field' \| 'read' \| 'hidden'` | Papel da coluna no [modo card](#modo-card-tablet-em-pe) |
 
 ### Slots
 
@@ -106,21 +106,28 @@ Sem declarar nada a tabela já cai em pé: a primeira coluna vira `title` e as d
 Declare para dar hierarquia — o que se lê de relance, o que se edita, o que é derivado.
 
 `field` e `read` aparecem **na ordem das colunas**, intercalados: o miolo do card lê na mesma
-sequência da tabela. Posição fixa só para `title`, `actions`, `meta` e a expansão.
+sequência da tabela. Posição fixa só para `title`, `actions`, `meta`, `value` e a expansão.
+
+**Borda é o que se edita; o que só se lê é texto.** Por isso `read` e `value` não têm caixa,
+fundo nem moldura — uma caixa tinta parece campo desabilitado e convida o dedo. O que separa
+o derivado do editável é a borda do controle; o que separa o número principal do resto é o
+tamanho.
 
 | Papel | Onde fica no card |
 |---|---|
 | `title` | Manchete, no topo (uma por linha; sobrando, a primeira vence) |
 | `actions` | Ao lado do título, à direita (o `WCrudSubview` já marca a coluna de ações assim) |
 | `meta` | Contexto compacto sob o título, duas por linha |
+| `value` | O número principal do card (saldo, total da linha): largura cheia, abaixo do contexto, rótulo pequeno em cima e o número grande em negrito, `tabular-nums`. Só leitura — use em coluna sem `editor` |
 | `field` | Rótulo à esquerda, controle à direita, largura cheia e alvo de toque |
-| `read` | Derivado: mesma régua do `field` — rótulo, caixa e número na mesma coluna, com a caixa tinta e sem borda (borda é o que se edita). No rodapé de totais fica compacto, duas por linha |
+| `read` | Derivado: mesma régua do `field` — rótulo e número na mesma coluna, o número alinhado à direita com o do campo de cima, como texto: sem caixa, fundo ou borda. Só leitura — use em coluna sem `editor`. No rodapé de totais fica compacto, duas por linha |
 | `hidden` | Fora do card (a coluna continua na tabela larga) |
 
 ```ts
 const columns: EditableColumnDef[] = [
   { field: 'produto_nome', header: 'Produto', card: 'title' },
   { field: 'lote', header: 'Lote', width: 116, card: 'meta' },
+  { field: 'saldo', header: 'Saldo (kg)', decimals: 0, card: 'value' },
   { field: 'area', header: 'Área (ha)', width: 112, editor: 'number' }, // field
   { field: 'volume_kg', header: 'Volume (kg)', width: 80, decimals: 0, card: 'read' },
 ]

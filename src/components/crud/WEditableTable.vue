@@ -29,7 +29,7 @@ import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/e
  * duas UIs para a mesma etapa, que divergem na primeira correção.
  *
  * O que cada coluna vira dentro do card sai de `column.card` (título, ações,
- * contexto, campo, leitura). Sem declarar nada, a primeira coluna é o título e
+ * contexto, número principal, campo, leitura). Sem declarar nada, a primeira coluna é o título e
  * as demais são campos — toda tabela existente já cai em pé no tablet.
  */
 const props = withDefaults(

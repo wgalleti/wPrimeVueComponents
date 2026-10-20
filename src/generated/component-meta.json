@@ -2436,6 +2436,13 @@
           "required": false,
           "default": null,
           "description": "Card usado como filtro e aplicado agora: destaca e anuncia `aria-pressed`."
+        },
+        {
+          "name": "tint",
+          "type": "\"value\" | \"icon\" | undefined",
+          "required": false,
+          "default": "\"icon\"",
+          "description": "O que o tom da severidade pinta: `icon` (padrão) só o ícone; `value` também o\nnúmero — para o KPI cujo valor já é o alerta (atraso, saldo negativo)."
         }
       ],
       "events": [

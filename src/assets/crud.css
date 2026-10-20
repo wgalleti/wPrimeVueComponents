@@ -1187,14 +1187,42 @@
   color: var(--w-fg-subtle);
 }
 
+/* --- Número principal (value) ------------------------------------------ */
+
+/* O número que o card existe para mostrar (saldo, total da linha): largura cheia,
+   logo abaixo do contexto e antes do miolo — posição fixa, como título e meta. É
+   só leitura e sem caixa; o tamanho é o que o separa do resto, não uma moldura. */
+.w-editable-table--cards td[data-card='value'] {
+  order: 3;
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-1);
+  font-size: var(--w-text-xl);
+  font-weight: var(--w-fw-bold);
+  line-height: var(--w-leading-snug);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg);
+}
+
+.w-editable-table--cards td[data-card='value'] .w-editable-table__card-label {
+  display: block;
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  line-height: var(--w-leading-snug);
+  text-transform: uppercase;
+  letter-spacing: var(--w-tracking-caps);
+  color: var(--w-fg-subtle);
+}
+
 /* --- Campos editáveis --------------------------------------------------- */
 
 /* `field` e `read` dividem o MESMO `order` de propósito: assim os dois seguem a
    ordem das colunas, e o card lê na mesma sequência da tabela — Sugestão antes de
-   A tratar, como na grade. Só título, ações, contexto e expansão têm posição fixa;
-   o miolo é o fluxo da tabela. */
+   A tratar, como na grade. Só título, ações, contexto, número principal e expansão
+   têm posição fixa; o miolo é o fluxo da tabela. */
 .w-editable-table--cards td[data-card='field'] {
-  order: 3;
+  order: 4;
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
@@ -1226,40 +1254,35 @@
 
 /* --- Derivados (leitura) ------------------------------------------------ */
 
-/* Na LINHA, o derivado é irmão do campo: mesma régua, mesma caixa, mesmo lugar do
-   número — quem edita e quem só lê ficam na mesma coluna, e o olho desce reto. O que
-   separa os dois é a borda: **borda é o que se edita**. O derivado ganha a caixa
-   tinta, sem moldura e sem gatilho, no lugar de virar uma linha de texto solta na
-   margem esquerda. */
+/* Na LINHA, o derivado é irmão do campo: mesma régua e o número no mesmo lugar —
+   quem edita e quem só lê ficam na mesma coluna, e o olho desce reto. O que separa
+   os dois é a borda: **borda é o que se edita; o que só se lê é texto**. Sem caixa,
+   sem fundo — uma caixa tinta parece campo desabilitado, e o operador tenta tocar.
+   O recuo interno do controle fica, para o dígito alinhar com o do campo de cima. */
 .w-editable-table--cards tbody td[data-card='read'] {
-  order: 3;
+  order: 4;
   grid-column: 1 / -1;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--w-space-3);
-  min-height: var(--w-touch-h);
   font-size: var(--w-text-sm);
 }
 
 .w-editable-table--cards tbody td[data-card='read'] > *:not(.w-editable-table__card-label) {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
   flex: 0 1 52%;
   min-width: 8.5rem;
-  min-height: var(--w-control-h);
   padding: 0 var(--w-control-px);
-  border-radius: var(--w-radius);
-  background: var(--w-surface-2);
   color: var(--w-fg);
   font-weight: var(--w-fw-medium);
   font-variant-numeric: tabular-nums;
 }
 
 /* No rodapé o derivado é resumo, não linha de formulário: segue compacto, duas por
-   linha, sem caixa — não há campo nenhum ao lado com que se alinhar. */
+   linha, rótulo e número nas pontas — não há campo nenhum ao lado com que se alinhar. */
 .w-editable-table--cards tfoot td[data-card='read'] {
-  order: 3;
+  order: 4;
   display: flex;
   align-items: baseline;
   justify-content: space-between;

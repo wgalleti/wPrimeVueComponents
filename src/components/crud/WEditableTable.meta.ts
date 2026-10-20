@@ -2,8 +2,22 @@ import { defineComponentMeta } from '@/types/componentMeta'
 import type { EditableColumnDef } from '@/types/editableTable'
 
 const lotes = [
-  { produto: 'HO APORE', lote: '32575111022', area: 160, volume: 12, volume_kg: 8400 },
-  { produto: 'BMX GUEPARDO', lote: '32575111023', area: 100, volume: 8, volume_kg: 5600 },
+  {
+    produto: 'HO APORE',
+    lote: '32575111022',
+    area: 160,
+    volume: 12,
+    volume_kg: 8400,
+    saldo_kg: 1200,
+  },
+  {
+    produto: 'BMX GUEPARDO',
+    lote: '32575111023',
+    area: 100,
+    volume: 8,
+    volume_kg: 5600,
+    saldo_kg: 800,
+  },
 ]
 
 const colunas: EditableColumnDef[] = [
@@ -65,7 +79,7 @@ export default defineComponentMeta({
     {
       name: 'Card (tablet em pé)',
       description:
-        'Abaixo de 840px a MESMA tabela vira card. `card` por coluna dá a hierarquia: título, contexto, campo e leitura.',
+        'Abaixo de 840px a MESMA tabela vira card. `card` por coluna dá a hierarquia: título, contexto, número principal (`value`), campo e leitura (texto, sem caixa).',
       props: {
         modelValue: lotes,
         cardMode: 'always',
@@ -73,6 +87,7 @@ export default defineComponentMeta({
         columns: [
           { field: 'produto', header: 'Produto', card: 'title' },
           { field: 'lote', header: 'Lote', card: 'meta' },
+          { field: 'saldo_kg', header: 'Saldo (kg)', decimals: 0, card: 'value' },
           { field: 'area', header: 'Área (ha)', editor: 'number', decimals: 0, footer: 'sum' },
           { field: 'volume', header: 'A tratar', editor: 'number', decimals: 0, footer: 'sum' },
           { field: 'volume_kg', header: 'Volume (kg)', decimals: 0, footer: 'sum', card: 'read' },
