@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.10.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.9.0...v1.10.0) (2026-10-21)
+
+### Funcionalidades
+
+* **crud:** WCrudView cardMode fit switches to cards only when the columns do not fit ([5e2e598](https://github.com/wgalleti/wPrimeVueComponents/commit/5e2e5984d680884fbb5ec022fc1fd0bea908461a))
+
+### Correções
+
+* **crud:** WCrudView switches to cards by the listing width and scrolls the table instead of squashing the title ([80d4abf](https://github.com/wgalleti/wPrimeVueComponents/commit/80d4abfbb02be4ed4986054d3678222aa0038c10))
 ## [1.9.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.8.0...v1.9.0) (2026-10-21)
 
 ### Funcionalidades
