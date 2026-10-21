@@ -491,6 +491,13 @@
           "description": ""
         },
         {
+          "name": "cardMode",
+          "type": "\"auto\" | \"never\" | \"always\" | undefined",
+          "required": false,
+          "default": "\"auto\"",
+          "description": "Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da\nlistagem (não da janela): cards abaixo de 840px, e o alternador some; acima,\ntabela — que rola na horizontal se as colunas não couberem. `never` nunca\nforça; `always` é sempre card, sem alternador. A escolha\ndo usuário (`defaultView`, alternador, `persistState`) vale só quando nada força."
+        },
+        {
           "name": "cardBare",
           "type": "boolean | undefined",
           "required": false,

@@ -1,8 +1,9 @@
 # useBreakpoint
 
 Em qual faixa de largura a janela está, e se o ponteiro primário é o dedo. É a régua de
-layout da suite — o mesmo corte que o `WCrudView` usa para trocar tabela por card e que os
-`@media` do `crud.css` usam.
+layout da suite — o mesmo corte (840px) que os `@media` do `crud.css` usam. O `WCrudView` e o
+`WEditableTable` aplicam esse 840 à largura do **próprio componente**, não da janela, para
+trocar tabela por card.
 
 ```ts
 import { useBreakpoint } from '@wgalleti/primevue-components'

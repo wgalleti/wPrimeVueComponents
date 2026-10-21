@@ -157,6 +157,42 @@
   font-size: var(--w-text-sm);
 }
 
+/* Abaixo do piso a tabela rola dentro do próprio contêiner — o `.w-crud-table`
+   cortaria o que vaza (`overflow: hidden` do canto arredondado). O piso não força
+   card: acima de 840px de área é sempre tabela. */
+.w-crud-table .p-datatable-table-container {
+  overflow-x: auto;
+  /* Régua do estado vazio (`100cqi`): a parte visível, não a tabela com piso. */
+  container-type: inline-size;
+}
+
+/* Tabela vazia com piso: a célula tem a largura da tabela (que rola), e o aviso
+   centrado nela ficaria fora do meio do que se vê — em 1024px, longe à direita.
+   Ele fica preso à parte visível, com a largura dela. */
+.w-crud-table .p-datatable-empty-message > td {
+  padding: 0;
+}
+
+.w-crud-table .w-crud-empty {
+  position: sticky;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  inline-size: 100cqi;
+}
+
+/* Piso da tabela (`--w-crud-min`, montado no componente). Só na tabela que o
+   declarou: a custom property herda, e um DataTable no `#expansion` não pode
+   receber o piso da tabela de fora. */
+.w-crud-table .p-datatable-table[style*='--w-crud-min'] {
+  min-width: var(--w-crud-min);
+}
+
+/* Título (primeira coluna visível) nunca esmagado: o layout automático do
+   DataTable espreme cada coluna até a palavra mais longa. */
+.w-crud-table .w-crud-col-title {
+  min-width: var(--w-col-title-min);
+}
+
 .w-crud-table .p-datatable-header {
   background: transparent;
   border-bottom: 1px solid var(--w-border);

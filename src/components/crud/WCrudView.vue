@@ -14,7 +14,7 @@ import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
 import { useTabHost } from '@/types/routeTabs'
-import { useBreakpoint } from '@/composables/useBreakpoint'
+import { useCardFit } from '@/composables/useCardFit'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudManagerReturn } from '@/types/manager'
@@ -61,6 +61,14 @@ const props = withDefaults(
     viewToggle?: boolean
     defaultView?: 'table' | 'cards'
     cardFields?: number
+    /**
+     * Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da
+     * listagem (não da janela): cards abaixo de 840px, e o alternador some; acima,
+     * tabela — que rola na horizontal se as colunas não couberem. `never` nunca
+     * força; `always` é sempre card, sem alternador. A escolha
+     * do usuário (`defaultView`, alternador, `persistState`) vale só quando nada força.
+     */
+    cardMode?: 'auto' | 'never' | 'always'
     /** Cards "sem moldura": remove o chrome padrão do card (borda/sombra/padding/
      *  seleção) para o slot `#card` desenhar o card inteiro (ex.: um card de design
      *  próprio). O wrapper vira só a célula do grid. */
@@ -90,6 +98,7 @@ const props = withDefaults(
     viewToggle: true,
     defaultView: 'table',
     cardFields: 4,
+    cardMode: 'auto',
     actionRail: true,
     contextMenu: true,
     showPrint: false,
@@ -130,15 +139,24 @@ function loadView(): 'table' | 'cards' {
 }
 const displayMode = ref<'table' | 'cards'>(loadView())
 
-// Tablet em pé (< 840px): tabela não se lê. Cada linha vira card — título em
-// destaque, o resto como rótulo/valor — e o alternador some, porque nessa
-// largura não existe escolha a fazer. A preferência guardada NÃO é sobrescrita:
-// ela volta intacta quando a janela cresce de novo.
-const { isRetrato } = useBreakpoint()
-const effectiveView = computed<'table' | 'cards'>(() =>
-  isRetrato.value ? 'cards' : displayMode.value,
+// Área da listagem abaixo de 840px: cada linha vira card — título em destaque, o
+// resto como rótulo/valor — e o alternador some, porque nessa largura não existe
+// escolha a fazer. A régua é a largura da ÁREA (`useCardFit`, a mesma do
+// `WEditableTable`), não a da janela: com a barra lateral do app a janela passa de
+// 840 com a área ainda abaixo. A preferência guardada NÃO é sobrescrita: ela volta
+// intacta quando a área cresce de novo.
+// Sem sonda: aqui o piso da tabela NÃO força card — acima de 840 é sempre tabela,
+// que rola na horizontal abaixo do piso (`tableStyle`). Só o `WEditableTable` cai
+// para card quando a grade não cabe.
+const conteudo = ref<HTMLElement | null>(null)
+const { estreito } = useCardFit(conteudo, ref(null))
+const cardForcado = computed(
+  () => props.cardMode === 'always' || (props.cardMode === 'auto' && estreito.value),
 )
-const canToggleView = computed(() => props.viewToggle && !isRetrato.value)
+const effectiveView = computed<'table' | 'cards'>(() =>
+  cardForcado.value ? 'cards' : displayMode.value,
+)
+const canToggleView = computed(() => props.viewToggle && !cardForcado.value)
 
 function isView(mode: 'table' | 'cards'): boolean {
   return effectiveView.value === mode
@@ -272,6 +290,11 @@ const effectiveRowActions = computed<RowAction[]>(
 
 const hasActions = computed(
   () => effectiveRowActions.value.length > 0 || Boolean(slots['row-actions']),
+)
+
+/** Largura da coluna de ações: um botão de 2.5rem por ação (e um pelo slot). */
+const actionsWidth = computed(
+  () => `${(effectiveRowActions.value.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem`,
 )
 
 /** Nome acessível do botão só-ícone: tooltip da action, senão o identificador. */
@@ -525,6 +548,53 @@ async function doExportCsv() {
   }
 }
 
+// --- Piso da tabela ---
+
+/** Largura que a coluna declara no `style` (`min-width` vence `width`). */
+function larguraDeclarada(style?: string): string | undefined {
+  if (!style) return undefined
+  const min = /(?:^|;)\s*min-width\s*:\s*([^;!]+)/i.exec(style)?.[1]
+  const fixa = /(?:^|;)\s*width\s*:\s*([^;!]+)/i.exec(style)?.[1]
+  return (min ?? fixa)?.trim()
+}
+
+/** Coluna do título na tabela: a primeira visível SEM largura declarada (o
+ *  código de 8rem que abre o schema não é o que se esmaga), senão a primeira. O
+ *  DataTable usa layout automático, que espreme as colunas sem largura até a
+ *  palavra mais longa — o título caía a uma palavra por linha. Ela ganha piso
+ *  (`--w-col-title-min`) na tabela e no piso. */
+const campoTitulo = computed(
+  () =>
+    (visibleColumns.value.find((c) => !larguraDeclarada(c.style)) ?? visibleColumns.value[0])
+      ?.field,
+)
+
+function colClass(col: { field: string; align?: string }) {
+  return [colAlignClass(col), col.field === campoTitulo.value ? 'w-crud-col-title' : undefined]
+}
+
+/** Piso da tabela: o título no `--w-col-title-min` (ou no que declarar, se
+ *  maior), as demais colunas no que declaram ou em `--w-col-min`, mais seleção,
+ *  expansor e a coluna de ações. A rail fica fora: a régua é a área ao lado dela.
+ *  Sai como string `calc()` que o navegador resolve. */
+const pisoCss = computed(() => {
+  const partes: string[] = []
+  if (isMultiSelect.value) partes.push('var(--w-col-narrow)')
+  if (props.expandable) partes.push('var(--w-col-narrow)')
+  for (const col of visibleColumns.value) {
+    const declarada = larguraDeclarada(col.style)
+    if (col.field !== campoTitulo.value) partes.push(declarada ?? 'var(--w-col-min)')
+    else if (declarada) partes.push(`max(var(--w-col-title-min), ${declarada})`)
+    else partes.push('var(--w-col-title-min)')
+  }
+  if (hasActions.value && !props.actionRail) partes.push(actionsWidth.value)
+  return partes.length ? `calc(${partes.join(' + ')})` : undefined
+})
+
+/** O piso vira `min-width` do `<table>`: abaixo dele o contêiner da tabela rola na
+ *  horizontal em vez de esmagar o título (ou cortar, sob o `overflow: hidden`). */
+const tableStyle = computed(() => (pisoCss.value ? { '--w-crud-min': pisoCss.value } : undefined))
+
 // --- Init ---
 
 onMounted(() => {
@@ -582,7 +652,7 @@ onMounted(() => {
 
     <!-- Content (table/cards + optional action rail) -->
     <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
-      <div class="w-crud-content-main">
+      <div ref="conteudo" class="w-crud-content-main">
         <!-- Table -->
         <div v-if="isView('table')" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->
@@ -631,6 +701,7 @@ onMounted(() => {
             :sort-field="crud.sort.field ?? undefined"
             :sort-order="crud.sort.order"
             :data-key="crud.config.pk || 'id'"
+            :table-style="tableStyle"
             :edit-mode="isCellEdit ? 'cell' : undefined"
             :selection="
               isMultiSelect
@@ -831,8 +902,8 @@ onMounted(() => {
               :header="col.header"
               :sortable="col.sortable"
               :style="col.style"
-              :header-class="colAlignClass(col)"
-              :body-class="colAlignClass(col)"
+              :header-class="colClass(col)"
+              :body-class="colClass(col)"
             >
               <template #body="{ data }">
                 <slot :name="`column-${col.field}`" :data="data" :value="data[col.field]">
@@ -867,9 +938,7 @@ onMounted(() => {
             <Column
               v-if="hasActions && !actionRail"
               header-class="w-crud-actions-header"
-              :style="{
-                width: `${(effectiveRowActions.length + (slots['row-actions'] ? 1 : 0)) * 2.5 + 1}rem`,
-              }"
+              :style="{ width: actionsWidth }"
             >
               <template #body="{ data }">
                 <div class="w-crud-actions">

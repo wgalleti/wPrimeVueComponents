@@ -116,7 +116,8 @@ sobrepostos.
 - **Sem oscilação**: as duas medidas (largura do componente e da sonda) não dependem do modo.
   O que o modo muda é a altura, que pode pôr ou tirar a barra de rolagem vertical da página
   (~15px); por isso a volta do card para a grade exige **24px de folga** acima do limite, e a
-  entrada no card é no limite exato.
+  entrada no card é no limite exato. A folga só vale depois de uma troca feita pelo observer; o
+  card decidido na montagem não a ganha.
 - **Piso 0 é "não sei", nunca "cabe"** (jsdom, tabela sem colunas): vale só a régua de 840.
   Coluna com `width` em `%` entra no piso resolvida contra a largura do componente — a mesma
   base do `min-width` da tabela.

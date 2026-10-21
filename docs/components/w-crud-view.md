@@ -225,10 +225,53 @@ inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFi
 `4`) diz quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
 `rótulo: valor`. Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
 
-**Abaixo de 840px a visão é forçada em `cards`** e o alternador some: nessa largura a tabela
-não se lê, e não há escolha a oferecer. A preferência guardada **não** é sobrescrita — ela
-volta intacta quando a janela cresce. O corte é o `isRetrato` do
-[`useBreakpoint`](/composables/use-breakpoint).
+### Quando a largura força os cards
+
+**A régua é a largura da área da listagem, não a da janela.** Com `cardMode: 'auto'` (default),
+a visão é **forçada em `cards`** quando a área ao lado da rail fica **abaixo de 840px**, e o
+alternador some: nessa largura não há escolha a oferecer. Com a barra lateral do app, a janela
+passa de 840px bem antes da área — por isso a régua não é `@media`. A preferência guardada
+(`defaultView`, alternador, `persistState`) **não** é sobrescrita: ela volta intacta quando a
+área cresce.
+
+**Acima de 840px é sempre tabela**, mesmo que as colunas não caibam. Nesse caso a tabela **rola
+na horizontal** dentro do próprio contêiner em vez de esmagar o título ou ser cortada. Diferente
+do [`WEditableTable`](/components/w-editable-table#largura-do-componente), a `WCrudView` não
+troca para card quando a grade não cabe.
+
+- **Título nunca esmagado:** a coluna do título tem `min-width: var(--w-col-title-min)` (12rem).
+  É a primeira coluna visível **sem largura** no `style`: o `Código` de `width: 8rem` que abre o
+  schema não é a coluna que se esmaga. Sem nenhuma coluna fluida, é a primeira.
+- **Piso da tabela:** o `<table>` recebe `min-width` igual à soma do que cada coluna visível
+  precisa. Abaixo disso, o contêiner rola.
+
+| Coluna | Entra no piso com |
+| --- | --- |
+| Título | `--w-col-title-min`, ou a largura declarada se maior |
+| Coluna com `width`/`min-width` no `style` | a largura declarada (`min-width` vence) |
+| Demais colunas sem largura | `--w-col-min` (7rem) |
+| Seleção múltipla, expansor | `--w-col-narrow` cada |
+| Ações de linha (só com `:action-rail="false"`) | a largura da coluna de ações |
+
+Ocultar uma coluna pelo seletor diminui o piso na hora. Para rolar menos, declare larguras
+menores nas colunas ou ajuste os tokens `--col-title-min` / `--col-min` no app.
+
+Detalhes que evitam piscar e oscilar:
+
+- **Histerese:** entra no card abaixo de 840 e só volta à tabela com 24px de folga. Trocar de
+  visão muda a altura da página e pode pôr ou tirar a barra de rolagem vertical. A folga só vale
+  depois de uma troca: o card decidido na montagem volta à tabela assim que a área passa de 840
+  (a área que monta 838px enquanto o layout assenta não fica presa em card a 842px).
+- **Área com largura 0** (aba inativa, `v-show`, `KeepAlive`): mantém a visão que estava.
+- A primeira medida é síncrona no `mount`: o tablet já nasce em cards, sem um quadro de tabela.
+
+| `cardMode` | Comportamento |
+| --- | --- |
+| `auto` (default) | cards forçados com a área abaixo de 840px; acima, tabela (rolando se precisar) e vale a escolha do usuário |
+| `never` | nunca força: a tabela fica em qualquer largura e o alternador continua |
+| `always` | sempre cards, sem alternador — vitrine e teste. Para só **começar** em cards e deixar trocar, use `defaultView: 'cards'` |
+
+A medida é a mesma do `WEditableTable` (`useCardFit`); lá, além dos 840, o piso também força o card.
 
 Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
 

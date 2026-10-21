@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, isRef, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, isRef, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import WDatePicker from '@/components/form/WDatePicker.vue'
-import { BREAKPOINTS } from '@/composables/useBreakpoint'
+import { useCardFit } from '@/composables/useCardFit'
 import { useFormatters } from '@/composables/useFormatters'
 import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/editableTable'
 
@@ -89,72 +89,11 @@ const { formatNumber } = useFormatters()
 
 // --- Modo card -------------------------------------------------------------
 
-// A régua é a largura do ELEMENTO (ResizeObserver), não a da janela. Tem de ser
-// JS e não só `@container`: o card troca marcação (rótulo dentro da célula,
-// `role`, largura inline), e o CSS só segue a classe `--cards` que sai daqui —
-// uma fonte só, JS e CSS nunca discordam.
+// A régua é a largura do ELEMENTO, não a da janela (`useCardFit`, a mesma do
+// `WCrudView`). O CSS só segue a classe `--cards` que sai daqui — uma fonte só.
 const raiz = ref<HTMLElement | null>(null)
 const sonda = ref<HTMLElement | null>(null)
-const estreito = ref(false)
-let largura = 0
-let piso = 0
-let observer: ResizeObserver | null = null
-let quadro = 0
-
-/** Folga na volta do card para a grade. Trocar de modo muda a altura e pode pôr
- *  ou tirar a barra de rolagem vertical da página (~15px de largura): sem folga,
- *  rente ao limite, a troca alteraria a própria medida que a decidiu. */
-const HISTERESE = 24
-
-/** Card quando a largura do componente não comporta a grade: abaixo da régua
- *  (840) OU do piso da tabela, o que for maior. Piso 0 é "não sei" (jsdom, sem
- *  colunas), nunca "cabe": vale só a régua. Largura 0 é componente escondido (aba
- *  inativa, `v-show`, KeepAlive): mantém o modo, senão a tabela piscaria para card
- *  ao voltar. As duas medidas independem do modo — a sonda tem a largura do piso
- *  em qualquer modo —, e a folga cobre o que o modo mexe na página. */
-function decidir(): boolean | null {
-  if (largura <= 0) return null
-  const limite = Math.max(BREAKPOINTS.retrato, piso)
-  return estreito.value ? largura < limite + HISTERESE : largura < limite
-}
-
-function aplicar(proximo: boolean | null) {
-  if (proximo == null || proximo === estreito.value) return
-  // Trocar a classe no próprio callback muda a altura do elemento observado e o
-  // navegador dispara "ResizeObserver loop…" no `window` — o app consumidor
-  // manda isso para o monitoramento. O quadro seguinte aplica sem laço.
-  cancelAnimationFrame(quadro)
-  quadro = requestAnimationFrame(() => {
-    estreito.value = proximo
-  })
-}
-
-onMounted(() => {
-  if (!raiz.value) return
-  // Medida síncrona antes da primeira pintura: sem ela o tablet veria a grade
-  // por um quadro antes de virar card.
-  largura = raiz.value.getBoundingClientRect().width
-  piso = sonda.value?.getBoundingClientRect().width ?? 0
-  const inicial = decidir()
-  if (inicial != null) estreito.value = inicial
-  if (typeof ResizeObserver === 'undefined') return
-  observer = new ResizeObserver((entries) => {
-    // Dois alvos no mesmo observer: o componente e a sonda do piso (que muda com
-    // colunas, densidade ou fonte). Cada entrada atualiza a sua medida.
-    for (const entry of entries) {
-      if (sonda.value && entry.target === sonda.value) piso = entry.contentRect.width
-      else largura = entry.contentRect.width
-    }
-    aplicar(decidir())
-  })
-  observer.observe(raiz.value)
-  if (sonda.value) observer.observe(sonda.value)
-})
-
-onBeforeUnmount(() => {
-  observer?.disconnect()
-  cancelAnimationFrame(quadro)
-})
+const { estreito } = useCardFit(raiz, sonda)
 
 const emCard = computed(
   () => props.cardMode === 'always' || (props.cardMode !== 'never' && estreito.value),

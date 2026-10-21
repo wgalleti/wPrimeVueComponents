@@ -2,9 +2,9 @@
 //
 // Cobre o nome acessível dos botões só-ícone (toolbar, ações de linha, rail).
 // Tooltip do PrimeVue não vira nome — cada um precisa de `aria-label`.
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
 import WCrudView from './WCrudView.vue'
@@ -301,6 +301,253 @@ describe('WCrudView — slots do form dialog repassados pela tela', () => {
     expect(form.find('.w-crud-form-main .upload-proprio').text()).toBe('meu upload')
     expect(form.find('.w-crud-form-main .previa').text()).toBe('prévia')
     expect(form.find('.w-crud-form-aside .painel').text()).toBe('lateral')
+    w.unmount()
+  })
+})
+
+describe('WCrudView — card pela largura da área da listagem', () => {
+  type Callback = (entries: { target?: Element; contentRect: { width: number } }[]) => void
+  let callbacks: Callback[] = []
+  const desconectados = vi.fn()
+
+  function instalarResizeObserver() {
+    callbacks = []
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(cb: Callback) {
+          callbacks.push(cb)
+        }
+        observe() {}
+        disconnect() {
+          desconectados()
+        }
+      },
+    )
+    vi.stubGlobal('requestAnimationFrame', (fn: FrameRequestCallback) => {
+      fn(0)
+      return 1
+    })
+    vi.stubGlobal('cancelAnimationFrame', () => {})
+  }
+
+  async function largura(px: number) {
+    for (const cb of callbacks) cb([{ contentRect: { width: px } }])
+    await nextTick()
+  }
+
+  async function pronto(config = {}, props = {}) {
+    const w = montar(config, props)
+    await flushPromises()
+    await nextTick()
+    return w
+  }
+
+  const emCard = (w: ReturnType<typeof montar>) => w.find('.w-crud-cards-wrap').exists()
+  const temAlternador = (w: ReturnType<typeof montar>) => w.find('.w-crud-view-toggle').exists()
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    localStorage.clear()
+  })
+
+  it('área abaixo de 840px vira card sem alternador; acima, tabela com alternador', async () => {
+    instalarResizeObserver()
+    const w = await pronto()
+    await largura(700)
+    expect(emCard(w)).toBe(true)
+    expect(temAlternador(w)).toBe(false)
+    await largura(900)
+    expect(emCard(w)).toBe(false)
+    expect(temAlternador(w)).toBe(true)
+    w.unmount()
+  })
+
+  it('a janela não decide: matchMedia estreito com área larga continua tabela', async () => {
+    instalarResizeObserver()
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+    const w = await pronto()
+    await largura(900)
+    expect(emCard(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('largura 0 (aba escondida) mantém o modo que estava', async () => {
+    instalarResizeObserver()
+    const w = await pronto()
+    await largura(700)
+    await largura(0)
+    expect(emCard(w)).toBe(true)
+    w.unmount()
+  })
+
+  // Decisão de produto: o piso não força card. Acima de 840 é tabela, que rola.
+  it('acima de 840 com colunas que não cabem continua tabela, com piso para rolar', async () => {
+    instalarResizeObserver()
+    const w = await pronto({
+      columns: [
+        { field: 'nome', header: 'Nome' },
+        { field: 'a', header: 'A', style: 'width: 40rem' },
+      ],
+    })
+    await largura(900)
+    expect(emCard(w)).toBe(false)
+    expect(w.find('.w-crud-probe').exists()).toBe(false)
+    expect(w.find('table').attributes('style')).toContain(
+      '--w-crud-min: calc(var(--w-col-title-min) + 40rem)',
+    )
+    w.unmount()
+  })
+
+  it('volta para a tabela só com folga acima de 840 (sem oscilar na borda)', async () => {
+    instalarResizeObserver()
+    const w = await pronto()
+    await largura(839)
+    expect(emCard(w)).toBe(true)
+    await largura(855)
+    expect(emCard(w)).toBe(true)
+    await largura(870)
+    expect(emCard(w)).toBe(false)
+    await largura(845)
+    expect(emCard(w)).toBe(false)
+    await largura(839)
+    expect(emCard(w)).toBe(true)
+    w.unmount()
+  })
+
+  // A área monta 2px estreita (barra lateral assentando) e cresce para 842: o card
+  // da montagem não foi troca do observer, então não ganha folga e volta à tabela.
+  it('card da montagem não ganha folga: área que cresce para 842 vira tabela', async () => {
+    instalarResizeObserver()
+    const original = HTMLElement.prototype.getBoundingClientRect
+    HTMLElement.prototype.getBoundingClientRect = function () {
+      const width = this.classList.contains('w-crud-content-main') ? 838 : 0
+      return { width } as DOMRect
+    }
+    try {
+      const w = await pronto()
+      expect(emCard(w)).toBe(true)
+      await largura(842)
+      expect(emCard(w)).toBe(false)
+      w.unmount()
+    } finally {
+      HTMLElement.prototype.getBoundingClientRect = original
+    }
+  })
+
+  it('a preferência guardada sobrevive ao card forçado', async () => {
+    instalarResizeObserver()
+    localStorage.setItem('wcrud:view:itens', 'table')
+    const w = await pronto({}, { persistState: 'itens' })
+    await largura(700)
+    expect(emCard(w)).toBe(true)
+    expect(localStorage.getItem('wcrud:view:itens')).toBe('table')
+    await largura(900)
+    expect(emCard(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('cardMode never ignora a largura e mantém o alternador', async () => {
+    instalarResizeObserver()
+    const w = await pronto({}, { cardMode: 'never' })
+    await largura(500)
+    expect(emCard(w)).toBe(false)
+    expect(temAlternador(w)).toBe(true)
+    expect(w.find('table').attributes('style')).toContain('--w-crud-min')
+    w.unmount()
+  })
+
+  it('cardMode always é card mesmo largo, sem alternador', async () => {
+    instalarResizeObserver()
+    const w = await pronto({}, { cardMode: 'always' })
+    await largura(1400)
+    expect(emCard(w)).toBe(true)
+    expect(temAlternador(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('desconecta o observer ao desmontar', async () => {
+    instalarResizeObserver()
+    desconectados.mockClear()
+    const w = await pronto()
+    w.unmount()
+    expect(desconectados).toHaveBeenCalled()
+  })
+
+  it('sem ResizeObserver (SSR, jsdom) fica a tabela', async () => {
+    vi.stubGlobal('ResizeObserver', undefined)
+    const w = await pronto()
+    expect(emCard(w)).toBe(false)
+    w.unmount()
+  })
+})
+
+describe('WCrudView — piso da tabela', () => {
+  const colunas = [
+    { field: 'codigo', header: 'Código', style: 'width: 8rem' },
+    { field: 'nome', header: 'Nome' },
+    { field: 'grupo', header: 'Grupo' },
+    { field: 'motivo', header: 'Motivo', style: 'min-width: 20rem; width: 9rem' },
+  ]
+
+  async function pronto(config = {}, props = {}) {
+    const w = montar({ columns: colunas, ...config }, props)
+    await flushPromises()
+    await w.vm.$nextTick()
+    return w
+  }
+
+  it('o título é a primeira coluna sem largura: piso próprio e classe na tabela', async () => {
+    const w = await pronto()
+    expect(w.find('table').attributes('style')).toContain(
+      '--w-crud-min: calc(8rem + var(--w-col-title-min) + var(--w-col-min) + 20rem)',
+    )
+    const titulos = w.findAll('th.w-crud-col-title')
+    expect(titulos).toHaveLength(1)
+    expect(titulos[0].text()).toContain('Nome')
+    w.unmount()
+  })
+
+  it('sem nenhuma coluna fluida o título é a primeira, com o maior entre o token e a declarada', async () => {
+    const w = await pronto({
+      columns: [{ field: 'codigo', header: 'Código', style: 'width: 8rem' }],
+    })
+    expect(w.find('table').attributes('style')).toContain(
+      '--w-crud-min: calc(max(var(--w-col-title-min), 8rem))',
+    )
+    w.unmount()
+  })
+
+  it('seleção múltipla e coluna de ações (sem rail) entram no piso', async () => {
+    const w = await pronto(
+      { columns: [{ field: 'nome', header: 'Nome' }], selectionMode: 'multiple' },
+      { actionRail: false },
+    )
+    expect(w.find('table').attributes('style')).toContain(
+      '--w-crud-min: calc(var(--w-col-narrow) + var(--w-col-title-min) + 8.5rem)',
+    )
+    w.unmount()
+  })
+
+  it('o piso segue as colunas visíveis (coluna oculta pelo seletor sai do piso)', async () => {
+    localStorage.setItem('wcrud:cols:itens', JSON.stringify({ hidden: ['grupo'] }))
+    const w = await pronto({}, { persistState: 'itens' })
+    expect(w.find('table').attributes('style')).toContain(
+      '--w-crud-min: calc(8rem + var(--w-col-title-min) + 20rem)',
+    )
+    localStorage.clear()
     w.unmount()
   })
 })
