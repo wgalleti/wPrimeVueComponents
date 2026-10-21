@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.9.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.8.0...v1.9.0) (2026-10-21)
+
+### Funcionalidades
+
+* **crud:** WEditableTable card gains the value role and read drops the tinted box ([1902ce6](https://github.com/wgalleti/wPrimeVueComponents/commit/1902ce675ab4e776694c0c826ac34e5829854267))
+* **crud:** WEditableTable resolves the card role per row ([46cdfef](https://github.com/wgalleti/wPrimeVueComponents/commit/46cdfef73bb93180f9bb5d8e33c2cc2526424a1d))
+* **ui:** WKpiCard tints the value with the severity tone ([acf7e73](https://github.com/wgalleti/wPrimeVueComponents/commit/acf7e73b1b79ee462de7aa4a8186de07af7134c6))
+
+### Correções
+
+* **crud:** WEditableTable card labels sit on the control's text baseline ([652334f](https://github.com/wgalleti/wPrimeVueComponents/commit/652334f2e82e9095a89e083878a5e6cfe33c0ad9))
+* **crud:** WEditableTable cards stack meta pairs, align digits and share one control height ([3fa4433](https://github.com/wgalleti/wPrimeVueComponents/commit/3fa44337c093ca95e6f23b5b1f000438ed74561c))
+* **crud:** WEditableTable falls back to cards when the table does not fit its own width ([59e7a24](https://github.com/wgalleti/wPrimeVueComponents/commit/59e7a24201faa2b04aa3197459ac0d5fe994aa97))
+* **crud:** WEditableTable switches to cards by its own width and never squashes the title column ([6504ea3](https://github.com/wgalleti/wPrimeVueComponents/commit/6504ea33342a445da426821d55eefe52a8fd240f))
+* **ui:** KPI values shrink with the card and never cross its border ([f11217b](https://github.com/wgalleti/wPrimeVueComponents/commit/f11217bab2edfffdbe5f747bd470722fa339d359))
+* **ui:** WKpiGrid auto picks a column count that closes its rows ([fe49fed](https://github.com/wgalleti/wPrimeVueComponents/commit/fe49fed05c8d616741deede5606d3d79d01c5088))
 ## [1.8.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.7.2...v1.8.0) (2026-10-17)
 
 ### Funcionalidades
