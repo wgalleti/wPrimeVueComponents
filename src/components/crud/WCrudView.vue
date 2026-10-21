@@ -578,8 +578,11 @@ const campoTitulo = computed(
       ?.field,
 )
 
+/** String, não array: o `Column` do PrimeVue declara `headerClass`/`bodyClass` como String. */
 function colClass(col: { field: string; align?: string }) {
-  return [colAlignClass(col), col.field === campoTitulo.value ? 'w-crud-col-title' : undefined]
+  return [colAlignClass(col), col.field === campoTitulo.value ? 'w-crud-col-title' : '']
+    .filter(Boolean)
+    .join(' ')
 }
 
 /** Piso da tabela: o título no `--w-col-title-min` (ou no que declarar, se
