@@ -159,7 +159,11 @@
   --w-col-title-min: var(
     --col-title-min,
     12rem
-  ); /* piso da coluna fluida (título) da tabela editável — abaixo dela a grade rola */
+  ); /* piso da coluna fluida da tabela editável e do título do WCrudView */
+  --w-col-min: var(
+    --col-min,
+    7rem
+  ); /* piso das demais colunas sem largura do WCrudView — soma no min-width da tabela */
   --w-col-remove: var(--col-remove, 2.75rem); /* coluna da lixeira da tabela editável */
 
   /* ---- Knobs de componente (o consumidor ajusta por instância via :style) - */
