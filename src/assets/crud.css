@@ -1119,6 +1119,13 @@
    ações, contexto, campos, leitura) não existiria.
    ========================================================== */
 
+/* Régua do dígito no card: onde termina o número dentro de um campo (recuo do
+   controle + a borda de 1px). Derivada aqui, e não em tokens.css, para seguir um
+   `--w-control-px` redefinido num escopo abaixo do <html>. */
+.w-editable-table--cards {
+  --w-card-digit-inset: calc(var(--w-control-px) + 1px);
+}
+
 .w-editable-table--cards .w-editable-table__table {
   display: block;
 }
@@ -1207,20 +1214,37 @@
 
 /* --- Contexto (meta) ---------------------------------------------------- */
 
+/* Rótulo em cima, valor embaixo — a mesma leitura do número principal (rótulo
+   pequeno sobre o número), e o que deixa o par caber na metade do card. Lado a
+   lado, rótulo e número não quebravam (rótulo `flex: 0 0 auto`, número sem ponto
+   de quebra) e, abaixo de ~600px, o valor atravessava a trilha vizinha e caía em
+   cima do rótulo dela. Agora a meta é uma coluna presa à trilha (`min-width: 0`)
+   e o valor quebra em último caso: nunca maior que a célula, nunca sobreposto.
+   O alinhamento é sempre o início, mesmo em coluna numérica — par rótulo/valor
+   se lê como lista, não como coluna de soma. */
 .w-editable-table--cards td[data-card='meta'] {
   order: 2;
   display: flex;
-  align-items: baseline;
-  gap: var(--w-space-2);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--w-space-1);
+  min-width: 0;
+  text-align: start;
   font-size: var(--w-text-sm);
   color: var(--w-fg-muted);
 }
 
+.w-editable-table--cards td[data-card='meta'] > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .w-editable-table--cards td[data-card='meta'] .w-editable-table__card-label {
-  display: inline;
-  flex: 0 0 auto;
+  display: block;
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
+  line-height: var(--w-leading-snug);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
@@ -1263,12 +1287,24 @@
 
 .w-editable-table--cards td[data-card='value'] .w-editable-table__card-label {
   display: block;
+  padding-inline-end: var(--w-card-digit-inset);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   line-height: var(--w-leading-snug);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-subtle);
+}
+
+/* Régua do dígito: o número escrito (manchete `value` e `read`) termina onde termina
+   o dígito dentro do campo — borda do controle + recuo interno. Antes a manchete
+   encostava na borda e o `read` ficava no recuo: duas réguas na mesma coluna, a
+   ~12px uma da outra. A manchete que É campo (InputNumber no slot) já tem o próprio
+   recuo e fica de fora. */
+.w-editable-table--cards
+  td[data-card='value']
+  > :not(.w-editable-table__card-label):not(:has(.p-inputtext)) {
+  padding-inline-end: var(--w-card-digit-inset);
 }
 
 /* --- Campos editáveis --------------------------------------------------- */
@@ -1308,6 +1344,41 @@
   min-width: 8.5rem;
 }
 
+/* Um controle só no card: a mesma altura (densidade da suíte, `--w-control-h`), a
+   mesma fonte e o mesmo recuo para número, texto, data e escolha — inclusive
+   quando o slot traz o `size="small"` que a grade usa para não esticar a linha. No
+   card isso dava input de 40px ao lado de select de 32px e um ritmo torto entre
+   campos. O recuo fixo é o que a régua do dígito (`--w-card-digit-inset`) supõe. */
+.w-editable-table--cards td[data-card='field'] .p-inputtext,
+.w-editable-table--cards td[data-card='field'] .p-select {
+  height: var(--w-control-h);
+  font-size: var(--w-ui-font);
+}
+
+.w-editable-table--cards td[data-card='field'] .p-inputtext {
+  /* O <input> tem largura intrínseca (~20 caracteres): sem o piso zerado ele
+     empurra o InputNumber para fora do card em vez de caber na metade da linha. */
+  min-width: 0;
+  padding-block: 0;
+  padding-inline: var(--w-control-px);
+}
+
+/* Centra pelo `align-self` (o `.p-select` é linha flex) e não virando flex: o rótulo
+   segue bloco, e o `text-overflow: ellipsis` do PrimeVue continua cortando com "…"
+   a opção longa na metade estreita do card. */
+.w-editable-table--cards td[data-card='field'] .p-select-label {
+  align-self: center;
+  padding-block: 0;
+  padding-inline-start: var(--w-control-px);
+  font-size: var(--w-ui-font);
+}
+
+/* Data com ícone depois do texto (WDatePicker): devolve o espaço do calendário que
+   o recuo acima apagou. */
+.w-editable-table--cards td[data-card='field'] .p-iconfield > .p-inputtext:has(~ .p-inputicon) {
+  padding-inline-end: calc(var(--w-control-px) * 2 + var(--w-space-4));
+}
+
 /* --- Derivados (leitura) ------------------------------------------------ */
 
 /* Na LINHA, o derivado é irmão do campo: mesma régua e o número no mesmo lugar —
@@ -1319,8 +1390,11 @@
   order: 4;
   grid-column: 1 / -1;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--w-space-3);
+  /* Mesma altura de linha do campo: o passo vertical do miolo é um só, edite-se
+     ou só se leia. */
+  min-height: var(--w-touch-h);
   font-size: var(--w-text-sm);
 }
 
@@ -1329,22 +1403,33 @@
   justify-content: flex-end;
   flex: 0 1 52%;
   min-width: 8.5rem;
-  padding: 0 var(--w-control-px);
+  padding-inline: var(--w-card-digit-inset);
   color: var(--w-fg);
   font-weight: var(--w-fw-medium);
   font-variant-numeric: tabular-nums;
 }
 
 /* No rodapé o derivado é resumo, não linha de formulário: segue compacto, duas por
-   linha, rótulo e número nas pontas — não há campo nenhum ao lado com que se alinhar. */
+   linha, rótulo e número nas pontas — não há campo nenhum ao lado com que se alinhar.
+   Na metade estreita do card (celular) o par não cabe lado a lado: o número desce
+   para a linha de baixo, ainda encostado à direita, em vez de espremer o rótulo em
+   três linhas e partir o número. */
 .w-editable-table--cards tfoot td[data-card='read'] {
   order: 4;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--w-space-2);
+  gap: 0 var(--w-space-2);
+  min-width: 0;
   font-size: var(--w-text-sm);
   font-variant-numeric: tabular-nums;
+}
+
+.w-editable-table--cards tfoot td[data-card='read'] > :not(.w-editable-table__card-label) {
+  max-width: 100%;
+  margin-inline-start: auto;
+  overflow-wrap: anywhere;
 }
 
 .w-editable-table--cards tfoot td[data-card='read'] .w-editable-table__card-label {
