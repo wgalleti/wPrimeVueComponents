@@ -122,6 +122,9 @@ export interface FieldDef {
   /** For 'transfer' fields — option keys to match against when searching
    *  (defaults to [optionLabel]). */
   searchFields?: string[]
+  /** For 'transfer' fields — altura máxima de cada lista (CSS, ex.: `'24rem'`).
+   *  Padrão: o token `--w-transfer-list-max-h` (14rem). */
+  listHeight?: string
 
   // fk
   endpoint?: string

@@ -1556,6 +1556,13 @@
           "description": "Fields to match when searching (default: [optionLabel])."
         },
         {
+          "name": "listHeight",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Altura máxima de cada lista (CSS, ex.: `'24rem'`); o resto rola. Padrão: o token\n`--w-transfer-list-max-h` (14rem, umas 7 linhas)."
+        },
+        {
           "name": "disabled",
           "type": "boolean | undefined",
           "required": false,
