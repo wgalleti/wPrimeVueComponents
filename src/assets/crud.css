@@ -1313,11 +1313,15 @@
    ordem das colunas, e o card lê na mesma sequência da tabela — Sugestão antes de
    A tratar, como na grade. Só título, ações, contexto, número principal e expansão
    têm posição fixa; o miolo é o fluxo da tabela. */
+/* Rótulo na linha de base do texto do controle, não no centro da caixa do slot: o
+   slot pode trazer um invólucro maior que o controle (respiro fixo embaixo para uma
+   confirmação) e, centrado nessa caixa, o rótulo caía abaixo do campo. A linha de
+   base é a do dígito/opção dentro do controle, qualquer que seja o invólucro. */
 .w-editable-table--cards td[data-card='field'] {
   order: 4;
   grid-column: 1 / -1;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: var(--w-space-3);
   min-height: var(--w-touch-h);
 }
