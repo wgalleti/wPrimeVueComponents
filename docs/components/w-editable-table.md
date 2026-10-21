@@ -11,20 +11,20 @@ Nada é mutado no lugar — cada edição emite um array novo em `update:modelVa
 
 ### `EditableColumnDef`
 
-| Campo                                     | Tipo                                                                                             | Para quê                                                                                                                       |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `field` / `header`                        | `string`                                                                                         | Chave na linha e título da coluna                                                                                              |
-| `width`                                   | `string \| number`                                                                               | Largura fixa (número = px). Sem ela a coluna é fluida, com piso de `--w-col-title-min` (ver [largura](#largura-do-componente)) |
-| `align`                                   | `'left' \| 'center' \| 'right'`                                                                  | Default: `right` quando `editor: 'number'`                                                                                     |
-| `editor`                                  | `'number' \| 'text' \| 'select' \| 'date' \| 'none'`                                             | Default `none` (célula só de leitura)                                                                                          |
-| `options` / `optionLabel` / `optionValue` | —                                                                                                | Do `editor: 'select'`                                                                                                          |
-| `minDate` / `maxDate`                     | `string \| Date`                                                                                 | Limites do `editor: 'date'`, que guarda `YYYY-MM-DD` na linha (o `WDatePicker`, com máscara, calendário e F2 = hoje)           |
-| `format(value, row)`                      | `=> string`                                                                                      | Formatação da célula de leitura (vence `decimals`/`suffix`)                                                                    |
-| `footer`                                  | `'sum' \| 'none' \| (rows) => string`                                                            | Rodapé de totais da coluna                                                                                                     |
-| `decimals` / `suffix`                     | `number` / `string`                                                                              | Exibição e soma, em pt-BR                                                                                                      |
-| `disabled`                                | `boolean \| (row, index) => boolean`                                                             | Trava a coluna ou só algumas linhas                                                                                            |
-| `group`                                   | `string`                                                                                         | Rótulo de grupo no cabeçalho: colunas **vizinhas** com o mesmo `group` ganham um título único (colspan) numa linha acima delas |
-| `card`                                    | `'title' \| 'actions' \| 'meta' \| 'value' \| 'field' \| 'read' \| 'hidden'` ou `(row) => papel` | Papel da coluna no [modo card](#modo-card-tablet-em-pe) — fixo ou [por linha](#papel-por-linha)                                |
+| Campo                                     | Tipo                                                                                                                       | Para quê                                                                                                                       |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `field`                                   | Rótulo à esquerda, controle à direita, largura cheia e alvo de toque. Todo controle tem a [mesma altura](#regua-do-digito) |
+| `width`                                   | `string \| number`                                                                                                         | Largura fixa (número = px). Sem ela a coluna é fluida, com piso de `--w-col-title-min` (ver [largura](#largura-do-componente)) |
+| `align`                                   | `'left' \| 'center' \| 'right'`                                                                                            | Default: `right` quando `editor: 'number'`                                                                                     |
+| `editor`                                  | `'number' \| 'text' \| 'select' \| 'date' \| 'none'`                                                                       | Default `none` (célula só de leitura)                                                                                          |
+| `options` / `optionLabel` / `optionValue` | —                                                                                                                          | Do `editor: 'select'`                                                                                                          |
+| `minDate` / `maxDate`                     | `string \| Date`                                                                                                           | Limites do `editor: 'date'`, que guarda `YYYY-MM-DD` na linha (o `WDatePicker`, com máscara, calendário e F2 = hoje)           |
+| `format(value, row)`                      | `=> string`                                                                                                                | Formatação da célula de leitura (vence `decimals`/`suffix`)                                                                    |
+| `footer`                                  | `'sum' \| 'none' \| (rows) => string`                                                                                      | Rodapé de totais da coluna                                                                                                     |
+| `decimals` / `suffix`                     | `number` / `string`                                                                                                        | Exibição e soma, em pt-BR                                                                                                      |
+| `disabled`                                | `boolean \| (row, index) => boolean`                                                                                       | Trava a coluna ou só algumas linhas                                                                                            |
+| `group`                                   | `string`                                                                                                                   | Rótulo de grupo no cabeçalho: colunas **vizinhas** com o mesmo `group` ganham um título único (colspan) numa linha acima delas |
+| `card`                                    | `'title' \| 'actions' \| 'meta' \| 'value' \| 'field' \| 'read' \| 'hidden'` ou `(row) => papel`                           | Papel da coluna no [modo card](#modo-card-tablet-em-pe) — fixo ou [por linha](#papel-por-linha)                                |
 
 ### Slots
 
@@ -154,7 +154,7 @@ tamanho.
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`   | Manchete, no topo (uma por linha; sobrando, a primeira vence)                                                                                                                                                                                                                                                                                                                    |
 | `actions` | Ao lado do título, à direita (o `WCrudSubview` já marca a coluna de ações assim)                                                                                                                                                                                                                                                                                                 |
-| `meta`    | Contexto compacto sob o título, duas por linha                                                                                                                                                                                                                                                                                                                                   |
+| `meta`    | Contexto compacto sob o título, duas por linha: rótulo pequeno em cima, valor embaixo, **alinhado no início** mesmo em coluna numérica (par rótulo/valor se lê como lista, não como soma). Presa à metade do card, nunca invade a vizinha: o valor quebra em último caso                                                                                                         |
 | `value`   | O número principal do card (saldo, total da linha): largura cheia, abaixo do contexto, rótulo pequeno em cima e o número grande em negrito, `tabular-nums`. **`value` pode receber um campo pelo slot; ele ocupa o lugar da manchete** — largura cheia, texto no tamanho dela. Coluna que edita em umas linhas e é calculada em outras usa o [papel por linha](#papel-por-linha) |
 | `field`   | Rótulo à esquerda, controle à direita, largura cheia e alvo de toque                                                                                                                                                                                                                                                                                                             |
 | `read`    | Derivado: mesma régua do `field` — rótulo e número na mesma coluna, o número alinhado à direita com o do campo de cima, como texto: sem caixa, fundo ou borda. Só leitura naquela linha — coluna que edita em umas linhas usa o [papel por linha](#papel-por-linha). No rodapé de totais fica compacto, duas por linha                                                           |
@@ -169,6 +169,28 @@ const columns: EditableColumnDef[] = [
   { field: 'volume_kg', header: 'Volume (kg)', width: 80, decimals: 0, card: 'read' },
 ]
 ```
+
+### Régua do dígito e altura dos campos {#regua-do-digito}
+
+Na coluna da direita do card o olho desce reto: **todo número escrito termina onde termina o
+dígito dentro de um campo** — borda do controle + recuo interno. A régua é o token
+`--w-card-digit-inset` (`calc(var(--w-control-px) + 1px)`), derivado na raiz do card e não em
+`tokens.css`, para seguir um `--w-control-px` redefinido num escopo abaixo do `<html>`.
+
+- `read` na linha usa a régua como recuo, então o número dele fica embaixo do dígito do campo de
+  cima.
+- A manchete `value` (e o rótulo dela) também termina na régua — antes encostava na borda, a ~12px
+  do `read`. Quando o slot de `value` traz um campo (`InputNumber`), ele já tem o próprio recuo e
+  fica de fora.
+
+**Um controle só no card**: número, texto, data e escolha do miolo (`field`) têm a mesma altura
+(`--w-control-h`, a densidade da suíte), a mesma fonte (`--w-ui-font`) e o mesmo recuo
+(`--w-control-px`) — inclusive quando o slot traz o `size="small"` que a grade usa. A data
+(`WDatePicker`) guarda o espaço do ícone do calendário. O `read` da linha tem a mesma altura de
+linha do `field` (`--w-touch-h`): o passo vertical do miolo é um só, edite-se ou só se leia.
+
+No rodapé de totais, o `read` compacto que não cabe lado a lado na metade estreita do card
+desce o número para a linha de baixo, ainda à direita, em vez de partir o número.
 
 ### Papel por linha {#papel-por-linha}
 
