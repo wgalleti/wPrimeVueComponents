@@ -459,6 +459,65 @@ describe('WCrudView — card pela largura da área da listagem', () => {
     w.unmount()
   })
 
+  // `fit`: lista embutida — só o piso da tabela decide, sem a régua de 840.
+  describe('cardMode fit', () => {
+    async function piso(w: ReturnType<typeof montar>, px: number) {
+      const target = w.find('.w-crud-probe > div').element
+      for (const cb of callbacks) cb([{ target, contentRect: { width: px } }])
+      await nextTick()
+    }
+
+    it('área de 700 com colunas que cabem (piso 500) continua tabela com alternador', async () => {
+      instalarResizeObserver()
+      const w = await pronto({}, { cardMode: 'fit' })
+      expect(w.find('.w-crud-probe').exists()).toBe(true)
+      await piso(w, 500)
+      await largura(700)
+      expect(emCard(w)).toBe(false)
+      expect(temAlternador(w)).toBe(true)
+      w.unmount()
+    })
+
+    it('área abaixo do piso vira card sem alternador; volta à tabela com folga', async () => {
+      instalarResizeObserver()
+      const w = await pronto({}, { cardMode: 'fit' })
+      await piso(w, 500)
+      await largura(400)
+      expect(emCard(w)).toBe(true)
+      expect(temAlternador(w)).toBe(false)
+      await largura(510)
+      expect(emCard(w)).toBe(true)
+      await largura(530)
+      expect(emCard(w)).toBe(false)
+      w.unmount()
+    })
+
+    it('piso desconhecido (0) nunca força card', async () => {
+      instalarResizeObserver()
+      const w = await pronto({}, { cardMode: 'fit' })
+      await largura(300)
+      expect(emCard(w)).toBe(false)
+      w.unmount()
+    })
+
+    it('a sonda tem a largura do piso da tabela', async () => {
+      instalarResizeObserver()
+      const w = await pronto(
+        {
+          columns: [
+            { field: 'nome', header: 'Nome' },
+            { field: 'a', header: 'A', style: 'width: 40rem' },
+          ],
+        },
+        { cardMode: 'fit' },
+      )
+      expect(w.find('.w-crud-probe > div').attributes('style')).toContain(
+        'width: calc(var(--w-col-title-min) + 40rem)',
+      )
+      w.unmount()
+    })
+  })
+
   it('cardMode never ignora a largura e mantém o alternador', async () => {
     instalarResizeObserver()
     const w = await pronto({}, { cardMode: 'never' })
@@ -475,6 +534,17 @@ describe('WCrudView — card pela largura da área da listagem', () => {
     await largura(1400)
     expect(emCard(w)).toBe(true)
     expect(temAlternador(w)).toBe(false)
+    w.unmount()
+  })
+
+  it('no card, os registros são itens de uma lista nomeada pelo título', async () => {
+    instalarResizeObserver()
+    const w = await pronto({}, { cardMode: 'always' })
+    const lista = w.find('[role="list"]')
+    expect(lista.attributes('aria-label')).toBe('Itens')
+    const itens = lista.findAll('[role="listitem"]')
+    expect(itens).toHaveLength(1)
+    expect(itens[0].text()).toContain('Soja')
     w.unmount()
   })
 

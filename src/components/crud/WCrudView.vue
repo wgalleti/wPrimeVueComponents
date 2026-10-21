@@ -64,11 +64,14 @@ const props = withDefaults(
     /**
      * Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da
      * listagem (não da janela): cards abaixo de 840px, e o alternador some; acima,
-     * tabela — que rola na horizontal se as colunas não couberem. `never` nunca
-     * força; `always` é sempre card, sem alternador. A escolha
-     * do usuário (`defaultView`, alternador, `persistState`) vale só quando nada força.
+     * tabela — que rola na horizontal se as colunas não couberem. `fit` é para a
+     * lista embutida (painel lateral, gaveta): card só quando as colunas não cabem
+     * na área — o piso da tabela —, sem a régua de 840. `never` nunca força;
+     * `always` é sempre card, sem alternador. A escolha do usuário (`defaultView`,
+     * alternador, `persistState`) vale só quando nada força. Lido na montagem:
+     * trocar entre `auto` e `fit` depois de montado não é suportado.
      */
-    cardMode?: 'auto' | 'never' | 'always'
+    cardMode?: 'auto' | 'never' | 'always' | 'fit'
     /** Cards "sem moldura": remove o chrome padrão do card (borda/sombra/padding/
      *  seleção) para o slot `#card` desenhar o card inteiro (ex.: um card de design
      *  próprio). O wrapper vira só a célula do grid. */
@@ -145,13 +148,19 @@ const displayMode = ref<'table' | 'cards'>(loadView())
 // `WEditableTable`), não a da janela: com a barra lateral do app a janela passa de
 // 840 com a área ainda abaixo. A preferência guardada NÃO é sobrescrita: ela volta
 // intacta quando a área cresce de novo.
-// Sem sonda: aqui o piso da tabela NÃO força card — acima de 840 é sempre tabela,
-// que rola na horizontal abaixo do piso (`tableStyle`). Só o `WEditableTable` cai
-// para card quando a grade não cabe.
+// Em `auto`, sem sonda: o piso da tabela NÃO força card — acima de 840 é sempre
+// tabela, que rola na horizontal abaixo do piso (`tableStyle`). Em `fit` (lista
+// embutida num painel estreito) é o contrário: sonda com a largura do piso e
+// régua 0 — card só quando as colunas não cabem, por menor que seja a área. O
+// modo é lido uma vez: o composable observa a sonda só na montagem.
 const conteudo = ref<HTMLElement | null>(null)
-const { estreito } = useCardFit(conteudo, ref(null))
+const sonda = ref<HTMLElement | null>(null)
+const ajusteAoPiso = props.cardMode === 'fit'
+const { estreito } = useCardFit(conteudo, sonda, ajusteAoPiso ? { regua: 0 } : {})
 const cardForcado = computed(
-  () => props.cardMode === 'always' || (props.cardMode === 'auto' && estreito.value),
+  () =>
+    props.cardMode === 'always' ||
+    ((props.cardMode === 'auto' || props.cardMode === 'fit') && estreito.value),
 )
 const effectiveView = computed<'table' | 'cards'>(() =>
   cardForcado.value ? 'cards' : displayMode.value,
@@ -653,6 +662,12 @@ onMounted(() => {
     <!-- Content (table/cards + optional action rail) -->
     <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
       <div ref="conteudo" class="w-crud-content-main">
+        <!-- Sonda do piso (só em `fit`): caixa com a largura do piso da tabela, que o
+             navegador resolve e o ResizeObserver lê em px, presa num envelope de
+             altura 0 com `overflow: hidden` para não rolar a página. -->
+        <div v-if="ajusteAoPiso" class="w-crud-probe" aria-hidden="true">
+          <div ref="sonda" :style="{ width: pisoCss ?? '0' }" />
+        </div>
         <!-- Table -->
         <div v-if="isView('table')" class="w-crud-table">
           <!-- Barra de ações em lote (seleção múltipla) -->
@@ -1102,10 +1117,19 @@ onMounted(() => {
             </div>
           </slot>
 
-          <div v-else class="w-crud-cards" :class="{ 'w-crud-cards--bare': cardBare }">
+          <!-- Lista acessível: na tabela o leitor anuncia linhas; no card, itens da lista
+               nomeada pelo título (as mesmas consultas por papel nos dois modos). -->
+          <div
+            v-else
+            class="w-crud-cards"
+            :class="{ 'w-crud-cards--bare': cardBare }"
+            role="list"
+            :aria-label="title || undefined"
+          >
             <div
               v-for="(row, idx) in crud.items.value"
               :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
+              role="listitem"
               :class="
                 cardBare
                   ? 'w-crud-card-bare'

@@ -16,12 +16,19 @@ const HISTERESE = 24
  * - `sonda`: uma caixa com a largura do piso da grade, que o navegador resolve
  *   (rem, tokens, calc do app) e o observer lê em px. Opcional: sem ela o piso é
  *   0 ("não sei") e vale só a régua de 840.
+ * - `regua`: largura mínima abaixo da qual é card mesmo com o piso cabendo.
+ *   Default 840 (`BREAKPOINTS.retrato`). Com 0 só o piso decide — piso 0 aí é
+ *   "nunca card", porque não há régua nenhuma a respeitar.
  *
  * Tem de ser JS e não `@container`: o card troca marcação, e o CSS só segue a
  * classe que sai de `estreito` — uma fonte só, JS e CSS nunca discordam. O modo
  * (`auto`/`never`/`always`) fica no componente: aqui sai só a medida.
  */
-export function useCardFit(raiz: Ref<HTMLElement | null>, sonda: Ref<HTMLElement | null>) {
+export function useCardFit(
+  raiz: Ref<HTMLElement | null>,
+  sonda: Ref<HTMLElement | null>,
+  { regua = BREAKPOINTS.retrato }: { regua?: number } = {},
+) {
   const estreito = ref(false)
   let largura = 0
   let piso = 0
@@ -29,9 +36,9 @@ export function useCardFit(raiz: Ref<HTMLElement | null>, sonda: Ref<HTMLElement
   let quadro = 0
   let trocou = false
 
-  /** Card quando a largura não comporta a grade: abaixo da régua (840) OU do
-   *  piso, o que for maior. Piso 0 é "não sei" (jsdom, sem colunas), nunca "cabe":
-   *  vale só a régua. Largura 0 é elemento escondido (aba inativa, `v-show`,
+  /** Card quando a largura não comporta a grade: abaixo da régua (840, ou a
+   *  dada) OU do piso, o que for maior. Piso 0 é "não sei" (jsdom, sem colunas),
+   *  nunca "cabe": vale só a régua — e com régua 0 nunca é card. Largura 0 é elemento escondido (aba inativa, `v-show`,
    *  KeepAlive): mantém o modo, senão a tabela piscaria para card ao voltar. As
    *  duas medidas independem do modo — a sonda tem a largura do piso em qualquer
    *  modo —, e a folga cobre o que o modo mexe na página. A folga só vale depois
@@ -40,7 +47,7 @@ export function useCardFit(raiz: Ref<HTMLElement | null>, sonda: Ref<HTMLElement
    *  presa em card a 842px. */
   function decidir(): boolean | null {
     if (largura <= 0) return null
-    const limite = Math.max(BREAKPOINTS.retrato, piso)
+    const limite = Math.max(regua, piso)
     const folga = estreito.value && trocou ? HISTERESE : 0
     return largura < limite + folga
   }
