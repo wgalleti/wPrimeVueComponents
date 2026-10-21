@@ -590,6 +590,15 @@ describe('WCrudView — piso da tabela', () => {
     w.unmount()
   })
 
+  it('a classe da coluna chega ao Column como string, sem aviso de tipo do Vue', async () => {
+    const aviso = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const w = await pronto()
+    const deClasse = aviso.mock.calls.filter(([m]) => /headerClass|bodyClass/.test(String(m)))
+    expect(deClasse).toEqual([])
+    aviso.mockRestore()
+    w.unmount()
+  })
+
   it('sem nenhuma coluna fluida o título é a primeira, com o maior entre o token e a declarada', async () => {
     const w = await pronto({
       columns: [{ field: 'codigo', header: 'Código', style: 'width: 8rem' }],
