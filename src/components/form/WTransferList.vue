@@ -20,6 +20,9 @@ const props = withDefaults(
     optionLabel?: string
     /** Fields to match when searching (default: [optionLabel]). */
     searchFields?: string[]
+    /** Altura máxima de cada lista (CSS, ex.: `'24rem'`); o resto rola. Padrão: o token
+     *  `--w-transfer-list-max-h` (14rem, umas 7 linhas). */
+    listHeight?: string
     disabled?: boolean
   }>(),
   {
@@ -91,7 +94,11 @@ function removeAll() {
 </script>
 
 <template>
-  <div class="w-transfer" :class="{ 'w-transfer--disabled': disabled }">
+  <div
+    class="w-transfer"
+    :class="{ 'w-transfer--disabled': disabled }"
+    :style="listHeight ? { '--w-transfer-list-max-h': listHeight } : undefined"
+  >
     <!-- Available -->
     <div class="w-transfer__pane">
       <div class="w-transfer__head">

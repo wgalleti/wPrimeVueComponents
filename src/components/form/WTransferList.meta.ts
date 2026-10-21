@@ -29,5 +29,13 @@ export default defineComponentMeta({
         optionLabel: 'nome',
       },
     },
+    {
+      name: 'Lista mais alta',
+      props: {
+        source: Array.from({ length: 15 }, (_, i) => ({ id: i + 1, nome: `Etiqueta ${i + 1}` })),
+        selected: [],
+        listHeight: '24rem',
+      },
+    },
   ],
 })

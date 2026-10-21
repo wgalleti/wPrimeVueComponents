@@ -171,6 +171,7 @@
   --w-form-aside: 18rem; /* largura do painel #aside do form */
   --w-fk-chip-max: 6rem; /* largura máxima do chip da FK múltipla */
   --w-tree-select-max-h: 18rem; /* altura máxima da árvore */
+  --w-transfer-list-max-h: 14rem; /* altura máxima de cada lista do WTransferList */
   --w-map-h: 28.75rem; /* altura do WMapSelect */
   --w-map-list-h: 23.75rem; /* altura da lista do WMapSelect */
   --w-chart-h: 18rem; /* altura do WChart */

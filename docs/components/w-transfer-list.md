@@ -25,3 +25,19 @@ const selecionadas = ref([1, 2])
   <WTransferList :source="permissoes" v-model:selected="selecionadas" option-label="nome" />
 </template>
 ```
+
+## Altura das listas
+
+Cada lista mostra até `14rem` (umas 7 linhas) e rola o resto — o contador do cabeçalho
+mostra o total. Onde a lista é longa ou o sistema esconde a barra de rolagem (macOS), suba a
+altura por instância com `list-height`, ou no `FieldDef` com `listHeight`:
+
+```vue
+<WTransferList :source="etiquetas" v-model:selected="escolhidas" list-height="24rem" />
+```
+
+```ts
+{ field: 'flags', label: 'Etiquetas', type: 'transfer', options, listHeight: '24rem' }
+```
+
+O padrão do app inteiro é o token `--w-transfer-list-max-h`.

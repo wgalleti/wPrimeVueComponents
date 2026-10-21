@@ -688,6 +688,7 @@ defineExpose({ validateAll, clearErrors })
                   :track-by="field.optionValue || 'id'"
                   :option-label="field.optionLabel || 'nome'"
                   :search-fields="field.searchFields"
+                  :list-height="field.listHeight"
                   :disabled="isFieldDisabled(field)"
                   @update:selected="(val) => emit('update:field', field.field, val)"
                 />
