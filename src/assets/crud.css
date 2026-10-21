@@ -940,10 +940,11 @@
   overflow-x: auto;
 }
 
-/* Sonda do piso (só em `cardMode: auto`): o filho tem a largura do piso, que o
-   navegador resolve e o ResizeObserver lê em px para decidir grade × card. O
-   envelope de altura 0 com overflow escondido impede que a caixa, mais larga que
-   o componente, faça a página rolar. */
+/* Sonda do piso (`WEditableTable` em `cardMode: auto`, `WCrudView` em `fit`): o
+   filho tem a largura do piso, que o navegador resolve e o ResizeObserver lê em
+   px para decidir grade × card. O envelope de altura 0 com overflow escondido
+   impede que a caixa, mais larga que o componente, faça a página rolar. */
+.w-crud-probe,
 .w-editable-table__probe {
   height: 0;
   overflow: hidden;

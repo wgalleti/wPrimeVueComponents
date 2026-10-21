@@ -236,8 +236,20 @@ passa de 840px bem antes da área — por isso a régua não é `@media`. A pref
 
 **Acima de 840px é sempre tabela**, mesmo que as colunas não caibam. Nesse caso a tabela **rola
 na horizontal** dentro do próprio contêiner em vez de esmagar o título ou ser cortada. Diferente
-do [`WEditableTable`](/components/w-editable-table#largura-do-componente), a `WCrudView` não
-troca para card quando a grade não cabe.
+do [`WEditableTable`](/components/w-editable-table#largura-do-componente), a `WCrudView` em
+`auto` não troca para card quando a grade não cabe.
+
+**Lista embutida: `cardMode: 'fit'`.** Num painel lateral ou gaveta de ~700px, a régua de 840
+viraria card no desktop uma lista de 4–5 colunas que cabe folgada. Em `fit` a régua de 840 sai
+e **só o piso da tabela decide**: card quando a área fica abaixo do piso (a mesma soma da tabela
+abaixo), tabela com alternador enquanto as colunas couberem. Uma sonda invisível com a largura
+do piso é medida pelo `ResizeObserver`, como no `WEditableTable`; sem colunas o piso é 0 e
+nunca vira card. A histerese de 24px e a largura 0 valem igual. As listagens principais seguem
+em `auto`. O modo é lido na montagem: trocar entre `auto` e `fit` depois não é suportado.
+
+```vue
+<WCrudView :crud="itens" card-mode="fit" />
+```
 
 - **Título nunca esmagado:** a coluna do título tem `min-width: var(--w-col-title-min)` (12rem).
   É a primeira coluna visível **sem largura** no `style`: o `Código` de `width: 8rem` que abre o
@@ -264,14 +276,18 @@ Detalhes que evitam piscar e oscilar:
   (a área que monta 838px enquanto o layout assenta não fica presa em card a 842px).
 - **Área com largura 0** (aba inativa, `v-show`, `KeepAlive`): mantém a visão que estava.
 - A primeira medida é síncrona no `mount`: o tablet já nasce em cards, sem um quadro de tabela.
+- No card, os registros são `listitem` de uma `list` nomeada pelo `title`: o leitor de tela anuncia
+  itens onde a tabela anunciava linhas, e uma consulta por papel acha o registro nos dois modos.
 
 | `cardMode` | Comportamento |
 | --- | --- |
 | `auto` (default) | cards forçados com a área abaixo de 840px; acima, tabela (rolando se precisar) e vale a escolha do usuário |
+| `fit` | cards só quando a área fica abaixo do piso da tabela (as colunas não cabem); sem a régua de 840 — para lista embutida |
 | `never` | nunca força: a tabela fica em qualquer largura e o alternador continua |
 | `always` | sempre cards, sem alternador — vitrine e teste. Para só **começar** em cards e deixar trocar, use `defaultView: 'cards'` |
 
-A medida é a mesma do `WEditableTable` (`useCardFit`); lá, além dos 840, o piso também força o card.
+A medida é a mesma do `WEditableTable` (`useCardFit`); lá, além dos 840, o piso também força o
+card. O `fit` da `WCrudView` é o piso sem os 840.
 
 Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
 

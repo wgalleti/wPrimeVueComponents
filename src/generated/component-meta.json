@@ -492,10 +492,10 @@
         },
         {
           "name": "cardMode",
-          "type": "\"auto\" | \"never\" | \"always\" | undefined",
+          "type": "\"auto\" | \"never\" | \"always\" | \"fit\" | undefined",
           "required": false,
           "default": "\"auto\"",
-          "description": "Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da\nlistagem (não da janela): cards abaixo de 840px, e o alternador some; acima,\ntabela — que rola na horizontal se as colunas não couberem. `never` nunca\nforça; `always` é sempre card, sem alternador. A escolha\ndo usuário (`defaultView`, alternador, `persistState`) vale só quando nada força."
+          "description": "Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da\nlistagem (não da janela): cards abaixo de 840px, e o alternador some; acima,\ntabela — que rola na horizontal se as colunas não couberem. `fit` é para a\nlista embutida (painel lateral, gaveta): card só quando as colunas não cabem\nna área — o piso da tabela —, sem a régua de 840. `never` nunca força;\n`always` é sempre card, sem alternador. A escolha do usuário (`defaultView`,\nalternador, `persistState`) vale só quando nada força. Lido na montagem:\ntrocar entre `auto` e `fit` depois de montado não é suportado."
         },
         {
           "name": "cardBare",
