@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.11.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.10.0...v1.11.0) (2026-10-22)
+
+### Funcionalidades
+
+* **form:** WTransferList listHeight sets each list's max height ([54a76e6](https://github.com/wgalleti/wPrimeVueComponents/commit/54a76e6c5fe3d014130038527ba8b435700d016f))
+
+### Correções
+
+* **crud:** WCrudView passes column classes to Column as a string ([c2177ce](https://github.com/wgalleti/wPrimeVueComponents/commit/c2177ce6266b29d62ebfc13948bc41f2d03014c9))
 ## [1.10.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.9.0...v1.10.0) (2026-10-21)
 
 ### Funcionalidades
