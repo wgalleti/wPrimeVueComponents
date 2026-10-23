@@ -152,6 +152,7 @@
   ); /* texto do ponto de atenção antes de o número descer */
   --w-badge-h: var(--badge-h, 1.25rem); /* contador/badge inline */
   --w-search-w: var(--search-w, 18rem); /* campo de busca das toolbars */
+  --w-flip-perspective: var(--flip-perspective, 1200px); /* giro do WFlipCard */
   --w-cell-image: var(--cell-image, 2.25rem); /* miniatura em célula de tabela */
   --w-dialog-sm: var(--dialog-sm, 30rem); /* diálogo curto: confirmação, mensagem */
   --w-col-narrow: var(--col-narrow, 3rem); /* coluna de seleção/expansor */

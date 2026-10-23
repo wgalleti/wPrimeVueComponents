@@ -25,6 +25,7 @@ export type {
 } from './editableTable'
 
 export type { CheckListItem, CheckListLevel } from './checkList'
+export type { FlipCardLabels, FlipCardSlotProps } from './flipCard'
 export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from './attentionList'
 
 export type { GroupedSelectGroupScope, GroupedSelectKey } from './groupedSelectList'

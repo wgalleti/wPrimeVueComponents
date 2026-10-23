@@ -2019,6 +2019,44 @@
         }
       ]
     },
+    "WFlipCard": {
+      "file": "src/components/ui/WFlipCard.vue",
+      "props": [
+        {
+          "name": "labels",
+          "type": "FlipCardLabels | undefined",
+          "required": false,
+          "default": "{}",
+          "description": "`aria-label` de cada face (role=\"group\"). Padrão: \"Frente\" e \"Verso\"."
+        },
+        {
+          "name": "flipped",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Face visível: `false` mostra a frente, `true` o verso. Funciona sem v-model."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:flipped",
+          "type": "[value: boolean]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "front",
+          "type": "FlipCardSlotProps",
+          "description": "Conteúdo da frente."
+        },
+        {
+          "name": "back",
+          "type": "FlipCardSlotProps",
+          "description": "Conteúdo do verso."
+        }
+      ]
+    },
     "WFormSection": {
       "file": "src/components/ui/WFormSection.vue",
       "props": [
