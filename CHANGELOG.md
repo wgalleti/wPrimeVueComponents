@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.12.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.11.0...v1.12.0) (2026-10-23)
+
+### Funcionalidades
+
+* **ui:** add WFlipCard, a two-face card that flips on demand ([6363edb](https://github.com/wgalleti/wPrimeVueComponents/commit/6363edb340b61207300f183ac4b6969da2e6ac07))
 ## [1.11.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.10.0...v1.11.0) (2026-10-22)
 
 ### Funcionalidades
