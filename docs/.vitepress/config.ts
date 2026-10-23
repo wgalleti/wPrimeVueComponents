@@ -81,6 +81,7 @@ export default defineConfig({
               { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WDialog', link: '/components/w-dialog' },
               { text: 'WEmptyState', link: '/components/w-empty-state' },
+              { text: 'WFlipCard', link: '/components/w-flip-card' },
               { text: 'WGroupedSelectList', link: '/components/w-grouped-select-list' },
               { text: 'WInfoCard', link: '/components/w-info-card' },
               { text: 'WInlineCell', link: '/components/w-inline-cell' },

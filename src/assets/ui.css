@@ -171,6 +171,43 @@
 }
 
 /* ==========================================================
+   WFlipCard — .w-flip-card
+   ========================================================== */
+
+/* Meia-volta: a face que sai gira até ficar de perfil (90°) e a que entra
+   parte do perfil oposto (−90°). Só uma face existe por vez (out-in), então
+   não há backface nem empilhamento — e a altura é a da face visível. */
+.w-flip-card {
+  perspective: var(--w-flip-perspective);
+}
+
+.w-flip-card-enter-active,
+.w-flip-card-leave-active {
+  transition: transform var(--w-motion) var(--w-ease);
+}
+
+.w-flip-card-leave-to {
+  transform: rotateY(90deg);
+}
+
+.w-flip-card-enter-from {
+  transform: rotateY(-90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-flip-card-enter-active,
+  .w-flip-card-leave-active {
+    transition: opacity var(--w-motion-fast) var(--w-ease);
+  }
+
+  .w-flip-card-enter-from,
+  .w-flip-card-leave-to {
+    transform: none;
+    opacity: 0;
+  }
+}
+
+/* ==========================================================
    WInfoCard — .w-info-card
    ========================================================== */
 
