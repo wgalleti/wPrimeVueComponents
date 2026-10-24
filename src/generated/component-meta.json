@@ -588,6 +588,11 @@
           "name": "row-collapse",
           "type": "[data: unknown]",
           "description": ""
+        },
+        {
+          "name": "row-click",
+          "type": "[data: Record<string, unknown>]",
+          "description": ""
         }
       ],
       "slots": [

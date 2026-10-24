@@ -40,8 +40,10 @@ type Linha = Record<string, unknown>
 function montar(
   config: Partial<CrudManagerConfig<Linha>> = {},
   props: Record<string, unknown> = {},
+  extraProvider: Partial<DataProvider> = {},
 ) {
   const provider: Partial<DataProvider> = {
+    ...extraProvider,
     list: vi.fn().mockResolvedValue({
       data: [{ id: 1, nome: 'Soja', ativo: true }],
       page: 1,
@@ -628,5 +630,149 @@ describe('WCrudView — piso da tabela', () => {
     )
     localStorage.clear()
     w.unmount()
+  })
+})
+
+describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
+  async function pronto(config: Partial<CrudManagerConfig<Linha>> = {}, props = {}) {
+    const w = montar(config, props)
+    await flushPromises()
+    await nextTick()
+    return w
+  }
+  const view = (w: ReturnType<typeof montar>) => w.findComponent(WCrudView)
+  const aberto = (w: ReturnType<typeof montar>) =>
+    (view(w).props('crud') as { dialogVisible: { value: boolean } }).dialogVisible.value
+  const cliques = (w: ReturnType<typeof montar>) => view(w).emitted('row-click') ?? []
+  const celula = (w: ReturnType<typeof montar>) =>
+    w.find('tbody tr td:not([data-p-selection-column="true"])')
+
+  afterEach(() => {
+    document.body.innerHTML = ''
+    localStorage.clear()
+  })
+
+  describe('tabela', () => {
+    it('default: emite row-click com a linha e não abre', async () => {
+      const w = await pronto()
+      await celula(w).trigger('click')
+      expect(cliques(w)).toEqual([[{ id: 1, nome: 'Soja', ativo: true }]])
+      expect(aberto(w)).toBe(false)
+    })
+
+    it('openOnRowClick: o clique simples abre a edição', async () => {
+      const w = await pronto({ openOnRowClick: true })
+      await celula(w).trigger('click')
+      await flushPromises()
+      expect(cliques(w)).toHaveLength(1)
+      expect(aberto(w)).toBe(true)
+    })
+
+    it('openOnRowClick respeita canEdit: false', async () => {
+      const w = await pronto({ openOnRowClick: true, canEdit: false })
+      await celula(w).trigger('click')
+      expect(cliques(w)).toHaveLength(1)
+      expect(aberto(w)).toBe(false)
+    })
+
+    it('clique em botão de ação da linha não emite nem abre pelo clique na linha', async () => {
+      const w = await pronto({ openOnRowClick: true }, { actionRail: false })
+      const botao = w.find('tbody tr button[aria-label="Excluir"]')
+      expect(botao.exists()).toBe(true)
+      await botao.trigger('click')
+      expect(cliques(w)).toHaveLength(0)
+      expect(aberto(w)).toBe(false)
+    })
+
+    it('seleção múltipla: checkbox e sua célula marcam sem abrir', async () => {
+      const w = await pronto({ openOnRowClick: true, selectionMode: 'multiple' })
+      const crud = view(w).props('crud') as { selectedItems: { value: unknown[] } }
+      await w.find('tbody tr td[data-p-selection-column="true"]').trigger('click')
+      expect(cliques(w)).toHaveLength(0)
+      expect(aberto(w)).toBe(false)
+      await w.find('tbody tr td[data-p-selection-column="true"] input').trigger('change')
+      await nextTick()
+      expect(crud.selectedItems.value).toHaveLength(1)
+      expect(cliques(w)).toHaveLength(0)
+      expect(aberto(w)).toBe(false)
+    })
+
+    it('Enter na linha abre; Espaço só seleciona', async () => {
+      const w = await pronto({ openOnRowClick: true })
+      const tr = w.find('tbody tr')
+      await tr.trigger('keydown', { code: 'Space', key: ' ' })
+      expect(cliques(w)).toHaveLength(0)
+      expect(aberto(w)).toBe(false)
+      await tr.trigger('keydown', { code: 'Enter', key: 'Enter' })
+      await flushPromises()
+      expect(cliques(w)).toHaveLength(1)
+      expect(aberto(w)).toBe(true)
+    })
+
+    it('editMode cell: clique fora da célula editável emite mas não abre', async () => {
+      const w = montar({
+        openOnRowClick: true,
+        editMode: 'cell',
+        columns: [
+          { field: 'nome', header: 'Nome' },
+          { field: 'ativo', header: 'Ativo' },
+        ],
+      })
+      await flushPromises()
+      await nextTick()
+      const editavel = w.find('tbody tr td[data-p-editable-column="true"]')
+      expect(editavel.exists()).toBe(true)
+      await w.find('tbody tr td:not([data-p-editable-column="true"])').trigger('click')
+      expect(cliques(w)).toHaveLength(1)
+      expect(aberto(w)).toBe(false)
+    })
+
+    it('fetchDetailOnEdit: dois cliques seguidos buscam o detalhe uma vez só', async () => {
+      // GET pendente até os dois cliques: o diálogo só abre quando ele resolve.
+      let resolver: (v: unknown) => void = () => {}
+      const get = vi.fn(() => new Promise((r) => (resolver = r))) as unknown as DataProvider['get']
+      const w = montar({ openOnRowClick: true, fetchDetailOnEdit: true }, {}, { get })
+      await flushPromises()
+      await nextTick()
+      await celula(w).trigger('click')
+      await celula(w).trigger('click')
+      expect(get).toHaveBeenCalledTimes(1)
+      resolver({ data: { id: 1, nome: 'Soja', ativo: true } })
+      await flushPromises()
+      expect(aberto(w)).toBe(true)
+    })
+  })
+
+  describe('cards', () => {
+    const card = (w: ReturnType<typeof montar>) => w.find('.w-crud-card')
+
+    it('default: clique seleciona e emite sem abrir; duplo clique abre', async () => {
+      const w = await pronto({}, { defaultView: 'cards', actionRail: false })
+      expect(card(w).exists()).toBe(true)
+      await card(w).trigger('click')
+      expect(cliques(w)).toEqual([[{ id: 1, nome: 'Soja', ativo: true }]])
+      expect(card(w).classes()).toContain('w-crud-card--selected')
+      expect(aberto(w)).toBe(false)
+      await card(w).trigger('dblclick')
+      await flushPromises()
+      expect(aberto(w)).toBe(true)
+    })
+
+    it('openOnRowClick: o clique simples abre a edição', async () => {
+      const w = await pronto({ openOnRowClick: true }, { defaultView: 'cards' })
+      await card(w).find('.w-crud-card-body').trigger('click')
+      await flushPromises()
+      expect(cliques(w)).toHaveLength(1)
+      expect(aberto(w)).toBe(true)
+    })
+
+    it('clique em botão de ação do card não emite nem abre', async () => {
+      const w = await pronto({ openOnRowClick: true }, { defaultView: 'cards', actionRail: false })
+      const botao = card(w).find('button[aria-label="Excluir"]')
+      expect(botao.exists()).toBe(true)
+      await botao.trigger('click')
+      expect(cliques(w)).toHaveLength(0)
+      expect(aberto(w)).toBe(false)
+    })
   })
 })
