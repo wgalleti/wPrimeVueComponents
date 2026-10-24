@@ -56,6 +56,16 @@ numérico numa tela apertada.
 rótulo, valor menor). O tamanho segue a precedência `item.size` → `size` da grade →
 `dense` → `default`: para uma grade densa com cards cheios, `dense size="default"`.
 
+## Faixa contínua (`ledger`)
+
+`ledger` une os cards num único painel contiguo com borda externa (`--w-border`), divisórias
+internas finas (`--w-line-subtle`) e hover discreto por célula (`--w-surface-subtle`), sem
+vão entre os cards — ideal para cabeçalhos operacionais e painéis densos:
+
+```vue
+<WKpiGrid :items="kpis" columns="auto" ledger />
+```
+
 ## Clique no card
 
 Com listener de `item-click`, todo card vira botão de teclado — menos o que traz

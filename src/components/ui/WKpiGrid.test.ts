@@ -142,4 +142,9 @@ describe('WKpiGrid — colunas', () => {
       'Custo',
     ])
   })
+
+  it('ledger ativa a classe de faixa contínua w-kpi-grid--ledger', () => {
+    expect(grid().classes()).not.toContain('w-kpi-grid--ledger')
+    expect(grid({ ledger: true }).classes()).toContain('w-kpi-grid--ledger')
+  })
 })

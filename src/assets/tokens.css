@@ -36,11 +36,16 @@
   --w-surface: var(--surface, var(--p-content-background));
   --w-surface-2: var(--surface-2, var(--p-content-hover-background));
   --w-surface-3: var(--surface-3, var(--p-content-hover-background));
+  --w-surface-subtle: var(
+    --surface-subtle,
+    color-mix(in srgb, var(--w-surface) 60%, var(--w-surface-2))
+  );
   --w-fg: var(--fg, var(--p-text-color));
   --w-fg-muted: var(--fg-muted, var(--p-text-muted-color));
   --w-fg-subtle: var(--fg-subtle, var(--p-text-muted-color));
   --w-border: var(--border, var(--p-content-border-color));
   --w-border-strong: var(--border-strong, var(--p-content-border-color));
+  --w-line-subtle: var(--line-subtle, color-mix(in srgb, var(--w-border) 62%, transparent));
 
   /* ---- Marca ------------------------------------------------------------- */
   --w-primary: var(--primary, var(--p-primary-color));
@@ -59,14 +64,13 @@
   --w-info-soft: var(--info-soft, color-mix(in srgb, var(--w-info) 12%, transparent));
 
   /* ---- Série categórica (gráficos, grupos de abas) — nunca cor de status.
-     OKLCH de croma contido: cor de acento, não de texto. Sem roxo nem rosa
-     (rosa colide com --w-danger). ------------------------------------------ */
-  --w-viz-1: var(--viz-1, oklch(62% 0.14 250)); /* azul */
-  --w-viz-2: var(--viz-2, oklch(64% 0.13 150)); /* verde */
-  --w-viz-3: var(--viz-3, oklch(66% 0.14 45)); /* laranja */
-  --w-viz-4: var(--viz-4, oklch(64% 0.12 195)); /* ciano */
-  --w-viz-5: var(--viz-5, oklch(68% 0.12 95)); /* âmbar */
-  --w-viz-6: var(--viz-6, oklch(60% 0.12 20)); /* terracota */
+     OKLCH de croma contido alinhado à direção Carbon & Terracotta. --------- */
+  --w-viz-1: var(--viz-1, oklch(55% 0.16 38)); /* cobre / terracota */
+  --w-viz-2: var(--viz-2, oklch(52% 0.19 260)); /* azul cobalto */
+  --w-viz-3: var(--viz-3, oklch(58% 0.14 75)); /* âmbar / ocre */
+  --w-viz-4: var(--viz-4, oklch(53% 0.12 170)); /* esmeralda */
+  --w-viz-5: var(--viz-5, oklch(50% 0.2 295)); /* índigo */
+  --w-viz-6: var(--viz-6, oklch(46% 0.03 260)); /* ardósia */
 
   /* ---- Espaço ------------------------------------------------------------ */
   --w-space-05: var(--space-05, 0.125rem); /* hairline: rótulo↔subtítulo, ícones colados */
@@ -96,22 +100,38 @@
   --w-leading-snug: var(--leading-snug, 1.35);
   --w-leading-normal: var(--leading-normal, 1.5);
   --w-leading-relaxed: var(--leading-relaxed, 1.7); /* prosa longa (markdown) */
-  --w-font-mono: var(--font-mono, ui-monospace, 'SFMono-Regular', Menlo, monospace);
+  --w-font-mono: var(
+    --font-mono,
+    ui-monospace,
+    'SFMono-Regular',
+    'JetBrains Mono',
+    Menlo,
+    Consolas,
+    monospace
+  );
   --w-tracking-caps: var(--tracking-caps, 0.04em);
 
-  /* ---- Raio -------------------------------------------------------------- */
-  --w-radius-xs: var(--radius-xs, 0.25rem);
-  --w-radius-sm: var(--radius-sm, 0.375rem);
-  --w-radius: var(--radius, 0.5rem);
-  --w-radius-md: var(--radius-md, 0.625rem);
-  --w-radius-lg: var(--radius-lg, 0.75rem);
-  --w-radius-xl: var(--radius-xl, 1rem);
+  /* ---- Raio (geometria técnica precisa) ---------------------------------- */
+  --w-radius-xs: var(--radius-xs, 0.125rem);
+  --w-radius-sm: var(--radius-sm, 0.3125rem);
+  --w-radius: var(--radius, 0.4375rem);
+  --w-radius-md: var(--radius-md, 0.4375rem);
+  --w-radius-lg: var(--radius-lg, 0.5625rem);
+  --w-radius-xl: var(--radius-xl, var(--raio, 0.6875rem));
   --w-radius-full: var(--radius-full, 999px);
 
   /* ---- Sombra ------------------------------------------------------------ */
-  --w-shadow-xs: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.05));
-  --w-shadow-md: var(--shadow-md, 0 4px 10px rgba(0, 0, 0, 0.08));
-  --w-shadow-lg: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.18));
+  --w-shadow-xs: var(--shadow-xs, 0 1px 2px rgb(15 23 42 / 5%));
+  --w-shadow-md: var(
+    --shadow-md,
+    0 14px 36px -6px rgb(15 23 42 / 7%),
+    0 2px 6px -1px rgb(15 23 42 / 4%)
+  );
+  --w-shadow-lg: var(
+    --shadow-lg,
+    0 24px 60px -12px rgb(15 23 42 / 26%),
+    0 0 0 1px rgb(15 23 42 / 8%)
+  );
   --w-overlay-shadow: var(--p-overlay-popover-shadow, var(--w-shadow-md));
 
   /* ---- Densidade dos controles ------------------------------------------- */
@@ -185,7 +205,7 @@
   --w-motion: var(--motion, 220ms);
   --w-motion-slow: var(--motion-slow, 380ms);
   --w-ease: var(--ease, ease);
-  --w-ease-spring: var(--ease-spring, cubic-bezier(0.34, 1.4, 0.64, 1));
+  --w-ease-spring: var(--ease-spring, cubic-bezier(0.16, 1, 0.3, 1));
 
   /* ---- Derivados da suíte (já existiam; agora sobre o vocabulário --w-) -- */
   /* Faixa do zebrado: tint do primário, relativo ao fundo. É color-mix com

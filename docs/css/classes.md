@@ -46,13 +46,13 @@ html[data-density='compact'] {
 
 | Grupo | Tokens | Default (sem app, sem PrimeVue) |
 |---|---|---|
-| Superfície e texto | `--w-surface`, `--w-surface-2`, `--w-surface-3`, `--w-fg`, `--w-fg-muted`, `--w-fg-subtle`, `--w-border`, `--w-border-strong` | `--p-content-background`, `--p-content-hover-background`, `--p-text-color`, `--p-text-muted-color`, `--p-content-border-color` |
+| Superfície e texto | `--w-surface`, `--w-surface-2`, `--w-surface-3`, `--w-surface-subtle`, `--w-fg`, `--w-fg-muted`, `--w-fg-subtle`, `--w-border`, `--w-border-strong`, `--w-line-subtle` | `--p-content-background`, `--p-content-hover-background`, `--p-text-color`, `--p-text-muted-color`, `--p-content-border-color` |
 | Marca | `--w-primary`, `--w-primary-fg`, `--w-primary-soft`, `--w-accent` | `--p-primary-color`, `--p-primary-contrast-color`, 10% do primário, `--w-primary` |
 | Status | `--w-success`, `--w-danger`, `--w-warning`, `--w-info` + `--w-<status>-soft` | `--p-green/red/yellow/sky-500`; soft = 12% sobre transparente |
-| Série categórica | `--w-viz-1` … `--w-viz-6` | OKLCH de croma contido (azul, verde, laranja, ciano, âmbar, terracota) |
+| Série categórica | `--w-viz-1` … `--w-viz-6` | OKLCH de croma contido (terracota, azul ardósia, verde, âmbar, índigo, ciano) |
 | Espaço | `--w-space-05`, `-1`, `-15`, `-2`, `-3`, `-4`, `-5`, `-6`, `-8` | 0.125 · 0.25 · 0.375 · 0.5 · 0.75 · 1 · 1.25 · 1.5 · 2rem |
 | Tipografia | `--w-text-2xs/xs/sm/base/md/lg/xl/2xl`, `--w-fw-regular/medium/semibold/bold`, `--w-leading-tight/snug/normal/relaxed`, `--w-font-mono`, `--w-tracking-caps` | 11 · 12 · 13 · 14 · 15 · 17 · 20 · 24px; 400/500/600/700; 1.2/1.35/1.5/1.7; 0.04em |
-| Raio | `--w-radius-xs/sm`, `--w-radius`, `--w-radius-md/lg/xl/full` | 4 · 6 · 8 · 10 · 12 · 16px · pill |
+| Raio | `--w-radius-xs/sm`, `--w-radius`, `--w-radius-md/lg/xl/full` | 2 · 5 · 7 · 7 · 9 · 11px · pill |
 | Sombra | `--w-shadow-xs/md/lg`, `--w-overlay-shadow` | rgba discretas; overlay = `--p-overlay-popover-shadow` |
 | Densidade | `--w-control-h`, `--w-control-h-sm`, `--w-control-px`, `--w-ui-font`, `--w-touch-h`, `--w-field-gap`, `--w-cell-py`, `--w-card-pad` | 38 · 32 · 12 · 14 · 44 · 6 · 10 · 20px |
 | Medidas de elemento | `--w-icon-box`, `--w-icon-btn`, `--w-empty-icon`, `--w-badge-h`, `--w-search-w`, `--w-cell-image`, `--w-dialog-sm`, `--w-col-narrow`, `--w-col-actions` | 40 · 28 · 64 · 20 · 288 · 36 · 480 · 48 · 96px |

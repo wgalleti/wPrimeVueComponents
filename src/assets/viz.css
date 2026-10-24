@@ -133,6 +133,7 @@
 }
 
 .w-map-select__count {
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   text-transform: uppercase;
@@ -242,7 +243,8 @@
 }
 
 .w-map-select__item-area {
-  font-size: var(--w-text-sm);
+  font-family: var(--w-font-mono);
+  font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -273,6 +275,7 @@
 }
 
 .w-map-select__area strong {
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xl);
   font-weight: var(--w-fw-bold);
   line-height: 1;

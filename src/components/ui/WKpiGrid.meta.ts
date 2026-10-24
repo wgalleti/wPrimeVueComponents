@@ -45,5 +45,42 @@ export default defineComponentMeta({
         ],
       },
     },
+    {
+      name: 'Faixa contínua (ledger)',
+      props: {
+        columns: 'auto',
+        ledger: true,
+        items: [
+          {
+            icon: 'pi pi-bolt',
+            label: 'Ativos',
+            value: 142,
+            severity: 'primary',
+            hint: '+12% vs mês ant.',
+          },
+          {
+            icon: 'pi pi-check-circle',
+            label: 'SLA dentro',
+            value: '99,4%',
+            severity: 'success',
+            hint: 'Meta ≥ 99,0%',
+          },
+          {
+            icon: 'pi pi-clock',
+            label: 'Tempo médio',
+            value: '18m',
+            severity: 'info',
+            hint: 'Janela 24h',
+          },
+          {
+            icon: 'pi pi-exclamation-triangle',
+            label: 'Alertas',
+            value: 3,
+            severity: 'warning',
+            hint: '1 crítico',
+          },
+        ],
+      },
+    },
   ],
 })

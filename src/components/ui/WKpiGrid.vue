@@ -24,11 +24,17 @@ const props = withDefaults(
      * `dense` (compact) → default.
      */
     size?: 'default' | 'compact'
+    /**
+     * Faixa contínua de indicadores (Ledger Strip): une os cards num bloco
+     * único emoldurado com divisórias internas finas (`--w-line-subtle`).
+     */
+    ledger?: boolean
   }>(),
   {
     items: () => [],
     columns: 4,
     dense: false,
+    ledger: false,
   },
 )
 
@@ -57,7 +63,7 @@ const dataCount = computed(() =>
 
 const gridClass = computed(() => [
   props.columns === 'auto' ? 'w-kpi-grid--auto' : `w-kpi-grid--cols-${props.columns}`,
-  { 'w-kpi-grid--dense': props.dense },
+  { 'w-kpi-grid--dense': props.dense, 'w-kpi-grid--ledger': props.ledger },
 ])
 </script>
 

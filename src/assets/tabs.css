@@ -70,6 +70,7 @@
   border-radius: var(--w-radius-full);
   background: var(--w-surface-3);
   color: var(--w-fg-muted);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-variant-numeric: tabular-nums;
 }
@@ -178,6 +179,7 @@
   align-self: stretch;
   padding: 0 var(--w-space-2) 0 var(--w-space-3);
   color: var(--w-fg-subtle);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-medium);
   letter-spacing: var(--w-tracking-caps);
