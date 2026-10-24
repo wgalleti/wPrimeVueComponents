@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.14.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.13.0...v1.14.0) (2026-10-24)
+
+### Funcionalidades
+
+* **crud:** WCrudView emits row-click and opens the row on a single click with openOnRowClick ([0adc47d](https://github.com/wgalleti/wPrimeVueComponents/commit/0adc47dcff5c9bf471f1952feb1371c9e1980c5a))
+
+### Correções
+
+* **crud:** WEditableTable keeps the value being typed across re-renders and shows a dash for a locked empty date ([2e03db8](https://github.com/wgalleti/wPrimeVueComponents/commit/2e03db8976464c0ab2debe09eabab27749773bf0))
 ## [1.13.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.12.0...v1.13.0) (2026-10-24)
 
 ### Funcionalidades
