@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { h, nextTick, reactive, type VNode } from 'vue'
 import PrimeVue from 'primevue/config'
+import InputNumber from 'primevue/inputnumber'
 import WEditableTable from './WEditableTable.vue'
 import type { EditableColumnDef, EditableRow } from '@/types/editableTable'
 
@@ -166,6 +167,48 @@ describe('WEditableTable — edição de célula', () => {
     expect(pickers[1].props('disabled')).toBe(true)
   })
 
+  // Documento travado: data vazia num campo desligado mostrava "dd/mm/aaaa" —
+  // máscara de digitação onde ninguém digita. Vazio travado é "—", como as demais.
+  it('editor date vazio e travado sai como "—", sem o campo', () => {
+    const colunasData: EditableColumnDef[] = [
+      { field: 'numero', header: 'Parcela' },
+      { field: 'vencimento', header: 'Vencimento', editor: 'date' },
+    ]
+    const w = montar({
+      disabled: true,
+      columns: colunasData,
+      modelValue: [
+        { numero: 1, vencimento: null },
+        { numero: 2, vencimento: '' },
+        { numero: 3, vencimento: '2026-10-05' },
+      ],
+    })
+    const pickers = w.findAllComponents({ name: 'WDatePicker' })
+    expect(pickers).toHaveLength(1) // só a linha com data
+    expect(pickers[0].props('disabled')).toBe(true)
+    const celulas = w.findAll('tbody td:nth-child(2)').map((td) => td.text())
+    expect(celulas.slice(0, 2)).toEqual(['—', '—'])
+    expect(w.findAll('tbody')[0].html()).not.toContain('dd/mm/aaaa')
+  })
+
+  it('editor date vazio travado só na linha travada vira "—"; a livre segue com o campo', () => {
+    const w = montar({
+      modelValue: [{ vencimento: null }, { vencimento: null }],
+      columns: [
+        {
+          field: 'vencimento',
+          header: 'Vencimento',
+          editor: 'date',
+          disabled: (_row: EditableRow, index: number) => index === 1,
+        },
+      ],
+    })
+    const pickers = w.findAllComponents({ name: 'WDatePicker' })
+    expect(pickers).toHaveLength(1)
+    expect(pickers[0].props('disabled')).toBe(false)
+    expect(w.findAll('tbody')[1].text()).toBe('—')
+  })
+
   it('disabled trava os editores', () => {
     const w = montar({ disabled: true })
     expect(w.find('input[type="text"]').attributes('disabled')).toBeDefined()
@@ -185,6 +228,142 @@ describe('WEditableTable — edição de célula', () => {
     const inputs = w.findAll('input[type="text"]')
     expect(inputs[0].attributes('disabled')).toBeDefined()
     expect(inputs[1].attributes('disabled')).toBeUndefined()
+  })
+})
+
+// Digitação perdida: o app troca o objeto da linha no modelValue (recarregou o
+// saldo ao escolher o produto) enquanto a pessoa digita no número. O InputNumber
+// guarda o texto digitado só no DOM até o blur; qualquer re-render dele (uma prop
+// que mudou com a linha nova: max, invalid, sufixo, um `:pt` literal no slot)
+// devolvia ao campo o valor antigo do modelo — e o número digitado sumia.
+describe('WEditableTable — digitação sobrevive à troca da linha', () => {
+  let aberto: VueWrapper | null = null
+  afterEach(() => {
+    aberto?.unmount()
+    aberto = null
+  })
+
+  function montarNoDom(
+    props: Record<string, unknown>,
+    slots: Record<`cell-${string}`, (scope: { row: EditableRow }) => VNode> = {},
+  ) {
+    aberto = mount(WEditableTable, {
+      props,
+      slots,
+      attachTo: document.body,
+      global: { plugins: [PrimeVue] },
+    })
+    return aberto
+  }
+
+  async function digitar(w: VueWrapper, texto: string) {
+    const input = w.find('.w-editable-table__num')
+    ;(input.element as HTMLInputElement).focus()
+    await input.trigger('focus')
+    for (const key of texto) await input.trigger('keypress', { key })
+    return input.element as HTMLInputElement
+  }
+
+  // O app recalcula as colunas a partir da linha: o teto vem do saldo.
+  const colunasComTeto = (saldo: number | null): EditableColumnDef[] => [
+    { field: 'produto', header: 'Produto' },
+    { field: 'quantidade', header: 'Qtd', editor: 'number', decimals: 0, max: saldo ?? undefined },
+  ]
+
+  it.each([
+    ['com rowKey', 'id'],
+    ['sem rowKey (chave por índice)', undefined],
+  ])('editor number, %s: o valor digitado fica no campo e sai no blur', async (_n, rowKey) => {
+    const w = montarNoDom({
+      rowKey,
+      columns: colunasComTeto(null),
+      modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: null }],
+    })
+    const input = await digitar(w, '300')
+    expect(input.value).toBe('300')
+
+    // O pai troca o objeto da linha (mesma chave, quantidade ainda nula) e
+    // recalcula a coluna com o saldo que chegou.
+    await w.setProps({
+      modelValue: [{ id: 'a1', produto: 'Ureia', saldo: 500, quantidade: null }],
+      columns: colunasComTeto(500),
+    })
+    expect(w.find('.w-editable-table__num').element).toBe(input) // não remontou
+    expect(input.value).toBe('300')
+
+    await w.find('.w-editable-table__num').trigger('blur')
+    expect(ultimo(w)).toEqual([{ id: 'a1', produto: 'Ureia', saldo: 500, quantidade: 300 }])
+    expect(input.value).toBe('300')
+  })
+
+  it.each([
+    ['com rowKey', 'id'],
+    ['sem rowKey (chave por índice)', undefined],
+  ])('InputNumber do slot #cell-*, %s: o valor digitado sobrevive', async (_n, rowKey) => {
+    // O padrão das telas de estoque: o InputNumber é do app, com `:invalid` e
+    // `:pt` literal — re-renderiza a cada render da tabela.
+    const w = montarNoDom(
+      {
+        rowKey,
+        columns: [
+          { field: 'produto', header: 'Produto' },
+          { field: 'quantidade', header: 'Qtd' },
+        ],
+        modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: null }],
+      },
+      {
+        'cell-quantidade': ({ row }: { row: EditableRow }) =>
+          h(InputNumber, {
+            modelValue: row.quantidade as number | null,
+            locale: 'pt-BR',
+            invalid: row.saldo === 0,
+            pt: { pcInputText: { root: { 'data-saldo': row.saldo } } },
+            inputClass: 'w-editable-table__num',
+          }),
+      },
+    )
+    const input = await digitar(w, '300')
+
+    await w.setProps({
+      modelValue: [{ id: 'a1', produto: 'Ureia', saldo: 0, quantidade: null }],
+    })
+    expect(input.value).toBe('300')
+  })
+
+  it('valor que o pai muda de verdade na célula com foco vence o digitado', async () => {
+    const w = montarNoDom({
+      rowKey: 'id',
+      columns: colunasComTeto(null),
+      modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: null }],
+    })
+    const input = await digitar(w, '300')
+    await w.setProps({
+      modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: 25 }],
+      columns: colunasComTeto(500),
+    })
+    expect(input.value).toBe('25')
+  })
+
+  it('linha mutada no lugar (reactive) também vence o digitado', async () => {
+    const linhas = reactive([{ id: 'a1', produto: 'Ureia', quantidade: null as number | null }])
+    const w = montarNoDom({ rowKey: 'id', columns: colunasComTeto(null), modelValue: linhas })
+    const input = await digitar(w, '300')
+    linhas[0].quantidade = 25
+    await nextTick()
+    expect(input.value).toBe('25')
+  })
+
+  it('valor novo do pai numa célula sem foco entra no campo', async () => {
+    const w = montarNoDom({
+      rowKey: 'id',
+      columns: colunasComTeto(null),
+      modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: 10 }],
+    })
+    await w.setProps({
+      modelValue: [{ id: 'a1', produto: 'Ureia', quantidade: 25 }],
+      columns: colunasComTeto(500),
+    })
+    expect((w.find('.w-editable-table__num').element as HTMLInputElement).value).toBe('25')
   })
 })
 

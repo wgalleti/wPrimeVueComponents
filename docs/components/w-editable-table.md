@@ -254,3 +254,12 @@ largura cheia e com o dígito no tamanho dela; a borda continua dizendo que ali 
 - **Números** saem alinhados à direita com `tabular-nums` e formatados em pt-BR.
 - **Card**: a lista de cards é a mesma tabela com outro display — nunca escreva uma segunda tela
   para o tablet; declare `card` nas colunas.
+- **Data travada e vazia**: `editor: 'date'` numa célula travada (`disabled` da tabela ou da coluna)
+  sem valor sai como `—`, igual às células de leitura — não um campo desligado com `dd/mm/aaaa`.
+  Com data, segue o `WDatePicker` desligado.
+- **Digitação em curso**: o `InputNumber` só entrega o valor no blur. Se o app troca o objeto da
+  linha enquanto a pessoa digita (recarregou o saldo ao escolher o produto) e a tabela re-renderiza,
+  o campo com foco mantém o texto digitado — vale para o editor `number` e para o input de um
+  slot `#cell-*`. O valor do pai só vence quando ele muda de fato aquela célula (linha pela
+  `rowKey` ou pelo índice, campo pela coluna). A chave da linha precisa ficar estável: trocar o
+  valor da `rowKey` remonta a linha.

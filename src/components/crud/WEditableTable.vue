@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, isRef, ref } from 'vue'
+import { computed, isRef, onBeforeUpdate, onMounted, onUpdated, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
@@ -217,11 +217,15 @@ function toNumber(value: unknown): number {
 function displayValue(column: EditableColumnDef, row: EditableRow): string {
   const value = row[column.field]
   if (column.format) return column.format(value, row)
-  if (value == null || value === '') return '—'
+  if (isEmptyValue(value)) return '—'
   if (isNumericColumn(column)) {
     return `${formatNumber(toNumber(value), column.decimals ?? 2)}${column.suffix ?? ''}`
   }
   return `${String(value)}${column.suffix ?? ''}`
+}
+
+function isEmptyValue(value: unknown): boolean {
+  return value == null || value === ''
 }
 
 function setCell(index: number, field: string, value: unknown) {
@@ -247,6 +251,70 @@ function rowKeyOf(row: EditableRow, index: number): string | number {
   }
   return index
 }
+
+// --- Digitação em curso ----------------------------------------------------
+// O InputNumber (o do editor `number` e o que o app põe num `#cell-*`) guarda o
+// que a pessoa digita só no DOM até o blur — o modelo segue com o valor antigo.
+// Se a tabela re-renderiza nesse meio (o app trocou o objeto da linha porque
+// recarregou o saldo, e com ela mudou um `max`, um `invalid`, um `:pt` literal),
+// o input interno é re-renderizado e o Vue devolve ao campo o valor do modelo:
+// o número digitado some. A chave da linha não muda, a célula não remonta — é só
+// o `value` do DOM sendo reescrito.
+//
+// A guarda: o campo com foco dentro da tabela mantém o texto da pessoa quando o
+// re-render o reescreveu E o modelo daquela célula (linha pela chave, campo pelo
+// `data-field` da `<td>`) não mudou. Mudou de verdade (o pai limpou, corrigiu,
+// formatou)? O pai vence. O texto mantido vai ao modelo no blur, como sempre.
+
+/** Cópia rasa das linhas do último render: em `onBeforeUpdate` as props já são
+ *  as novas, e o app pode ter mutado a linha no lugar (`reactive`) — guardar a
+ *  referência faria o "antes" ler o valor já mudado. */
+let linhasAnteriores: EditableRow[] = []
+const fotografarLinhas = () => (linhasAnteriores = props.modelValue.map((row) => ({ ...row })))
+onMounted(fotografarLinhas)
+
+type CampoEmCurso = {
+  el: HTMLInputElement | HTMLTextAreaElement
+  value: string
+  start: number | null
+  end: number | null
+}
+let emCurso: CampoEmCurso | null = null
+
+function valorDaCelula(rows: EditableRow[], key: string, field: string): unknown {
+  const index = rows.findIndex((row, i) => String(rowKeyOf(row, i)) === key)
+  return index < 0 ? undefined : rows[index][field]
+}
+
+onBeforeUpdate(() => {
+  emCurso = null
+  const el = document.activeElement
+  if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return
+  const td = el.closest<HTMLElement>('td[data-field]')
+  // Só célula DESTA tabela: a filha do `#expansion` tem a própria guarda.
+  if (!td || td.closest('.w-editable-table') !== raiz.value) return
+  const field = td.dataset.field
+  const key = td.closest<HTMLElement>('tbody[data-row-key]')?.dataset.rowKey
+  if (field == null || key == null) return
+  // O pai mexeu nesta célula: o valor dele entra, mesmo com foco.
+  const antes = valorDaCelula(linhasAnteriores, key, field)
+  if (!Object.is(antes, valorDaCelula(props.modelValue, key, field))) return
+  emCurso = { el, value: el.value, start: el.selectionStart, end: el.selectionEnd }
+})
+
+onUpdated(() => {
+  fotografarLinhas()
+  const campo = emCurso
+  emCurso = null
+  if (!campo || !campo.el.isConnected || document.activeElement !== campo.el) return
+  if (campo.el.value === campo.value) return
+  campo.el.value = campo.value
+  try {
+    if (campo.start != null && campo.end != null) campo.el.setSelectionRange(campo.start, campo.end)
+  } catch {
+    // tipo de input sem seleção (number, date nativos): fica só o texto.
+  }
+})
 
 // --- Rodapé de totais ------------------------------------------------------
 
@@ -386,7 +454,11 @@ const headerGroupCells = computed(() => {
           </tr>
         </tbody>
 
-        <tbody v-for="(row, index) in modelValue" :key="rowKeyOf(row, index)">
+        <tbody
+          v-for="(row, index) in modelValue"
+          :key="rowKeyOf(row, index)"
+          :data-row-key="rowKeyOf(row, index)"
+        >
           <!-- Zebra pelo índice, não por `:nth-child`: cada linha é um `<tbody>` próprio
              (por causa da expansão), então a contagem do CSS não enxergaria a
              alternância. -->
@@ -415,6 +487,7 @@ const headerGroupCells = computed(() => {
               :class="columnClass(column)"
               :style="columnStyle(column)"
               :data-card="cardRole(column, row)"
+              :data-field="column.field"
             >
               <!-- O rótulo é o cabeçalho da coluna trazido para dentro da célula:
                  no card não existe `thead`, e um campo sem nome ao lado não se
@@ -468,9 +541,14 @@ const headerGroupCells = computed(() => {
 
                 <!-- Data: o mesmo campo dos formulários (máscara, calendário, F2 = hoje),
                    guardando `YYYY-MM-DD` na linha. Sem o "limpar" — numa grade, célula
-                   de data vazia é linha sem vencimento, que ninguém quer criar sem querer. -->
+                   de data vazia é linha sem vencimento, que ninguém quer criar sem querer.
+                   Vazia e travada (documento fechado) cai no texto "—": um campo
+                   desligado com "dd/mm/aaaa" é máscara de digitação onde ninguém digita. -->
                 <WDatePicker
-                  v-else-if="column.editor === 'date'"
+                  v-else-if="
+                    column.editor === 'date' &&
+                    !(isCellDisabled(column, row, index) && isEmptyValue(row[column.field]))
+                  "
                   :model-value="row[column.field] as string | null"
                   :min-date="column.minDate"
                   :max-date="column.maxDate"
