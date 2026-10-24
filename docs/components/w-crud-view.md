@@ -59,6 +59,32 @@ function aoSelecionarNoMapa(id) {
 </template>
 ```
 
+## Clique na linha
+
+Clique simples numa linha (tabela) ou num card emite `row-click` com a linha. O clique
+que cai num elemento com acao propria **nao** conta: botao (acoes de linha, expansor),
+link, campo, `label`, checkbox/celula de selecao, item de menu e celula em edicao.
+
+Com `openOnRowClick: true` no config do `useCrudManager`, esse mesmo clique abre a
+edicao — o caminho do duplo clique no card (respeita `canEdit: false`; com o flag
+ligado o duplo clique nao abre de novo). Default `false`: sem o flag nada muda, o
+clique so seleciona e o duplo clique no card abre.
+
+```ts
+const crud = useCrudManager({ endpoint: '/api/pedidos/', columns, form, openOnRowClick: true })
+```
+
+```vue
+<WCrudView :crud="crud" title="Pedidos" @row-click="(linha) => console.log(linha)" />
+```
+
+- **Teclado:** na tabela, Enter na linha focada faz o mesmo que o clique (Espaco so
+  seleciona). As linhas so recebem foco com selecao simples — `actionRail` ou
+  `contextMenu` ligados e sem `selectionMode: 'multiple'`. Os cards nao sao focaveis.
+- **Edicao por celula** (`editMode: 'cell'`): o clique fica com o editor da celula e
+  nao abre o dialogo.
+- **`cardBare`:** o card cru nao seleciona, nao emite nem abre — o slot `card` cuida.
+
 ## Slots
 
 ### `header-actions`

@@ -45,6 +45,14 @@ export interface CrudManagerConfig<T> {
   rowActions?: RowAction<T>[]
   /** Habilita seleção múltipla na tabela (checkbox + barra de ações em lote). */
   selectionMode?: 'multiple'
+  /** Clique simples na linha (tabela) ou no card abre a edição — o mesmo caminho
+   *  do duplo clique no card (respeita `canEdit`). Clique em botão, link, campo,
+   *  checkbox de seleção, menu ou célula em edição não abre. Na tabela, Enter na
+   *  linha focada também abre (linhas só são focáveis com seleção simples, isto é,
+   *  `actionRail` ou `contextMenu` ligados e sem `selectionMode: 'multiple'`).
+   *  Em `editMode: 'cell'` o clique fica com o editor da célula e não abre.
+   *  Default: `false`. */
+  openOnRowClick?: boolean
   /** Ações aplicadas ao conjunto selecionado, exibidas na barra de lote. */
   bulkActions?: BulkAction<T>[]
   filterParams?: () => Record<string, unknown>

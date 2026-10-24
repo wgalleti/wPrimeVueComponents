@@ -406,6 +406,9 @@ interface CrudManagerConfig<T> {
   /** Acoes customizadas nas linhas */
   rowActions?: RowAction<T>[]
 
+  /** Clique simples na linha/card abre a edicao (como o duplo clique). Default: false */
+  openOnRowClick?: boolean
+
   /** Parametros de filtro dinamicos adicionados a cada request */
   filterParams?: () => Record<string, unknown>
 

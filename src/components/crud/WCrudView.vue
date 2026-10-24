@@ -116,6 +116,9 @@ const emit = defineEmits<{
   'row-expand': [data: unknown]
   'row-collapse': [data: unknown]
   print: [data: Record<string, unknown>]
+  /** Clique simples (ou Enter, na tabela) numa linha/card, fora de botão, link,
+   *  campo, checkbox de seleção, menu ou célula em edição. */
+  'row-click': [data: Record<string, unknown>]
 }>()
 
 const slots: Slots = useSlots()
@@ -480,6 +483,74 @@ function selectRow(row: Record<string, unknown>) {
   selectedRow.value = row
 }
 
+// --- Clique na linha (row-click + opt-in config.openOnRowClick) ---
+
+const openOnRowClick = computed(() => props.crud.config.openOnRowClick === true)
+
+// Alvos que têm ação própria dentro da linha/card: o clique neles não é "clique
+// na linha". O DataTable já ignora parte (isClickable), mas não o padding da
+// célula de seleção nem a célula em edição; o card não tem filtro nenhum.
+const INTERACTIVE_SELECTOR = [
+  'button',
+  'a',
+  'input',
+  'select',
+  'textarea',
+  'label',
+  '[role="button"]',
+  '[role="checkbox"]',
+  '[role="menu"]',
+  '[role="menuitem"]',
+  '[contenteditable]',
+  '[data-p-selection-column="true"]',
+  '[data-p-cell-editing="true"]',
+].join(',')
+
+function isInteractiveTarget(event: Event): boolean {
+  const target = event.target
+  return target instanceof Element && target.closest(INTERACTIVE_SELECTOR) !== null
+}
+
+// Duplo clique = clique, clique, dblclick: sem trava abriria (e, com
+// fetchDetailOnEdit, buscaria o detalhe) mais de uma vez. Com fetchDetailOnEdit o
+// diálogo só fica visível depois do GET — `opening` cobre essa janela.
+let opening = false
+
+/** Caminho único de "abrir" a linha — o do duplo clique no card. */
+function openRow(row: Record<string, unknown>) {
+  if (props.crud.config.canEdit === false) return
+  if (props.crud.dialogVisible.value || opening) return
+  const pending = props.crud.openEditDialog(row)
+  if (pending) {
+    opening = true
+    pending.finally(() => (opening = false))
+  }
+}
+
+function handleRowClick(event: Event, row: Record<string, unknown>) {
+  if (isInteractiveTarget(event)) return
+  // O DataTable manda Enter e Espaço pelo mesmo row-click; Espaço só seleciona.
+  if (event instanceof KeyboardEvent && event.key !== 'Enter') return
+  emit('row-click', row)
+  if (openOnRowClick.value && !isCellEdit.value) openRow(row)
+}
+
+function onTableRowClick(e: { originalEvent: Event; data: Record<string, unknown> }) {
+  handleRowClick(e.originalEvent, e.data)
+}
+
+function onCardClick(event: MouseEvent, row: Record<string, unknown>) {
+  if (props.cardBare) return
+  selectRow(row)
+  handleRowClick(event, row)
+}
+
+function onCardDblClick(row: Record<string, unknown>) {
+  // Com openOnRowClick o clique simples já abriu.
+  if (props.cardBare || openOnRowClick.value) return
+  openRow(row)
+}
+
 function onRowContextMenu(event: { originalEvent: Event; data: Record<string, unknown> }) {
   if (!props.contextMenu) return
   selectedRow.value = event.data
@@ -738,6 +809,7 @@ onMounted(() => {
             "
             @update:context-menu-selection="(v: any) => (selectedRow = v)"
             @row-contextmenu="onRowContextMenu"
+            @row-click="onTableRowClick"
             @page="crud.onPage"
             @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
             @row-expand="(e) => emit('row-expand', e.data)"
@@ -1138,8 +1210,8 @@ onMounted(() => {
                   ? 'w-crud-card-bare'
                   : ['w-crud-card', { 'w-crud-card--selected': selectedRow === row }]
               "
-              @click="!cardBare && selectRow(row)"
-              @dblclick="!cardBare && crud.config.canEdit !== false && crud.openEditDialog(row)"
+              @click="onCardClick($event, row)"
+              @dblclick="onCardDblClick(row)"
               @contextmenu="!cardBare && onCardContextMenu($event, row)"
             >
               <!-- Slot `card`: assume o CONTEÚDO do card (corpo + ações), mantendo o

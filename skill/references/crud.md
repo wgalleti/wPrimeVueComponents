@@ -16,6 +16,7 @@ const crud = useCrudManager<Produto>({
   keyboardNav: true,                // foco no 1º campo + Enter pula p/ próximo (estilo desktop)
   editMode: 'cell',                 // edição inline por célula (default: 'dialog')
   selectionMode: 'multiple',        // seleção múltipla → habilita bulkActions
+  openOnRowClick: true,             // clique simples na linha/card abre a edição (default: false)
   // outros: pk, formColumns, searchDebounce, partialUpdate, refetchOnSave,
   //   canCreate/canEdit/canDelete, rowActions, bulkActions, filterParams,
   //   transformPayload, createDefaults, onAfterSave, onAfterDelete, labels.
