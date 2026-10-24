@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.13.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.12.0...v1.13.0) (2026-10-24)
+
+### Funcionalidades
+
+* **ui:** apply carbon-terracotta visual direction, mono layer, and WKpiGrid ledger strip ([288e50c](https://github.com/wgalleti/wPrimeVueComponents/commit/288e50c4a9af91033a8efc896440fd9e7cd24ad2))
 ## [1.12.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.11.0...v1.12.0) (2026-10-23)
 
 ### Funcionalidades
