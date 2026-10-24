@@ -35,6 +35,7 @@
 
 /* Contagem total do filtro, ao lado do título — texto abafado, sem moldura. */
 .w-crud-count {
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
   font-variant-numeric: tabular-nums;
   color: var(--w-fg-muted);
@@ -143,6 +144,7 @@
   color: var(--w-fg);
   letter-spacing: -0.02em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 /* --- Table wrapper --- */
@@ -205,12 +207,13 @@
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
   color: var(--w-fg-muted);
-  background: var(--w-surface);
+  background: var(--w-surface-subtle);
 }
 
 .w-crud-table .p-datatable-tbody > tr > td {
   padding-top: var(--w-space-3);
   padding-bottom: var(--w-space-3);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Zebrado: o olho perde a linha em tabela larga, e a faixa alternada devolve o
@@ -233,7 +236,9 @@
 }
 
 .w-crud-paginator .p-paginator-current {
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
+  font-variant-numeric: tabular-nums;
   color: var(--w-fg-muted);
   margin-right: auto !important;
 }

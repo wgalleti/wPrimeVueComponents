@@ -13,40 +13,40 @@ import { api } from './plugins/axios'
 import { router } from './router'
 import App from './App.vue'
 
-// WorkHard preset — steel-blue navy palette
-const navySurface = {
+// Carbon & Terracotta preset — cold carbon slate surface + terracotta oxide accent
+const carbonSurface = {
   0: '#ffffff',
-  50: '#F5F5F4',
-  100: '#EBEBEA',
-  200: '#E0E1DD',
-  300: '#C8C9C5',
-  400: '#9A9B97',
-  500: '#6B6C68',
-  600: '#4A4B48',
-  700: '#333432',
-  800: '#1E1F1D',
-  900: '#141514',
-  950: '#0A0A09',
+  50: '#f8f9fa',
+  100: '#f3f4f6',
+  200: '#e5e7eb',
+  300: '#d1d5db',
+  400: '#9ca3af',
+  500: '#6b7280',
+  600: '#4b5563',
+  700: '#272b35',
+  800: '#1c2028',
+  900: '#14171d',
+  950: '#0b0d10',
 }
 
 const WorkHardPreset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '#E8ECF1',
-      100: '#C8D1DC',
-      200: '#A4B3C5',
-      300: '#778DA9',
-      400: '#5D7A99',
-      500: '#415A77',
-      600: '#364D67',
-      700: '#2C3F55',
-      800: '#243448',
-      900: '#1B263B',
-      950: '#111827',
+      50: '#fff7ed',
+      100: '#ffedd5',
+      200: '#fed7aa',
+      300: '#fdba74',
+      400: '#fb923c',
+      500: '#ea580c',
+      600: '#c2410c',
+      700: '#9a3412',
+      800: '#7c2d12',
+      900: '#431407',
+      950: '#270a03',
     },
     colorScheme: {
-      light: { surface: navySurface },
-      dark: { surface: navySurface },
+      light: { surface: carbonSurface },
+      dark: { surface: carbonSurface },
     },
   },
 })

@@ -519,6 +519,33 @@
   gap: var(--w-space-2);
 }
 
+/* Faixa contínua (Ledger Strip): os cards perdem a caixa individual e formam
+   um painel único dividido por hairlines internas (--w-line-subtle). */
+.w-kpi-grid--ledger {
+  gap: 0;
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-xl);
+  background: var(--w-surface);
+  overflow: hidden;
+}
+
+.w-kpi-grid--ledger :is(.w-kpi-card, .w-meter) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow:
+    1px 0 0 0 var(--w-line-subtle),
+    0 1px 0 0 var(--w-line-subtle);
+  transition: background-color var(--w-motion-fast) var(--w-ease);
+}
+
+.w-kpi-grid--ledger :is(.w-kpi-card--interactive, .w-meter--interactive):hover {
+  background: var(--w-surface-subtle);
+  box-shadow:
+    1px 0 0 0 var(--w-line-subtle),
+    0 1px 0 0 var(--w-line-subtle);
+}
+
 /* O card é o contêiner do próprio valor: o número desce de tamanho pela largura
    do card (degraus no fim do bloco), não da janela. Efeito colateral do
    inline-size: o card não se dimensiona pelo conteúdo — ele ocupa a célula
@@ -576,6 +603,7 @@
   line-height: var(--w-leading-tight);
   letter-spacing: -0.02em;
   color: var(--w-fg);
+  font-variant-numeric: tabular-nums;
   /* Último recurso, depois dos degraus: valor longo demais quebra de linha em vez
      de passar da borda. Nunca overflow: hidden nem reticências — número cortado
      é número errado. (O espaço do `Intl` depois de "R$" é inseparável.) */
@@ -583,7 +611,8 @@
 }
 
 .w-kpi-card__hint {
-  font-size: var(--w-text-sm);
+  font-family: var(--w-font-mono);
+  font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
 }
 
@@ -602,8 +631,10 @@
   gap: var(--w-space-1);
   padding: var(--w-space-1) var(--w-space-2);
   border-radius: var(--w-radius-full);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
   font-weight: var(--w-fw-semibold);
+  font-variant-numeric: tabular-nums;
   background: var(--w-surface-2);
   color: var(--w-fg-muted);
 }
@@ -841,6 +872,7 @@
 
 .w-meter__percent {
   flex-shrink: 0;
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-sm);
   font-weight: var(--w-fw-semibold);
   color: var(--w-card-tone);
@@ -864,7 +896,8 @@
 
 .w-meter__goal,
 .w-meter__no-goal {
-  font-size: var(--w-text-sm);
+  font-family: var(--w-font-mono);
+  font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
 }
 
@@ -912,6 +945,7 @@
 }
 
 .w-meter__hint {
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
 }
@@ -1010,6 +1044,7 @@
   border: 1px solid var(--w-border);
   color: var(--w-fg-muted);
   background: var(--w-surface);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-sm);
   font-weight: var(--w-fw-semibold);
   font-variant-numeric: tabular-nums;
@@ -1138,6 +1173,7 @@
   border-radius: var(--w-radius-full);
   background: var(--w-surface-3);
   color: var(--w-fg-muted);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   font-variant-numeric: tabular-nums;
@@ -1227,6 +1263,7 @@
   border: 1px solid var(--w-border-strong);
   background: var(--w-surface);
   color: var(--w-fg-subtle);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
   font-weight: var(--w-fw-bold);
   font-variant-numeric: tabular-nums;
@@ -1316,6 +1353,7 @@
   border-radius: var(--w-radius-full);
   background: var(--w-surface-3);
   color: var(--w-fg-muted);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   font-variant-numeric: tabular-nums;
@@ -1641,6 +1679,7 @@
   border-radius: var(--w-radius-full);
   background: var(--w-surface-3);
   color: var(--w-fg-muted);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-xs);
   font-weight: var(--w-fw-medium);
   font-variant-numeric: tabular-nums;
@@ -1854,6 +1893,7 @@
   overflow: hidden;
   background: var(--w-avatar-tone, var(--w-surface-3));
   color: var(--w-primary-fg);
+  font-family: var(--w-font-mono);
   font-size: var(--w-text-2xs);
   font-weight: var(--w-fw-bold);
   line-height: 1;

@@ -2562,6 +2562,13 @@
           "required": false,
           "default": null,
           "description": "Tamanho de todos os cards. Precedência: `item.size` → `size` da grade →\n`dense` (compact) → default."
+        },
+        {
+          "name": "ledger",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Faixa contínua de indicadores (Ledger Strip): une os cards num bloco\núnico emoldurado com divisórias internas finas (`--w-line-subtle`)."
         }
       ],
       "events": [
