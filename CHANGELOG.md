@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.15.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.14.0...v1.15.0) (2026-10-29)
+
+### Funcionalidades
+
+* **ui:** add WCalendarGrid time grid with now line, overlap lanes, click-to-create and drag-to-move ([73fab4d](https://github.com/wgalleti/wPrimeVueComponents/commit/73fab4d8b697bd4e3bed13817f30da7f9003e2bc))
+
+### Correções
+
+* **crud:** WCrudView rail acts on the clicked row and on a single checked item in multiple selection ([e257951](https://github.com/wgalleti/wPrimeVueComponents/commit/e257951c6e907e56b0282c408ccf56f00e465cd7))
 ## [1.14.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.13.0...v1.14.0) (2026-10-24)
 
 ### Funcionalidades
