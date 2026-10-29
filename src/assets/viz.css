@@ -829,3 +829,323 @@
     animation: none;
   }
 }
+
+/* ==========================================================
+   WCalendarGrid — .w-calendar-grid
+   ==========================================================
+   Grade de horário no desenho dos calendários de mesa: régua de horas à
+   esquerda, linhas da hora (fio) e da meia hora (fio mais fraco), coluna de
+   hoje tingida e linha do "agora". O evento é um bloco de fundo tonal com a
+   faixa da categoria (`--w-calendar-accent`) na borda esquerda; o ESTADO vai
+   por forma (esmaecer, hachura, riscado, contorno), nunca pela cor.
+   Posição vertical por `--w-calendar-top`/`--w-calendar-span` (em horas) e
+   divisão por sobreposição em `--w-calendar-lane`/`--w-calendar-lanes`. */
+
+.w-calendar-grid {
+  --w-calendar-hour-h: 3rem;
+  --w-calendar-ruler: 3.25rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.w-calendar-grid--loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.w-calendar-grid__head,
+.w-calendar-grid__body {
+  display: grid;
+  grid-template-columns: var(--w-calendar-ruler) repeat(var(--w-calendar-days), minmax(0, 1fr));
+}
+
+.w-calendar-grid__head {
+  position: sticky;
+  top: 0;
+  z-index: 3; /* escala da grade: 1 evento · 2 evento em foco e agora · 3 cabeçalho fixo */
+  padding-bottom: var(--w-space-2);
+  background: var(--w-surface);
+}
+
+.w-calendar-grid__day {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--w-space-1);
+  padding: var(--w-space-1) 0;
+  border: 0;
+  border-radius: var(--w-radius-sm);
+  background: none;
+  color: var(--w-fg-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.w-calendar-grid__day:disabled {
+  cursor: default;
+}
+
+.w-calendar-grid__day:not(:disabled):hover {
+  background: var(--w-surface-2);
+}
+
+.w-calendar-grid__day:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 1px;
+}
+
+.w-calendar-grid__weekday {
+  font-size: var(--w-text-xs);
+  text-transform: capitalize;
+}
+
+.w-calendar-grid__date {
+  font-size: var(--w-text-lg);
+  font-weight: var(--w-fw-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg);
+}
+
+.w-calendar-grid__day--today .w-calendar-grid__weekday {
+  color: var(--w-primary);
+}
+
+.w-calendar-grid__day--today .w-calendar-grid__date {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--w-badge-h);
+  padding: 0 var(--w-space-1);
+  border-radius: var(--w-radius-full);
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+}
+
+.w-calendar-grid__count {
+  font-size: var(--w-text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg-subtle);
+}
+
+.w-calendar-grid__ruler {
+  display: grid;
+  grid-template-rows: repeat(var(--w-calendar-hours), var(--w-calendar-hour-h));
+}
+
+.w-calendar-grid__hour {
+  transform: translateY(-0.5em);
+  padding-right: var(--w-space-2);
+  text-align: right;
+  font-size: var(--w-text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg-subtle);
+}
+
+.w-calendar-grid__hour:first-child {
+  visibility: hidden;
+}
+
+.w-calendar-grid__column {
+  position: relative;
+  height: calc(var(--w-calendar-hours) * var(--w-calendar-hour-h));
+  border-left: 1px solid var(--w-line-subtle);
+  background-color: var(--w-surface); /* a grade é superfície própria, não herda o fundo da página */
+  background-image:
+    linear-gradient(var(--w-line-subtle) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--w-line-subtle) 45%, transparent) 1px, transparent 1px);
+  background-size:
+    100% var(--w-calendar-hour-h),
+    100% calc(var(--w-calendar-hour-h) / 2);
+}
+
+.w-calendar-grid--creatable .w-calendar-grid__column {
+  cursor: cell;
+}
+
+.w-calendar-grid__column--weekend {
+  background-color: var(--w-surface-2);
+}
+
+.w-calendar-grid__column--today {
+  background-color: color-mix(in srgb, var(--w-primary-soft) 50%, transparent);
+}
+
+.w-calendar-grid__ghost,
+.w-calendar-grid__event,
+.w-calendar-grid__now {
+  position: absolute;
+  top: calc(var(--w-calendar-top) * var(--w-calendar-hour-h));
+}
+
+.w-calendar-grid__ghost,
+.w-calendar-grid__event {
+  height: calc(var(--w-calendar-span) * var(--w-calendar-hour-h) - 2px);
+}
+
+.w-calendar-grid__ghost {
+  left: var(--w-space-05);
+  right: var(--w-space-05);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w-space-1);
+  padding: var(--w-space-05) var(--w-space-2);
+  border: 1px dashed var(--w-border-strong);
+  border-radius: var(--w-radius-sm);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  pointer-events: none;
+}
+
+.w-calendar-grid__ghost--move {
+  border-color: var(--w-primary);
+  background: color-mix(in srgb, var(--w-primary-soft) 70%, transparent);
+  color: var(--w-primary);
+}
+
+.w-calendar-grid__event {
+  --w-calendar-accent-c: var(--w-calendar-accent, var(--w-fg-subtle));
+  --w-calendar-tone: color-mix(in srgb, var(--w-calendar-accent-c) 14%, var(--w-surface));
+  left: calc(var(--w-calendar-lane) / var(--w-calendar-lanes) * 100% + var(--w-space-05));
+  width: calc(100% / var(--w-calendar-lanes) - var(--w-space-1));
+  z-index: 1; /* escala da grade: ver cabeçalho */
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  padding: var(--w-space-05) var(--w-space-2) var(--w-space-05) calc(var(--w-space-2) + var(--w-space-05));
+  border: 0;
+  border-radius: var(--w-radius-sm);
+  background: var(--w-calendar-tone);
+  box-shadow: inset 3px 0 0 var(--w-calendar-accent-c);
+  color: var(--w-fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow var(--w-motion-fast) var(--w-ease);
+}
+
+.w-calendar-grid__event:hover {
+  z-index: 2; /* escala da grade: ver cabeçalho */
+  box-shadow:
+    inset 3px 0 0 var(--w-calendar-accent-c),
+    var(--w-shadow-md);
+}
+
+.w-calendar-grid__event:focus-visible {
+  z-index: 2; /* escala da grade: ver cabeçalho */
+  outline: 2px solid var(--w-primary);
+  outline-offset: 1px;
+}
+
+.w-calendar-grid__event[draggable='true'] {
+  cursor: grab;
+}
+
+.w-calendar-grid__event--short {
+  justify-content: center;
+}
+
+.w-calendar-grid__event--selected {
+  z-index: 2; /* escala da grade: ver cabeçalho */
+  background: color-mix(in srgb, var(--w-calendar-accent-c) 26%, var(--w-surface));
+  box-shadow:
+    inset 3px 0 0 var(--w-calendar-accent-c),
+    0 0 0 2px var(--w-calendar-accent-c);
+}
+
+.w-calendar-grid__title {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  min-width: 0;
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-medium);
+}
+
+.w-calendar-grid__title > .pi {
+  flex: none;
+  font-size: var(--w-text-2xs);
+  color: var(--w-calendar-accent-c);
+}
+
+.w-calendar-grid__name,
+.w-calendar-grid__meta {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-calendar-grid__name {
+  flex: 1;
+}
+
+.w-calendar-grid__meta {
+  font-size: var(--w-text-2xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--w-fg-muted);
+}
+
+.w-calendar-grid__event--done {
+  opacity: 0.62;
+}
+
+.w-calendar-grid__event--missed {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--w-calendar-tone),
+    var(--w-calendar-tone) 6px,
+    var(--w-danger-soft) 6px,
+    var(--w-danger-soft) 12px
+  ); /* hachura: passo da listra, não é espaçamento de layout */
+}
+
+.w-calendar-grid__event--missed .w-calendar-grid__state {
+  color: var(--w-danger);
+}
+
+.w-calendar-grid__event--canceled {
+  opacity: 0.55;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--w-border);
+}
+
+.w-calendar-grid__event--canceled .w-calendar-grid__name {
+  text-decoration: line-through;
+}
+
+.w-calendar-grid__event--attention {
+  box-shadow:
+    inset 3px 0 0 var(--w-calendar-accent-c),
+    inset 0 0 0 1px var(--w-warning);
+}
+
+.w-calendar-grid__event--attention .w-calendar-grid__state {
+  color: var(--w-warning);
+}
+
+.w-calendar-grid__now {
+  left: 0;
+  right: 0;
+  z-index: 2; /* escala da grade: ver cabeçalho */
+  height: 2px;
+  background: var(--w-danger);
+  pointer-events: none;
+}
+
+.w-calendar-grid__now::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--w-space-1) * -1);
+  top: calc(var(--w-space-1) * -1 + 1px);
+  width: var(--w-space-2);
+  height: var(--w-space-2);
+  border-radius: var(--w-radius-full);
+  background: var(--w-danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-calendar-grid__event {
+    transition: none;
+  }
+}

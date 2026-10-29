@@ -30,6 +30,8 @@ export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from '
 
 export type { GroupedSelectGroupScope, GroupedSelectKey } from './groupedSelectList'
 
+export type { CalendarEvent, CalendarEventState, CalendarMoveEvent } from './calendar'
+
 export type { KanbanColumn, KanbanMoveEvent } from './kanban'
 
 export type { MarkdownHeading, MarkdownRenderResult } from './markdown'

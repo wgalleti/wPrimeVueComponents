@@ -104,3 +104,10 @@
     min-height: var(--w-touch-h);
   }
 }
+
+/* WCalendarGrid: hora mais alta no dedo — o bloco de 30 min passa do alvo mínimo. */
+@media (pointer: coarse) {
+  .w-calendar-grid {
+    --w-calendar-hour-h: var(--w-touch-h);
+  }
+}
