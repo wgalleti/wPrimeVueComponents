@@ -77,6 +77,7 @@ export default defineConfig({
             items: [
               { text: 'WAttentionList', link: '/components/w-attention-list' },
               { text: 'WAvatar', link: '/components/w-avatar' },
+              { text: 'WCalendarGrid', link: '/components/w-calendar-grid' },
               { text: 'WChart', link: '/components/w-chart' },
               { text: 'WCheckList', link: '/components/w-check-list' },
               { text: 'WDialog', link: '/components/w-dialog' },

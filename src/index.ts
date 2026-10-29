@@ -64,6 +64,7 @@ export {
   WTabNav,
   WTabViewport,
   WKanbanBoard,
+  WCalendarGrid,
 } from './components'
 
 // Composables
@@ -136,6 +137,9 @@ export type {
   RouteTabsApi,
   TabHostContext,
   UseRouteTabsOptions,
+  CalendarEvent,
+  CalendarEventState,
+  CalendarMoveEvent,
   KanbanColumn,
   KanbanMoveEvent,
   MapSelectFeature,

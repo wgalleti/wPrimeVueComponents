@@ -1854,6 +1854,122 @@
       "events": [],
       "slots": []
     },
+    "WCalendarGrid": {
+      "file": "src/components/ui/WCalendarGrid.vue",
+      "props": [
+        {
+          "name": "days",
+          "type": "string[]",
+          "required": true,
+          "default": null,
+          "description": "Dias exibidos, na ordem, em `YYYY-MM-DD`. Um dia = visão de dia."
+        },
+        {
+          "name": "events",
+          "type": "CalendarEvent<Record<string, unknown>>[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "selectedId",
+          "type": "string | number | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Evento realçado (ex.: aberto num painel ao lado)."
+        },
+        {
+          "name": "creatable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Clique no vazio emite `create` e mostra a prévia do horário ao passar o mouse."
+        },
+        {
+          "name": "startHour",
+          "type": "number | undefined",
+          "required": false,
+          "default": "7",
+          "description": "Primeira e última hora visíveis; abre mais se houver evento fora delas."
+        },
+        {
+          "name": "endHour",
+          "type": "number | undefined",
+          "required": false,
+          "default": "20",
+          "description": ""
+        },
+        {
+          "name": "createStep",
+          "type": "number | undefined",
+          "required": false,
+          "default": "30",
+          "description": "Passo do clique de criação e do arraste, em minutos."
+        },
+        {
+          "name": "moveStep",
+          "type": "number | undefined",
+          "required": false,
+          "default": "15",
+          "description": ""
+        },
+        {
+          "name": "minEventMinutes",
+          "type": "number | undefined",
+          "required": false,
+          "default": "30",
+          "description": "Altura mínima desenhada de um evento curto, em minutos (o título precisa caber)."
+        },
+        {
+          "name": "dayClickable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Cabeçalho do dia clicável (emite `day-click`) quando há mais de um dia."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "select",
+          "type": "[event: CalendarEvent<Record<string, unknown>>]",
+          "description": ""
+        },
+        {
+          "name": "create",
+          "type": "[payload: { start: string; }]",
+          "description": ""
+        },
+        {
+          "name": "move",
+          "type": "[payload: CalendarMoveEvent<Record<string, unknown>>]",
+          "description": ""
+        },
+        {
+          "name": "day-click",
+          "type": "[day: string]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "event",
+          "type": "{ event: CalendarEvent<Record<string, unknown>>; short: boolean; time: string; }",
+          "description": "Conteúdo do evento. `short` é verdadeiro quando só cabe uma linha."
+        },
+        {
+          "name": "day-header",
+          "type": "{ day: string; count: number; today: boolean; }",
+          "description": "Cabeçalho do dia."
+        }
+      ]
+    },
     "WCheckList": {
       "file": "src/components/ui/WCheckList.vue",
       "props": [
