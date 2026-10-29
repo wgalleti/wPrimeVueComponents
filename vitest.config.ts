@@ -15,6 +15,7 @@ export default defineConfig({
     // utils/composables puros rodam em 'node'; testes de componente que
     // precisarem de DOM anotam `// @vitest-environment jsdom` no topo do arquivo.
     environment: 'node',
+    setupFiles: ['tests/setup-storage.ts'],
     include: ['src/**/*.{test,spec}.ts', 'tests/**/*.{test,spec}.ts'],
   },
 })
