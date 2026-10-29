@@ -135,10 +135,25 @@ const expandedRows = ref({})
 function viewKey(): string | null {
   return props.persistState ? `wcrud:view:${props.persistState}` : null
 }
+// Storage ausente ou bloqueado (SSR, modo privado, cota): a preferência só não persiste.
+function storageGet(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+function storageSet(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value)
+  } catch {
+    /* sem storage — não persiste */
+  }
+}
 function loadView(): 'table' | 'cards' {
   const key = viewKey()
   if (key) {
-    const stored = localStorage.getItem(key)
+    const stored = storageGet(key)
     if (stored === 'table' || stored === 'cards') return stored
   }
   return props.defaultView
@@ -176,7 +191,7 @@ function isView(mode: 'table' | 'cards'): boolean {
 function setView(mode: 'table' | 'cards'): void {
   displayMode.value = mode
   const key = viewKey()
-  if (key) localStorage.setItem(key, mode)
+  if (key) storageSet(key, mode)
 }
 const paginatorFirst = computed(
   () => (props.crud.pagination.page - 1) * props.crud.pagination.pageSize,
@@ -194,7 +209,7 @@ function loadColumnState() {
   const key = colStateKey()
   if (!key) return
   try {
-    const parsed = JSON.parse(localStorage.getItem(key) || '{}')
+    const parsed = JSON.parse(storageGet(key) || '{}')
     if (Array.isArray(parsed.hidden)) columnState.hidden = parsed.hidden
   } catch {
     /* estado inválido — ignora */
@@ -202,7 +217,7 @@ function loadColumnState() {
 }
 function saveColumnState() {
   const key = colStateKey()
-  if (key) localStorage.setItem(key, JSON.stringify({ hidden: columnState.hidden }))
+  if (key) storageSet(key, JSON.stringify({ hidden: columnState.hidden }))
 }
 
 // Estado de FILTROS (opt-in via persistState): filtros de coluna + busca ficam em
@@ -215,7 +230,7 @@ function loadFilters() {
   const key = filtersKey()
   if (!key) return
   try {
-    const parsed = JSON.parse(localStorage.getItem(key) || '{}')
+    const parsed = JSON.parse(storageGet(key) || '{}')
     if (parsed && typeof parsed.columnFilters === 'object' && parsed.columnFilters) {
       for (const [k, v] of Object.entries(parsed.columnFilters)) {
         if (v !== null && v !== undefined && v !== '') props.crud.columnFilters[k] = v
@@ -231,7 +246,7 @@ function loadFilters() {
 function saveFilters() {
   const key = filtersKey()
   if (!key) return
-  localStorage.setItem(
+  storageSet(
     key,
     JSON.stringify({
       columnFilters: { ...props.crud.columnFilters },
@@ -532,7 +547,27 @@ function handleRowClick(event: Event, row: Record<string, unknown>) {
   // O DataTable manda Enter e Espaço pelo mesmo row-click; Espaço só seleciona.
   if (event instanceof KeyboardEvent && event.key !== 'Enter') return
   emit('row-click', row)
+  // Sem abrir no clique, o clique torna a linha ativa (alvo do trilho). Em seleção
+  // múltipla é o único caminho: o DataTable não tem selectionMode e os checkboxes
+  // ficam intocados.
+  if (!openOnRowClick.value) selectedRow.value = row
   if (openOnRowClick.value && !isCellEdit.value) openRow(row)
+}
+
+// Alvo das ações do trilho: a linha ativa; sem ela, em seleção múltipla, o único
+// item marcado.
+const railRow = computed<Record<string, unknown> | null>(() => {
+  if (selectedRow.value) return selectedRow.value
+  const marcados = props.crud.selectedItems.value
+  return isMultiSelect.value && marcados.length === 1 ? marcados[0] : null
+})
+
+// Seleção múltipla: o DataTable não destaca a linha ativa sozinho.
+function rowClass(row: Record<string, unknown>) {
+  const pk = props.crud.config.pk || 'id'
+  return isMultiSelect.value && selectedRow.value?.[pk] === row[pk]
+    ? 'p-datatable-row-selected'
+    : undefined
 }
 
 function onTableRowClick(e: { originalEvent: Event; data: Record<string, unknown> }) {
@@ -606,7 +641,7 @@ const contextMenuItems = computed<MenuItem[]>(() => {
 // --- Action rail handlers ---
 
 function railPrint() {
-  if (selectedRow.value) emit('print', selectedRow.value)
+  if (railRow.value) emit('print', railRow.value)
 }
 
 // --- CSV export (visible columns) ---
@@ -809,6 +844,7 @@ onMounted(() => {
             "
             @update:context-menu-selection="(v: any) => (selectedRow = v)"
             @row-contextmenu="onRowContextMenu"
+            :row-class="rowClass"
             @row-click="onTableRowClick"
             @page="crud.onPage"
             @sort="(e: any) => crud.onSort({ sortField: e.sortField, sortOrder: e.sortOrder })"
@@ -1287,18 +1323,18 @@ onMounted(() => {
         <div v-if="canCreate && effectiveRowActions.length" class="w-crud-rail-sep" />
         <template v-for="action in effectiveRowActions" :key="action.action">
           <Button
-            v-if="!selectedRow || isActionVisible(action, selectedRow)"
+            v-if="!railRow || isActionVisible(action, railRow)"
             v-tooltip.left="action.tooltip"
             :icon="action.icon"
             :aria-label="actionLabel(action)"
             text
             rounded
             :severity="action.severity as any"
-            :disabled="!selectedRow || isActionDisabled(action, selectedRow)"
-            @click="selectedRow && handleRowAction(action, selectedRow)"
+            :disabled="!railRow || isActionDisabled(action, railRow)"
+            @click="railRow && handleRowAction(action, railRow)"
           />
         </template>
-        <slot name="rail-actions" :selected="selectedRow" :crud="crud" />
+        <slot name="rail-actions" :selected="railRow" :crud="crud" />
         <div v-if="showPrint || exportCsv" class="w-crud-rail-sep" />
         <Button
           v-if="showPrint"
@@ -1307,7 +1343,7 @@ onMounted(() => {
           aria-label="Imprimir"
           text
           rounded
-          :disabled="!selectedRow"
+          :disabled="!railRow"
           @click="railPrint"
         />
         <Button
