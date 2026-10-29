@@ -727,6 +727,48 @@ describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
       expect(aberto(w)).toBe(false)
     })
 
+    describe('trilho de ações age sobre a linha ativa', () => {
+      const handler = vi.fn()
+      const acao = { action: 'ficha', icon: 'pi pi-id-card', tooltip: 'Abrir ficha', handler }
+      const botao = (w: ReturnType<typeof montar>) =>
+        w.find('.w-crud-rail button[aria-label="Abrir ficha"]')
+      const linha = { id: 1, nome: 'Soja', ativo: true }
+
+      it('sem multiselect: clicar na célula ativa a linha e habilita o trilho', async () => {
+        handler.mockClear()
+        const w = await pronto({ rowActions: [acao] })
+        expect(botao(w).attributes('disabled')).toBeDefined()
+        await celula(w).trigger('click')
+        await nextTick()
+        expect(botao(w).attributes('disabled')).toBeUndefined()
+        await botao(w).trigger('click')
+        expect(handler).toHaveBeenCalledWith(linha)
+      })
+
+      it('multiselect: clique fora do checkbox ativa a linha sem marcar o checkbox', async () => {
+        handler.mockClear()
+        const w = await pronto({ rowActions: [acao], selectionMode: 'multiple' })
+        const crud = view(w).props('crud') as { selectedItems: { value: unknown[] } }
+        expect(botao(w).attributes('disabled')).toBeDefined()
+        await celula(w).trigger('click')
+        await nextTick()
+        expect(crud.selectedItems.value).toHaveLength(0)
+        expect(botao(w).attributes('disabled')).toBeUndefined()
+        await botao(w).trigger('click')
+        expect(handler).toHaveBeenCalledWith(linha)
+      })
+
+      it('multiselect: sem linha ativa, exatamente 1 item marcado vira o alvo', async () => {
+        handler.mockClear()
+        const w = await pronto({ rowActions: [acao], selectionMode: 'multiple' })
+        await w.find('tbody tr td[data-p-selection-column="true"] input').trigger('change')
+        await nextTick()
+        expect(botao(w).attributes('disabled')).toBeUndefined()
+        await botao(w).trigger('click')
+        expect(handler).toHaveBeenCalledWith(linha)
+      })
+    })
+
     it('fetchDetailOnEdit: dois cliques seguidos buscam o detalhe uma vez só', async () => {
       // GET pendente até os dois cliques: o diálogo só abre quando ele resolve.
       let resolver: (v: unknown) => void = () => {}

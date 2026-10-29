@@ -70,6 +70,10 @@ edicao — o caminho do duplo clique no card (respeita `canEdit: false`; com o f
 ligado o duplo clique nao abre de novo). Default `false`: sem o flag nada muda, o
 clique so seleciona e o duplo clique no card abre.
 
+O clique tambem torna a linha **ativa** (`selectedRow`), o alvo das acoes do action rail —
+inclusive com `selectionMode: 'multiple'`, onde os checkboxes ficam intocados. Sem linha ativa,
+o rail age sobre o unico item marcado (exatamente 1).
+
 ```ts
 const crud = useCrudManager({ endpoint: '/api/pedidos/', columns, form, openOnRowClick: true })
 ```
