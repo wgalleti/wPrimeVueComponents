@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.16.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.15.0...v1.16.0) (2026-11-06)
+
+### Funcionalidades
+
+* **form:** WAutoCompleteFK saves inline to crud.endpoint when reads and writes differ ([0432f52](https://github.com/wgalleti/wPrimeVueComponents/commit/0432f52e875e8a03cab28127744e3978f14bbd9f))
 ## [1.15.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.14.0...v1.15.0) (2026-10-29)
 
 ### Funcionalidades
