@@ -17,7 +17,7 @@ vi.mock('@/composables/useAppToast', () => ({
   useAppToast: () => ({ success: vi.fn(), error: vi.fn(), info: vi.fn(), warn: vi.fn() }),
 }))
 vi.mock('@/composables/useAppConfirm', () => ({
-  useAppConfirm: () => ({ confirmDelete: vi.fn(), confirmAction: vi.fn() }),
+  useAppConfirm: () => ({ confirmDelete: (cb: () => unknown) => cb(), confirmAction: vi.fn() }),
 }))
 
 beforeAll(() => {
@@ -311,6 +311,67 @@ describe('WAutoCompleteFK — Enter sem correspondência abre o cadastro', () =>
     const form = wrapper.findComponent(WCrudFormDialog)
     expect(form.props('visible')).toBe(true)
     expect((form.props('formData') as Linha).nome).toBe('Inédito')
+    wrapper.unmount()
+  })
+})
+
+describe('WAutoCompleteFK — destino da gravação do cadastro embutido', () => {
+  const item = { id: 5, codigo: 1, nome: 'Milho' }
+
+  async function abrirModal(props: Record<string, unknown>) {
+    const ctx = montar({ autoSelectSingle: false, canCreate: true, ...props }, [item])
+    await flushPromises()
+    await ctx.wrapper.find('.w-autocompletefk-trigger').trigger('click')
+    await flushPromises()
+    return ctx
+  }
+
+  it.each([
+    ['crud.endpoint existe', { crud: { form: campos, endpoint: '/cadastro' } }, '/cadastro'],
+    ['crud.endpoint omitido', { crud: { form: campos } }, '/itens'],
+  ])('create, update e delete vão para o destino certo (%s)', async (_n, props, esperado) => {
+    const { wrapper, provider } = await abrirModal(props)
+    provider.update.mockResolvedValue({ data: item })
+
+    // update: editar a linha do modal e salvar
+    await wrapper.find('button[aria-label="Editar"]').trigger('click')
+    wrapper.findComponent(WCrudFormDialog).vm.$emit('save')
+    await flushPromises()
+    expect(provider.update).toHaveBeenCalledWith(esperado, 5, expect.any(Object))
+
+    // delete
+    await wrapper.find('button[aria-label="Excluir"]').trigger('click')
+    await flushPromises()
+    expect(provider.delete).toHaveBeenCalledWith(esperado, 5)
+
+    // create pelo botão Novo do modal
+    const novo = wrapper.findAll('button').find((b) => b.text() === 'Novo')!
+    await novo.trigger('click')
+    wrapper.findComponent(WCrudFormDialog).vm.$emit('save')
+    await flushPromises()
+    expect(provider.create).toHaveBeenCalledWith(esperado, expect.any(Object))
+    // a leitura continua no endpoint do campo
+    expect(provider.list.mock.calls.every((c) => c[0] === '/itens')).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('create com dependsOn semeia o pai e grava em crud.endpoint', async () => {
+    const { wrapper, provider } = montar({
+      autoSelectSingle: false,
+      canCreate: true,
+      crud: { form: campos, endpoint: '/cadastro' },
+      drilldown: { field: 'produto', value: 7 },
+    })
+    await flushPromises()
+    await digitar(wrapper, 'Lote A')
+    await input(wrapper).trigger('keydown', { key: 'Enter', code: 'Enter' })
+    await flushPromises()
+    wrapper.findComponent(WCrudFormDialog).vm.$emit('save')
+    await flushPromises()
+    expect(provider.create).toHaveBeenCalledWith(
+      '/cadastro',
+      expect.objectContaining({ nome: 'Lote A', produto: 7 }),
+    )
     wrapper.unmount()
   })
 })
