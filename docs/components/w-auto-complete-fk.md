@@ -170,6 +170,8 @@ const form: FieldDef[] = [
 ]
 ```
 
+Quando a leitura e a escrita usam rotas diferentes (ex.: lista numa view, gravação no recurso), informe `crud.endpoint`: criar, editar e excluir inline gravam nele; sem ele, gravam em `endpoint`.
+
 ## Uso Standalone
 
 ```vue

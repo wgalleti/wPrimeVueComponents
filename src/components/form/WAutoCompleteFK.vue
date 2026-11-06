@@ -970,7 +970,7 @@ async function saveForm() {
 
     if (isEditing.value && editingItem.value) {
       const pk = editingItem.value[props.optionValue]
-      response = await provider.update(props.endpoint, pk as string | number, payload)
+      response = await provider.update(props.crud?.endpoint ?? props.endpoint, pk as string | number, payload)
       // Atualiza na lista do modal
       const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
@@ -988,7 +988,7 @@ async function saveForm() {
           payload[key] = value
         }
       }
-      response = await provider.create(props.endpoint, payload)
+      response = await provider.create(props.crud?.endpoint ?? props.endpoint, payload)
       // Adiciona na lista e seleciona automaticamente
       modalData.value.unshift(response.data)
       modalTotalRecords.value++
@@ -1029,7 +1029,7 @@ function confirmDelete(item: Record<string, unknown>) {
   confirmDeleteDialog(async () => {
     try {
       const pk = item[props.optionValue]
-      await provider.delete(props.endpoint, pk as string | number)
+      await provider.delete(props.crud?.endpoint ?? props.endpoint, pk as string | number)
       const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
         modalData.value.splice(idx, 1)

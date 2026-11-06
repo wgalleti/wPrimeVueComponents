@@ -58,6 +58,8 @@ export type FieldSubRowsFetch = (rows: Record<string, unknown>[]) => Promise<Fie
 
 /** Recorte do `CrudManagerConfig` que faz sentido dentro do modal de uma FK. */
 export interface FkCrudConfig {
+  /** Destino da gravação (criar/editar/excluir); omitido grava em `endpoint` do campo. */
+  endpoint?: string
   form: FieldDef[]
   columns?: ColumnDef[]
   formColumns?: number
