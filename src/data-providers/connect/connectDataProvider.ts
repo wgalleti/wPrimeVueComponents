@@ -112,7 +112,10 @@ function coerceTimestamps(desc: DescMessage, payload: Json): Json {
 
 /** Timestamp volta como RFC3339; data pura é `string` no proto e passa como veio. */
 function readRow<T>(desc: DescMessage, message: unknown): T {
-  return toJson(desc, message as never, { useProtoFieldName: true }) as T
+  return toJson(desc, message as never, {
+    useProtoFieldName: true,
+    alwaysEmitImplicit: true, // false/0/"" chegam, não somem
+  }) as T
 }
 
 function assertPlain(payload: Json | FormData): Json {
@@ -188,10 +191,10 @@ export function createConnectDataProvider(
         throw new Error(`${method.output.typeName}.results deve ser repeated message.`)
       }
       return {
-        data: response.results.map((m) => readRow<T>(results.message, m)),
+        data: (response.results ?? []).map((m) => readRow<T>(results.message, m)),
         page: req.pagina,
         page_size: req.tamanho,
-        rows: Number(response.count),
+        rows: Number(response.count ?? 0),
         extras: {},
       }
     },

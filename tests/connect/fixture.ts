@@ -12,7 +12,7 @@ import {
 } from '@bufbuild/protobuf/wkt'
 
 type T = FieldDescriptorProto_Type
-const { STRING, INT32, INT64, MESSAGE } = FieldDescriptorProto_Type
+const { STRING, INT32, INT64, BOOL, MESSAGE } = FieldDescriptorProto_Type
 const REPEATED = FieldDescriptorProto_Label.REPEATED
 
 function f(name: string, number: number, type: T, extra: Record<string, unknown> = {}) {
@@ -89,6 +89,8 @@ const parceriaFile = create(FileDescriptorProtoSchema, {
         f('data_inicio', 3, MESSAGE, { typeName: '.google.protobuf.Timestamp' }),
         f('valor', 4, STRING),
         f('qtd_total', 5, INT64),
+        f('ativo', 6, BOOL),
+        f('prioridade', 7, INT32),
       ],
     },
     {
