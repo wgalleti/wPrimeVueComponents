@@ -90,32 +90,22 @@ function findField(desc: DescMessage, name: string): DescField | undefined {
 
 const isTimestamp = (f: DescField) => f.fieldKind === 'message' && f.message.typeName === TIMESTAMP
 
-/** Data sem hora (`2026-01-31`) vira Timestamp à meia-noite UTC; datetime sem zona é hora local. */
+/** `Timestamp` é sempre data-hora: `''` vira nulo e datetime sem fuso é hora local. */
 function coerceTimestamps(desc: DescMessage, payload: Json): Json {
   const out: Json = { ...payload }
   for (const [key, value] of Object.entries(out)) {
     const f = findField(desc, key)
     if (!f || !isTimestamp(f)) continue
     if (value === '') out[key] = null
-    else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value))
-      out[key] = `${value}T00:00:00Z`
     else if (typeof value === 'string' && !/(Z|[+-]\d{2}:?\d{2})$/.test(value))
       out[key] = new Date(value).toISOString()
   }
   return out
 }
 
-/** Timestamp exatamente à meia-noite UTC volta como data (`YYYY-MM-DD`), simétrico ao envio. */
+/** Timestamp volta como RFC3339; data pura é `string` no proto e passa como veio. */
 function readRow<T>(desc: DescMessage, message: unknown): T {
-  const row = toJson(desc, message as never, { useProtoFieldName: true }) as Json
-  for (const f of desc.fields) {
-    const v = row[f.name]
-    if (isTimestamp(f) && typeof v === 'string') {
-      const m = /^(\d{4}-\d{2}-\d{2})T00:00:00(\.0+)?Z$/.exec(v)
-      if (m) row[f.name] = m[1]
-    }
-  }
-  return row as T
+  return toJson(desc, message as never, { useProtoFieldName: true }) as T
 }
 
 function assertPlain(payload: Json | FormData): Json {

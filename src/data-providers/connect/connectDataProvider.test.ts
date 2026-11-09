@@ -102,11 +102,11 @@ describe('createConnectDataProvider', () => {
     expect(res.rows).toBe(42)
     expect(res.page).toBe(3)
     expect(res.page_size).toBe(200)
-    // nomes de campo do proto (snake_case); Timestamp à meia-noite UTC volta como data
+    // nomes de campo do proto (snake_case); Timestamp volta como RFC3339, sem heurística de data
     expect(res.data[0]).toMatchObject({
       id: 'u1',
       nome: 'Alfa',
-      data_inicio: '2026-01-31',
+      data_inicio: '2026-01-31T00:00:00Z',
       qtd_total: '7',
     })
   })
@@ -122,27 +122,31 @@ describe('createConnectDataProvider', () => {
     expect(out.data).toMatchObject({ id: '1', nome: 'A' })
   })
 
-  it('create: payload do formulário vira a mensagem (data sem hora -> Timestamp)', async () => {
+  it('create: payload do formulário vira a mensagem (Timestamp = data-hora)', async () => {
     const { provider, calls } = setup()
     await provider.create('parcerias', {
       nome: 'Nova',
-      data_inicio: '2026-02-01',
+      data_inicio: '2026-02-01T10:00:00Z',
       valor: '9.90',
       so_do_form: 1,
     })
     expect(calls.create[0]).toEqual({
       nome: 'Nova',
-      dataInicio: '2026-02-01T00:00:00Z',
+      dataInicio: '2026-02-01T10:00:00Z',
       valor: '9.90',
     })
   })
 
   it('update: update_mask só com os campos alterados, em snake_case do proto (camelCase do form também)', async () => {
     const { provider, calls, raws } = setup()
-    await provider.update('parcerias', 'u1', { nome: 'Novo', dataInicio: '2026-03-01', fora: 'x' })
+    await provider.update('parcerias', 'u1', {
+      nome: 'Novo',
+      dataInicio: '2026-03-01T10:00:00Z',
+      fora: 'x',
+    })
     expect(calls.update[0]).toEqual({
       id: 'u1',
-      parceria: { nome: 'Novo', dataInicio: '2026-03-01T00:00:00Z' },
+      parceria: { nome: 'Novo', dataInicio: '2026-03-01T10:00:00Z' },
       updateMask: 'nome,dataInicio',
     })
     expect((raws.update[0] as { updateMask: { paths: string[] } }).updateMask.paths).toEqual([
