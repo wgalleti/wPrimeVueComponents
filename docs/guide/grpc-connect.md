@@ -113,7 +113,7 @@ rowActions: [{ action: 'aprovar', icon: 'pi pi-check',
 | demais parametros (filtros de coluna, `endpointParams`, `dependsOn`) | `ListRequest.filtros` (`campo` ou `campo__op`; array vira `campo__in` separado por virgula) |
 | `count` / `results` | `rows` / `data` do grid |
 | diff do formulario (`partialUpdate`, padrao) | `Update.update_mask.paths`, so os campos alterados |
-| `Create` | campos do form viram a `Create<X>Request` |
+| `Create` | campos do form viram a `Create<X>Request`; se ela só tem a entidade (`{ contato }`), o form entra embrulhado nela |
 | `Delete` | `IdRequest` |
 
 - **Nomes de campo**: o grid e o form usam os nomes do proto (`snake_case`). Na leitura a suite usa

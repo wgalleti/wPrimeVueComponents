@@ -206,14 +206,24 @@ export function createConnectDataProvider(
 
     async create<T = Json>(endpoint: string, payload: Json | FormData) {
       const plain = assertPlain(payload)
-      const { response, method } = await run(
-        endpoint,
-        'Create',
-        (input) =>
-          fromJson(input, coerceTimestamps(input, plain) as never, {
-            ignoreUnknownFields: true,
-          }) as unknown as Json,
-      )
+      const { response, method } = await run(endpoint, 'Create', (input) => {
+        // Create<X>Request { <x> entidade = 1 }: o form vira a entidade embrulhada (como no Update).
+        const [only] = input.fields
+        if (input.fields.length === 1 && only.fieldKind === 'message' && !isTimestamp(only)) {
+          return {
+            [only.localName]: fromJson(
+              only.message,
+              coerceTimestamps(only.message, plain) as never,
+              {
+                ignoreUnknownFields: true,
+              },
+            ),
+          }
+        }
+        return fromJson(input, coerceTimestamps(input, plain) as never, {
+          ignoreUnknownFields: true,
+        }) as unknown as Json
+      })
       return { data: readRow<T>(method.output, response) }
     },
 

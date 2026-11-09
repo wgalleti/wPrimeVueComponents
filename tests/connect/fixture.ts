@@ -116,8 +116,23 @@ const parceriaFile = create(FileDescriptorProtoSchema, {
         f('update_mask', 3, MESSAGE, { typeName: '.google.protobuf.FieldMask' }),
       ],
     },
+    // Create embrulhado (Create<X>Request { <x> = 1 }), como o CrmContato da api2.
+    {
+      name: 'CreateWrappedRequest',
+      field: [f('parceria', 1, MESSAGE, { typeName: '.app.v1.Parceria' })],
+    },
   ],
   service: [
+    {
+      name: 'WrappedService',
+      method: [
+        {
+          name: 'Create',
+          inputType: '.app.v1.CreateWrappedRequest',
+          outputType: '.app.v1.Parceria',
+        },
+      ],
+    },
     {
       name: 'ParceriaService',
       method: [
@@ -164,3 +179,4 @@ export const ListParceriasResponseSchema = registry.getMessage(
   'app.v1.ListParceriasResponse',
 ) as DescMessage
 export const BadRequestSchema = registry.getMessage('google.rpc.BadRequest') as DescMessage
+export const WrappedService = registry.getService('app.v1.WrappedService') as DescService
