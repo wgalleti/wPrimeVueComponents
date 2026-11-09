@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.17.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.16.0...v1.17.0) (2026-11-09)
+
+### Funcionalidades
+
+* **crud:** show server field errors from a 400 on the form fields ([7abc52b](https://github.com/wgalleti/wPrimeVueComponents/commit/7abc52b83697264c55987e240d8a2c12cecf6614))
+* **data:** add Connect (gRPC) data provider as the ./connect entry ([6173767](https://github.com/wgalleti/wPrimeVueComponents/commit/61737678109b0ff5ae7967a0659d41d2c3769058))
+
+### Correções
+
+* **data:** emit proto3 default values when reading Connect messages ([afe9986](https://github.com/wgalleti/wPrimeVueComponents/commit/afe998636abcfb2a2e99813b36234b6a82426966))
+* **data:** reject a date-only string sent to a Connect Timestamp field ([9ba76ff](https://github.com/wgalleti/wPrimeVueComponents/commit/9ba76ff29edc4ffaac6d7c926cb9c2248f971352))
+* **data:** treat Connect Timestamp as date-time, no midnight-UTC date heuristic ([1e9ca20](https://github.com/wgalleti/wPrimeVueComponents/commit/1e9ca20968273b0beef6f2ea74177d084d25fdc0))
+
+### Documentação
+
+* document the Connect (gRPC) provider ([2415c37](https://github.com/wgalleti/wPrimeVueComponents/commit/2415c37acdc0101a7bfdd94dc1543ab3e58a4909))
 ## [1.16.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.15.0...v1.16.0) (2026-11-06)
 
 ### Funcionalidades
