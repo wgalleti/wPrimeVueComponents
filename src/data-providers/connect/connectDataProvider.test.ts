@@ -6,6 +6,7 @@ import {
   ListParceriasResponseSchema,
   ParceriaSchema,
   ParceriaService,
+  WrappedService,
 } from '../../../tests/connect/fixture'
 import { createConnectDataProvider, toFiltros } from './connectDataProvider'
 import { extractApiError, extractFieldErrors } from '@/composables/useApiError'
@@ -150,6 +151,22 @@ describe('createConnectDataProvider', () => {
       dataInicio: '2026-02-01T10:00:00Z',
       valor: '9.90',
     })
+  })
+
+  it('create: Create<X>Request com só a entidade recebe o form embrulhado', async () => {
+    let got: unknown
+    const transport = createRouterTransport(({ service }) => {
+      service(WrappedService, {
+        create: (req: never) => {
+          got = toJson(WrappedService.methods[0].input, req)
+          return row('1', 'A')
+        },
+      } as never)
+    })
+    const provider = createConnectDataProvider({ transport, resources: { w: WrappedService } })
+    const { data } = await provider.create<{ id: string }>('w', { nome: 'Nova', fora: 1 })
+    expect(got).toEqual({ parceria: { nome: 'Nova' } })
+    expect(data.id).toBe('1')
   })
 
   it('update: update_mask só com os campos alterados, em snake_case do proto (camelCase do form também)', async () => {
