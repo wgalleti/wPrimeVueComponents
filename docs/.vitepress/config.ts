@@ -30,6 +30,7 @@ export default defineConfig({
           { text: 'O que e?', link: '/guide/what-is' },
           { text: 'Primeiros Passos', link: '/guide/getting-started' },
           { text: 'Plugin', link: '/guide/plugin' },
+          { text: 'API gRPC (Connect)', link: '/guide/grpc-connect' },
           { text: 'Playground local', link: '/guide/playground' },
         ],
       },
