@@ -159,6 +159,16 @@ describe('createConnectDataProvider', () => {
     ])
   })
 
+  it('data pura em campo Timestamp falha com erro no campo, sem virar meia-noite UTC', async () => {
+    const { provider, calls } = setup()
+    const err = await provider
+      .create('parcerias', { nome: 'x', data_inicio: '2026-02-01' })
+      .catch((e) => e)
+    expect(err.response.status).toBe(400)
+    expect(extractFieldErrors(err).data_inicio).toMatch(/date-time/)
+    expect(calls.create).toBeUndefined()
+  })
+
   it('rejeita FormData e recurso não registrado', async () => {
     const { provider } = setup()
     await expect(provider.create('parcerias', new FormData())).rejects.toMatchObject({

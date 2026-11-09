@@ -119,7 +119,7 @@ rowActions: [{ action: 'aprovar', icon: 'pi pi-check',
 - **Nomes de campo**: o grid e o form usam os nomes do proto (`snake_case`). Na leitura a suite usa
   `toJson({ useProtoFieldName: true })`; no envio aceita `snake_case` ou `camelCase` e grava o mask
   sempre em `snake_case`. Chave que nao existe na mensagem e ignorada (nao vai no mask).
-- **Datas**: data pura e `string` `YYYY-MM-DD` no proto e passa como veio, igual ao REST. `Timestamp` e sempre data-hora (RFC3339 na leitura; datetime sem fuso no envio e hora local).
+- **Datas**: data pura e `string` `YYYY-MM-DD` no proto e passa como veio, igual ao REST. `Timestamp` e sempre data-hora (data pura em campo Timestamp falha com erro 400 no campo) (RFC3339 na leitura; datetime sem fuso no envio e hora local).
 - **Dinheiro e int64** chegam como string; `FormData` (upload) nao e suportado — envie o arquivo a parte
   e mande a referencia no payload.
 - **Mantenha `partialUpdate: true`** (padrao): com `false` o mask leva todos os campos.
