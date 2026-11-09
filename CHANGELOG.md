@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file. See [commit
 * **data:** emit proto3 default values when reading Connect messages ([afe9986](https://github.com/wgalleti/wPrimeVueComponents/commit/afe998636abcfb2a2e99813b36234b6a82426966))
 * **data:** reject a date-only string sent to a Connect Timestamp field ([9ba76ff](https://github.com/wgalleti/wPrimeVueComponents/commit/9ba76ff29edc4ffaac6d7c926cb9c2248f971352))
 * **data:** treat Connect Timestamp as date-time, no midnight-UTC date heuristic ([1e9ca20](https://github.com/wgalleti/wPrimeVueComponents/commit/1e9ca20968273b0beef6f2ea74177d084d25fdc0))
+* **data:** wrap the form in single-entity Connect Create requests ([bb9ac37](https://github.com/wgalleti/wPrimeVueComponents/commit/bb9ac375021d00793f3e4fed3ceec641f45e29e5))
 
 ### Documentação
 
