@@ -13,7 +13,7 @@ import type {
   DataProviderListResponse,
   DataProviderResponse,
 } from '@/types/dataProvider'
-import { normalizeConnectError } from './connectErrors'
+import { normalizeConnectError, type ConnectNormalizedError } from './connectErrors'
 
 const MAX_PAGE_SIZE = 200
 const RESERVED = new Set(['page', 'page_size', 'search', 'ordering'])
@@ -97,6 +97,13 @@ function coerceTimestamps(desc: DescMessage, payload: Json): Json {
     const f = findField(desc, key)
     if (!f || !isTimestamp(f)) continue
     if (value === '') out[key] = null
+    else if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value))
+      // Converter para meia-noite UTC traria de volta o dia a menos em UTC-3.
+      throw {
+        message: `${f.name}: data pura em campo Timestamp`,
+        code: 'InvalidArgument',
+        response: { status: 400, data: { [f.name]: ['Use date-time (RFC3339), não só a data.'] } },
+      } satisfies ConnectNormalizedError
     else if (typeof value === 'string' && !/(Z|[+-]\d{2}:?\d{2})$/.test(value))
       out[key] = new Date(value).toISOString()
   }
@@ -158,6 +165,7 @@ export function createConnectDataProvider(
       const response = await rpc[method.localName](create(method.input, body as never))
       return { response: response as R, method }
     } catch (err) {
+      if (err && typeof err === 'object' && 'response' in err) throw err // já normalizado
       const normalized = normalizeConnectError(err)
       if (normalized.response.status === 401) options.onUnauthenticated?.(ConnectError.from(err))
       throw normalized
