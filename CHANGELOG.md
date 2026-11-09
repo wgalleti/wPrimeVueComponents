@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.17.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.17.0...v1.17.1) (2026-11-09)
+
+### Segurança
+
+* **deps:** raise `dompurify` to ^3.4.17 and `markdown-it` to ^15.0.3, closing critical and high CVEs in the Markdown sanitizer ([92bc821](https://github.com/wgalleti/wPrimeVueComponents/commit/92bc821))
+
 ## [1.17.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.16.0...v1.17.0) (2026-11-09)
 
 ### Funcionalidades
