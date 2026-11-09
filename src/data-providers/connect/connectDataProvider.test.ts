@@ -111,6 +111,21 @@ describe('createConnectDataProvider', () => {
     })
   })
 
+  it('valores padrão do proto3 (false, 0, "") chegam, não somem', async () => {
+    const { provider } = setup({
+      get: () => fromJson(ParceriaSchema, { id: 'u1' }),
+    })
+    const { data } = await provider.get('parcerias', 'u1')
+    expect(data).toMatchObject({ nome: '', ativo: false, prioridade: 0, qtd_total: '0' })
+  })
+
+  it('lista vazia ({} sem count/results) vira rows=0 e data=[]', async () => {
+    const { provider } = setup({ list: () => ({}) })
+    const res = await provider.list('parcerias')
+    expect(res.rows).toBe(0)
+    expect(res.data).toEqual([])
+  })
+
   it('get/delete/ação usam IdRequest', async () => {
     const { provider, calls } = setup()
     await provider.get('parcerias', 'u1')
