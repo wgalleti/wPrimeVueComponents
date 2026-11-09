@@ -15,6 +15,12 @@ try {
 }
 ```
 
+## `extractFieldErrors(error)`
+
+Devolve `{ campo: mensagem }` de uma resposta 400 (DRF `{ campo: [msgs] }`; no provedor Connect, o
+`BadRequest.field_violations`). `detail` e `non_field_errors` ficam de fora. O `useCrudManager` usa isso para
+preencher `crud.fieldErrors`, que o `WCrudView` mostra no campo do formulario.
+
 ## `extractApiError(error, fallback?)`
 
 | Param | Tipo | Padrao |

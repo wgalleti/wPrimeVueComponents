@@ -94,6 +94,48 @@ app.use(WPrimeVuePlugin, {
 })
 ```
 
+### API gRPC (Connect)
+
+A API Go (`api2`) é gRPC-first com [ConnectRPC](https://connectrpc.com). O provedor Connect implementa o mesmo
+`DataProvider` — `useCrudManager`, `useSubviewCrud`, `WCrudView` e `WAutoCompleteFK` não mudam; o `endpoint`
+passa a ser a chave do serviço gerado. Projetos REST não instalam nada disso (peers opcionais).
+
+```bash
+yarn add @connectrpc/connect @connectrpc/connect-web @bufbuild/protobuf
+yarn add -D @bufbuild/buf @bufbuild/protoc-gen-es   # tipos gerados no projeto (buf generate)
+```
+
+```typescript
+import { createConnectTransport } from '@connectrpc/connect-web'
+import { createConnectDataProvider } from '@wgalleti/primevue-components/connect'
+import { ParceriaService } from './gen/app/v1/parceria_pb'
+
+const transport = createConnectTransport({
+  baseUrl: `${API}/api/v2/rpc`,
+  interceptors: [
+    (next) => (req) => {
+      req.header.set('Authorization', `Bearer ${token}`)
+      req.header.set('X-Organizacao', organizacaoId)
+      return next(req)
+    },
+  ],
+})
+
+app.use(WPrimeVuePlugin, {
+  dataProvider: createConnectDataProvider({
+    transport,
+    resources: { parcerias: ParceriaService },
+    onUnauthenticated: () => session.expire(),
+  }),
+})
+
+// na tela: useCrudManager({ endpoint: 'parcerias', columns, form })
+```
+
+Paginação, ordenação, filtro e busca viram `ListRequest`; o diff do formulário vira `update_mask`;
+`BadRequest.field_violations` vira erro no campo. Detalhes e a tabela de códigos de erro em
+`docs/guide/grpc-connect.md`.
+
 ## Uso Rápido
 
 ### CRUD Completo em ~30 linhas
