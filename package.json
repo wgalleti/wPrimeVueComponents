@@ -41,6 +41,11 @@
       "require": "./dist/types.cjs"
     },
     "./style.css": "./dist/primevue-components.css",
+    "./connect": {
+      "types": "./dist/connect.d.ts",
+      "import": "./dist/connect.js",
+      "require": "./dist/connect.cjs"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js",
@@ -85,6 +90,9 @@
     "site:build": "yarn docs:build && yarn playground:build && node scripts/merge-site.mjs"
   },
   "peerDependencies": {
+    "@bufbuild/protobuf": "^2.7.0",
+    "@connectrpc/connect": "^2.3.0",
+    "@connectrpc/connect-web": "^2.3.0",
     "axios": "^1.0.0",
     "dayjs": "^1.11.0",
     "primevue": "^4.2.0",
@@ -92,6 +100,15 @@
     "vue-router": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
+    "@bufbuild/protobuf": {
+      "optional": true
+    },
+    "@connectrpc/connect": {
+      "optional": true
+    },
+    "@connectrpc/connect-web": {
+      "optional": true
+    },
     "axios": {
       "optional": true
     },
@@ -118,6 +135,9 @@
     "mermaid": "^11.17.2"
   },
   "devDependencies": {
+    "@bufbuild/protobuf": "2.17.0",
+    "@connectrpc/connect": "2.3.0",
+    "@connectrpc/connect-web": "2.3.0",
     "@eslint/js": "^10.0.1",
     "@primevue/themes": "^4.2.0",
     "@types/leaflet": "^1.9.22",

@@ -30,6 +30,8 @@ export default defineConfig({
         types: resolve(__dirname, 'src/types/index.ts'),
         // Plugins Vite (Node) para o app consumidor: `@wgalleti/primevue-components/vite`.
         vite: resolve(__dirname, 'src/vite/index.ts'),
+        // Provedor gRPC (Connect): subpath próprio para o projeto REST não precisar dos peers.
+        connect: resolve(__dirname, 'src/data-providers/connect/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
@@ -53,6 +55,9 @@ export default defineConfig({
         'primevue',
         'axios',
         'dayjs',
+        // peers opcionais do provedor Connect (entrada `./connect`)
+        /^@connectrpc\/.*/,
+        /^@bufbuild\/.*/,
         'leaflet',
         // `echarts` segue a lógica do leaflet: dependência entregue pelo npm,
         // carregada por import() dinâmico no WChart — fora do bundle da suite.

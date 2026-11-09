@@ -45,4 +45,10 @@ export interface DataProvider {
     config?: DataProviderRequestConfig,
   ): Promise<DataProviderResponse<T>>
   delete(endpoint: string, id: string | number): Promise<void>
+  /** Ação de estado própria do recurso (opcional; hoje só o provedor Connect). */
+  action?<T = Record<string, unknown>>(
+    endpoint: string,
+    id: string | number,
+    method: string,
+  ): Promise<DataProviderResponse<T>>
 }
