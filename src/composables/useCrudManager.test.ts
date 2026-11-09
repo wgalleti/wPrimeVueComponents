@@ -169,6 +169,38 @@ describe('useCrudManager — save', () => {
   })
 })
 
+describe('useCrudManager — erros do servidor por campo', () => {
+  const form = [
+    { field: 'nome', label: 'Nome' },
+    { field: 'valor', label: 'Valor' },
+  ]
+  const err400 = (data: AnyRecord) => ({ response: { status: 400, data } })
+
+  it('400 com {campo: [msg]} preenche fieldErrors só dos campos do formulário; limpa ao salvar de novo', async () => {
+    const create = vi
+      .fn()
+      .mockRejectedValueOnce(err400({ nome: ['obrigatório'], desconhecido: ['x'], detail: 'y' }))
+      .mockResolvedValue({ data: { id: 1 } })
+    const crud = setup(
+      { endpoint: '/p', columns: [], form, refetchOnSave: false },
+      { list: okList(), create },
+    )
+    crud.openCreateDialog()
+    await crud.save()
+    expect({ ...crud.fieldErrors }).toEqual({ nome: 'obrigatório' })
+    await crud.save()
+    expect({ ...crud.fieldErrors }).toEqual({})
+  })
+
+  it('500 sem corpo não gera erro por campo', async () => {
+    const create = vi.fn().mockRejectedValue({ response: { status: 500, data: undefined } })
+    const crud = setup({ endpoint: '/p', columns: [], form }, { list: okList(), create })
+    crud.openCreateDialog()
+    await crud.save()
+    expect({ ...crud.fieldErrors }).toEqual({})
+  })
+})
+
 describe('useCrudManager — seleção múltipla', () => {
   it('selectedItems começa vazio; clearSelection e recarga limpam', async () => {
     const list = okList([{ id: 1 }], 1)

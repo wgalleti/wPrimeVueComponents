@@ -8,7 +8,7 @@ import type { CrudLabels } from '@/types/labels'
 import { DEFAULT_CRUD_LABELS } from '@/types/labels'
 import { useAppToast } from './useAppToast'
 import { useAppConfirm } from './useAppConfirm'
-import { extractApiError } from './useApiError'
+import { extractApiError, extractFieldErrors } from './useApiError'
 import { usePendingForm } from './usePendingForms'
 import { useTabHost } from '@/types/routeTabs'
 import { parseDate, toDateString, toDateTimeString } from '@/utils/dates'
@@ -88,6 +88,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   const viewMode = ref(false)
   const editingItem = ref<T | null>(null) as import('vue').Ref<T | null>
   const formData = reactive<Record<string, unknown>>({})
+  const fieldErrors = reactive<Record<string, string>>({})
   // Snapshot of the form values when an edit dialog opens — used for diff-based PATCH.
   let editingOriginal: Record<string, unknown> | null = null
 
@@ -284,7 +285,12 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   // Form
   // ---------------------------------------------------------------------------
 
+  function clearFieldErrors(): void {
+    for (const key of Object.keys(fieldErrors)) delete fieldErrors[key]
+  }
+
   function resetForm(): void {
+    clearFieldErrors()
     const defs = getDefaults()
     for (const key of Object.keys(defs)) {
       formData[key] = defs[key]
@@ -311,6 +317,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   }
 
   function loadItemIntoForm(item: T): void {
+    clearFieldErrors()
     editingOriginal = loadItemIntoRecord(item, formFields, formData)
   }
 
@@ -424,6 +431,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       return null
     }
 
+    clearFieldErrors()
     saving.value = true
     try {
       let payload: Record<string, unknown> = convertRecord(formData)
@@ -529,6 +537,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
       if (onAfterSave) onAfterSave(response.data, isEditing.value)
       return response.data
     } catch (err) {
+      // Só campos do formulário: chave desconhecida ficaria sem lugar para aparecer (o toast cobre).
+      const known = new Set(formFields.map((f) => f.field))
+      for (const [key, msg] of Object.entries(extractFieldErrors(err))) {
+        if (known.has(key)) fieldErrors[key] = msg
+      }
       toast.error(extractApiError(err, 'Erro ao salvar registro'))
       return null
     } finally {
@@ -618,6 +631,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     isDirty,
     editingItem,
     formData,
+    fieldErrors,
     pagination,
     sort,
     isEditing,

@@ -188,6 +188,13 @@
           "required": false,
           "default": "undefined",
           "description": "Largura da coluna do slot `#aside` (track do grid: `'24rem'`, `'2fr'`…).\nDefault: metade do dialog. Só vale quando o slot está preenchido."
+        },
+        {
+          "name": "errors",
+          "type": "Record<string, string> | undefined",
+          "required": false,
+          "default": null,
+          "description": "Erros por campo vindos do servidor (repassado ao WFormRenderer)."
         }
       ],
       "events": [
@@ -1272,6 +1279,13 @@
           "required": false,
           "default": "2",
           "description": "Nº de colunas do grid (default 2). Campos ocupam frações via `colSpan`;\ngrupos podem sobrepor via `fieldGroup.columns`."
+        },
+        {
+          "name": "errors",
+          "type": "Record<string, string> | undefined",
+          "required": false,
+          "default": null,
+          "description": "Erros vindos do servidor (`{ campo: mensagem }`), ex.: 400 da API. Aparecem no campo como o `validate`."
         }
       ],
       "events": [

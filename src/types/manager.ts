@@ -91,6 +91,8 @@ export interface CrudManagerReturn<T> {
   isDirty: ComputedRef<boolean>
   editingItem: Ref<T | null>
   formData: Record<string, unknown>
+  /** Erros por campo do último save recusado pelo servidor (400); limpo ao abrir o diálogo e ao salvar. */
+  fieldErrors: Record<string, string>
   pagination: PaginationState
   sort: SortState
 

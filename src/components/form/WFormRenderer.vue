@@ -27,6 +27,8 @@ const props = withDefaults(
     /** Nº de colunas do grid (default 2). Campos ocupam frações via `colSpan`;
      *  grupos podem sobrepor via `fieldGroup.columns`. */
     columns?: number
+    /** Erros vindos do servidor (`{ campo: mensagem }`), ex.: 400 da API. Aparecem no campo como o `validate`. */
+    errors?: Record<string, string>
   }>(),
   {
     disabled: false,
@@ -40,6 +42,18 @@ const emit = defineEmits<{
 const slots = useSlots()
 
 const fieldErrors = reactive<Record<string, string | null>>({})
+
+// Erros do servidor entram no mesmo mapa do `validate`; o que saiu do conjunto é limpo.
+let serverKeys: string[] = []
+watch(
+  () => props.errors,
+  (errs) => {
+    for (const k of serverKeys) fieldErrors[k] = null
+    serverKeys = Object.keys(errs ?? {})
+    for (const k of serverKeys) fieldErrors[k] = errs![k]
+  },
+  { deep: true, immediate: true },
+)
 
 // --- Acessibilidade: ids estáveis por instância ---------------------------
 // Cada campo ganha `${formId}-${field}`: o `<label for>` aponta para o input, o

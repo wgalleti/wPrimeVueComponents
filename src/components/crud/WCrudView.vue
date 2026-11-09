@@ -1373,6 +1373,7 @@ onMounted(() => {
         :title="crud.dialogTitle.value"
         :fields="crud.config.form"
         :form-data="crud.formData"
+        :errors="crud.fieldErrors"
         :is-editing="crud.isEditing.value"
         :saving="crud.saving.value"
         :disabled="crud.viewMode?.value ?? false"

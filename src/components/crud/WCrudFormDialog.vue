@@ -29,6 +29,8 @@ const props = withDefaults(
     /** Largura da coluna do slot `#aside` (track do grid: `'24rem'`, `'2fr'`…).
      *  Default: metade do dialog. Só vale quando o slot está preenchido. */
     asideWidth?: string
+    /** Erros por campo vindos do servidor (repassado ao WFormRenderer). */
+    errors?: Record<string, string>
   }>(),
   {
     width: '480px',
@@ -107,6 +109,7 @@ watch(
           :is-editing="isEditing"
           :disabled="disabled"
           :columns="formColumns"
+          :errors="errors"
           @update:field="(f, v) => emit('update:field', f, v)"
         >
           <!-- Forward field-* slots from parent -->
