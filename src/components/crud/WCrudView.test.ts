@@ -818,3 +818,74 @@ describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
     })
   })
 })
+
+describe('WCrudView — groupBy', () => {
+  const linhas: Linha[] = [
+    { id: 1, nome: 'Safras', modulo: 'Agro' },
+    { id: 2, nome: 'Usuários', modulo: 'Administração' },
+    { id: 3, nome: 'Talhões', modulo: 'Agro' },
+  ]
+  const config = { transformItems: () => linhas }
+  const cabecalhos = (w: ReturnType<typeof montar>) =>
+    w.findAll('.p-datatable-row-group-header').map((c) => c.find('.w-crud-group-label').text())
+  const linhasDeDados = (w: ReturnType<typeof montar>) =>
+    w.findAll('tbody tr:not(.p-datatable-row-group-header)').map((l) => l.findAll('td')[0].text())
+
+  it('junta as linhas do grupo na ordem da primeira aparição', async () => {
+    const w = montar(config, { groupBy: 'modulo' })
+    await flushPromises()
+    expect(cabecalhos(w)).toEqual(['Agro', 'Administração'])
+    expect(linhasDeDados(w)).toEqual(['Safras', 'Talhões', 'Usuários'])
+    expect(w.find('.p-datatable-row-group-header td').attributes('colspan')).toBe('1')
+    w.unmount()
+  })
+
+  it('aceita função, groupLabel e os slots do grupo', async () => {
+    const w = montar(config, {
+      groupBy: (item: Linha) => String(item.modulo).toUpperCase(),
+      groupLabel: (chave: string, itens: Linha[]) => `${chave} (${itens.length})`,
+    })
+    await flushPromises()
+    expect(cabecalhos(w)).toEqual(['AGRO (2)', 'ADMINISTRAÇÃO (1)'])
+    w.unmount()
+  })
+
+  it('recolher um grupo esconde as linhas e avisa pelo v-model', async () => {
+    const atualizar = vi.fn()
+    const w = montar(config, { groupBy: 'modulo', 'onUpdate:collapsedGroups': atualizar })
+    await flushPromises()
+    await w.find('.p-datatable-row-group-header button').trigger('click')
+    expect(atualizar).toHaveBeenLastCalledWith(['Agro'])
+    expect(linhasDeDados(w)).toEqual(['Usuários'])
+    w.unmount()
+  })
+
+  it('recolhe e expande todos pela toolbar', async () => {
+    const w = montar(config, { groupBy: 'modulo' })
+    await flushPromises()
+    await w.find('button[aria-label="Recolher grupos"]').trigger('click')
+    expect(linhasDeDados(w)).toEqual([])
+    await w.find('button[aria-label="Expandir grupos"]').trigger('click')
+    expect(linhasDeDados(w)).toHaveLength(3)
+    w.unmount()
+  })
+
+  it('agrupa também nos cards', async () => {
+    const w = montar(config, { groupBy: 'modulo', cardMode: 'always' })
+    await flushPromises()
+    expect(w.findAll('.w-crud-group-label').map((c) => c.text())).toEqual(['Agro', 'Administração'])
+    expect(w.findAll('[role="listitem"]')).toHaveLength(3)
+    await w.find('button[aria-label="Recolher Agro"]').trigger('click')
+    expect(w.findAll('[role="listitem"]')).toHaveLength(1)
+    w.unmount()
+  })
+
+  it('sem groupBy não desenha grupos nem os botões', async () => {
+    const w = montar(config)
+    await flushPromises()
+    expect(w.find('.p-datatable-row-group-header').exists()).toBe(false)
+    expect(w.find('button[aria-label="Recolher grupos"]').exists()).toBe(false)
+    expect(linhasDeDados(w)).toEqual(['Safras', 'Usuários', 'Talhões'])
+    w.unmount()
+  })
+})

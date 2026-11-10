@@ -626,6 +626,85 @@
 }
 
 /* ==========================================================
+   WCrudView — agrupamento (`groupBy`)
+   ========================================================== */
+
+/* Seta do cabeçalho do grupo na tabela: menor e centrada na linha do rótulo (a do PrimeVue
+   fica na linha de base, abaixo do texto). */
+.w-crud .p-datatable-row-group-header > td > .p-datatable-row-toggle-button {
+  width: var(--w-icon-box-sm);
+  height: var(--w-icon-box-sm);
+  margin-inline-end: var(--w-space-1);
+  vertical-align: middle;
+}
+
+/* As linhas do grupo começam onde começa o nome do grupo (depois da seta), e o título da
+   primeira coluna acompanha. */
+.w-crud-table--grouped .p-datatable-row-group-header > td {
+  padding-inline-start: var(--w-space-3);
+}
+
+.w-crud-table--grouped .p-datatable-thead > tr > th:first-child,
+.w-crud-table--grouped
+  .p-datatable-tbody
+  > tr:not(.p-datatable-row-group-header, .p-datatable-row-expansion)
+  > td:first-child {
+  padding-inline-start: calc(var(--w-space-3) + var(--w-icon-box-sm) + var(--w-space-1));
+}
+
+.w-crud .p-datatable-row-group-header .p-datatable-row-toggle-icon {
+  width: var(--w-text-xs);
+  height: var(--w-text-xs);
+}
+
+.w-crud-group-head {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  vertical-align: middle;
+}
+
+.w-crud-group-label {
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-fg);
+}
+
+.w-crud-group-meta {
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+}
+
+.w-crud-group-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding-block: var(--w-space-3);
+}
+
+.w-crud-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-icon-box-sm);
+  height: var(--w-icon-box-sm);
+  font-size: var(--w-text-xs);
+  padding: 0;
+  border: 0;
+  border-radius: var(--w-radius);
+  background: none;
+  color: var(--w-fg-muted);
+  cursor: pointer;
+}
+
+.w-crud-group-toggle .pi {
+  font-size: inherit;
+}
+
+.w-crud-group-toggle:hover {
+  background: var(--w-row-hover);
+}
+
+/* ==========================================================
    WCrudView — cards view
    ========================================================== */
 
