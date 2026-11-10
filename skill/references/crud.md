@@ -28,6 +28,8 @@ Retornos úteis do `crud` (além de alimentar o WCrudView): `selectedItems`, `cl
 
 `<WCrudView>` aceita `title`, `subtitle`, `dialog-width`, e **slots** para sobrescrever qualquer seção (toolbar, ações de linha, etc.).
 
+Para agrupar linhas sob cabeçalhos recolhíveis, use `group-by` (campo ou função), com `group-label`, `v-model:collapsed-groups` e os slots `group-header`/`group-meta`. A lista é paginada: o grupo vale para a página atual.
+
 ### Filtros: sempre na toolbar do grid, ao lado da busca
 
 Todo filtro de uma listagem mora **dentro do grid**, na mesma toolbar da busca — nunca numa faixa própria acima da tabela, num painel lateral, no cabeçalho da página ou em `before-table`. Ordem fixa na toolbar: busca → `toolbar-start` → filtros declarativos (`ColumnDef.filter`) → slot `toolbar-filters` → "Limpar filtros". Dois caminhos, nessa ordem de preferência:

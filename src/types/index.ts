@@ -28,6 +28,7 @@ export type { CheckListItem, CheckListLevel } from './checkList'
 export type { FlipCardLabels, FlipCardSlotProps } from './flipCard'
 export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from './attentionList'
 
+export type { CrudGroupScope } from './crudGroup'
 export type { GroupedSelectGroupScope, GroupedSelectKey } from './groupedSelectList'
 
 export type { CalendarEvent, CalendarEventState, CalendarMoveEvent } from './calendar'
