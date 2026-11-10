@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, useSlots } from 'vue'
+import { ref, reactive, computed, nextTick, onMounted, watch, useSlots } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -13,10 +13,12 @@ import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
 import ContextMenu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
+import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
+import type { CrudGroupScope } from '@/types/crudGroup'
 import type { CrudManagerReturn } from '@/types/manager'
 import type { RowAction } from '@/types/action'
 import type { ColumnDef } from '@/types/column'
@@ -86,6 +88,13 @@ const props = withDefaults(
     /** Chave de persistência do estado de coluna (visibilidade) em localStorage.
      *  Opt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado. */
     persistState?: string
+    /** Agrupa as linhas sob cabeçalhos recolhíveis, na tabela e nos cards: nome do campo ou
+     *  função que dá a chave do grupo. Os grupos seguem a ordem da primeira aparição em
+     *  `crud.items`; para ordenar, use `transformItems` ou a ordenação da API. A lista é lazy:
+     *  agrupa o que veio na página, então um grupo pode continuar na página seguinte. */
+    groupBy?: string | ((item: Record<string, unknown>) => string)
+    /** Rótulo do grupo; default a própria chave ("Sem grupo" quando vazia). */
+    groupLabel?: (groupKey: string, items: Record<string, unknown>[]) => string
   }>(),
   {
     showSearch: true,
@@ -109,6 +118,8 @@ const props = withDefaults(
     csvFilename: 'export.csv',
     csvScope: 'all',
     csvPageSize: 200,
+    groupBy: undefined,
+    groupLabel: undefined,
   },
 )
 
@@ -430,6 +441,89 @@ const selectedRow = defineModel<Record<string, unknown> | null>('selectedRow', {
   default: null,
 })
 
+// Agrupamento — opt-in via `groupBy`. Guarda os recolhidos (e não os abertos) para grupo novo
+// nascer aberto e o estado sobreviver à troca de página.
+const collapsedGroups = defineModel<string[]>('collapsedGroups', {
+  default: () => [],
+})
+
+function groupKeyOf(item: Record<string, unknown>): string {
+  return typeof props.groupBy === 'function'
+    ? props.groupBy(item)
+    : String(item[props.groupBy as string] ?? '')
+}
+
+const groups = computed<CrudGroupScope[]>(() => {
+  if (!props.groupBy) return []
+  const map = new Map<string, Record<string, unknown>[]>()
+  for (const item of props.crud.items.value as Record<string, unknown>[]) {
+    const key = groupKeyOf(item)
+    const list = map.get(key)
+    if (list) list.push(item)
+    else map.set(key, [item])
+  }
+  const collapsed = new Set(collapsedGroups.value)
+  return [...map].map(([groupKey, items]) => ({
+    groupKey,
+    label: props.groupLabel?.(groupKey, items) ?? (groupKey || 'Sem grupo'),
+    items,
+    count: items.length,
+    collapsed: collapsed.has(groupKey),
+  }))
+})
+
+const isGrouped = computed(() => Boolean(props.groupBy))
+// O tipo do PrimeVue pede `object` na função, mas o valor é só comparado entre as linhas.
+const groupRowsBy = computed(() =>
+  isGrouped.value ? (groupKeyOf as unknown as (field: unknown) => object) : undefined,
+)
+const groupByKey = computed(() => new Map(groups.value.map((group) => [group.groupKey, group])))
+const groupOf = (item: Record<string, unknown>) => groupByKey.value.get(groupKeyOf(item))
+
+/** A DataTable só junta linhas vizinhas: com grupos, as linhas de cada grupo ficam juntas. */
+const displayItems = computed<Record<string, unknown>[]>(() =>
+  isGrouped.value ? groups.value.flatMap((group) => group.items) : props.crud.items.value,
+)
+
+const expandedGroupKeys = computed(() =>
+  groups.value.filter((group) => !group.collapsed).map((group) => group.groupKey),
+)
+
+/** A tabela informa os abertos da página; recolhidos de outras páginas continuam guardados. */
+function onExpandedGroupsChange(expanded: unknown): void {
+  const open = new Set((expanded as string[] | null) ?? [])
+  const pageKeys = new Set(groups.value.map((group) => group.groupKey))
+  collapsedGroups.value = [
+    ...collapsedGroups.value.filter((key) => !pageKeys.has(key)),
+    ...groups.value.filter((group) => !open.has(group.groupKey)).map((group) => group.groupKey),
+  ]
+}
+
+function toggleGroup(groupKey: string): void {
+  collapsedGroups.value = collapsedGroups.value.includes(groupKey)
+    ? collapsedGroups.value.filter((key) => key !== groupKey)
+    : [...collapsedGroups.value, groupKey]
+}
+
+function setAllGroupsCollapsed(collapsed: boolean): void {
+  const pageKeys = groups.value.map((group) => group.groupKey)
+  const others = collapsedGroups.value.filter((key) => !pageKeys.includes(key))
+  collapsedGroups.value = collapsed ? [...others, ...pageKeys] : others
+}
+
+/** Cards: sem grupos, uma seção só e sem cabeçalho. `offset` mantém o `index` do slot `card`. */
+const cardSections = computed(() => {
+  if (!isGrouped.value) {
+    return [{ group: null, items: displayItems.value, offset: 0 }]
+  }
+  let offset = 0
+  return groups.value.map((group) => {
+    const section = { group, items: group.items, offset }
+    offset += group.count
+    return section
+  })
+})
+
 // Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
 const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
 
@@ -441,18 +535,29 @@ const tableRef = ref<{ $el?: HTMLElement } | null>(null)
  * para o sentido "de fora para dentro" (selecionou no mapa/gráfico, a linha
  * aparece). Só alcança a página atual: linha em outra página não é buscada — é
  * do consumidor decidir o que fazer nesse caso (a lista é lazy). Com linhas de
- * expansão abertas o índice DOM diverge do índice do item; aí não rola.
+ * expansão abertas o índice DOM diverge do índice do item; aí não rola. Linha em
+ * grupo recolhido: abre o grupo antes de rolar.
  */
 function scrollToRow(value: unknown): void {
   const pk = props.crud.config.pk || 'id'
-  const index = props.crud.items.value.findIndex(
-    (row: Record<string, unknown>) => row[pk] === value,
-  )
-  if (index < 0) return
-  const root = tableRef.value?.$el as HTMLElement | undefined
-  const rows = root?.querySelectorAll<HTMLElement>('tbody > tr')
-  if (!rows || rows.length !== props.crud.items.value.length) return
-  rows[index]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  const target = displayItems.value.find((row) => row[pk] === value)
+  if (!target) return
+  const roll = () => {
+    const visible = displayItems.value.filter((row) => !groupOf(row)?.collapsed)
+    const root = tableRef.value?.$el as HTMLElement | undefined
+    const rows = root?.querySelectorAll<HTMLElement>(
+      'tbody > tr:not(.p-datatable-row-group-header)',
+    )
+    if (!rows || rows.length !== visible.length) return
+    rows[visible.indexOf(target)]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }
+  const group = groupOf(target)
+  if (group?.collapsed) {
+    toggleGroup(group.groupKey)
+    void nextTick(roll)
+  } else {
+    roll()
+  }
 }
 
 defineExpose({ scrollToRow })
@@ -713,6 +818,23 @@ const pisoCss = computed(() => {
  *  horizontal em vez de esmagar o título (ou cortar, sob o `overflow: hidden`). */
 const tableStyle = computed(() => (pisoCss.value ? { '--w-crud-min': pisoCss.value } : undefined))
 
+/** A DataTable reserva uma coluna ao lado do cabeçalho do grupo (`colspan` = colunas - 1), o
+ *  que deixa a faixa curta; aqui ela ocupa a largura toda. */
+const tablePt = computed(() => ({
+  pcPaginator: { root: { class: 'w-crud-paginator' } },
+  ...(isGrouped.value
+    ? {
+        rowGroupHeaderCell: {
+          colspan:
+            (isMultiSelect.value ? 1 : 0) +
+            (props.expandable ? 1 : 0) +
+            visibleColumns.value.length +
+            (hasActions.value && !props.actionRail ? 1 : 0),
+        },
+      }
+    : {}),
+}))
+
 // --- Init ---
 
 onMounted(() => {
@@ -778,7 +900,11 @@ onMounted(() => {
           <div ref="sonda" :style="{ width: pisoCss ?? '0' }" />
         </div>
         <!-- Table -->
-        <div v-if="isView('table')" class="w-crud-table">
+        <div
+          v-if="isView('table')"
+          class="w-crud-table"
+          :class="{ 'w-crud-table--grouped': isGrouped }"
+        >
           <!-- Barra de ações em lote (seleção múltipla) -->
           <div v-if="isMultiSelect && crud.selectedItems.value.length" class="w-crud-bulkbar">
             <span class="w-crud-bulkbar__count">
@@ -809,15 +935,19 @@ onMounted(() => {
           <DataTable
             ref="tableRef"
             v-model:expanded-rows="expandedRows"
-            :value="crud.items.value"
+            :value="displayItems"
             :loading="crud.loading.value"
+            :row-group-mode="isGrouped ? 'subheader' : undefined"
+            :group-rows-by="groupRowsBy"
+            :expandable-row-groups="isGrouped"
+            :expanded-row-groups="isGrouped ? expandedGroupKeys : undefined"
             paginator
             :rows="crud.pagination.pageSize"
             :total-records="crud.pagination.rows"
             :rows-per-page-options="[10, 20, 50]"
             paginator-template="CurrentPageReport PrevPageLink NextPageLink"
             :current-page-report-template="pageReportTemplate"
-            :pt="{ pcPaginator: { root: { class: 'w-crud-paginator' } } }"
+            :pt="tablePt"
             lazy
             striped-rows
             removable-sort
@@ -843,6 +973,7 @@ onMounted(() => {
               (v: any) => (isMultiSelect ? (crud.selectedItems.value = v) : (selectedRow = v))
             "
             @update:context-menu-selection="(v: any) => (selectedRow = v)"
+            @update:expanded-row-groups="onExpandedGroupsChange"
             @row-contextmenu="onRowContextMenu"
             :row-class="rowClass"
             @row-click="onTableRowClick"
@@ -930,6 +1061,24 @@ onMounted(() => {
                 </div>
                 <div class="w-crud-toolbar-end">
                   <slot name="toolbar-actions" />
+                  <template v-if="groups.length > 1">
+                    <Button
+                      v-tooltip.top="'Expandir grupos'"
+                      icon="pi pi-angle-double-down"
+                      aria-label="Expandir grupos"
+                      text
+                      size="small"
+                      @click="setAllGroupsCollapsed(false)"
+                    />
+                    <Button
+                      v-tooltip.top="'Recolher grupos'"
+                      icon="pi pi-angle-double-up"
+                      aria-label="Recolher grupos"
+                      text
+                      size="small"
+                      @click="setAllGroupsCollapsed(true)"
+                    />
+                  </template>
                   <template v-if="persistState">
                     <Button
                       v-tooltip.top="'Colunas'"
@@ -1012,6 +1161,19 @@ onMounted(() => {
                   <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
                 </div>
               </slot>
+            </template>
+
+            <template v-if="isGrouped" #groupheader="{ data }">
+              <span v-if="groupOf(data)" class="w-crud-group-head">
+                <slot name="group-header" v-bind="groupOf(data)!">
+                  <span class="w-crud-group-label">{{ groupOf(data)!.label }}</span>
+                </slot>
+                <span class="w-crud-group-meta">
+                  <slot name="group-meta" v-bind="groupOf(data)!">
+                    <Tag :value="String(groupOf(data)!.count)" severity="secondary" rounded />
+                  </slot>
+                </span>
+              </span>
             </template>
 
             <!-- Seleção múltipla (checkbox) -->
@@ -1173,6 +1335,24 @@ onMounted(() => {
             </div>
             <div class="w-crud-toolbar-end">
               <slot name="toolbar-actions" />
+              <template v-if="groups.length > 1">
+                <Button
+                  v-tooltip.top="'Expandir grupos'"
+                  icon="pi pi-angle-double-down"
+                  aria-label="Expandir grupos"
+                  text
+                  size="small"
+                  @click="setAllGroupsCollapsed(false)"
+                />
+                <Button
+                  v-tooltip.top="'Recolher grupos'"
+                  icon="pi pi-angle-double-up"
+                  aria-label="Recolher grupos"
+                  text
+                  size="small"
+                  @click="setAllGroupsCollapsed(true)"
+                />
+              </template>
               <Button
                 v-if="exportCsv"
                 v-tooltip.top="csvLabel"
@@ -1230,70 +1410,102 @@ onMounted(() => {
 
           <!-- Lista acessível: na tabela o leitor anuncia linhas; no card, itens da lista
                nomeada pelo título (as mesmas consultas por papel nos dois modos). -->
-          <div
-            v-else
-            class="w-crud-cards"
-            :class="{ 'w-crud-cards--bare': cardBare }"
-            role="list"
-            :aria-label="title || undefined"
-          >
+          <template v-for="section in cardSections" v-else :key="section.group?.groupKey ?? ''">
+            <div v-if="section.group" class="w-crud-group-bar">
+              <button
+                type="button"
+                class="w-crud-group-toggle"
+                :aria-expanded="!section.group.collapsed"
+                :aria-label="`${section.group.collapsed ? 'Expandir' : 'Recolher'} ${section.group.label}`"
+                @click="toggleGroup(section.group.groupKey)"
+              >
+                <i
+                  :class="section.group.collapsed ? 'pi pi-chevron-right' : 'pi pi-chevron-down'"
+                  aria-hidden="true"
+                />
+              </button>
+              <span class="w-crud-group-head">
+                <slot name="group-header" v-bind="section.group">
+                  <span class="w-crud-group-label">{{ section.group.label }}</span>
+                </slot>
+                <span class="w-crud-group-meta">
+                  <slot name="group-meta" v-bind="section.group">
+                    <Tag :value="String(section.group.count)" severity="secondary" rounded />
+                  </slot>
+                </span>
+              </span>
+            </div>
             <div
-              v-for="(row, idx) in crud.items.value"
-              :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
-              role="listitem"
-              :class="
-                cardBare
-                  ? 'w-crud-card-bare'
-                  : ['w-crud-card', { 'w-crud-card--selected': selectedRow === row }]
-              "
-              @click="onCardClick($event, row)"
-              @dblclick="onCardDblClick(row)"
-              @contextmenu="!cardBare && onCardContextMenu($event, row)"
+              v-if="!section.group?.collapsed"
+              class="w-crud-cards"
+              :class="{ 'w-crud-cards--bare': cardBare }"
+              role="list"
+              :aria-label="section.group?.label ?? (title || undefined)"
             >
-              <!-- Slot `card`: assume o CONTEÚDO do card (corpo + ações), mantendo o
+              <div
+                v-for="(row, idx) in section.items"
+                :key="(row[crud.config.pk || 'id'] as string | number) ?? idx"
+                role="listitem"
+                :class="
+                  cardBare
+                    ? 'w-crud-card-bare'
+                    : ['w-crud-card', { 'w-crud-card--selected': selectedRow === row }]
+                "
+                @click="onCardClick($event, row)"
+                @dblclick="onCardDblClick(row)"
+                @contextmenu="!cardBare && onCardContextMenu($event, row)"
+              >
+                <!-- Slot `card`: assume o CONTEÚDO do card (corpo + ações), mantendo o
                    wrapper do WCrudView (chrome, seleção, dblclick-editar, contextmenu,
                    toolbar/loading/empty/paginação). Sem o slot, cai no card padrão
                    (título + label:valor das `cardColumns` + ações de linha). -->
-              <slot name="card" :data="row" :crud="crud" :columns="cardColumns" :index="idx">
-                <div class="w-crud-card-body">
-                  <div
-                    v-for="(col, ci) in cardColumns"
-                    :key="col.field"
-                    class="w-crud-card-row"
-                    :class="{ 'w-crud-card-row--title': ci === 0 }"
-                  >
-                    <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
-                    <span class="w-crud-card-value">
-                      <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
-                        <WCrudColumnRenderer
-                          :column="col"
-                          :value="row[col.field]"
-                          :row-data="row"
-                        />
-                      </slot>
-                    </span>
+                <slot
+                  name="card"
+                  :data="row"
+                  :crud="crud"
+                  :columns="cardColumns"
+                  :index="section.offset + idx"
+                >
+                  <div class="w-crud-card-body">
+                    <div
+                      v-for="(col, ci) in cardColumns"
+                      :key="col.field"
+                      class="w-crud-card-row"
+                      :class="{ 'w-crud-card-row--title': ci === 0 }"
+                    >
+                      <span v-if="ci !== 0" class="w-crud-card-label">{{ col.header }}</span>
+                      <span class="w-crud-card-value">
+                        <slot :name="`column-${col.field}`" :data="row" :value="row[col.field]">
+                          <WCrudColumnRenderer
+                            :column="col"
+                            :value="row[col.field]"
+                            :row-data="row"
+                          />
+                        </slot>
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
-                  <template v-for="action in effectiveRowActions" :key="action.action">
-                    <Button
-                      v-if="isActionVisible(action, row)"
-                      v-tooltip.top="action.tooltip"
-                      :icon="action.icon"
-                      :aria-label="actionLabel(action)"
-                      text
-                      rounded
-                      size="small"
-                      :severity="action.severity as any"
-                      :disabled="isActionDisabled(action, row)"
-                      @click="handleRowAction(action, row)"
-                    />
-                  </template>
-                  <slot name="row-actions" :data="row" :crud="crud" />
-                </div>
-              </slot>
+                  <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
+                    <template v-for="action in effectiveRowActions" :key="action.action">
+                      <Button
+                        v-if="isActionVisible(action, row)"
+                        v-tooltip.top="action.tooltip"
+                        :icon="action.icon"
+                        :aria-label="actionLabel(action)"
+                        text
+                        rounded
+                        size="small"
+                        :severity="action.severity as any"
+                        :disabled="isActionDisabled(action, row)"
+                        @click="handleRowAction(action, row)"
+                      />
+                    </template>
+                    <slot name="row-actions" :data="row" :crud="crud" />
+                  </div>
+                </slot>
+              </div>
             </div>
-          </div>
+          </template>
 
           <Paginator
             v-if="crud.items.value.length"
