@@ -128,6 +128,7 @@ export type {
   AttentionItem,
   AttentionItemClickEvent,
   AttentionSeverity,
+  CrudGroupScope,
   GroupedSelectGroupScope,
   GroupedSelectKey,
   // TabItem faltava aqui — a doc do WTabBar ensina importar da raiz.

@@ -255,6 +255,31 @@ inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFi
 `4`) diz quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
 `rótulo: valor`. Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
 
+### Agrupar linhas
+
+`groupBy` (nome do campo ou função) reúne as linhas sob cabeçalhos recolhíveis, na tabela e nos
+cards. Os grupos seguem a ordem da primeira aparição em `crud.items`: para outra ordem, use
+`transformItems` ou a ordenação da API. Com mais de um grupo, a toolbar ganha os botões de
+expandir e recolher todos.
+
+```vue
+<WCrudView
+  v-model:collapsed-groups="recolhidos"
+  :crud="crud"
+  title="Permissões"
+  group-by="modulo"
+>
+  <template #group-meta="{ count }">{{ count }} permissões</template>
+</WCrudView>
+```
+
+`v-model:collapsedGroups` guarda as chaves recolhidas e é opcional; `groupLabel` troca o texto do
+cabeçalho. Os slots `group-header` e `group-meta` recebem `groupKey`, `label`, `items`, `count` e
+`collapsed`.
+
+A listagem continua paginada: o grupo vale para o que veio na página e pode continuar na seguinte.
+Para ver cada grupo inteiro, peça a lista toda (`pageSize` alto) ou ordene a API pelo mesmo campo.
+
 ### Quando a largura força os cards
 
 **A régua é a largura da área da listagem, não a da janela.** Com `cardMode: 'auto'` (default),

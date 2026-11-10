@@ -568,10 +568,31 @@
           "description": "Chave de persistência do estado de coluna (visibilidade) em localStorage.\nOpt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado."
         },
         {
+          "name": "groupBy",
+          "type": "string | ((item: Record<string, unknown>) => string) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Agrupa as linhas sob cabeçalhos recolhíveis, na tabela e nos cards: nome do campo ou\nfunção que dá a chave do grupo. Os grupos seguem a ordem da primeira aparição em\n`crud.items`; para ordenar, use `transformItems` ou a ordenação da API. A lista é lazy:\nagrupa o que veio na página, então um grupo pode continuar na página seguinte."
+        },
+        {
+          "name": "groupLabel",
+          "type": "((groupKey: string, items: Record<string, unknown>[]) => string) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Rótulo do grupo; default a própria chave (\"Sem grupo\" quando vazia)."
+        },
+        {
           "name": "selectedRow",
           "type": "Record<string, unknown> | null | undefined",
           "required": false,
           "default": "null",
+          "description": ""
+        },
+        {
+          "name": "collapsedGroups",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": "[]",
           "description": ""
         }
       ],
@@ -584,6 +605,11 @@
         {
           "name": "update:selectedRow",
           "type": "[value: Record<string, unknown> | null]",
+          "description": ""
+        },
+        {
+          "name": "update:collapsedGroups",
+          "type": "[value: string[]]",
           "description": ""
         },
         {
@@ -639,6 +665,16 @@
           "description": ""
         },
         {
+          "name": "group-header",
+          "type": "{ groupKey: string; label: string; items: Record<string, unknown>[]; count: number; collapsed: boolean; }",
+          "description": ""
+        },
+        {
+          "name": "group-meta",
+          "type": "{ groupKey: string; label: string; items: Record<string, unknown>[]; count: number; collapsed: boolean; }",
+          "description": ""
+        },
+        {
           "name": "row-actions",
           "type": "{ data: any; crud: CrudManagerReturn<any>; }",
           "description": ""
@@ -650,7 +686,7 @@
         },
         {
           "name": "card",
-          "type": "{ data: any; crud: CrudManagerReturn<any>; columns: ColumnDef[]; index: number; }",
+          "type": "{ data: Record<string, unknown>; crud: CrudManagerReturn<any>; columns: ColumnDef[]; index: number; }",
           "description": ""
         },
         {
