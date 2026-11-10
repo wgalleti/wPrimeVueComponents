@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.18.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.17.1...v1.18.0) (2026-11-10)
+
+### Funcionalidades
+
+* **crud:** agrupa as linhas do WCrudView com groupBy ([f348c86](https://github.com/wgalleti/wPrimeVueComponents/commit/f348c860e8191bc49851fe0684f3d2fb2fc12e72))
 ## [1.17.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.17.0...v1.17.1) (2026-11-09)
 
 ### Segurança
