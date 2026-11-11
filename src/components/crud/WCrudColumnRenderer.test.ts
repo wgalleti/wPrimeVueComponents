@@ -109,3 +109,29 @@ describe('WCrudColumnRenderer — format vence o formatador do tipo', () => {
     expect(montar(col, '2026-09-21').text()).toBe('21/09/2026')
   })
 })
+
+describe('WCrudColumnRenderer — vazio com `empty` e `emptySeverity`', () => {
+  const col: ColumnDef = {
+    field: 'corretor',
+    header: 'Corretor',
+    type: 'identity',
+    empty: 'Sem corretor',
+    emptySeverity: 'warn',
+  }
+
+  it("'' e null viram o texto de `empty`, com a classe de atenção", () => {
+    for (const v of [null, undefined, '']) {
+      const w = montar(col, v)
+      expect(w.find('.w-cell-empty').text()).toBe('Sem corretor')
+      expect(w.find('.w-cell-empty').classes()).toContain('w-cell-empty--warn')
+      expect(w.find('.w-cell-avatar').exists()).toBe(false)
+    }
+  })
+
+  it("sem `empty` nada muda: null é o travessão sem destaque e '' passa como valor", () => {
+    const nulo = montar({ field: 'x', header: 'X' }, null)
+    expect(nulo.find('.w-cell-empty').text()).toBe('—')
+    expect(nulo.find('.w-cell-empty').classes()).not.toContain('w-cell-empty--warn')
+    expect(montar({ field: 'x', header: 'X' }, '').find('.w-cell-empty').exists()).toBe(false)
+  })
+})

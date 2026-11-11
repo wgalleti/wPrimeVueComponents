@@ -34,6 +34,8 @@ export interface ColumnDef {
   style?: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
+  /** Campo enviado na ordenação quando difere do `field` (ex.: ordenar a etapa pela data). */
+  sortField?: string
   /** Render próprio da célula. Vence o formatador do tipo (`currency`, `date`, `datetime`, `number`). */
   format?: (value: unknown, rowData?: Record<string, unknown>) => string
   visible?: boolean
@@ -63,4 +65,9 @@ export interface ColumnDef {
   progress?: (rowData: Record<string, unknown>) => { of: number; total: number }
   /** `type: 'relative'` — prazo: fica em vermelho quando a data já passou. */
   dueDate?: boolean
+  /** Opt-in: texto da célula quando o valor é vazio (`null`, `undefined` ou `''`), em qualquer tipo.
+   *  Sem `empty`, `null` segue como "—" e `''` passa como valor, igual antes. */
+  empty?: string
+  /** Destaque do texto vazio: `warn` pinta com o token de atenção (ex.: "Sem corretor"). */
+  emptySeverity?: 'warn'
 }
