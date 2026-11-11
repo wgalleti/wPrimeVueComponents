@@ -19,10 +19,25 @@ interface ColumnDef {
   decimals?: number
   tagValue?: (value: unknown, rowData?: Record<string, unknown>) => string
   tagSeverity?: (value: unknown, rowData?: Record<string, unknown>) => string
+  filter?: ColumnFilter
+  // Linhas compostas (ver WCrudView > Linhas compostas)
+  secondary?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  avatar?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  progress?: (rowData: Record<string, unknown>) => { of: number; total: number }
+  dueDate?: boolean
 }
 
-type ColumnType = 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+type ColumnType =
+  | 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  | 'identity' | 'progress' | 'relative'
 ```
+
+- `secondary`: segunda linha abafada sob o valor, em qualquer tipo (nome de campo ou função).
+- `identity`: valor em destaque com `avatar` à esquerda (URL por campo ou função; sem imagem,
+  iniciais do valor) e `secondary` abaixo.
+- `progress`: mini barra com rótulo `of/total` vindo de `progress(row)`; `format` troca o rótulo.
+- `relative`: "há 3 dias" (dayjs, pt-BR); a data exata vai no tooltip e num texto oculto da
+  célula. `dueDate: true` pinta de vermelho a data que já passou.
 
 ## FieldDef
 

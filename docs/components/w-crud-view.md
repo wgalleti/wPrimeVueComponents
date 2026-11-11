@@ -346,6 +346,39 @@ card. O `fit` da `WCrudView` é o piso sem os 840.
 
 Para desenhar o card inteiro, use o slot `card` (com `cardBare` para remover o chrome padrão).
 
+## Linhas compostas
+
+`composed` (opt-in) troca a linha simples por uma linha de duas alturas — a altura vem do token
+de densidade (3.5rem na média, 3rem na compacta) — sem réguas verticais nem zebra: o hover é o
+trilho. O cabeçalho fica leve (sem caixa alta) e fixo no scroll. Nada muda para quem não passa
+`composed` nem usa os tipos abaixo.
+
+```ts
+const columns: ColumnDef[] = [
+  { field: 'nome', header: 'Cliente', type: 'identity', avatar: 'foto_url', secondary: 'email' },
+  { field: 'valor', header: 'Valor', type: 'currency', secondary: (r) => `${r.parcelas}x` },
+  {
+    field: 'etapas_feitas',
+    header: 'Etapas',
+    type: 'progress',
+    progress: (r) => ({ of: r.etapas_feitas as number, total: r.etapas_total as number }),
+  },
+  { field: 'vence_em', header: 'Vence', type: 'relative', dueDate: true },
+]
+```
+
+```vue
+<WCrudView :crud="crud" title="Negócios" composed />
+```
+
+- `secondary` (qualquer tipo): segunda linha abafada; nome de campo da linha ou função.
+- `identity`: nome em destaque, `avatar` à esquerda (sem imagem, as iniciais) e `secondary`
+  abaixo. Nos cards (`cardMode: 'auto'`) essa coluna vira o título, onde quer que esteja.
+- `progress`: mini barra com rótulo `of/total`; `format` troca o rótulo.
+- `relative`: "há 3 dias" com a data exata no tooltip e num texto oculto da célula — a linha
+  continua casando a data em busca de texto e nos e2e. `dueDate: true` pinta de vermelho o que
+  já venceu.
+
 ## Filtros
 
 **Todo filtro mora na toolbar do grid, ao lado da busca** — nunca numa faixa própria acima da
