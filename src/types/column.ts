@@ -4,7 +4,14 @@
 import type { RouteLocationRaw } from 'vue-router'
 
 export type ColumnType =
-  | 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  | 'text'
+  | 'boolean'
+  | 'date'
+  | 'datetime'
+  | 'number'
+  | 'currency'
+  | 'image'
+  | 'custom'
   /** Linha composta: nome em destaque, `secondary` abafado abaixo e `avatar` à esquerda. */
   | 'identity'
   /** Mini barra com rótulo "de/total" (`progress`). */
