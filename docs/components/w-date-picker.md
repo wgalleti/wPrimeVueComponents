@@ -4,6 +4,11 @@ Campo de data pt-BR padronizado: exibe `DD/MM/YYYY` (ou `DD/MM/YYYY HH:mm` com `
 e **salva `YYYY-MM-DD`**. A digitação direta é mascarada (`30051988` vira `30/05/1988`), o
 ícone de calendário abre o seletor (Hoje / Limpar) e `F2` preenche a data de hoje.
 
+Com `showTime` o seletor não fecha ao escolher o dia, porque ainda falta a hora. O rodapé
+traz os atalhos **Agora** e **Limpar** à esquerda e um **OK** à direita, que confirma, fecha
+e devolve o foco ao campo. O Limpar fica longe do OK para não apagar a data sem querer;
+`Esc` fecha sem mudar nada.
+
 Com `autonow`, no mount o campo preenche hoje se o valor estiver `null` — valor já existente
 é preservado.
 

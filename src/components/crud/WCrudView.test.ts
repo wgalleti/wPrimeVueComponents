@@ -43,13 +43,13 @@ function montar(
   extraProvider: Partial<DataProvider> = {},
 ) {
   const provider: Partial<DataProvider> = {
-    ...extraProvider,
     list: vi.fn().mockResolvedValue({
       data: [{ id: 1, nome: 'Soja', ativo: true }],
       page: 1,
       page_size: 20,
       rows: 1,
     }),
+    ...extraProvider,
   }
   const Host = defineComponent({
     setup() {
@@ -756,6 +756,29 @@ describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
         expect(botao(w).attributes('disabled')).toBeUndefined()
         await botao(w).trigger('click')
         expect(handler).toHaveBeenCalledWith(linha)
+      })
+
+      it('multiselect: marcar a caixa tira a linha ativa e o alvo vira o item marcado', async () => {
+        handler.mockClear()
+        const milho = { id: 2, nome: 'Milho', ativo: true }
+        const list = vi.fn().mockResolvedValue({
+          data: [linha, milho],
+          page: 1,
+          page_size: 20,
+          rows: 2,
+        }) as unknown as DataProvider['list']
+        const w = montar({ rowActions: [acao], selectionMode: 'multiple' }, {}, { list })
+        await flushPromises()
+        await nextTick()
+        // Linha 1 ativa (clique, ou botão direito), depois a caixa da linha 2 marcada.
+        await celula(w).trigger('click')
+        await nextTick()
+        const caixas = w.findAll('tbody tr td[data-p-selection-column="true"] input')
+        await caixas[1].trigger('change')
+        await nextTick()
+        await botao(w).trigger('click')
+        expect(handler).toHaveBeenCalledWith(milho)
+        expect(w.findAll('tbody tr.p-datatable-row-selected')).toHaveLength(0)
       })
 
       it('multiselect: sem linha ativa, exatamente 1 item marcado vira o alvo', async () => {
