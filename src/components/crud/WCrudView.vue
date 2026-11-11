@@ -74,6 +74,9 @@ const props = withDefaults(
      * trocar entre `auto` e `fit` depois de montado não é suportado.
      */
     cardMode?: 'auto' | 'never' | 'always' | 'fit'
+    /** Linhas compostas (opt-in): linha de duas alturas pelo token de densidade, sem réguas
+     *  verticais, cabeçalho leve e fixo; nos cards a coluna `identity` vira o título. */
+    composed?: boolean
     /** Cards "sem moldura": remove o chrome padrão do card (borda/sombra/padding/
      *  seleção) para o slot `#card` desenhar o card inteiro (ex.: um card de design
      *  próprio). O wrapper vira só a célula do grid. */
@@ -111,6 +114,7 @@ const props = withDefaults(
     defaultView: 'table',
     cardFields: 4,
     cardMode: 'auto',
+    composed: false,
     actionRail: true,
     contextMenu: true,
     showPrint: false,
@@ -294,7 +298,12 @@ function colAlignClass(col: { align?: string }) {
   return undefined
 }
 
-const cardColumns = computed(() => visibleColumns.value.slice(0, props.cardFields))
+// Composto: a coluna `identity` é o título do card (avatar + duas linhas), onde estiver.
+const cardColumns = computed(() => {
+  const cols = visibleColumns.value.slice(0, props.cardFields)
+  const id = props.composed ? visibleColumns.value.find((c) => c.type === 'identity') : undefined
+  return id ? [id, ...cols.filter((c) => c !== id)].slice(0, props.cardFields) : cols
+})
 
 // --- Row Actions ---
 
@@ -858,7 +867,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-crud">
+  <div class="w-crud" :class="{ 'w-crud--composed': composed }">
     <!-- Header -->
     <div v-if="showHeader" class="w-crud-header">
       <div class="w-crud-header-content">
@@ -1200,6 +1209,7 @@ onMounted(() => {
               :field="col.field"
               :header="col.header"
               :sortable="col.sortable"
+              :sort-field="col.sortField"
               :style="col.style"
               :header-class="colClass(col)"
               :body-class="colClass(col)"

@@ -138,6 +138,77 @@ describe('WCrudView — nome acessível dos botões só-ícone', () => {
   })
 })
 
+describe('WCrudView — linhas compostas (opt-in)', () => {
+  const ontem = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
+  const colunas = [
+    { field: 'nome', header: 'Nome', type: 'identity' as const, secondary: 'email' },
+    {
+      field: 'feitas',
+      header: 'Etapas',
+      type: 'progress' as const,
+      progress: (r: Record<string, unknown>) => ({ of: r.feitas as number, total: 4 }),
+    },
+    { field: 'prazo', header: 'Prazo', type: 'relative' as const, dueDate: true },
+    { field: 'valor', header: 'Valor', type: 'currency' as const, secondary: () => 'à vista' },
+  ]
+  const linha = { id: 1, nome: 'Ana Souza', email: 'ana@x.com', feitas: 1, prazo: ontem, valor: 10 }
+  const composto = { columns: colunas, transformItems: () => [linha] }
+
+  it('sem `composed` nem tipos novos nada muda', async () => {
+    const w = montar()
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.w-crud--composed').exists()).toBe(false)
+    expect(w.find('.w-cell-secondary').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('identity: iniciais sem imagem, segunda linha abafada; `composed` marca a raiz', async () => {
+    const w = montar(composto, { composed: true })
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.w-crud--composed').exists()).toBe(true)
+    const id = w.find('.w-cell-identity')
+    expect(id.find('.w-cell-avatar').text()).toBe('AS')
+    expect(id.find('.w-cell-identity__primary').text()).toBe('Ana Souza')
+    expect(id.find('.w-cell-secondary').text()).toBe('ana@x.com')
+    w.unmount()
+  })
+
+  it('progress: barra com a porcentagem e rótulo de/total', async () => {
+    const w = montar(composto, { composed: true })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const bar = w.find('.w-cell-progress')
+    expect(bar.find('[role="progressbar"]').attributes('aria-valuenow')).toBe('25')
+    expect(bar.find('.w-cell-progress__fill').attributes('style')).toContain('--w-progress: 25%')
+    expect(bar.find('.w-cell-progress__label').text()).toBe('1/4')
+    w.unmount()
+  })
+
+  it('relative: texto relativo, data exata oculta na linha e vermelho quando venceu', async () => {
+    const w = montar(composto, { composed: true })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const rel = w.find('.w-cell-relative')
+    expect(rel.text()).toContain('há')
+    const [a, m, d] = ontem.split('-')
+    expect(rel.find('.w-cell-relative__exact').text()).toBe(`${d}/${m}/${a}`)
+    expect(rel.classes()).toContain('w-cell-relative--due')
+    w.unmount()
+  })
+
+  it('secondary vale em tipo simples (currency) sem mudar o valor', async () => {
+    const w = montar(composto, { composed: true })
+    await flushPromises()
+    await w.vm.$nextTick()
+    const td = w.findAll('.p-datatable-tbody td').find((c) => c.find('.w-cell-number').exists())!
+    expect(td.find('.w-cell-number').text()).toContain('10,00')
+    expect(td.find('.w-cell-secondary').text()).toBe('à vista')
+    w.unmount()
+  })
+})
+
 describe('WCrudView — contagem total junto ao título', () => {
   it('mostra o total do filtro ao lado do título, com aria-live', async () => {
     const w = montar()
