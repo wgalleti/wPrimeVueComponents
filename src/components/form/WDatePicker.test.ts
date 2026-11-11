@@ -28,4 +28,33 @@ describe('WDatePicker', () => {
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(w.find('[aria-label="Abrir calendário"]').exists()).toBe(true)
   })
+
+  // O calendário em si (PrimeVue) não interessa aqui e pede matchMedia, que o jsdom não tem.
+  const comPainel = { teleport: true, DatePicker: true }
+
+  it('só data: atalho Hoje, sem OK (o clique no dia já fecha)', async () => {
+    const w = mount(WDatePicker, {
+      props: { modelValue: null },
+      global: { plugins: [PrimeVue], stubs: comPainel },
+    })
+    await w.find('[aria-label="Abrir calendário"]').trigger('click')
+    const rotulos = w.findAll('.w-datepicker-actions button').map((b) => b.text())
+    expect(rotulos).toEqual(['Hoje', 'Limpar'])
+  })
+
+  it('com hora: Agora e Limpar à esquerda e OK que fecha e volta o foco ao campo', async () => {
+    const w = mount(WDatePicker, {
+      props: { modelValue: null, showTime: true },
+      global: { plugins: [PrimeVue], stubs: comPainel },
+      attachTo: document.body,
+    })
+    await w.find('[aria-label="Abrir calendário"]').trigger('click')
+    const atalhos = w.findAll('.w-datepicker-shortcuts button').map((b) => b.text())
+    expect(atalhos).toEqual(['Agora', 'Limpar'])
+    const ok = w.findAll('.w-datepicker-actions > button')
+    expect(ok.map((b) => b.text())).toEqual(['OK'])
+    await ok[0].trigger('click')
+    expect(document.activeElement).toBe(w.find('input').element)
+    w.unmount()
+  })
 })

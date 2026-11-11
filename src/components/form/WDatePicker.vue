@@ -13,7 +13,9 @@ import { useDateInput, type DateValueFormat } from '@/composables/useDateInput'
  * Campo de data pt-BR padronizado.
  * - Exibe `DD/MM/YYYY` (ou `DD/MM/YYYY HH:mm` com `showTime`) e salva `YYYY-MM-DD`.
  * - Digitação direta com máscara: `30051988` vira `30/05/1988`.
- * - Ícone de calendário abre o seletor (Hoje / Limpar).
+ * - Ícone de calendário abre o seletor (Hoje / Limpar). Com `showTime` o seletor não fecha ao
+ *   escolher (falta a hora): os atalhos viram "Agora" / "Limpar" à esquerda e um **OK** à
+ *   direita confirma e fecha, devolvendo o foco ao campo. `Esc` fecha sem mudar nada.
  * - `F2` preenche a data de hoje.
  * - `autonow`: no mount, se o valor for `null`, preenche hoje; senão mantém.
  */
@@ -57,6 +59,7 @@ const di = useDateInput({
 const typed = ref('') // texto no input (DD/MM/YYYY[ HH:mm])
 const panelDate = ref<Date | null>(null) // valor do calendário
 const op = ref<InstanceType<typeof Popover> | null>(null)
+const inputRef = ref<InstanceType<typeof InputText> | null>(null)
 
 const maskaOptions = computed(() => ({ mask: di.mask() }))
 const minDateObj = computed(() => di.toDate(props.minDate) ?? undefined)
@@ -114,6 +117,13 @@ function clearValue() {
   op.value?.hide()
 }
 
+/** OK do seletor com hora: a escolha já foi aplicada; fecha e volta o foco ao campo. */
+function confirm() {
+  op.value?.hide()
+  const el = (inputRef.value as { $el?: HTMLElement } | null)?.$el
+  el?.focus()
+}
+
 function toggle(e: Event) {
   if (props.disabled) return
   op.value?.toggle(e)
@@ -129,6 +139,7 @@ onMounted(() => {
     <IconField>
       <InputText
         :id="inputId"
+        ref="inputRef"
         v-bind="inputAttrs"
         v-model="typed"
         v-maska="maskaOptions"
@@ -164,15 +175,18 @@ onMounted(() => {
           @update:model-value="onPick"
         />
         <div class="w-datepicker-actions">
-          <Button label="Hoje" text size="small" @click="setToday" />
-          <Button
-            v-if="showClear"
-            label="Limpar"
-            text
-            size="small"
-            severity="secondary"
-            @click="clearValue"
-          />
+          <div class="w-datepicker-shortcuts">
+            <Button :label="showTime ? 'Agora' : 'Hoje'" text size="small" @click="setToday" />
+            <Button
+              v-if="showClear"
+              label="Limpar"
+              text
+              size="small"
+              severity="secondary"
+              @click="clearValue"
+            />
+          </div>
+          <Button v-if="showTime" label="OK" size="small" @click="confirm" />
         </div>
       </div>
     </Popover>
