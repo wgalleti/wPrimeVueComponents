@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.19.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.18.0...v1.19.0) (2026-11-11)
+
+### Funcionalidades
+
+* **crud:** composed rows with identity, progress and relative date cells ([c003fd8](https://github.com/wgalleti/wPrimeVueComponents/commit/c003fd851923af9ef1fd3e344f38a5281504c87a))
+* **crud:** empty fallback text and sort field per column ([98cab27](https://github.com/wgalleti/wPrimeVueComponents/commit/98cab27a9eb996369c37a26d634d053a8648362e))
+* **crud:** per-row due date compared by day and links in cells ([77208f3](https://github.com/wgalleti/wPrimeVueComponents/commit/77208f3205b094eb470b1835d847a61185395bdf))
+* **form:** botão OK no WDatePicker com hora ([dfe3140](https://github.com/wgalleti/wPrimeVueComponents/commit/dfe314060bac7ff401bc3796a451de94a57d82f5))
+
+### Correções
+
+* **build:** keep dayjs plugins and locales external ([88c42e5](https://github.com/wgalleti/wPrimeVueComponents/commit/88c42e5bd39120d6586f561116bd18160aec9e85))
+* **crud:** trilho segue a caixa marcada na seleção múltipla ([e50ed3f](https://github.com/wgalleti/wPrimeVueComponents/commit/e50ed3f2a057901c0e52e461478af1e2d78c4b9e))
 ## [1.18.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.17.1...v1.18.0) (2026-11-10)
 
 ### Funcionalidades
