@@ -3,7 +3,13 @@
 // ---------------------------------------------------------------------------
 
 export type ColumnType =
-  'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  | 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  /** Linha composta: nome em destaque, `secondary` abafado abaixo e `avatar` à esquerda. */
+  | 'identity'
+  /** Mini barra com rótulo "de/total" (`progress`). */
+  | 'progress'
+  /** Tempo relativo ("há 3 dias"); a data exata vai no tooltip e no texto oculto da linha. */
+  | 'relative'
 
 /** Severidade do tag de status (mesmos nomes do PrimeVue; a cor vem dos tokens do app). */
 export type TagSeverity =
@@ -49,4 +55,12 @@ export interface ColumnDef {
   falseSeverity?: TagSeverity | null
   /** Filtro declarativo desta coluna (aparece na toolbar do grid, junto da busca). */
   filter?: ColumnFilter
+  /** Segunda linha abafada sob o valor, em qualquer tipo: nome de outro campo ou função. */
+  secondary?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  /** `type: 'identity'` — URL da imagem (campo ou função). Sem imagem, iniciais do valor. */
+  avatar?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  /** `type: 'progress'` — quanto já foi (`of`) de quanto (`total`). */
+  progress?: (rowData: Record<string, unknown>) => { of: number; total: number }
+  /** `type: 'relative'` — prazo: fica em vermelho quando a data já passou. */
+  dueDate?: boolean
 }

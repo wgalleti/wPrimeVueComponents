@@ -230,6 +230,134 @@
   border-top: 1px solid var(--w-border);
 }
 
+/* ==========================================================
+   Linhas compostas (WCrudView `composed`) — opt-in
+   Linha de duas alturas, altura pelo token de densidade (controle + um passo:
+   3.5rem na média, 3rem na compacta), sem réguas verticais nem zebra: o hover é
+   o trilho. Cabeçalho leve (sem caixa alta espaçada) e fixo no scroll.
+   ========================================================== */
+.w-crud--composed .w-crud-table .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-medium);
+  text-transform: none;
+  letter-spacing: normal;
+  background: var(--w-surface);
+  border-inline: 0;
+}
+
+.w-crud--composed .w-crud-table .p-datatable-tbody > tr > td {
+  height: calc(var(--w-control-h) + var(--w-space-4));
+  padding-top: var(--w-space-2);
+  padding-bottom: var(--w-space-2);
+  border-inline: 0;
+  vertical-align: middle;
+}
+
+.w-crud--composed .w-crud-table .p-datatable-tbody > tr.p-row-odd:not(:hover):not(.p-datatable-row-selected) {
+  background: transparent;
+}
+
+.w-crud--composed .w-crud-table .p-datatable-tbody > tr:hover > td {
+  background: var(--w-row-hover);
+}
+
+/* Célula composta: identity (avatar + duas linhas), secondary, progress, relative. */
+.w-cell-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-3);
+  min-width: 0;
+}
+
+.w-cell-avatar.p-avatar {
+  width: var(--w-icon-box-sm);
+  height: var(--w-icon-box-sm);
+  flex-shrink: 0;
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-primary);
+  background: var(--w-primary-soft);
+}
+
+.w-cell-identity__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--w-leading-snug);
+}
+
+.w-cell-identity__primary {
+  font-weight: var(--w-fw-medium);
+  color: var(--w-fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-cell-secondary {
+  display: block;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  line-height: var(--w-leading-snug);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-cell-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  min-width: 0;
+}
+
+.w-cell-progress__track {
+  width: var(--w-icon-box);
+  flex: 1 1 auto;
+  height: var(--w-meter-h);
+  border-radius: var(--w-radius-full);
+  background: var(--w-surface-3);
+  overflow: hidden;
+}
+
+.w-cell-progress__fill {
+  display: block;
+  height: 100%;
+  width: var(--w-progress); /* knob por instância: o renderer escreve a porcentagem */
+  border-radius: inherit;
+  background: var(--w-primary);
+  transition: width var(--w-motion) var(--w-ease);
+}
+
+.w-cell-progress__label {
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.w-cell-relative--due {
+  color: var(--w-danger);
+}
+
+/* Data exata só para leitor de tela e para o texto da linha (busca, e2e). */
+.w-cell-relative__exact {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Nos cards a identity é o título: avatar e duas linhas, sem rótulo. */
+.w-crud--composed .w-crud-card-row--title .w-cell-identity {
+  display: flex;
+}
+
 /* Paginator — compact: "Página X de Y  < >" aligned right */
 .w-crud-paginator .p-paginator-content {
   justify-content: flex-end;
