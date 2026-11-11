@@ -659,6 +659,17 @@ function handleRowClick(event: Event, row: Record<string, unknown>) {
   if (openOnRowClick.value && !isCellEdit.value) openRow(row)
 }
 
+// Marcar ou desmarcar uma caixa é a interação mais recente: a linha ativa anterior (do
+// clique ou do botão direito) deixa de ser o alvo do trilho, que passa ao único item
+// marcado. Sem isso o trilho seguia agindo sobre a linha do clique direito, com outra
+// marcada na caixa.
+watch(
+  () => props.crud.selectedItems.value,
+  () => {
+    if (isMultiSelect.value && selectedRow.value) selectedRow.value = null
+  },
+)
+
 // Alvo das ações do trilho: a linha ativa; sem ela, em seleção múltipla, o único
 // item marcado.
 const railRow = computed<Record<string, unknown> | null>(() => {
