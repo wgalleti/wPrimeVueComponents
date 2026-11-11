@@ -52,6 +52,7 @@ function getCompactFormatter(locale: string, currency?: string): Intl.NumberForm
   if (!fmt) {
     fmt = new Intl.NumberFormat(locale, {
       notation: 'compact',
+      minimumFractionDigits: 0, // Node 22 herda as 2 casas da moeda: "R$ 2,0 mi"
       maximumFractionDigits: 1,
       ...(currency ? { style: 'currency' as const, currency } : {}),
     })
