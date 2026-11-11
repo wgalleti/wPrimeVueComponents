@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.19.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.0...v1.19.1) (2026-11-11)
+
+### Correções
+
+* **build:** import dayjs plugins and locales with the .js extension so Node ESM consumers resolve them ([0403afa](https://github.com/wgalleti/wPrimeVueComponents/commit/0403afae6099f2e933451246cf49a38e483803bf))
+* **formatters:** drop the trailing zero in compact currency on Node 22 ([f6480d4](https://github.com/wgalleti/wPrimeVueComponents/commit/f6480d467e49be28d4d3c36505e091bd2889e043))
 ## [1.19.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.18.0...v1.19.0) (2026-11-11)
 
 ### Funcionalidades
