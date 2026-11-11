@@ -382,7 +382,10 @@ const columns: ColumnDef[] = [
 - `progress`: mini barra com rótulo `of/total`; `format` troca o rótulo.
 - `relative`: "há 3 dias" com a data exata no tooltip e num texto oculto da célula — a linha
   continua casando a data em busca de texto e nos e2e. `dueDate: true` pinta de vermelho o que
-  já venceu.
+  já venceu; `dueDate: (row) => boolean` diz por linha se o prazo ainda está aberto (a cobrança
+  quitada não fica vermelha).
+- `to` (`identity` e texto): `(row) => RouteLocationRaw | string | undefined` — o valor vira
+  RouterLink (sem router, `<a href>` quando string). O clique no link não seleciona a linha.
 
 ## Filtros
 
