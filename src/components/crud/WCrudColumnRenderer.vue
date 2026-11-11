@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, getCurrentInstance } from 'vue'
+import { RouterLink } from 'vue-router'
 import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import dayjs from 'dayjs'
@@ -9,7 +11,7 @@ import { useFormatters } from '@/composables/useFormatters'
 
 dayjs.extend(relativeTime)
 
-defineProps<{
+const props = defineProps<{
   column: ColumnDef
   value: unknown
   rowData: Record<string, unknown>
@@ -103,8 +105,25 @@ function relativeText(column: ColumnDef, value: unknown, rowData: Record<string,
   return dayjs(value as string).locale('pt-br').fromNow()
 }
 
-function isOverdue(column: ColumnDef, value: unknown) {
-  return Boolean(column.dueDate) && dayjs(value as string).isBefore(dayjs())
+function isOverdue(column: ColumnDef, value: unknown, rowData: Record<string, unknown>) {
+  const due = typeof column.dueDate === 'function' ? column.dueDate(rowData) : Boolean(column.dueDate)
+  return due && dayjs(value as string).isBefore(dayjs(), 'day')
+}
+
+// --- Link na célula (`to`) ---------------------------------------------
+// Com router no app vira RouterLink; sem router, `<a href>` quando `to` é string. O clique
+// para no link (`.stop`) para não virar seleção da linha.
+const hasRouter = Boolean(getCurrentInstance()?.appContext.config.globalProperties.$router)
+
+const link = computed(() => {
+  const to = props.column.to?.(props.rowData)
+  if (to == null || to === '') return undefined
+  if (hasRouter) return { is: RouterLink, attrs: { to } }
+  return typeof to === 'string' ? { is: 'a', attrs: { href: to } } : undefined
+})
+
+function stopIfLink(event: MouseEvent) {
+  if (link.value) event.stopPropagation()
 }
 
 function boolSeverity(
@@ -140,7 +159,15 @@ function boolSeverity(
       aria-hidden="true"
     />
     <span class="w-cell-identity__text">
-      <span class="w-cell-identity__primary">{{ primaryText(column, value, rowData) }}</span>
+      <component
+        :is="link?.is ?? 'span'"
+        v-bind="link?.attrs"
+        class="w-cell-identity__primary"
+        :class="{ 'w-cell-link': link }"
+        @click="stopIfLink"
+      >
+        {{ primaryText(column, value, rowData) }}
+      </component>
       <span v-if="secondaryText(column, rowData)" class="w-cell-secondary">
         {{ secondaryText(column, rowData) }}
       </span>
@@ -165,7 +192,7 @@ function boolSeverity(
     v-else-if="column.type === 'relative'"
     v-tooltip.top="exactDate(value)"
     class="w-cell-relative"
-    :class="{ 'w-cell-relative--due': isOverdue(column, value) }"
+    :class="{ 'w-cell-relative--due': isOverdue(column, value, rowData) }"
   >
     {{ relativeText(column, value, rowData) }}
     <span class="w-cell-relative__exact">{{ exactDate(value) }}</span>
@@ -212,9 +239,16 @@ function boolSeverity(
     }}
   </span>
 
-  <span v-else class="w-cell-text">
+  <component
+    v-else
+    :is="link?.is ?? 'span'"
+    v-bind="link?.attrs"
+    class="w-cell-text"
+    :class="{ 'w-cell-link': link }"
+    @click="stopIfLink"
+  >
     {{ column.format ? column.format(value, rowData) : value }}
-  </span>
+  </component>
 
   <!-- Segunda linha dos tipos simples; identity já desenha a sua ao lado do avatar. -->
   <span

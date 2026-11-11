@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import type { ColumnDef } from '@/types/column'
 
@@ -133,5 +134,65 @@ describe('WCrudColumnRenderer — vazio com `empty` e `emptySeverity`', () => {
     expect(nulo.find('.w-cell-empty').text()).toBe('—')
     expect(nulo.find('.w-cell-empty').classes()).not.toContain('w-cell-empty--warn')
     expect(montar({ field: 'x', header: 'X' }, '').find('.w-cell-empty').exists()).toBe(false)
+  })
+})
+
+describe('WCrudColumnRenderer — `dueDate` por linha', () => {
+  const col = (dueDate: ColumnDef['dueDate']): ColumnDef => ({
+    field: 'prazo',
+    header: 'Prazo',
+    type: 'relative',
+    dueDate,
+  })
+  const passado = '2020-01-01'
+
+  it('função: vermelho só quando ela diz que o prazo está aberto e a data passou', () => {
+    const aberta = montar(col((r) => r.status === 'aberta'), passado, { status: 'aberta' })
+    expect(aberta.find('.w-cell-relative').classes()).toContain('w-cell-relative--due')
+    const feita = montar(col((r) => r.status === 'aberta'), passado, { status: 'feita' })
+    expect(feita.find('.w-cell-relative').classes()).not.toContain('w-cell-relative--due')
+  })
+
+  it('função verdadeira com data futura não pinta', () => {
+    const w = montar(col(() => true), '2999-01-01')
+    expect(w.find('.w-cell-relative').classes()).not.toContain('w-cell-relative--due')
+  })
+
+  it('booleano segue como antes', () => {
+    expect(montar(col(true), passado).find('.w-cell-relative').classes()).toContain(
+      'w-cell-relative--due',
+    )
+  })
+})
+
+describe('WCrudColumnRenderer — `to` (link na célula)', () => {
+  const to = (r: Record<string, unknown>) => (r.id ? `/imoveis/${r.id}` : undefined)
+
+  it('sem router, string vira <a href> no texto e na identity', () => {
+    const t = montar({ field: 'n', header: 'N', to }, 'Casa', { id: 7 })
+    expect(t.find('a.w-cell-text').attributes('href')).toBe('/imoveis/7')
+    const i = montar({ field: 'n', header: 'N', type: 'identity', to }, 'Casa', { id: 7 })
+    expect(i.find('a.w-cell-identity__primary').attributes('href')).toBe('/imoveis/7')
+  })
+
+  it('undefined não vira link', () => {
+    const w = montar({ field: 'n', header: 'N', to }, 'Casa', {})
+    expect(w.find('a').exists()).toBe(false)
+    expect(w.find('span.w-cell-text').text()).toBe('Casa')
+  })
+
+  it('com router vira RouterLink e o clique não sobe para a linha', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: { render: () => null } }],
+    })
+    const w = mount(
+      { template: '<div @click="$emit(\'row\')"><R :column="c" :value="v" :row-data="r" /></div>', components: { R: WCrudColumnRenderer }, emits: ['row'], data: () => ({ c: { field: 'n', header: 'N', to: () => ({ path: '/x' }) }, v: 'Casa', r: {} }) },
+      { global: { plugins: [PrimeVue, router] } },
+    )
+    const a = w.find('a.w-cell-link')
+    expect(a.attributes('href')).toBe('/x')
+    await a.trigger('click')
+    expect(w.emitted('row')).toBeUndefined()
   })
 })
