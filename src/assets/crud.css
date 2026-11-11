@@ -256,7 +256,10 @@
   vertical-align: middle;
 }
 
-.w-crud--composed .w-crud-table .p-datatable-tbody > tr.p-row-odd:not(:hover):not(.p-datatable-row-selected) {
+.w-crud--composed
+  .w-crud-table
+  .p-datatable-tbody
+  > tr.p-row-odd:not(:hover):not(.p-datatable-row-selected) {
   background: transparent;
 }
 
