@@ -119,7 +119,13 @@ function boolSeverity(
 </script>
 
 <template>
-  <span v-if="value == null" class="w-cell-empty">&mdash;</span>
+  <span
+    v-if="value == null || (value === '' && column.empty !== undefined)"
+    class="w-cell-empty"
+    :class="{ 'w-cell-empty--warn': column.emptySeverity === 'warn' }"
+  >
+    {{ column.empty ?? '—' }}
+  </span>
 
   <template v-else-if="column.type === 'image'">
     <img :src="String(value)" :alt="column.header" class="w-cell-image" />

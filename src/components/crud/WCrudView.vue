@@ -1198,6 +1198,7 @@ onMounted(() => {
               :field="col.field"
               :header="col.header"
               :sortable="col.sortable"
+              :sort-field="col.sortField"
               :style="col.style"
               :header-class="colClass(col)"
               :body-class="colClass(col)"

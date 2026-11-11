@@ -372,6 +372,11 @@ const columns: ColumnDef[] = [
 ```
 
 - `secondary` (qualquer tipo): segunda linha abafada; nome de campo da linha ou função.
+- `empty` (qualquer tipo, opt-in): texto do valor vazio (`null` ou `''`) no lugar do travessão;
+  `emptySeverity: 'warn'` pinta com o token de atenção ("Sem corretor"). Sem `empty`, nada muda:
+  `null` é "—" e `''` passa como valor.
+- `sortField`: campo da ordenação quando difere do `field` — a barra de etapa pode ordenar pela
+  data da última atividade.
 - `identity`: nome em destaque, `avatar` à esquerda (sem imagem, as iniciais) e `secondary`
   abaixo. Nos cards (`cardMode: 'auto'`) essa coluna vira o título, onde quer que esteja.
 - `progress`: mini barra com rótulo `of/total`; `format` troca o rótulo.
