@@ -1,9 +1,16 @@
 // ---------------------------------------------------------------------------
 // Column
 // ---------------------------------------------------------------------------
+import type { RouteLocationRaw } from 'vue-router'
 
 export type ColumnType =
-  'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  | 'text' | 'boolean' | 'date' | 'datetime' | 'number' | 'currency' | 'image' | 'custom'
+  /** Linha composta: nome em destaque, `secondary` abafado abaixo e `avatar` à esquerda. */
+  | 'identity'
+  /** Mini barra com rótulo "de/total" (`progress`). */
+  | 'progress'
+  /** Tempo relativo ("há 3 dias"); a data exata vai no tooltip e no texto oculto da linha. */
+  | 'relative'
 
 /** Severidade do tag de status (mesmos nomes do PrimeVue; a cor vem dos tokens do app). */
 export type TagSeverity =
@@ -28,6 +35,8 @@ export interface ColumnDef {
   style?: string
   align?: 'left' | 'center' | 'right'
   sortable?: boolean
+  /** Campo enviado na ordenação quando difere do `field` (ex.: ordenar a etapa pela data). */
+  sortField?: string
   /** Render próprio da célula. Vence o formatador do tipo (`currency`, `date`, `datetime`, `number`). */
   format?: (value: unknown, rowData?: Record<string, unknown>) => string
   visible?: boolean
@@ -49,4 +58,21 @@ export interface ColumnDef {
   falseSeverity?: TagSeverity | null
   /** Filtro declarativo desta coluna (aparece na toolbar do grid, junto da busca). */
   filter?: ColumnFilter
+  /** Segunda linha abafada sob o valor, em qualquer tipo: nome de outro campo ou função. */
+  secondary?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  /** `type: 'identity'` — URL da imagem (campo ou função). Sem imagem, iniciais do valor. */
+  avatar?: string | ((rowData: Record<string, unknown>) => string | undefined)
+  /** `type: 'progress'` — quanto já foi (`of`) de quanto (`total`). */
+  progress?: (rowData: Record<string, unknown>) => { of: number; total: number }
+  /** `type: 'relative'` — prazo: fica em vermelho quando a data já passou. Função por linha
+   *  diz se o prazo ainda está aberto (a cobrança quitada não fica vermelha). */
+  dueDate?: boolean | ((rowData: Record<string, unknown>) => boolean)
+  /** Destino ao clicar no valor (`identity` e texto): vira RouterLink; sem router, `<a href>`
+   *  quando for string. O clique no link não seleciona a linha. */
+  to?: (rowData: Record<string, unknown>) => RouteLocationRaw | string | undefined
+  /** Opt-in: texto da célula quando o valor é vazio (`null`, `undefined` ou `''`), em qualquer tipo.
+   *  Sem `empty`, `null` segue como "—" e `''` passa como valor, igual antes. */
+  empty?: string
+  /** Destaque do texto vazio: `warn` pinta com o token de atenção (ex.: "Sem corretor"). */
+  emptySeverity?: 'warn'
 }

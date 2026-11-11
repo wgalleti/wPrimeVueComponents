@@ -164,6 +164,10 @@
   font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
 }
+/* Vazio que pede atenção (`emptySeverity: 'warn'`): "Sem corretor", "Sem responsável". */
+.w-cell-empty--warn {
+  color: var(--w-warning);
+}
 
 .w-cell-date {
   font-family: var(--w-font-mono);

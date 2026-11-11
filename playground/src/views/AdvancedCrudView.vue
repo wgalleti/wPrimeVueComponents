@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { WCrudView, useCrudManager, useFormatters } from '@wgalleti/primevue-components'
 import type { ColumnDef, FieldDef, RowAction, KpiItem } from '@wgalleti/primevue-components'
 import Tag from 'primevue/tag'
+import { categorias } from '../mock/data'
 
 const { formatCurrency } = useFormatters()
 
@@ -18,7 +19,13 @@ interface Produto {
 
 const columns: ColumnDef[] = [
   { field: 'id', header: '#', style: 'width: 60px', align: 'center' },
-  { field: 'nome', header: 'Nome' },
+  {
+    field: 'nome',
+    header: 'Nome',
+    type: 'identity',
+    secondary: (r) => categorias.find((c) => c.id === r.categoria)?.nome,
+  },
+  { field: 'created_at', header: 'Cadastro', type: 'relative' },
   { field: 'preco', header: 'Preco', type: 'currency' },
   { field: 'estoque', header: 'Estoque', type: 'number', align: 'center' },
   {
@@ -92,7 +99,8 @@ const crud = useCrudManager<Produto>({
   <WCrudView
     :crud="crud"
     title="Produtos Avancado"
-    subtitle="FK, validacao, row actions customizadas, KPIs"
+    subtitle="FK, validacao, row actions customizadas, KPIs, linhas compostas"
+    composed
     dialog-width="560px"
     show-kpi
     kpi-icon="pi pi-shopping-cart"

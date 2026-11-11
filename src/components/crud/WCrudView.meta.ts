@@ -12,5 +12,12 @@ export default defineComponentMeta({
         subtitle: 'Gerencie os clientes cadastrados',
       },
     },
+    {
+      name: 'Linhas compostas',
+      props: {
+        title: 'Clientes',
+        composed: true,
+      },
+    },
   ],
 })
