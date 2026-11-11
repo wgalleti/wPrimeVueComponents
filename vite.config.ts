@@ -54,7 +54,8 @@ export default defineConfig({
         'vue-router',
         'primevue',
         'axios',
-        'dayjs',
+        // subcaminhos (plugin, locale) são UMD com require('dayjs'): no bundle viram require em ESM
+        /^dayjs(\/.*)?$/,
         // peers opcionais do provedor Connect (entrada `./connect`)
         /^@connectrpc\/.*/,
         /^@bufbuild\/.*/,
