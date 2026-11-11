@@ -949,7 +949,9 @@
   position: relative;
   height: calc(var(--w-calendar-hours) * var(--w-calendar-hour-h));
   border-left: 1px solid var(--w-line-subtle);
-  background-color: var(--w-surface); /* a grade é superfície própria, não herda o fundo da página */
+  background-color: var(
+    --w-surface
+  ); /* a grade é superfície própria, não herda o fundo da página */
   background-image:
     linear-gradient(var(--w-line-subtle) 1px, transparent 1px),
     linear-gradient(color-mix(in srgb, var(--w-line-subtle) 45%, transparent) 1px, transparent 1px);
@@ -1012,7 +1014,8 @@
   flex-direction: column;
   gap: 0;
   overflow: hidden;
-  padding: var(--w-space-05) var(--w-space-2) var(--w-space-05) calc(var(--w-space-2) + var(--w-space-05));
+  padding: var(--w-space-05) var(--w-space-2) var(--w-space-05)
+    calc(var(--w-space-2) + var(--w-space-05));
   border: 0;
   border-radius: var(--w-radius-sm);
   background: var(--w-calendar-tone);

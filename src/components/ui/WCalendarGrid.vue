@@ -139,9 +139,7 @@ function blocksOf(day: string): Block[] {
       close()
       group = []
     }
-    const taken = new Set(
-      group.filter((o) => o.minute + o.visual > b.minute).map((o) => o.lane),
-    )
+    const taken = new Set(group.filter((o) => o.minute + o.visual > b.minute).map((o) => o.lane))
     while (taken.has(b.lane)) b.lane++
     group.push(b)
     groupEnd = Math.max(groupEnd, b.minute + b.visual)
@@ -218,7 +216,10 @@ const showNow = computed(
   <div
     class="w-calendar-grid"
     :class="{ 'w-calendar-grid--loading': loading, 'w-calendar-grid--creatable': creatable }"
-    :style="{ '--w-calendar-days': String(days.length), '--w-calendar-hours': String(hours.length) }"
+    :style="{
+      '--w-calendar-days': String(days.length),
+      '--w-calendar-hours': String(hours.length),
+    }"
     :aria-busy="loading"
   >
     <div class="w-calendar-grid__head">
@@ -307,7 +308,8 @@ const showNow = computed(
               ></i>
             </span>
             <span v-if="!b.short" class="w-calendar-grid__meta">
-              {{ timeLabel(b) }}<template v-if="b.event.subtitle"> · {{ b.event.subtitle }}</template>
+              {{ timeLabel(b)
+              }}<template v-if="b.event.subtitle"> · {{ b.event.subtitle }}</template>
             </span>
           </slot>
         </button>

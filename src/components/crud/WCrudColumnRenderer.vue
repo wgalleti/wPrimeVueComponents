@@ -102,11 +102,14 @@ function exactDate(value: unknown) {
 
 function relativeText(column: ColumnDef, value: unknown, rowData: Record<string, unknown>) {
   if (column.format) return column.format(value, rowData)
-  return dayjs(value as string).locale('pt-br').fromNow()
+  return dayjs(value as string)
+    .locale('pt-br')
+    .fromNow()
 }
 
 function isOverdue(column: ColumnDef, value: unknown, rowData: Record<string, unknown>) {
-  const due = typeof column.dueDate === 'function' ? column.dueDate(rowData) : Boolean(column.dueDate)
+  const due =
+    typeof column.dueDate === 'function' ? column.dueDate(rowData) : Boolean(column.dueDate)
   return due && dayjs(value as string).isBefore(dayjs(), 'day')
 }
 
@@ -153,7 +156,9 @@ function boolSeverity(
   <span v-else-if="column.type === 'identity'" class="w-cell-identity">
     <Avatar
       :image="avatarUrl(column, rowData)"
-      :label="avatarUrl(column, rowData) ? undefined : initials(primaryText(column, value, rowData))"
+      :label="
+        avatarUrl(column, rowData) ? undefined : initials(primaryText(column, value, rowData))
+      "
       shape="circle"
       class="w-cell-avatar"
       aria-hidden="true"
@@ -183,7 +188,10 @@ function boolSeverity(
       aria-valuemax="100"
       :aria-label="column.header"
     >
-      <span class="w-cell-progress__fill" :style="{ '--w-progress': `${progressPct(column, rowData)}%` }" />
+      <span
+        class="w-cell-progress__fill"
+        :style="{ '--w-progress': `${progressPct(column, rowData)}%` }"
+      />
     </span>
     <span class="w-cell-progress__label">{{ progressLabel(column, value, rowData) }}</span>
   </span>

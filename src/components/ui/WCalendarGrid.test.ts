@@ -24,7 +24,8 @@ function montar(props: Record<string, unknown> = {}) {
 /** jsdom não tem layout: a coluna mede 13 h × 100 px (07–20h, 100 px por hora). */
 function medir(w: VueWrapper, col: number) {
   const el = w.findAll('.w-calendar-grid__column')[col].element as HTMLElement
-  el.getBoundingClientRect = () => ({ top: 0, height: 1300, bottom: 1300, left: 0, right: 100, width: 100, x: 0, y: 0 }) as DOMRect
+  el.getBoundingClientRect = () =>
+    ({ top: 0, height: 1300, bottom: 1300, left: 0, right: 100, width: 100, x: 0, y: 0 }) as DOMRect
 }
 
 const eventoEl = (w: VueWrapper, titulo: string) =>

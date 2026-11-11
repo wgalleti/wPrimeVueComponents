@@ -147,14 +147,25 @@ describe('WCrudColumnRenderer — `dueDate` por linha', () => {
   const passado = '2020-01-01'
 
   it('função: vermelho só quando ela diz que o prazo está aberto e a data passou', () => {
-    const aberta = montar(col((r) => r.status === 'aberta'), passado, { status: 'aberta' })
+    const aberta = montar(
+      col((r) => r.status === 'aberta'),
+      passado,
+      { status: 'aberta' },
+    )
     expect(aberta.find('.w-cell-relative').classes()).toContain('w-cell-relative--due')
-    const feita = montar(col((r) => r.status === 'aberta'), passado, { status: 'feita' })
+    const feita = montar(
+      col((r) => r.status === 'aberta'),
+      passado,
+      { status: 'feita' },
+    )
     expect(feita.find('.w-cell-relative').classes()).not.toContain('w-cell-relative--due')
   })
 
   it('função verdadeira com data futura não pinta', () => {
-    const w = montar(col(() => true), '2999-01-01')
+    const w = montar(
+      col(() => true),
+      '2999-01-01',
+    )
     expect(w.find('.w-cell-relative').classes()).not.toContain('w-cell-relative--due')
   })
 
@@ -187,7 +198,16 @@ describe('WCrudColumnRenderer — `to` (link na célula)', () => {
       routes: [{ path: '/:p(.*)*', component: { render: () => null } }],
     })
     const w = mount(
-      { template: '<div @click="$emit(\'row\')"><R :column="c" :value="v" :row-data="r" /></div>', components: { R: WCrudColumnRenderer }, emits: ['row'], data: () => ({ c: { field: 'n', header: 'N', to: () => ({ path: '/x' }) }, v: 'Casa', r: {} }) },
+      {
+        template: '<div @click="$emit(\'row\')"><R :column="c" :value="v" :row-data="r" /></div>',
+        components: { R: WCrudColumnRenderer },
+        emits: ['row'],
+        data: () => ({
+          c: { field: 'n', header: 'N', to: () => ({ path: '/x' }) },
+          v: 'Casa',
+          r: {},
+        }),
+      },
       { global: { plugins: [PrimeVue, router] } },
     )
     const a = w.find('a.w-cell-link')
