@@ -970,7 +970,11 @@ async function saveForm() {
 
     if (isEditing.value && editingItem.value) {
       const pk = editingItem.value[props.optionValue]
-      response = await provider.update(props.crud?.endpoint ?? props.endpoint, pk as string | number, payload)
+      response = await provider.update(
+        props.crud?.endpoint ?? props.endpoint,
+        pk as string | number,
+        payload,
+      )
       // Atualiza na lista do modal
       const idx = modalData.value.findIndex((i) => i[props.optionValue] === pk)
       if (idx !== -1) {
