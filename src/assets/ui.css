@@ -2697,3 +2697,22 @@
   left: 50%;
   translate: -50% -50%;
 }
+
+/* Desabilitado: neutro e apagado nos dois temas. A opacidade do PrimeVue sobre a cor primária
+   não basta no escuro (a primária clara continua parecendo ativa); o carregando mantém o visual. */
+.p-button.w-button:disabled:not(.w-button--loading) {
+  background: var(--w-surface-3);
+  border-color: transparent;
+  color: var(--w-fg-subtle);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.p-button.w-button.p-button-outlined:disabled:not(.w-button--loading) {
+  background: transparent;
+  border-color: var(--w-border);
+}
+
+.p-button.w-button.p-button-text:disabled:not(.w-button--loading) {
+  background: transparent;
+}

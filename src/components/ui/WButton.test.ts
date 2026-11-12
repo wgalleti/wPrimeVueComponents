@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
@@ -117,5 +118,15 @@ describe('WButton', () => {
     const a = montar({ label: 'x', href: 'mailto:a@b.c', disabled: true }).find('a')
     expect(a.attributes('href')).toBeUndefined()
     expect(a.attributes('aria-disabled')).toBe('true')
+  })
+
+  it('desabilitado: neutro nos dois temas, sem herdar a cor primária (o carregando mantém o visual)', () => {
+    expect(
+      montar({ label: 'x', disabled: true }).find('button').attributes('disabled'),
+    ).toBeDefined()
+    const css = readFileSync('src/assets/ui.css', 'utf8')
+    expect(css).toMatch(
+      /\.p-button\.w-button:disabled:not\(\.w-button--loading\) \{\s*background: var\(--w-surface-3\);[^}]*color: var\(--w-fg-subtle\);/,
+    )
   })
 })
