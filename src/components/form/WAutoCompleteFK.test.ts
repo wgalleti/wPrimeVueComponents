@@ -142,9 +142,10 @@ describe('WAutoCompleteFK — único registro já vem preenchido', () => {
   })
 
   it('já há valor → não consulta', async () => {
-    const { wrapper, provider } = montar({ autoSelectSingle: true, modelValue: { id: 5, nome: 'Fixo' } }, [
-      { id: 1, nome: 'Único' },
-    ])
+    const { wrapper, provider } = montar(
+      { autoSelectSingle: true, modelValue: { id: 5, nome: 'Fixo' } },
+      [{ id: 1, nome: 'Único' }],
+    )
     await flushPromises()
     expect(provider.list).not.toHaveBeenCalled()
     expect(emitido(wrapper)).toEqual([])
@@ -159,18 +160,20 @@ describe('WAutoCompleteFK — único registro já vem preenchido', () => {
   })
 
   it('multiple → não consulta', async () => {
-    const { wrapper, provider } = montar({ autoSelectSingle: true, multiple: true, modelValue: [] }, [
-      { id: 1, nome: 'Único' },
-    ])
+    const { wrapper, provider } = montar(
+      { autoSelectSingle: true, multiple: true, modelValue: [] },
+      [{ id: 1, nome: 'Único' }],
+    )
     await flushPromises()
     expect(provider.list).not.toHaveBeenCalled()
     wrapper.unmount()
   })
 
   it('cascata obrigatória vazia → não consulta; preenchida → seleciona o único filho', async () => {
-    const { wrapper, provider } = montar({ autoSelectSingle: true, drilldown: { field: 'unidade', value: null } }, [
-      { id: 7, nome: 'Filho único' },
-    ])
+    const { wrapper, provider } = montar(
+      { autoSelectSingle: true, drilldown: { field: 'unidade', value: null } },
+      [{ id: 7, nome: 'Filho único' }],
+    )
     await flushPromises()
     expect(provider.list).not.toHaveBeenCalled()
 

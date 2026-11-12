@@ -2307,11 +2307,13 @@
   position: sticky;
   inset-inline-start: 0;
   z-index: 1;
-  min-width: var(--w-permission-name-min, 11rem);
+  min-width: var(--w-permission-name-min);
   background-color: var(--w-surface);
 }
 
-.w-permission-matrix:not(.w-permission-matrix--cards) .w-permission-matrix__row:hover .w-permission-matrix__name {
+.w-permission-matrix:not(.w-permission-matrix--cards)
+  .w-permission-matrix__row:hover
+  .w-permission-matrix__name {
   background-image: linear-gradient(var(--w-row-hover), var(--w-row-hover));
 }
 

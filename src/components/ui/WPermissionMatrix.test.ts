@@ -134,7 +134,7 @@ describe('WPermissionMatrix — muitas operações', () => {
       /\.w-permission-matrix:not\(\.w-permission-matrix--cards\) \.w-permission-matrix__table \{\s*min-width: max-content;/,
     )
     expect(css).toMatch(
-      /__name \{\s*position: sticky;[^}]*min-width: var\(--w-permission-name-min, 11rem\);/,
+      /__name \{\s*position: sticky;[^}]*min-width: var\(--w-permission-name-min\);/,
     )
   })
 })

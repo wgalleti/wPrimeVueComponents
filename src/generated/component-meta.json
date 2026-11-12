@@ -494,8 +494,8 @@
           "name": "cardFields",
           "type": "number | undefined",
           "required": false,
-          "default": "4",
-          "description": ""
+          "default": "undefined",
+          "description": "Quantas colunas visíveis entram no card (a primeira é o título). Sem valor, todas."
         },
         {
           "name": "cardMode",
@@ -815,7 +815,7 @@
           "type": "\"auto\" | \"never\" | \"always\" | undefined",
           "required": false,
           "default": "\"auto\"",
-          "description": "Quando a tabela vira card. `auto` (default) segue a largura do próprio\ncomponente (não da janela): card abaixo de 840px ou do piso da grade, o que\nfor maior; tabela acima. `never` mantém a tabela em qualquer largura (planilha\nque só faz sentido em grade, rola na horizontal); `always` é para vitrine e teste."
+          "description": "Quando a tabela vira card. `auto` (default) segue a janela (card abaixo de\n840px) e o piso da grade medido no próprio componente; tabela nos demais casos. `never` mantém a tabela em qualquer largura (planilha\nque só faz sentido em grade, rola na horizontal); `always` é para vitrine e teste."
         },
         {
           "name": "expansionLabel",

@@ -179,6 +179,10 @@
   --w-dialog-sm: var(--dialog-sm, 30rem); /* diálogo curto: confirmação, mensagem */
   --w-col-narrow: var(--col-narrow, 3rem); /* coluna de seleção/expansor */
   --w-col-actions: var(--col-actions, 6rem); /* coluna de ações de linha */
+  --w-permission-name-min: var(
+    --permission-name-min,
+    11rem
+  ); /* coluna "Tela" da WPermissionMatrix */
   --w-col-title-min: var(
     --col-title-min,
     12rem
