@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, computed, nextTick, onMounted, watch, useSlots } from 'vue'
+import {
+  ref,
+  reactive,
+  computed,
+  nextTick,
+  onMounted,
+  watch,
+  useSlots,
+  getCurrentInstance,
+} from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
@@ -16,6 +25,7 @@ import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
+import { useUrlState } from '@/composables/useUrlState'
 import { useDelayedLoading } from '@/composables/useDelayedLoading'
 import WSkeleton from '@/components/ui/WSkeleton.vue'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
@@ -93,6 +103,16 @@ const props = withDefaults(
     /** Chave de persistência do estado de coluna (visibilidade) em localStorage.
      *  Opt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado. */
     persistState?: string
+    /** Guarda o estado da lista na query da URL (`router.replace`, nunca push): sobrevive ao F5
+     *  e às abas de rota. LIGADO por padrão; `false` desliga — obrigatório em lista embutida
+     *  (diálogo, aba de detalhe), que não pode escrever na URL da página. `true` ou prefixo (`string`, p.ex. `'orc'` → `orc_page`) para duas
+     *  listas na mesma tela. Chaves: `search`, `page`, `sort` (`campo` / `-campo`), `f_<param>`
+     *  (filtro de coluna; lista em CSV) e `id` (linha selecionada, só com `v-model:selected-row`).
+     *  Valor padrão fica fora da URL. Filtros só os declarados em `ColumnDef.filter`; os de
+     *  `toolbar-filters` e os não serializáveis (objeto, data) ficam fora. Restaura antes do
+     *  primeiro fetch (uma só chamada). Com `persistState`, a URL ganha quando traz busca ou
+     *  filtro; senão vale o localStorage. Exige `vue-router`; sem ele ignora (avisa em dev só se a prop foi passada). */
+    urlState?: boolean | string
     /** Agrupa as linhas sob cabeçalhos recolhíveis, na tabela e nos cards: nome do campo ou
      *  função que dá a chave do grupo. Os grupos seguem a ordem da primeira aparição em
      *  `crud.items`; para ordenar, use `transformItems` ou a ordenação da API. A lista é lazy:
@@ -132,6 +152,7 @@ const props = withDefaults(
     groupBy: undefined,
     groupLabel: undefined,
     skeleton: true,
+    urlState: true,
     loadingDelay: 150,
   },
 )
@@ -873,11 +894,126 @@ const tablePt = computed(() => ({
     : {}),
 }))
 
+// --- Estado na URL (ligado por padrão; `urlState: false` desliga) ---
+
+const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
+const urlStateExplicit = 'urlState' in vnodeProps || 'url-state' in vnodeProps
+const urlSync = props.urlState
+  ? useUrlState(typeof props.urlState === 'string' ? props.urlState : '', urlStateExplicit)
+  : null
+// O id só vai para a query se o consumidor usa `v-model:selected-row`.
+const idBound = 'onUpdate:selectedRow' in vnodeProps || 'onUpdate:selected-row' in vnodeProps
+// Enquanto o `id` da URL espera os itens chegarem, o watch não pode apagá-lo.
+let pendingId: string | null = null
+
+function urlFilterCols(): ColumnDef[] {
+  return filterableColumns.value
+}
+function filterToUrl(v: unknown): string | null {
+  if (Array.isArray(v)) {
+    return v.length && v.every((x) => ['string', 'number', 'boolean'].includes(typeof x))
+      ? v.join(',')
+      : null
+  }
+  return ['string', 'number', 'boolean'].includes(typeof v) && v !== '' ? String(v) : null
+}
+function filterFromUrl(col: ColumnDef, raw: string): unknown {
+  const type = col.filter?.type || 'text'
+  if (type === 'numeric') return Number.isNaN(Number(raw)) ? undefined : Number(raw)
+  if (type === 'boolean') return raw === 'true' ? true : raw === 'false' ? false : undefined
+  if (type === 'select') {
+    const opts = col.filter?.options ?? []
+    const one = opts.find((o) => String(o.value) === raw)
+    if (one) return one.value
+    const many = raw.split(',').map((r) => opts.find((o) => String(o.value) === r)?.value)
+    return many.length > 1 && many.every((v) => v !== undefined) ? many : undefined
+  }
+  return raw
+}
+/** Aplica a query ao crud — chamado antes do primeiro fetch. */
+function restoreFromUrl(): void {
+  if (!urlSync) return
+  const crud = props.crud
+  const search = urlSync.get('search')
+  if (search) crud.search.value = search
+  for (const col of urlFilterCols()) {
+    const raw = urlSync.get(`f_${fParam(col)}`)
+    const v = raw === undefined ? undefined : filterFromUrl(col, raw)
+    if (v !== undefined) crud.columnFilters[fParam(col)] = v
+  }
+  const page = Number(urlSync.get('page'))
+  if (Number.isInteger(page) && page > 1) crud.pagination.page = page
+  const sort = urlSync.get('sort')
+  if (sort) {
+    const desc = sort.startsWith('-')
+    const field = desc ? sort.slice(1) : sort
+    if (crud.config.columns.some((c) => c.sortable && (c.sortField || c.field) === field)) {
+      crud.sort.field = field
+      crud.sort.order = desc ? -1 : 1
+    }
+  }
+  if (idBound) pendingId = urlSync.get('id') ?? null
+}
+function urlHasFilters(): boolean {
+  return (
+    !!urlSync &&
+    (urlSync.get('search') !== undefined ||
+      urlFilterCols().some((c) => urlSync.get(`f_${fParam(c)}`) !== undefined))
+  )
+}
+function writeToUrl(): void {
+  if (!urlSync) return
+  const crud = props.crud
+  const patch: Record<string, string | null> = {
+    search: crud.search.value || null,
+    page: crud.pagination.page > 1 ? String(crud.pagination.page) : null,
+    sort:
+      crud.sort.field && crud.sort.order !== 0
+        ? `${crud.sort.order === -1 ? '-' : ''}${crud.sort.field}`
+        : null,
+  }
+  for (const col of urlFilterCols()) {
+    patch[`f_${fParam(col)}`] = filterToUrl(crud.columnFilters[fParam(col)])
+  }
+  if (idBound && pendingId === null) {
+    const id = selectedRow.value?.[crud.config.pk || 'id']
+    patch.id = id === undefined || id === null ? null : String(id)
+  }
+  urlSync.write(patch)
+}
+if (urlSync) {
+  watch(
+    () => [
+      props.crud.search.value,
+      props.crud.pagination.page,
+      props.crud.sort.field,
+      props.crud.sort.order,
+      JSON.stringify(props.crud.columnFilters),
+      selectedRow.value,
+    ],
+    writeToUrl,
+  )
+  // `id` da URL: espera o primeiro lote de itens; ausente nele, limpa a seleção e a query.
+  watch(
+    () => props.crud.items.value,
+    (items) => {
+      if (pendingId === null) return
+      const pk = props.crud.config.pk || 'id'
+      const row = items.find((r) => String((r as Record<string, unknown>)[pk]) === pendingId)
+      pendingId = null
+      selectedRow.value = (row as Record<string, unknown> | undefined) ?? null
+      writeToUrl()
+    },
+  )
+}
+
 // --- Init ---
 
 onMounted(() => {
   loadColumnState()
-  loadFilters() // restaura filtros/busca ANTES do init para o fetch já sair filtrado
+  // URL ganha do localStorage quando traz busca ou filtro; senão `persistState` restaura.
+  if (!urlHasFilters()) loadFilters()
+  restoreFromUrl() // tudo restaurado ANTES do init: o primeiro fetch já sai com o estado
   if (props.autoInit) {
     props.crud.init()
   }

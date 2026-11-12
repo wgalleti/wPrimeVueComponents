@@ -89,6 +89,39 @@ const crud = useCrudManager({ endpoint: '/api/pedidos/', columns, form, openOnRo
   nao abre o dialogo.
 - **`cardBare`:** o card cru nao seleciona, nao emite nem abre — o slot `card` cuida.
 
+## Estado na URL (`urlState`)
+
+**Ligado por padrão.** `:url-state="false"` desliga; `url-state="orc"` é o prefixo que separa duas
+listas na mesma tela (`orc_page`, `orc_search`...). O estado da lista vive na query da URL via `router.replace`
+(nunca `push`): o F5 e a volta a uma aba de rota (`useRouteTabs` guarda o `fullPath`) caem onde
+o usuário estava. Exige `vue-router`; sem ele a prop é ignorada (avisa em dev só se você a passou explicitamente).
+
+> **Lista embutida** (em diálogo, aba de detalhe, painel lateral) não é a lista da página e não
+> pode escrever na URL dela: passe `:url-state="false"`. Duas listas na mesma tela: um prefixo
+> em cada. A suíte não embute `WCrudView` em nenhum componente seu.
+
+| Chave | O que guarda | Fica fora da URL quando |
+|---|---|---|
+| `search` | busca | vazia |
+| `page` | página | é a 1 |
+| `sort` | `campo` (asc) ou `-campo` (desc), só de coluna `sortable` | sem ordenação |
+| `f_<param>` | filtro de coluna (`ColumnDef.filter`; lista vira CSV) | sem valor |
+| `id` | linha selecionada, só com `v-model:selected-row` | sem seleção |
+
+```vue
+<WCrudView :crud="crud" title="Imóveis" v-model:selected-row="linha" />
+```
+
+- Restaura antes do primeiro fetch: a lista sai em **uma** chamada, já filtrada/paginada.
+- Só grava enquanto a rota é a da montagem (telas ocultas das abas de rota não mexem na URL).
+- `id` que não está nos itens carregados limpa a seleção e a query, sem aviso; não reabre diálogo.
+- Filtros sincronizados: só os declarados em `ColumnDef.filter`. Os do slot `toolbar-filters`, e
+  qualquer valor não serializável (objeto, data), ficam fora. O tipo volta pelo `filter.type`
+  (`numeric` → número, `boolean` → `true`/`false`, `select` → a opção de mesmo valor).
+- Com `persistState`: a URL ganha quando traz `search` ou algum `f_*`; sem eles, o localStorage
+  restaura filtros e busca como antes. Página, ordenação e `id` só existem na URL.
+- A query é lida na montagem; mudança externa dela depois (outra navegação) não é re-aplicada.
+
 ## Slots
 
 ### `header-actions`

@@ -575,6 +575,13 @@
           "description": "Chave de persistência do estado de coluna (visibilidade) em localStorage.\nOpt-in: quando definida, exibe o seletor de colunas e persiste o que foi ocultado."
         },
         {
+          "name": "urlState",
+          "type": "string | boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Guarda o estado da lista na query da URL (`router.replace`, nunca push): sobrevive ao F5\ne às abas de rota. LIGADO por padrão; `false` desliga — obrigatório em lista embutida\n(diálogo, aba de detalhe), que não pode escrever na URL da página. `true` ou prefixo (`string`, p.ex. `'orc'` → `orc_page`) para duas\nlistas na mesma tela. Chaves: `search`, `page`, `sort` (`campo` / `-campo`), `f_<param>`\n(filtro de coluna; lista em CSV) e `id` (linha selecionada, só com `v-model:selected-row`).\nValor padrão fica fora da URL. Filtros só os declarados em `ColumnDef.filter`; os de\n`toolbar-filters` e os não serializáveis (objeto, data) ficam fora. Restaura antes do\nprimeiro fetch (uma só chamada). Com `persistState`, a URL ganha quando traz busca ou\nfiltro; senão vale o localStorage. Exige `vue-router`; sem ele ignora (avisa em dev só se a prop foi passada)."
+        },
+        {
           "name": "groupBy",
           "type": "string | ((item: Record<string, unknown>) => string) | undefined",
           "required": false,
@@ -3688,6 +3695,13 @@
           "required": false,
           "default": null,
           "description": "Rótulo do grupo para leitores de tela."
+        },
+        {
+          "name": "urlKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Liga o `v-model` à query `?<urlKey>=` (`router.replace`): a aba sobrevive ao F5 e às abas\nde rota. Valor fora dos `items` (ou de aba desabilitada) cai na aba inicial; essa aba (o\n`modelValue` da montagem) fica fora da URL. Exige `vue-router`; sem ele, avisa em dev."
         }
       ],
       "events": [
