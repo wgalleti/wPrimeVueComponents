@@ -16,4 +16,20 @@ describe('WStatusTag', () => {
     expect(w.text()).toBe('xpto')
     expect(w.find('.p-tag').classes()).toContain('w-tag--secondary')
   })
+
+  it('removable mostra o botão acessível e emite remove', async () => {
+    const w = mount(WStatusTag, {
+      props: { value: 'ativo', removable: true },
+      global: { plugins: [PrimeVue] },
+    })
+    const btn = w.find('button')
+    expect(btn.attributes('aria-label')).toBe('Remover Ativo')
+    await btn.trigger('click')
+    expect(w.emitted('remove')).toHaveLength(1)
+  })
+
+  it('sem removable não há botão', () => {
+    const w = mount(WStatusTag, { props: { value: 'ativo' }, global: { plugins: [PrimeVue] } })
+    expect(w.find('button').exists()).toBe(false)
+  })
 })

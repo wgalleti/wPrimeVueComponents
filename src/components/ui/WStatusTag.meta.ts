@@ -14,6 +14,10 @@ export default defineComponentMeta({
       props: { value: 'pendente' },
     },
     {
+      name: 'Removível',
+      props: { value: 'ativo', removable: true },
+    },
+    {
       name: 'Mapa customizado',
       props: {
         value: 'novo',

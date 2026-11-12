@@ -11,9 +11,15 @@ const props = withDefaults(
   defineProps<{
     value: string
     map?: Record<string, StatusMapping>
+    /** Mostra o botão de remover (substitui o `Chip` removível) e emite `remove`. */
+    removable?: boolean
   }>(),
-  {},
+  { removable: false },
 )
+
+const emit = defineEmits<{
+  remove: []
+}>()
 
 const defaultMap: Record<string, StatusMapping> = {
   ativo: { label: 'Ativo', severity: 'success' },
@@ -56,6 +62,17 @@ const statusInfo = computed(() => {
   <Tag
     :value="statusInfo.label"
     :severity="statusInfo.severity as any"
-    :class="['w-tag', `w-tag--${statusInfo.severity}`]"
-  />
+    :class="['w-tag', `w-tag--${statusInfo.severity}`, { 'w-tag--removable': removable }]"
+  >
+    <span class="p-tag-label">{{ statusInfo.label }}</span>
+    <button
+      v-if="removable"
+      type="button"
+      class="w-tag-remove"
+      :aria-label="`Remover ${statusInfo.label}`"
+      @click="emit('remove')"
+    >
+      <i class="pi pi-times" aria-hidden="true" />
+    </button>
+  </Tag>
 </template>

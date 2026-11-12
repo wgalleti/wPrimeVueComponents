@@ -10,6 +10,15 @@ A tag é o `<Tag>` do PrimeVue com a classe `w-tag w-tag--<severity>`: a cor vem
 app (`--success`, `--danger`, `--warning`, `--info` e os `-soft`), não da paleta fixa do
 PrimeVue — ver [Classes CSS](/css/classes#cores-de-status).
 
+## Removível
+
+`removable` mostra um botão com `aria-label` "Remover <rótulo>" e emite `remove`; o consumidor tira
+o item da lista. Substitui o `Chip` removível.
+
+```vue
+<WStatusTag v-for="s in filtros" :key="s" :value="s" removable @remove="tirar(s)" />
+```
+
 ## Exemplo
 
 ```vue
