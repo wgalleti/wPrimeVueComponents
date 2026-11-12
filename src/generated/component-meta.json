@@ -823,9 +823,35 @@
           "required": false,
           "default": "\"Detalhes\"",
           "description": "Rótulo do abridor da expansão no card — lá não existe coluna de seta."
+        },
+        {
+          "name": "selectable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Liga a coluna de seleção (checkbox por linha e \"marcar todos\" no cabeçalho), sobre os\ndados em memória; as chaves (`rowKey`) vão em `v-model:selected`. Não mexe nas linhas."
+        },
+        {
+          "name": "isRowSelectable",
+          "type": "((row: EditableRow, index: number) => boolean) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Diz se a linha pode ser marcada; default todas. A já marcada continua desmarcável."
+        },
+        {
+          "name": "selected",
+          "type": "(string | number)[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Chaves (`rowKey`) das linhas marcadas. Chave que não está nas linhas fica intacta."
         }
       ],
       "events": [
+        {
+          "name": "update:selected",
+          "type": "[value: (string | number)[]]",
+          "description": ""
+        },
         {
           "name": "update:modelValue",
           "type": "[rows: EditableRow[]]",
@@ -1556,6 +1582,20 @@
           "description": "Display locale for grouping/decimal separators (default: 'pt-BR')."
         },
         {
+          "name": "min",
+          "type": "number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Piso do valor (inclusive): ao sair do campo, abaixo dele vira ele."
+        },
+        {
+          "name": "max",
+          "type": "number | undefined",
+          "required": false,
+          "default": null,
+          "description": "Teto do valor (inclusive): ao sair do campo, acima dele vira ele (ex.: 100 no modo %)."
+        },
+        {
           "name": "disabled",
           "type": "boolean | undefined",
           "required": false,
@@ -2004,6 +2044,27 @@
           "required": false,
           "default": null,
           "description": "Destino: o botão vira RouterLink (exige vue-router)."
+        },
+        {
+          "name": "href",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Link comum: o botão vira `<a href>` com a mesma aparência (`tel:`, `mailto:`, arquivo)."
+        },
+        {
+          "name": "download",
+          "type": "string | boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": "Com `href`: baixa em vez de navegar; string = nome do arquivo salvo."
+        },
+        {
+          "name": "target",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Com `href`: alvo do link (`_blank` ganha `rel=\"noopener noreferrer\"`)."
         },
         {
           "name": "type",
@@ -2505,6 +2566,20 @@
           "description": "Texto do badge nas linhas não selecionáveis."
         },
         {
+          "name": "isLocked",
+          "type": "((item: Record<string, unknown>) => boolean) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Linha fixa: não muda em nenhum sentido — nem pelo clique, nem por \"selecionar todos\" ou\n\"limpar\" (do grupo ou geral). Fica como está em `selection`, com cadeado e `aria-disabled`."
+        },
+        {
+          "name": "lockedReason",
+          "type": "((item: Record<string, unknown>) => string | null | undefined) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Dica da linha fixa (badge ao lado do cadeado e `title`), ex.: \"Sempre ativo para o dono\"."
+        },
+        {
           "name": "loading",
           "type": "boolean | undefined",
           "required": false,
@@ -2540,11 +2615,25 @@
           "description": "false remove o botão de recolher dos grupos."
         },
         {
+          "name": "selectionMode",
+          "type": "\"multiple\" | \"single\" | undefined",
+          "required": false,
+          "default": "\"multiple\"",
+          "description": "`single`: rádio por linha, sem checkbox de grupo nem \"selecionar todos\", e a escolha\nvai no `v-model` (uma chave ou `null`). Default `multiple` (`v-model:selection`)."
+        },
+        {
           "name": "selection",
           "type": "GroupedSelectKey[] | undefined",
           "required": false,
           "default": "[]",
           "description": "Chaves das linhas selecionadas (v-model:selection). Sem v-model do pai o estado é local."
+        },
+        {
+          "name": "modelValue",
+          "type": "GroupedSelectKey | null | undefined",
+          "required": false,
+          "default": "null",
+          "description": "Chave da linha escolhida no modo `single` (`v-model`)."
         },
         {
           "name": "collapsed",
@@ -2555,6 +2644,11 @@
         }
       ],
       "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: GroupedSelectKey | null]",
+          "description": ""
+        },
         {
           "name": "update:selection",
           "type": "[value: GroupedSelectKey[]]",
@@ -3777,10 +3871,10 @@
       "props": [
         {
           "name": "variant",
-          "type": "\"text\" | \"rows\" | \"card\" | undefined",
+          "type": "\"text\" | \"rows\" | \"card\" | \"block\" | undefined",
           "required": false,
           "default": "\"rows\"",
-          "description": "`rows`: n linhas de tabela; `card`: bloco de card; `text`: n linhas de parágrafo."
+          "description": "`rows`: n linhas de tabela; `card`: bloco de card; `text`: n linhas de parágrafo;\n`block`: um retângulo só (figura de painel, área de gráfico)."
         },
         {
           "name": "count",
@@ -3788,6 +3882,27 @@
           "required": false,
           "default": "5",
           "description": "Quantidade de linhas (`rows` e `text`)."
+        },
+        {
+          "name": "size",
+          "type": "\"md\" | \"sm\" | \"lg\" | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Altura nomeada (`block`; no `card` vira altura mínima): sm 3rem, md 6rem (KPI), lg a do\ngráfico. Tokens `--w-skeleton-block-*`. `block` sem `size` nem `height` = md."
+        },
+        {
+          "name": "height",
+          "type": "string | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Altura própria, sempre por token (`'var(--w-chart-h)'`); vence `size`."
+        },
+        {
+          "name": "width",
+          "type": "string | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Largura própria, sempre por token; omitida ocupa a linha."
         }
       ],
       "events": [],
