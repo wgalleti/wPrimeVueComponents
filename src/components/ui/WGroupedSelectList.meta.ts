@@ -15,7 +15,7 @@ export default defineComponentMeta({
   category: 'UI',
   icon: 'pi pi-list-check',
   summary:
-    'Tabela agrupada com seleção múltipla, checkbox de grupo em três estados e grupos recolhíveis.',
+    'Tabela agrupada com seleção múltipla (ou única), checkbox de grupo em três estados, linhas fixas e grupos recolhíveis.',
   examples: [
     {
       name: 'Agrupada por área',
@@ -55,6 +55,20 @@ export default defineComponentMeta({
         items: [
           { id: 1, area: 'Perfis', nome: 'Gerenciar perfis', quantidade: 1, status: 'Livre' },
           { id: 2, area: 'Perfis', nome: 'Ver perfis', quantidade: 1, status: 'Livre' },
+        ],
+      },
+    },
+    {
+      name: 'Seleção única',
+      props: {
+        columns,
+        groupBy: 'area',
+        selectionMode: 'single',
+        modelValue: 2,
+        items: [
+          { id: 1, area: 'Norte', nome: 'Pacote A', quantidade: 12, status: 'Livre' },
+          { id: 2, area: 'Norte', nome: 'Pacote B', quantidade: 8, status: 'Livre' },
+          { id: 3, area: 'Sul', nome: 'Pacote C', quantidade: 20, status: 'Livre' },
         ],
       },
     },

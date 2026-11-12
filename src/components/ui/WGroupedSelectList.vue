@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, useId, useSlots } from 'vue'
 import Checkbox from 'primevue/checkbox'
+import RadioButton from 'primevue/radiobutton'
 import Tag from 'primevue/tag'
 import type { ColumnDef } from '@/types/column'
 import type { GroupedSelectGroupScope, GroupedSelectKey } from '@/types/groupedSelectList'
 import WCrudColumnRenderer from '@/components/crud/WCrudColumnRenderer.vue'
 
 /**
- * Tabela agrupada com seleção múltipla: grupos recolhíveis, checkbox de grupo em três estados,
+ * Tabela agrupada com seleção múltipla (ou única, `selectionMode="single"` + `v-model`): grupos recolhíveis, checkbox de grupo em três estados,
  * linhas que podem não ser selecionáveis (com o motivo num badge) e a ação "selecionar todos os
  * resultados". O componente nunca filtra: `items` já é o resultado. As chaves de `selection` que
  * não estão em `items` ficam intactas e não são contadas — podá-las é papel de quem chama.
@@ -42,6 +43,9 @@ const props = withDefaults(
     clearSelectionLabel?: string
     /** false remove o botão de recolher dos grupos. */
     collapsible?: boolean
+    /** `single`: rádio por linha, sem checkbox de grupo nem "selecionar todos", e a escolha
+     *  vai no `v-model` (uma chave ou `null`). Default `multiple` (`v-model:selection`). */
+    selectionMode?: 'single' | 'multiple'
   }>(),
   {
     dataKey: 'id',
@@ -56,18 +60,24 @@ const props = withDefaults(
     selectAllLabel: 'Selecionar todos os resultados',
     clearSelectionLabel: 'Limpar seleção',
     collapsible: true,
+    selectionMode: 'multiple',
   },
 )
 
 /** Chaves das linhas selecionadas (v-model:selection). Sem v-model do pai o estado é local. */
 const selection = defineModel<GroupedSelectKey[]>('selection', { default: () => [] })
+/** Chave da linha escolhida no modo `single` (`v-model`). */
+const single = defineModel<GroupedSelectKey | null>({ default: null })
 /** Chaves dos grupos recolhidos (v-model:collapsed). */
 const collapsed = defineModel<string[]>('collapsed', { default: () => [] })
 
 const slots = useSlots()
 const uid = useId()
 
-const selectedSet = computed(() => new Set(selection.value))
+const isSingle = computed(() => props.selectionMode === 'single')
+const selectedSet = computed(
+  () => new Set(isSingle.value ? (single.value == null ? [] : [single.value]) : selection.value),
+)
 const visibleColumns = computed(() => props.columns.filter((c) => c.visible !== false))
 const hasActions = computed(() => Boolean(slots['row-actions']))
 const colCount = computed(() => 1 + visibleColumns.value.length + (hasActions.value ? 1 : 0))
@@ -177,7 +187,9 @@ const clearMode = computed(() =>
 )
 const showBar = computed(
   () =>
-    props.selectable && (allSelectableKeys.value.length > 0 || selectedInItems.value.length > 0),
+    props.selectable &&
+    !isSingle.value &&
+    (allSelectableKeys.value.length > 0 || selectedInItems.value.length > 0),
 )
 const hasRows = computed(() => groups.value.length > 0)
 
@@ -211,6 +223,11 @@ function commitSelection(next: GroupedSelectKey[]) {
 
 function toggleRow(row: Row) {
   if (rowDisabled(row)) return
+  // Única: o rádio só escolhe (clicar no escolhido não desmarca).
+  if (isSingle.value) {
+    single.value = row.key
+    return
+  }
   commitSelection(selectedSet.value.has(row.key) ? remove([row.key]) : add([row.key]))
 }
 
@@ -318,6 +335,7 @@ function rowLabel(data: Record<string, unknown>) {
                     />
                   </button>
                   <Checkbox
+                    v-if="!isSingle"
                     :key="checkboxRev"
                     binary
                     :model-value="group.checked"
@@ -350,7 +368,17 @@ function rowLabel(data: Record<string, unknown>) {
                 :title="row.lockedReason ?? undefined"
               >
                 <td class="w-grouped-select-list__td w-grouped-select-list__td--check">
+                  <RadioButton
+                    v-if="isSingle"
+                    :model-value="single"
+                    :value="row.key"
+                    :name="uid"
+                    :disabled="rowDisabled(row)"
+                    :aria-label="`Selecionar ${rowLabel(row.data)}`"
+                    @update:model-value="toggleRow(row)"
+                  />
                   <Checkbox
+                    v-else
                     :key="checkboxRev"
                     binary
                     :model-value="selectedSet.has(row.key)"

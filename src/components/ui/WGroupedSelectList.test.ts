@@ -278,4 +278,25 @@ describe('WGroupedSelectList', () => {
       expect(last(w)).toEqual([1])
     })
   })
+
+  describe('seleção única (selectionMode single)', () => {
+    const unico = (extra: Record<string, unknown> = {}) =>
+      make({ selectionMode: 'single', ...extra })
+
+    it('rádio por linha, sem checkbox de grupo nem "selecionar todos"', () => {
+      const w = unico()
+      expect(w.findAll('input[type="radio"]')).toHaveLength(4)
+      expect(w.find('input[aria-label="Selecionar Norte"]').exists()).toBe(false)
+      expect(w.find('.w-grouped-select-list__link').exists()).toBe(false)
+    })
+
+    it('clicar emite um id no v-model; linha bloqueada não escolhe', async () => {
+      const w = unico({ modelValue: 1 })
+      expect(w.findAll('.w-grouped-select-list__row--selected')).toHaveLength(1)
+      await rowBox(w, 'D').setValue(true)
+      expect(w.emitted('update:modelValue')!.at(-1)).toEqual([4])
+      expect(w.emitted('update:selection')).toBeUndefined()
+      expect(rowBox(w, 'C').attributes('disabled')).toBeDefined()
+    })
+  })
 })

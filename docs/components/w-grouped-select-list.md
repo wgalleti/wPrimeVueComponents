@@ -88,3 +88,19 @@ Caso real: a matriz de acesso do perfil, em que "Gerenciar perfis" nunca sai do 
   :locked-reason="() => 'Sempre ativo para o dono'"
 />
 ```
+
+## Seleção única — `selectionMode="single"`
+
+Uma linha só: rádio por linha, sem checkbox de grupo nem "selecionar todos", e a escolha vai no
+`v-model` (uma chave ou `null`) — `v-model:selection` fica para o modo múltiplo. Clicar na linha
+escolhida não desmarca. `isSelectable`, `disabledReason` e `isLocked` valem igual.
+
+```vue
+<WGroupedSelectList
+  v-model="contaId"
+  selection-mode="single"
+  :items="contas"
+  :columns="colunas"
+  group-by="banco"
+/>
+```
