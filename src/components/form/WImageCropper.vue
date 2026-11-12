@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch, onBeforeUnmount } from 'vue'
 import Dialog from 'primevue/dialog'
 import { useTabHost } from '@/types/routeTabs'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 import Slider from 'primevue/slider'
 
 // Dentro da navegação por abas, o dialog pendura no pane da própria aba
@@ -256,20 +256,17 @@ function confirmCrop() {
       <template v-if="previewSrc">
         <img :src="previewSrc" alt="" class="w-imgcropper-img" />
         <div class="w-imgcropper-actions">
-          <Button
-            type="button"
+          <WButton
+            variant="ghost"
+            icon-only
             icon="pi pi-pencil"
-            rounded
-            text
             aria-label="Trocar imagem"
             @click="openPicker"
           />
-          <Button
-            type="button"
+          <WButton
+            variant="danger"
+            icon-only
             icon="pi pi-trash"
-            rounded
-            text
-            severity="danger"
             aria-label="Remover imagem"
             @click="remove"
           />
@@ -326,8 +323,8 @@ function confirmCrop() {
         </div>
       </div>
       <template #footer>
-        <Button type="button" label="Cancelar" text @click="cropOpen = false" />
-        <Button type="button" label="Confirmar" @click="confirmCrop" />
+        <WButton variant="ghost" label="Cancelar" @click="cropOpen = false" />
+        <WButton label="Confirmar" @click="confirmCrop" />
       </template>
     </Dialog>
   </div>

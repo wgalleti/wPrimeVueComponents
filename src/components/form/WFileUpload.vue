@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 
 /**
  * Upload de arquivo(s) genérico (single ou multiple), sem dependência pesada.
@@ -79,12 +79,11 @@ function fmtSize(bytes: number): string {
 <template>
   <div class="w-fileupload">
     <div>
-      <Button
-        type="button"
+      <WButton
+        variant="secondary"
         :label="chooseLabel"
         icon="pi pi-upload"
-        outlined
-        size="small"
+        size="sm"
         :disabled="disabled"
         @click="open"
       />
@@ -104,14 +103,12 @@ function fmtSize(bytes: number): string {
           {{ f.name }}
         </span>
         <span class="w-fileupload__size">{{ fmtSize(f.size) }}</span>
-        <Button
-          type="button"
+        <WButton
+          variant="danger"
+          icon-only
           icon="pi pi-times"
           :aria-label="`Remover ${f.name}`"
-          text
-          rounded
-          size="small"
-          severity="danger"
+          size="sm"
           :disabled="disabled"
           @click="removeAt(i)"
         />

@@ -213,11 +213,14 @@
   --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
   --w-tab-viewport-padding: 0; /* respiro da página dentro do scroll da aba; o app define o seu */
+  --w-overlay-shift-x: 0px; /* WPopover/WMenu no pane: deslocamento do pane (o JS grava no pane) */
+  --w-overlay-shift-y: 0px;
 
   /* ---- Movimento --------------------------------------------------------- */
   --w-motion-fast: var(--motion-fast, 140ms);
   --w-motion: var(--motion, 220ms);
   --w-motion-slow: var(--motion-slow, 380ms);
+  --w-motion-loop: var(--motion-loop, 1.2s); /* ciclo do WProgress indeterminado */
   --w-ease: var(--ease, ease);
   --w-ease-spring: var(--ease-spring, cubic-bezier(0.16, 1, 0.3, 1));
 

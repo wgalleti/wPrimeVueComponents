@@ -6,7 +6,7 @@ import Dialog from 'primevue/dialog'
 import { useTabHost } from '@/types/routeTabs'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
@@ -1183,11 +1183,11 @@ function confirmDelete(item: Record<string, unknown>) {
         />
       </IconField>
       <div class="w-autocompletefk-toolbar-actions">
-        <Button
+        <WButton
           v-if="showCreate"
           label="Novo"
           icon="pi pi-plus"
-          size="small"
+          size="sm"
           @click="openCreateForm"
         />
       </div>
@@ -1241,25 +1241,24 @@ function confirmDelete(item: Record<string, unknown>) {
         <Column v-if="hasRowActions" header="" class="w-col-actions">
           <template #body="{ data }">
             <div class="w-autocompletefk-row-actions">
-              <Button
+              <WButton
                 v-if="showEdit"
                 v-tooltip.top="'Editar'"
+                variant="ghost"
+                icon-only
                 icon="pi pi-pencil"
                 aria-label="Editar"
-                text
-                rounded
-                size="small"
+                size="sm"
                 @click="openEditForm(data)"
               />
-              <Button
+              <WButton
                 v-if="showDelete"
                 v-tooltip.top="'Excluir'"
+                variant="danger"
+                icon-only
                 icon="pi pi-trash"
                 aria-label="Excluir"
-                text
-                rounded
-                size="small"
-                severity="danger"
+                size="sm"
                 @click="confirmDelete(data)"
               />
             </div>
@@ -1292,8 +1291,8 @@ function confirmDelete(item: Record<string, unknown>) {
 
     <template #footer>
       <div class="w-autocompletefk-footer">
-        <Button label="Cancelar" severity="secondary" text @click="modalVisible = false" />
-        <Button
+        <WButton variant="ghost" label="Cancelar" @click="modalVisible = false" />
+        <WButton
           :label="
             multiple && modalSelecionados.length
               ? `Selecionar (${modalSelecionados.length})`

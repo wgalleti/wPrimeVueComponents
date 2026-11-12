@@ -2220,3 +2220,221 @@
     transition: none;
   }
 }
+
+/* ==========================================================
+   WSegmented — .w-segmented
+   ========================================================== */
+
+.p-selectbutton.w-segmented {
+  display: inline-flex;
+  gap: var(--w-space-05);
+  padding: var(--w-space-05);
+  border-radius: var(--w-radius-md);
+  background: var(--w-surface-2);
+}
+
+.w-segmented .p-togglebutton,
+.w-segmented--toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-15);
+  height: var(--w-control-h);
+  padding: 0 var(--w-control-px);
+  border: 0;
+  border-radius: var(--w-radius);
+  background: transparent;
+  color: var(--w-fg-muted);
+  font-size: var(--w-ui-font);
+  font-weight: var(--w-fw-medium);
+  cursor: pointer;
+  transition: background var(--w-motion-fast) var(--w-ease);
+}
+
+.w-segmented--sm.p-selectbutton .p-togglebutton,
+.w-segmented--toggle.w-segmented--sm {
+  height: var(--w-control-h-sm);
+  font-size: var(--w-text-sm);
+}
+
+.w-segmented .p-togglebutton::before {
+  display: none;
+}
+
+.w-segmented .p-togglebutton.p-togglebutton-checked,
+.w-segmented--on {
+  background: var(--w-surface);
+  color: var(--w-fg);
+  box-shadow: var(--w-shadow-xs);
+}
+
+.w-segmented--toggle {
+  background: var(--w-surface-2);
+}
+
+.w-segmented .p-togglebutton:focus-visible,
+.w-segmented--toggle:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+.w-segmented .p-togglebutton.p-disabled,
+.w-segmented--toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   WNotice — .w-notice
+   ========================================================== */
+
+.w-notice {
+  --w-notice-tone: var(--w-info);
+  --w-notice-soft: var(--w-info-soft);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w-space-3);
+  padding: var(--w-space-3) var(--w-space-4);
+  border: 1px solid var(--w-notice-tone);
+  border-radius: var(--w-radius-md);
+  background: var(--w-notice-soft);
+  color: var(--w-fg);
+  font-size: var(--w-text-sm);
+}
+
+.w-notice--warn {
+  --w-notice-tone: var(--w-warning);
+  --w-notice-soft: var(--w-warning-soft);
+}
+
+.w-notice--danger {
+  --w-notice-tone: var(--w-danger);
+  --w-notice-soft: var(--w-danger-soft);
+}
+
+.w-notice--success {
+  --w-notice-tone: var(--w-success);
+  --w-notice-soft: var(--w-success-soft);
+}
+
+.w-notice-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.w-notice-title {
+  font-weight: var(--w-fw-semibold);
+  color: var(--w-notice-tone);
+}
+
+.w-notice-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w-icon-btn);
+  height: var(--w-icon-btn);
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--w-radius);
+  background: transparent;
+  color: var(--w-fg-muted);
+  cursor: pointer;
+}
+
+.w-notice-close:hover {
+  background: var(--w-notice-soft);
+  color: var(--w-fg);
+}
+
+.w-notice-close:focus-visible,
+.w-tag-remove:focus-visible {
+  outline: 2px solid var(--w-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================
+   WProgress — .w-progress
+   ========================================================== */
+
+.w-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-1);
+  --w-progress-value: 0;
+}
+
+.w-progress-track {
+  position: relative;
+  overflow: hidden;
+  height: var(--w-meter-h);
+  border-radius: var(--w-radius-full);
+  background: var(--w-primary-soft);
+}
+
+.w-progress--strip .w-progress-track {
+  height: var(--w-space-05);
+  border-radius: 0;
+}
+
+.w-progress-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--w-primary);
+  transform: scaleX(var(--w-progress-value));
+  transform-origin: left center;
+  transition: transform var(--w-motion-slow) var(--w-ease);
+}
+
+.w-progress--indeterminate .w-progress-fill {
+  width: 40%;
+  transform: none;
+  animation: w-progress-slide var(--w-motion-loop) var(--w-ease) infinite;
+}
+
+@keyframes w-progress-slide {
+  from {
+    left: -40%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.w-progress-label {
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-segmented .p-togglebutton,
+  .w-segmented--toggle,
+  .w-progress-fill {
+    transition: none;
+  }
+
+  .w-progress--indeterminate .w-progress-fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================================
+   WButton — .w-button
+   ==========================================================
+   Aparência do Button do PrimeVue (variant/size viram severity/text/outlined/size).
+   Carregando sem ícone: o spinner fica por cima do rótulo invisível — a largura não muda. */
+.w-button--loading.w-button--bare {
+  position: relative;
+}
+
+.w-button--loading.w-button--bare .p-button-label {
+  visibility: hidden;
+}
+
+.w-button--loading.w-button--bare .p-button-loading-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}

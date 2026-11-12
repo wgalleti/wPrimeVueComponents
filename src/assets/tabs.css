@@ -338,3 +338,10 @@
 .w-tab-viewport__pane > .p-dialog-mask {
   position: absolute !important;
 }
+
+/* Overlay transiente ancorado no pane (WPopover, WMenu): o PrimeVue posiciona em coordenadas
+   do documento e o pane é posicionado — o translate devolve o deslocamento do pane, gravado
+   em --w-overlay-shift-* por useTabOverlay antes de abrir. */
+.w-tab-viewport__pane > .w-tab-overlay {
+  translate: var(--w-overlay-shift-x) var(--w-overlay-shift-y);
+}

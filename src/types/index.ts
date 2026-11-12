@@ -83,3 +83,5 @@ export type {
 export { W_TAB_HOST_KEY, useTabHost } from './routeTabs'
 
 export type { PaletteItem } from './commandPalette'
+
+export type { ButtonSize, ButtonVariant, MenuMode } from './button'

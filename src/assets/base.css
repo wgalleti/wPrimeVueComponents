@@ -202,3 +202,20 @@
 .p-datatable .w-col-actions {
   width: var(--w-col-actions);
 }
+
+/* WStatusTag removível: o botão herda a cor da tag. */
+.p-tag.w-tag--removable {
+  gap: var(--w-space-1);
+}
+
+.w-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: var(--w-text-2xs);
+  cursor: pointer;
+}

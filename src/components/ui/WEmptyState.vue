@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
+import WButton from './WButton.vue'
 
 /**
  * Estado vazio: ícone (ou ilustração do produto pelo slot `illustration`), título, descrição e
@@ -37,11 +37,11 @@ defineSlots<{
     </div>
     <p class="w-empty-state-title">{{ title }}</p>
     <p v-if="description" class="w-empty-state-description">{{ description }}</p>
-    <Button
+    <WButton
       v-if="actionLabel"
       :label="actionLabel"
       :icon="actionIcon"
-      size="small"
+      size="sm"
       class="w-empty-state-action"
       @click="emit('action')"
     />

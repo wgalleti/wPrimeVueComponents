@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import { useTabHost } from '@/types/routeTabs'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 import type { FieldDef } from '@/types/field'
 import WFormRenderer from '@/components/form/WFormRenderer.vue'
 import { useFormKeyboardNav } from '@/composables/useFormKeyboardNav'
@@ -143,16 +143,14 @@ watch(
       <!-- Footer -->
       <div class="w-crud-form-footer">
         <slot name="footer" :saving="saving" :disabled="disabled">
-          <Button
-            type="button"
+          <WButton
+            variant="ghost"
             :label="disabled ? 'Fechar' : 'Cancelar'"
-            severity="secondary"
-            text
             :disabled="saving"
             data-kbd-skip
             @click="emit('update:visible', false)"
           />
-          <Button
+          <WButton
             v-if="!disabled"
             type="submit"
             :label="isEditing ? 'Atualizar' : 'Salvar'"

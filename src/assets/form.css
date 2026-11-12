@@ -307,9 +307,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--w-space-2);
+  min-height: 0;
+}
+
+/* Altura limitada pelo fitOverlay (nao cabe em lado nenhum): o calendario rola e o rodape
+   (Agora/Limpar/OK) fica sempre visivel. */
+.p-popover:has(> .p-popover-content > .w-datepicker-panel),
+.p-popover-content:has(> .w-datepicker-panel) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.w-datepicker-panel > .p-datepicker {
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .w-datepicker-actions {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

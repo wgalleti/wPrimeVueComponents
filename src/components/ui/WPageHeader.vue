@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
+import WButton from './WButton.vue'
 
 defineProps<{
   title: string
@@ -21,7 +21,7 @@ const emit = defineEmits<{
     </div>
     <div class="w-page-header-actions">
       <slot name="actions" />
-      <Button v-if="actionLabel" :label="actionLabel" :icon="actionIcon" @click="emit('action')" />
+      <WButton v-if="actionLabel" :label="actionLabel" :icon="actionIcon" @click="emit('action')" />
     </div>
   </div>
 </template>

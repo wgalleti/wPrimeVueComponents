@@ -47,6 +47,9 @@ export {
   WFormSection,
   WActionBar,
   WProgressFlow,
+  WProgress,
+  WNotice,
+  WSegmented,
   WStepFlow,
   WStepSection,
   WAvatar,
@@ -59,6 +62,9 @@ export {
   WMarkdownEditor,
   WMarkdownToc,
   WDialog,
+  WButton,
+  WPopover,
+  WMenu,
   WFlipCard,
   WCommandPalette,
   WSkeleton,
@@ -129,6 +135,9 @@ export type {
   EditableColumnEditor,
   EditableRow,
   PaletteItem,
+  ButtonSize,
+  ButtonVariant,
+  MenuMode,
   CheckListItem,
   CheckListLevel,
   FlipCardLabels,
@@ -175,6 +184,7 @@ export type {
 } from './types'
 
 export type { StatusMapping } from './components/ui/WStatusTag.vue'
+export type { SegmentedOption } from './components/ui/WSegmented.vue'
 export type { InfoField } from './components/ui/WInfoCard.vue'
 export type { StepFlowContext, StepFlowLabels, StepFlowOrientation } from './utils/stepFlow'
 export { W_STEP_FLOW_KEY } from './utils/stepFlow'

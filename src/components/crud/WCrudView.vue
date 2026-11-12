@@ -11,16 +11,16 @@ import {
 } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
-import Popover from 'primevue/popover'
+import WPopover from '@/components/ui/WPopover.vue'
 import Checkbox from 'primevue/checkbox'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
-import ContextMenu from 'primevue/contextmenu'
+import WMenu from '@/components/ui/WMenu.vue'
 import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
@@ -253,7 +253,7 @@ const paginatorFirst = computed(() =>
 
 // Estado de coluna (opt-in via persistState): visibilidade persistida em localStorage.
 const columnState = reactive<{ hidden: string[] }>({ hidden: [] })
-const chooser = ref<InstanceType<typeof Popover> | null>(null)
+const chooser = ref<InstanceType<typeof WPopover> | null>(null)
 function colStateKey(): string | null {
   return props.persistState ? `wcrud:cols:${props.persistState}` : null
 }
@@ -386,6 +386,12 @@ function actionLabel(action: RowAction): string {
   return action.tooltip ?? action.action
 }
 
+/** Na linha: desabilitada com motivo, o motivo vira o nome e a dica ("Você não pode…"). */
+function actionHint(action: RowAction, data: Record<string, unknown> | null): string {
+  const reason = data && isActionDisabled(action, data) ? action.disabledReason?.(data) : undefined
+  return reason ?? actionLabel(action)
+}
+
 const csvLabel = computed(() =>
   props.csvScope === 'all' ? 'Exportar tudo (CSV)' : 'Exportar página (CSV)',
 )
@@ -454,17 +460,25 @@ const totalCount = computed<number>(() => {
 // Primeira carga (carregando e sem linhas): não existe total ainda, então nada de "0 registros".
 const initialLoading = computed(() => props.crud.loading.value && !props.crud.items.value.length)
 
+// Total saturado (a API contou só até um teto): `extras.count_aproximado` vira "10.000+".
+const approxCount = computed(() => props.crud.extras.value.count_aproximado === true)
+const totalText = computed(
+  () => `${formatNumber(totalCount.value, 0)}${approxCount.value ? '+' : ''}`,
+)
+
 const countLabel = computed(() => {
   if (initialLoading.value) return '—'
   const n = totalCount.value
-  return `${formatNumber(n, 0)} ${n === 1 ? 'registro' : 'registros'}`
+  return `${totalText.value} ${n === 1 && !approxCount.value ? 'registro' : 'registros'}`
 })
 
 const showCount = computed(() => !props.hideCount)
 
-/** Paginador em pt-BR: "1–20 de 132". */
+/** Paginador em pt-BR: "1–20 de 132" (ou "1–20 de 10.000+"). */
 const pageReportTemplate = computed(() =>
-  initialLoading.value ? '—' : '{first}–{last} de {totalRecords}',
+  initialLoading.value
+    ? '—'
+    : `{first}–{last} de ${approxCount.value ? totalText.value : '{totalRecords}'}`,
 )
 
 // --- KPIs ---
@@ -483,6 +497,16 @@ const allKpis = computed<KpiItem[]>(() => {
 })
 
 const canCreate = computed(() => props.crud.config.canCreate !== false)
+// Trilho só com alguma ação: numa tela somente leitura ele seria uma pílula vazia.
+const railVisible = computed(
+  () =>
+    props.actionRail &&
+    (canCreate.value ||
+      effectiveRowActions.value.length > 0 ||
+      !!slots['rail-actions'] ||
+      props.showPrint ||
+      props.exportCsv),
+)
 
 // --- Selection (drives action rail + context menu) ---
 
@@ -649,7 +673,7 @@ function onTextFilter(col: ColumnDef, value: string) {
   if (filterTimers[param]) clearTimeout(filterTimers[param])
   filterTimers[param] = setTimeout(() => props.crud.setColumnFilter(param, value || null), 300)
 }
-const cm = ref<InstanceType<typeof ContextMenu> | null>(null)
+const cm = ref<InstanceType<typeof WMenu> | null>(null)
 
 function selectRow(row: Record<string, unknown>) {
   selectedRow.value = row
@@ -1044,7 +1068,7 @@ onMounted(() => {
       </div>
       <div class="w-crud-header-actions">
         <slot name="header-actions" />
-        <Button
+        <WButton
           v-if="canCreate && !actionRail"
           label="Novo"
           icon="pi pi-plus"
@@ -1069,7 +1093,7 @@ onMounted(() => {
     </slot>
 
     <!-- Content (table/cards + optional action rail) -->
-    <div class="w-crud-content" :class="{ 'w-crud-content--rail': actionRail }">
+    <div class="w-crud-content" :class="{ 'w-crud-content--rail': railVisible }">
       <div ref="conteudo" class="w-crud-content-main">
         <!-- Sonda do piso (só em `fit`): caixa com a largura do piso da tabela, que o
              navegador resolve e o ResizeObserver lê em px, presa num envelope de
@@ -1089,24 +1113,24 @@ onMounted(() => {
               {{ crud.selectedItems.value.length }} selecionado(s)
             </span>
             <slot name="bulk-actions" :selected="crud.selectedItems.value" :crud="crud">
-              <Button
+              <WButton
                 v-for="ba in crud.config.bulkActions || []"
                 :key="ba.action"
                 :label="ba.label"
                 :icon="ba.icon"
-                :severity="ba.severity"
-                size="small"
+                :variant="ba.severity === 'danger' ? 'danger' : 'primary'"
+                size="sm"
                 :disabled="ba.disabled ? ba.disabled(crud.selectedItems.value) : false"
                 @click="ba.handler(crud.selectedItems.value)"
               />
             </slot>
-            <Button
+            <WButton
               v-tooltip.top="'Limpar seleção'"
+              variant="ghost"
+              icon-only
               icon="pi pi-times"
               aria-label="Limpar seleção"
-              text
-              rounded
-              size="small"
+              size="sm"
               @click="crud.clearSelection()"
             />
           </div>
@@ -1229,46 +1253,49 @@ onMounted(() => {
                     />
                   </template>
                   <slot name="toolbar-filters" />
-                  <Button
+                  <WButton
                     v-if="Object.keys(crud.columnFilters).length"
+                    variant="ghost"
                     label="Limpar filtros"
                     icon="pi pi-filter-slash"
-                    text
-                    size="small"
+                    size="sm"
                     @click="crud.clearColumnFilters()"
                   />
                 </div>
                 <div class="w-crud-toolbar-end">
                   <slot name="toolbar-actions" />
                   <template v-if="groups.length > 1">
-                    <Button
+                    <WButton
                       v-tooltip.top="'Expandir grupos'"
+                      variant="ghost"
+                      icon-only
                       icon="pi pi-angle-double-down"
                       aria-label="Expandir grupos"
-                      text
-                      size="small"
+                      size="sm"
                       @click="setAllGroupsCollapsed(false)"
                     />
-                    <Button
+                    <WButton
                       v-tooltip.top="'Recolher grupos'"
+                      variant="ghost"
+                      icon-only
                       icon="pi pi-angle-double-up"
                       aria-label="Recolher grupos"
-                      text
-                      size="small"
+                      size="sm"
                       @click="setAllGroupsCollapsed(true)"
                     />
                   </template>
                   <template v-if="persistState">
-                    <Button
+                    <WButton
                       v-tooltip.top="'Colunas'"
+                      variant="ghost"
+                      icon-only
                       icon="pi pi-sliders-h"
                       aria-label="Colunas"
                       aria-haspopup="dialog"
-                      text
-                      size="small"
-                      @click="(e) => chooser?.toggle(e)"
+                      size="sm"
+                      @click="chooser?.toggle($event)"
                     />
-                    <Popover ref="chooser">
+                    <WPopover ref="chooser">
                       <div class="w-crud-chooser">
                         <div
                           v-for="col in baseColumns"
@@ -1286,41 +1313,42 @@ onMounted(() => {
                           </label>
                         </div>
                       </div>
-                    </Popover>
+                    </WPopover>
                   </template>
-                  <Button
+                  <WButton
                     v-if="exportCsv"
                     v-tooltip.top="csvLabel"
+                    variant="ghost"
+                    icon-only
                     icon="pi pi-download"
                     :aria-label="csvLabel"
-                    text
-                    size="small"
+                    size="sm"
                     :loading="exporting"
                     @click="doExportCsv"
                   />
                   <div v-if="canToggleView" class="w-crud-view-toggle">
-                    <Button
+                    <WButton
                       v-tooltip.top="'Ver como tabela'"
+                      icon-only
                       icon="pi pi-table"
                       aria-label="Ver como tabela"
                       :aria-pressed="isView('table')"
-                      size="small"
-                      :text="!isView('table')"
-                      :outlined="isView('table')"
+                      size="sm"
+                      :variant="isView('table') ? 'secondary' : 'ghost'"
                       @click="setView('table')"
                     />
-                    <Button
+                    <WButton
                       v-tooltip.top="'Ver como cards'"
+                      icon-only
                       icon="pi pi-th-large"
                       aria-label="Ver como cards"
                       :aria-pressed="isView('cards')"
-                      size="small"
-                      :text="!isView('cards')"
-                      :outlined="isView('cards')"
+                      size="sm"
+                      :variant="isView('cards') ? 'secondary' : 'ghost'"
                       @click="setView('cards')"
                     />
                   </div>
-                  <Button
+                  <WButton
                     v-if="!showHeader && canCreate && !actionRail"
                     label="Novo"
                     icon="pi pi-plus"
@@ -1344,7 +1372,9 @@ onMounted(() => {
                     <i class="pi pi-inbox" />
                   </div>
                   <p class="w-crud-empty-title">Nenhum registro encontrado</p>
-                  <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
+                  <p class="w-crud-empty-text">
+                    Tente ajustar sua busca{{ canCreate ? ' ou crie um novo registro' : '' }}
+                  </p>
                 </div>
               </slot>
             </template>
@@ -1418,15 +1448,17 @@ onMounted(() => {
               <template #body="{ data }">
                 <div class="w-crud-actions">
                   <template v-for="action in effectiveRowActions" :key="action.action">
-                    <Button
+                    <WButton
                       v-if="isActionVisible(action, data)"
-                      v-tooltip.top="action.tooltip"
+                      v-tooltip.top="
+                        action.disabledReason ? actionHint(action, data) : action.tooltip
+                      "
+                      icon-only
                       :icon="action.icon"
-                      :aria-label="actionLabel(action)"
-                      text
-                      rounded
-                      size="small"
-                      :severity="action.severity as any"
+                      :aria-label="actionHint(action, data)"
+                      :title="action.disabledReason ? actionHint(action, data) : undefined"
+                      size="sm"
+                      :variant="action.severity === 'danger' ? 'danger' : 'ghost'"
                       :disabled="isActionDisabled(action, data)"
                       @click="handleRowAction(action, data)"
                     />
@@ -1511,68 +1543,71 @@ onMounted(() => {
                 />
               </template>
               <slot name="toolbar-filters" />
-              <Button
+              <WButton
                 v-if="Object.keys(crud.columnFilters).length"
+                variant="ghost"
                 label="Limpar filtros"
                 icon="pi pi-filter-slash"
-                text
-                size="small"
+                size="sm"
                 @click="crud.clearColumnFilters()"
               />
             </div>
             <div class="w-crud-toolbar-end">
               <slot name="toolbar-actions" />
               <template v-if="groups.length > 1">
-                <Button
+                <WButton
                   v-tooltip.top="'Expandir grupos'"
+                  variant="ghost"
+                  icon-only
                   icon="pi pi-angle-double-down"
                   aria-label="Expandir grupos"
-                  text
-                  size="small"
+                  size="sm"
                   @click="setAllGroupsCollapsed(false)"
                 />
-                <Button
+                <WButton
                   v-tooltip.top="'Recolher grupos'"
+                  variant="ghost"
+                  icon-only
                   icon="pi pi-angle-double-up"
                   aria-label="Recolher grupos"
-                  text
-                  size="small"
+                  size="sm"
                   @click="setAllGroupsCollapsed(true)"
                 />
               </template>
-              <Button
+              <WButton
                 v-if="exportCsv"
                 v-tooltip.top="csvLabel"
+                variant="ghost"
+                icon-only
                 icon="pi pi-download"
                 :aria-label="csvLabel"
-                text
-                size="small"
+                size="sm"
                 :loading="exporting"
                 @click="doExportCsv"
               />
               <div v-if="canToggleView" class="w-crud-view-toggle">
-                <Button
+                <WButton
                   v-tooltip.top="'Ver como tabela'"
+                  icon-only
                   icon="pi pi-table"
                   aria-label="Ver como tabela"
                   :aria-pressed="isView('table')"
-                  size="small"
-                  :text="!isView('table')"
-                  :outlined="isView('table')"
+                  size="sm"
+                  :variant="isView('table') ? 'secondary' : 'ghost'"
                   @click="setView('table')"
                 />
-                <Button
+                <WButton
                   v-tooltip.top="'Ver como cards'"
+                  icon-only
                   icon="pi pi-th-large"
                   aria-label="Ver como cards"
                   :aria-pressed="isView('cards')"
-                  size="small"
-                  :text="!isView('cards')"
-                  :outlined="isView('cards')"
+                  size="sm"
+                  :variant="isView('cards') ? 'secondary' : 'ghost'"
                   @click="setView('cards')"
                 />
               </div>
-              <Button
+              <WButton
                 v-if="!showHeader && canCreate && !actionRail"
                 label="Novo"
                 icon="pi pi-plus"
@@ -1597,7 +1632,9 @@ onMounted(() => {
                 <i class="pi pi-inbox" />
               </div>
               <p class="w-crud-empty-title">Nenhum registro encontrado</p>
-              <p class="w-crud-empty-text">Tente ajustar sua busca ou crie um novo registro</p>
+              <p class="w-crud-empty-text">
+                Tente ajustar sua busca{{ canCreate ? ' ou crie um novo registro' : '' }}
+              </p>
             </div>
           </slot>
 
@@ -1680,15 +1717,17 @@ onMounted(() => {
                   </div>
                   <div v-if="hasActions && !actionRail" class="w-crud-card-actions">
                     <template v-for="action in effectiveRowActions" :key="action.action">
-                      <Button
+                      <WButton
                         v-if="isActionVisible(action, row)"
-                        v-tooltip.top="action.tooltip"
+                        v-tooltip.top="
+                          action.disabledReason ? actionHint(action, row) : action.tooltip
+                        "
+                        icon-only
                         :icon="action.icon"
-                        :aria-label="actionLabel(action)"
-                        text
-                        rounded
-                        size="small"
-                        :severity="action.severity as any"
+                        :aria-label="actionHint(action, row)"
+                        :title="action.disabledReason ? actionHint(action, row) : undefined"
+                        size="sm"
+                        :variant="action.severity === 'danger' ? 'danger' : 'ghost'"
                         :disabled="isActionDisabled(action, row)"
                         @click="handleRowAction(action, row)"
                       />
@@ -1716,48 +1755,54 @@ onMounted(() => {
       <!-- /.w-crud-content-main -->
 
       <!-- Floating action rail (todas as actions vivem aqui) -->
-      <aside v-if="actionRail" class="w-crud-rail">
-        <Button
+      <aside v-if="railVisible" class="w-crud-rail">
+        <WButton
           v-if="canCreate"
           v-tooltip.left="'Novo'"
+          icon-only
           icon="pi pi-plus"
           aria-label="Novo"
-          rounded
           @click="crud.openCreateDialog()"
         />
         <div v-if="canCreate && effectiveRowActions.length" class="w-crud-rail-sep" />
         <template v-for="action in effectiveRowActions" :key="action.action">
-          <Button
+          <WButton
             v-if="!railRow || isActionVisible(action, railRow)"
-            v-tooltip.left="action.tooltip"
+            v-tooltip.left="action.disabledReason ? actionHint(action, railRow) : action.tooltip"
+            icon-only
             :icon="action.icon"
-            :aria-label="actionLabel(action)"
-            text
-            rounded
-            :severity="action.severity as any"
+            :aria-label="actionHint(action, railRow)"
+            :title="action.disabledReason ? actionHint(action, railRow) : undefined"
+            :variant="action.severity === 'danger' ? 'danger' : 'ghost'"
             :disabled="!railRow || isActionDisabled(action, railRow)"
             @click="railRow && handleRowAction(action, railRow)"
           />
         </template>
         <slot name="rail-actions" :selected="railRow" :crud="crud" />
-        <div v-if="showPrint || exportCsv" class="w-crud-rail-sep" />
-        <Button
+        <div
+          v-if="
+            (canCreate || effectiveRowActions.length || $slots['rail-actions']) &&
+            (showPrint || exportCsv)
+          "
+          class="w-crud-rail-sep"
+        />
+        <WButton
           v-if="showPrint"
           v-tooltip.left="'Imprimir'"
+          variant="ghost"
+          icon-only
           icon="pi pi-print"
           aria-label="Imprimir"
-          text
-          rounded
           :disabled="!railRow"
           @click="railPrint"
         />
-        <Button
+        <WButton
           v-if="exportCsv"
           v-tooltip.left="csvLabel"
+          variant="ghost"
+          icon-only
           icon="pi pi-download"
           :aria-label="csvLabel"
-          text
-          rounded
           :loading="exporting"
           @click="doExportCsv"
         />
@@ -1766,10 +1811,7 @@ onMounted(() => {
     <!-- /.w-crud-content -->
 
     <!-- Context menu -->
-    <!-- Transiente (fecha no clique fora): fica no body — o absolutePosition
-         do PrimeVue calcula contra o documento e um container posicionado o
-         desloca. Só dialog/confirm ancoram no pane. -->
-    <ContextMenu v-if="contextMenu" ref="cm" :model="contextMenuItems" />
+    <WMenu v-if="contextMenu" ref="cm" mode="context" :items="contextMenuItems" />
 
     <!-- Form Dialog -->
     <slot name="form-dialog" :crud="crud" :dialog-width="dialogWidth">
@@ -1835,19 +1877,16 @@ onMounted(() => {
     >
       <slot name="delete-message" :item="deleteTarget" />
       <template #footer>
-        <Button
-          type="button"
+        <WButton
+          variant="ghost"
           label="Cancelar"
-          severity="secondary"
-          text
           :disabled="deleting"
           @click="deleteDialogVisible = false"
         />
-        <Button
-          type="button"
+        <WButton
+          variant="danger"
           label="Excluir"
           icon="pi pi-trash"
-          severity="danger"
           :loading="deleting"
           @click="onConfirmDelete"
         />

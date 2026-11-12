@@ -4,7 +4,7 @@ import Tree from 'primevue/tree'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 import {
   allLeafValues,
   buildTree,
@@ -218,19 +218,17 @@ function clearAll() {
         </span>
         <span v-else />
         <div v-if="showToggleAll" class="w-tree-select__actions">
-          <Button
-            type="button"
+          <WButton
+            variant="ghost"
             label="Marcar todos"
-            text
             data-kbd-skip
             tabindex="-1"
             :disabled="disabled || selectedCount === totalLeaves || !totalLeaves"
             @click="selectAll"
           />
-          <Button
-            type="button"
+          <WButton
+            variant="ghost"
             label="Limpar"
-            text
             data-kbd-skip
             tabindex="-1"
             :disabled="disabled || !selectedCount"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
-import Popover from 'primevue/popover'
+import WPopover from './WPopover.vue'
 
 /**
  * Célula editável no lugar: o valor aparece como botão e, ao clicar, abre um popover com o
@@ -22,7 +22,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{ open: []; close: [] }>()
 
-const popover = ref<InstanceType<typeof Popover> | null>(null)
+const popover = ref<InstanceType<typeof WPopover> | null>(null)
 const trigger = ref<HTMLButtonElement | null>(null)
 const expanded = ref(false)
 const editor = ref<HTMLElement | null>(null)
@@ -76,10 +76,10 @@ defineExpose({ close })
     </button>
     <span v-else class="w-inline-cell__static"><slot /></span>
 
-    <Popover v-if="editable" ref="popover" @show="onShow" @hide="onHide">
+    <WPopover v-if="editable" ref="popover" @show="onShow" @hide="onHide">
       <div ref="editor" class="w-inline-cell__editor">
         <slot name="editor" :close="close" />
       </div>
-    </Popover>
+    </WPopover>
   </span>
 </template>

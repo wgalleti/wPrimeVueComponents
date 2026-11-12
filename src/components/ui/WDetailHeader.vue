@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
+import WButton from './WButton.vue'
 import WStatusTag from './WStatusTag.vue'
 
 const props = defineProps<{
@@ -29,7 +29,13 @@ function goBack() {
 <template>
   <div class="w-detail-header">
     <div class="w-detail-header-left">
-      <Button icon="pi pi-arrow-left" aria-label="Voltar" text rounded @click="goBack" />
+      <WButton
+        icon="pi pi-arrow-left"
+        icon-only
+        aria-label="Voltar"
+        variant="ghost"
+        @click="goBack"
+      />
       <i v-if="icon" :class="icon" class="w-detail-header-icon" />
       <div class="w-detail-header-content">
         <h2 class="w-detail-header-title">{{ title }}</h2>

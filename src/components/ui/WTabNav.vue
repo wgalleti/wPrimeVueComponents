@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
-import ContextMenu from 'primevue/contextmenu'
+import WMenu from './WMenu.vue'
 import type { MenuItem } from 'primevue/menuitem'
 import type { RouteTab, RouteTabsApi } from '@/types/routeTabs'
 
@@ -66,7 +66,7 @@ function navegar(indice: number, passo: number): void {
 }
 
 // Menu de contexto: mesmo padrão do WCrudView (um ContextMenu, alvo corrente).
-const menu = ref<InstanceType<typeof ContextMenu> | null>(null)
+const menu = ref<InstanceType<typeof WMenu> | null>(null)
 const alvoMenu = ref<RouteTab | null>(null)
 
 const itensMenu = computed<MenuItem[]>(() => {
@@ -211,6 +211,6 @@ function inicioDeGrupo(indice: number): boolean {
     <div v-if="$slots.actions" class="w-tab-nav__actions">
       <slot name="actions" />
     </div>
-    <ContextMenu ref="menu" :model="itensMenu" />
+    <WMenu ref="menu" mode="context" :items="itensMenu" />
   </div>
 </template>

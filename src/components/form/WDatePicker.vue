@@ -4,8 +4,8 @@ import DatePicker from 'primevue/datepicker'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import Popover from 'primevue/popover'
-import Button from 'primevue/button'
+import WPopover from '@/components/ui/WPopover.vue'
+import WButton from '@/components/ui/WButton.vue'
 import { vMaska } from 'maska/vue'
 import { useDateInput, type DateValueFormat } from '@/composables/useDateInput'
 
@@ -58,7 +58,7 @@ const di = useDateInput({
 
 const typed = ref('') // texto no input (DD/MM/YYYY[ HH:mm])
 const panelDate = ref<Date | null>(null) // valor do calendário
-const op = ref<InstanceType<typeof Popover> | null>(null)
+const op = ref<InstanceType<typeof WPopover> | null>(null)
 const inputRef = ref<InstanceType<typeof InputText> | null>(null)
 
 const maskaOptions = computed(() => ({ mask: di.mask() }))
@@ -163,7 +163,7 @@ onMounted(() => {
       />
     </IconField>
 
-    <Popover ref="op">
+    <WPopover ref="op">
       <div class="w-datepicker-panel">
         <DatePicker
           :model-value="panelDate ?? undefined"
@@ -176,19 +176,23 @@ onMounted(() => {
         />
         <div class="w-datepicker-actions">
           <div class="w-datepicker-shortcuts">
-            <Button :label="showTime ? 'Agora' : 'Hoje'" text size="small" @click="setToday" />
-            <Button
+            <WButton
+              variant="ghost"
+              :label="showTime ? 'Agora' : 'Hoje'"
+              size="sm"
+              @click="setToday"
+            />
+            <WButton
               v-if="showClear"
+              variant="ghost"
               label="Limpar"
-              text
-              size="small"
-              severity="secondary"
+              size="sm"
               @click="clearValue"
             />
           </div>
-          <Button v-if="showTime" label="OK" size="small" @click="confirm" />
+          <WButton v-if="showTime" label="OK" size="sm" @click="confirm" />
         </div>
       </div>
-    </Popover>
+    </WPopover>
   </div>
 </template>

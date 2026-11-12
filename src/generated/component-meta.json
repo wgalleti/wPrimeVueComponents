@@ -1932,6 +1932,96 @@
       "events": [],
       "slots": []
     },
+    "WButton": {
+      "file": "src/components/ui/WButton.vue",
+      "props": [
+        {
+          "name": "variant",
+          "type": "ButtonVariant | undefined",
+          "required": false,
+          "default": "\"primary\"",
+          "description": ""
+        },
+        {
+          "name": "size",
+          "type": "ButtonSize | undefined",
+          "required": false,
+          "default": "\"md\"",
+          "description": ""
+        },
+        {
+          "name": "icon",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Ícone PrimeIcons (`pi pi-check`)."
+        },
+        {
+          "name": "iconPos",
+          "type": "\"right\" | \"left\" | \"top\" | \"bottom\" | undefined",
+          "required": false,
+          "default": "\"left\"",
+          "description": ""
+        },
+        {
+          "name": "label",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Mostra o spinner, bloqueia o clique e marca `aria-busy`; a largura não muda."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "iconOnly",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": "Só o ícone (redondo): exige `ariaLabel`."
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "to",
+          "type": "string | et | X | undefined",
+          "required": false,
+          "default": null,
+          "description": "Destino: o botão vira RouterLink (exige vue-router)."
+        },
+        {
+          "name": "type",
+          "type": "\"button\" | \"submit\" | \"reset\" | undefined",
+          "required": false,
+          "default": "\"button\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": [
+        {
+          "name": "default",
+          "type": "any",
+          "description": "Substitui o conteúdo inteiro (ícone + rótulo)."
+        }
+      ]
+    },
     "WCalendarGrid": {
       "file": "src/components/ui/WCalendarGrid.vue",
       "props": [
@@ -3206,6 +3296,27 @@
       ],
       "slots": []
     },
+    "WMenu": {
+      "file": "src/components/ui/WMenu.vue",
+      "props": [
+        {
+          "name": "items",
+          "type": "MenuItem[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "mode",
+          "type": "MenuMode | undefined",
+          "required": false,
+          "default": "\"popup\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
     "WMeter": {
       "file": "src/components/ui/WMeter.vue",
       "props": [
@@ -3295,6 +3406,53 @@
         }
       ]
     },
+    "WNotice": {
+      "file": "src/components/ui/WNotice.vue",
+      "props": [
+        {
+          "name": "severity",
+          "type": "\"success\" | \"info\" | \"warn\" | \"danger\" | undefined",
+          "required": false,
+          "default": "\"info\"",
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "closable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "closeLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Fechar aviso\"",
+          "description": "Rótulo do botão de fechar."
+        }
+      ],
+      "events": [
+        {
+          "name": "close",
+          "type": "[]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "default",
+          "type": "any",
+          "description": ""
+        }
+      ]
+    },
     "WPageHeader": {
       "file": "src/components/ui/WPageHeader.vue",
       "props": [
@@ -3341,6 +3499,40 @@
           "description": ""
         }
       ]
+    },
+    "WPopover": {
+      "file": "src/components/ui/WPopover.vue",
+      "props": [],
+      "events": [],
+      "slots": []
+    },
+    "WProgress": {
+      "file": "src/components/ui/WProgress.vue",
+      "props": [
+        {
+          "name": "value",
+          "type": "number | undefined",
+          "required": false,
+          "default": null,
+          "description": "0 a 100. Ausente: indeterminado."
+        },
+        {
+          "name": "label",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Texto do leitor de tela e legenda da barra `bar`."
+        },
+        {
+          "name": "size",
+          "type": "\"bar\" | \"strip\" | undefined",
+          "required": false,
+          "default": "\"bar\"",
+          "description": ""
+        }
+      ],
+      "events": [],
+      "slots": []
     },
     "WProgressFlow": {
       "file": "src/components/ui/WProgressFlow.vue",
@@ -3525,6 +3717,61 @@
         }
       ]
     },
+    "WSegmented": {
+      "file": "src/components/ui/WSegmented.vue",
+      "props": [
+        {
+          "name": "options",
+          "type": "SegmentedOption[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "multiple",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "size",
+          "type": "\"md\" | \"sm\" | undefined",
+          "required": false,
+          "default": "\"md\"",
+          "description": ""
+        },
+        {
+          "name": "ariaLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Nome acessível do grupo (ou do alternador, se o rótulo da opção não bastar)."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        },
+        {
+          "name": "modelValue",
+          "type": "unknown",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: unknown]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
     "WSkeleton": {
       "file": "src/components/ui/WSkeleton.vue",
       "props": [
@@ -3562,9 +3809,22 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "removable",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Mostra o botão de remover (substitui o `Chip` removível) e emite `remove`."
         }
       ],
-      "events": [],
+      "events": [
+        {
+          "name": "remove",
+          "type": "[]",
+          "description": ""
+        }
+      ],
       "slots": []
     },
     "WStepFlow": {

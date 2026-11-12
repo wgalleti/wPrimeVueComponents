@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import Button from 'primevue/button'
+import WButton from '@/components/ui/WButton.vue'
 
 type Id = string | number
 type Item = Record<string, unknown>
@@ -125,21 +125,19 @@ function removeAll() {
 
     <!-- Controls -->
     <div class="w-transfer__controls">
-      <Button
-        type="button"
+      <WButton
+        variant="ghost"
+        icon-only
         icon="pi pi-angle-double-right"
         aria-label="Adicionar todos"
-        text
-        rounded
         :disabled="disabled || !available.length"
         @click="addAll"
       />
-      <Button
-        type="button"
+      <WButton
+        variant="ghost"
+        icon-only
         icon="pi pi-angle-double-left"
         aria-label="Remover todos"
-        text
-        rounded
         :disabled="disabled || !selected.length"
         @click="removeAll"
       />
