@@ -496,6 +496,10 @@
   font-size: var(--w-text-2xl);
 }
 
+.w-crud-cards-loading > .w-skeleton {
+  flex: 1;
+}
+
 .w-crud-empty-title {
   font-size: var(--w-text-base);
   font-weight: var(--w-fw-semibold);

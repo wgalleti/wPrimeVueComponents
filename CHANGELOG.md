@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.20.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.1...v1.20.0) (2026-11-12)
+
+### Funcionalidades
+
+* **crud:** show a delayed skeleton on first load with WSkeleton and useDelayedLoading ([36f2715](https://github.com/wgalleti/wPrimeVueComponents/commit/36f271514e3f84c54c46daca13b1b1e84cada790))
+* **ui:** add WCommandPalette with accent-insensitive search and Ctrl/Cmd+K ([651b635](https://github.com/wgalleti/wPrimeVueComponents/commit/651b6355dbebaac8d2500da2c2ac765d2828ef5d))
 ## [1.19.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.0...v1.19.1) (2026-11-11)
 
 ### Correções

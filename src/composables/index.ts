@@ -11,6 +11,8 @@ export { useApiError, extractApiError, extractFieldErrors } from './useApiError'
 export { useFormatters } from './useFormatters'
 export { useRouteTabs } from './useRouteTabs'
 export { useBreakpoint, BREAKPOINTS } from './useBreakpoint'
+export { useDelayedLoading } from './useDelayedLoading'
+export type { UseDelayedLoadingOptions } from './useDelayedLoading'
 export { usePendingForm, setPendingForm, listPendingForms } from './usePendingForms'
 export {
   createPublishedVersion,

@@ -133,6 +133,8 @@
     0 0 0 1px rgb(15 23 42 / 8%)
   );
   --w-overlay-shadow: var(--p-overlay-popover-shadow, var(--w-shadow-md));
+  /* Véu atrás de overlay modal: o do tema do PrimeVue (escuro nos dois temas), ou o do app. */
+  --w-scrim: var(--scrim, var(--p-mask-background, rgb(0 0 0 / 40%)));
 
   /* ---- Densidade dos controles ------------------------------------------- */
   --w-control-h: var(--control-h, 2.375rem);
@@ -196,6 +198,18 @@
   --w-map-h: 28.75rem; /* altura do WMapSelect */
   --w-map-list-h: 23.75rem; /* altura da lista do WMapSelect */
   --w-chart-h: 18rem; /* altura do WChart */
+  --w-palette-w: 36rem; /* largura da WCommandPalette */
+  --w-palette-max-h: 32rem; /* altura máxima da WCommandPalette */
+  --w-palette-top: 12vh; /* distância da WCommandPalette ao topo */
+  --w-z-overlay: var(--z-overlay, 1100); /* camada dos overlays próprios da suíte */
+  --w-skeleton-row-h: 1.25rem; /* altura da linha do WSkeleton */
+  --w-skeleton-px: var(
+    --cell-px,
+    1rem
+  ); /* recuo lateral do WSkeleton rows: o da célula de tabela (Aura) */
+  --w-skeleton-title-h: 1.5rem; /* altura do título do WSkeleton cartão */
+  --w-skeleton-card-pad: var(--w-card-pad); /* respiro do WSkeleton cartão */
+  --w-arrival-shift: 0.375rem; /* deslocamento inicial da .w-chegada */
   --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
   --w-tab-viewport-padding: 0; /* respiro da página dentro do scroll da aba; o app define o seu */
