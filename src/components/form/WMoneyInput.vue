@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputGroup from 'primevue/inputgroup'
 import InputGroupAddon from 'primevue/inputgroupaddon'
@@ -56,15 +56,14 @@ const display = computed(() => {
   }).format(v)
 })
 
-function onInput(event: Event) {
-  const digits = (event.target as HTMLInputElement).value.replace(/\D/g, '')
-  if (!digits) {
-    emit('update:modelValue', null)
-    return
-  }
+async function onInput(event: Event) {
+  const el = event.target as HTMLInputElement
+  const digits = el.value.replace(/\D/g, '')
   // Digits fill from the right: "1000" with decimals=2 -> 10.00
-  const num = Number(digits) / Math.pow(10, props.decimals)
-  emit('update:modelValue', num)
+  emit('update:modelValue', digits ? Number(digits) / Math.pow(10, props.decimals) : null)
+  // Se o pai rejeita ou trava o valor, o modelo não muda e o input ficaria com o texto cru digitado.
+  await nextTick()
+  if (el.value !== display.value) el.value = display.value
 }
 
 // Clamp no blur, não a cada dígito: digitar "150" a caminho de "15,00" passaria pelo teto.
