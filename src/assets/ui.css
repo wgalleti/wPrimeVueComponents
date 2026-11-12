@@ -2162,3 +2162,61 @@
   color: var(--w-fg-muted);
   text-align: center;
 }
+
+/* ==========================================================
+   WSkeleton e .w-chegada — chegada suave dos dados
+   ========================================================== */
+
+.w-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-3);
+}
+
+.w-skeleton--card {
+  padding: var(--w-skeleton-card-pad);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+}
+
+.w-skeleton--rows {
+  padding-inline: var(--w-skeleton-px);
+}
+
+.w-skeleton--text {
+  gap: var(--w-space-2);
+}
+
+.w-skeleton__linha.p-skeleton {
+  height: var(--w-skeleton-row-h);
+}
+
+.w-skeleton__titulo.p-skeleton {
+  width: 40%;
+  height: var(--w-skeleton-title-h);
+}
+
+.w-skeleton__linha--curta.p-skeleton {
+  width: 60%;
+}
+
+/* Conteúdo que acabou de chegar: fade + leve subida. Só visual, nunca atrasa o dado. */
+@keyframes w-chegada {
+  from {
+    opacity: 0;
+    transform: translateY(var(--w-arrival-shift));
+  }
+}
+
+.w-chegada {
+  animation: w-chegada var(--w-motion-fast) var(--w-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-chegada,
+  .w-skeleton .p-skeleton {
+    animation: none;
+    transition: none;
+  }
+}

@@ -16,6 +16,8 @@ import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
+import WSkeleton from '@/components/ui/WSkeleton.vue'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import type { CrudGroupScope } from '@/types/crudGroup'
@@ -98,6 +100,11 @@ const props = withDefaults(
     groupBy?: string | ((item: Record<string, unknown>) => string)
     /** Rótulo do grupo; default a própria chave ("Sem grupo" quando vazia). */
     groupLabel?: (groupKey: string, items: Record<string, unknown>[]) => string
+    /** Carregamento suave: esqueleto só depois de `loadingDelay` ms, no lugar do spinner seco.
+     *  `false` volta ao loading imediato do DataTable / spinner dos cards. */
+    skeleton?: boolean
+    /** Atraso (ms) antes de o esqueleto aparecer. */
+    loadingDelay?: number
   }>(),
   {
     showSearch: true,
@@ -124,6 +131,8 @@ const props = withDefaults(
     csvPageSize: 200,
     groupBy: undefined,
     groupLabel: undefined,
+    skeleton: true,
+    loadingDelay: 150,
   },
 )
 
@@ -138,6 +147,9 @@ const emit = defineEmits<{
 
 const slots: Slots = useSlots()
 const { formatNumber } = useFormatters()
+const { showSkeleton } = useDelayedLoading(() => props.crud.loading.value, {
+  delay: () => props.loadingDelay,
+})
 
 const expandedRows = ref({})
 
@@ -414,7 +426,11 @@ const totalCount = computed<number>(() => {
   return typeof rows === 'number' && rows > 0 ? rows : props.crud.items.value.length
 })
 
+// Primeira carga (carregando e sem linhas): não existe total ainda, então nada de "0 registros".
+const initialLoading = computed(() => props.crud.loading.value && !props.crud.items.value.length)
+
 const countLabel = computed(() => {
+  if (initialLoading.value) return '—'
   const n = totalCount.value
   return `${formatNumber(n, 0)} ${n === 1 ? 'registro' : 'registros'}`
 })
@@ -422,7 +438,9 @@ const countLabel = computed(() => {
 const showCount = computed(() => !props.hideCount)
 
 /** Paginador em pt-BR: "1–20 de 132". */
-const pageReportTemplate = '{first}–{last} de {totalRecords}'
+const pageReportTemplate = computed(() =>
+  initialLoading.value ? '—' : '{first}–{last} de {totalRecords}',
+)
 
 // --- KPIs ---
 
@@ -956,7 +974,7 @@ onMounted(() => {
             ref="tableRef"
             v-model:expanded-rows="expandedRows"
             :value="displayItems"
-            :loading="crud.loading.value"
+            :loading="skeleton ? crud.loading.value && !!displayItems.length : crud.loading.value"
             :row-group-mode="isGrouped ? 'subheader' : undefined"
             :group-rows-by="groupRowsBy"
             :expandable-row-groups="isGrouped"
@@ -1172,7 +1190,14 @@ onMounted(() => {
             </template>
 
             <template #empty>
-              <slot name="empty">
+              <!-- Carregando sem linhas: esqueleto (depois do delay) em vez de "nenhum registro". -->
+              <WSkeleton
+                v-if="skeleton && crud.loading.value"
+                v-show="showSkeleton"
+                variant="rows"
+                :count="Math.min(crud.pagination.pageSize, 8)"
+              />
+              <slot v-else name="empty">
                 <div class="w-crud-empty">
                   <div class="w-crud-empty-icon">
                     <i class="pi pi-inbox" />
@@ -1415,8 +1440,14 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="crud.loading.value" class="w-crud-cards-loading">
-            <i class="pi pi-spin pi-spinner" />
+          <div
+            v-if="crud.loading.value && (!skeleton || !crud.items.value.length)"
+            class="w-crud-cards-loading"
+          >
+            <template v-if="skeleton">
+              <WSkeleton v-if="showSkeleton" variant="card" />
+            </template>
+            <i v-else class="pi pi-spin pi-spinner" />
           </div>
 
           <slot v-else-if="!crud.items.value.length" name="empty">

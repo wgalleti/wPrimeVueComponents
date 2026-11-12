@@ -81,3 +81,5 @@ export type {
   UseRouteTabsOptions,
 } from './routeTabs'
 export { W_TAB_HOST_KEY, useTabHost } from './routeTabs'
+
+export type { PaletteItem } from './commandPalette'

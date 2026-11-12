@@ -589,6 +589,20 @@
           "description": "Rótulo do grupo; default a própria chave (\"Sem grupo\" quando vazia)."
         },
         {
+          "name": "skeleton",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Carregamento suave: esqueleto só depois de `loadingDelay` ms, no lugar do spinner seco.\n`false` volta ao loading imediato do DataTable / spinner dos cards."
+        },
+        {
+          "name": "loadingDelay",
+          "type": "number | undefined",
+          "required": false,
+          "default": "150",
+          "description": "Atraso (ms) antes de o esqueleto aparecer."
+        },
+        {
           "name": "selectedRow",
           "type": "Record<string, unknown> | null | undefined",
           "required": false,
@@ -2068,6 +2082,66 @@
         }
       ]
     },
+    "WCommandPalette": {
+      "file": "src/components/ui/WCommandPalette.vue",
+      "props": [
+        {
+          "name": "items",
+          "type": "PaletteItem[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "recent",
+          "type": "string[] | undefined",
+          "required": false,
+          "default": "[]",
+          "description": "Ids usados recentemente, do mais novo ao mais antigo."
+        },
+        {
+          "name": "placeholder",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Para onde você quer ir?\"",
+          "description": ""
+        },
+        {
+          "name": "shortcut",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "true",
+          "description": "Liga os atalhos globais: Ctrl/⌘+K alterna e `/` abre. Ambos só valem fora de campos de\ntexto (input, textarea, contenteditable) e sem outro modal aberto; `visible` não muda\ndurante repetição de tecla nem composição (IME). Dentro da paleta, Ctrl/⌘+K fecha."
+        },
+        {
+          "name": "label",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Paleta de comandos\"",
+          "description": "Nome acessível da janela."
+        },
+        {
+          "name": "visible",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "select",
+          "type": "[item: PaletteItem]",
+          "description": ""
+        },
+        {
+          "name": "update:visible",
+          "type": "[value: boolean]",
+          "description": ""
+        }
+      ],
+      "slots": []
+    },
     "WDetailHeader": {
       "file": "src/components/ui/WDetailHeader.vue",
       "props": [
@@ -3443,6 +3517,27 @@
           "description": ""
         }
       ]
+    },
+    "WSkeleton": {
+      "file": "src/components/ui/WSkeleton.vue",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"text\" | \"rows\" | \"card\" | undefined",
+          "required": false,
+          "default": "\"rows\"",
+          "description": "`rows`: n linhas de tabela; `card`: bloco de card; `text`: n linhas de parágrafo."
+        },
+        {
+          "name": "count",
+          "type": "number | undefined",
+          "required": false,
+          "default": "5",
+          "description": "Quantidade de linhas (`rows` e `text`)."
+        }
+      ],
+      "events": [],
+      "slots": []
     },
     "WStatusTag": {
       "file": "src/components/ui/WStatusTag.vue",
