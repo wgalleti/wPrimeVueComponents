@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { mount, VueWrapper } from '@vue/test-utils'
 import dayjs from 'dayjs'
@@ -103,5 +104,14 @@ describe('WCalendarGrid', () => {
     const w = montar()
     await w.findAll('.w-calendar-grid__day')[1].trigger('click')
     expect(w.emitted('day-click')![0]).toEqual([OUTRO])
+  })
+})
+
+describe('WCalendarGrid — cabeçalho do dia estreito', () => {
+  // jsdom não calcula layout: confere a regra no CSS que a suíte publica.
+  it('a contagem quebra para a linha de baixo em vez de colidir com o número do dia', () => {
+    const css = readFileSync('src/assets/viz.css', 'utf8')
+    expect(css).toMatch(/\.w-calendar-grid__day \{[^}]*flex-wrap: wrap;/)
+    expect(css).toMatch(/\.w-calendar-grid__count \{\s*flex: 0 0 100%;/)
   })
 })

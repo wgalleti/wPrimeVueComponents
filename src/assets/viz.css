@@ -870,9 +870,11 @@
 
 .w-calendar-grid__day {
   display: flex;
+  flex-wrap: wrap; /* a contagem desce para a linha de baixo em vez de colidir com o dia */
   align-items: baseline;
   justify-content: center;
-  gap: var(--w-space-1);
+  gap: 0 var(--w-space-1);
+  min-width: 0;
   padding: var(--w-space-1) 0;
   border: 0;
   border-radius: var(--w-radius-sm);
@@ -922,6 +924,8 @@
 }
 
 .w-calendar-grid__count {
+  flex: 0 0 100%;
+  text-align: center;
   font-size: var(--w-text-xs);
   font-variant-numeric: tabular-nums;
   color: var(--w-fg-subtle);
