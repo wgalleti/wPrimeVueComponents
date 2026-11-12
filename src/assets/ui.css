@@ -2201,6 +2201,37 @@
   width: 60%;
 }
 
+/* Tamanho: `size` põe a altura nomeada; `height`/`width` chegam como knob inline e vencem.
+   Sem nenhum dos dois, as variedades de sempre não mudam (o var() inválido vira `auto`). */
+.w-skeleton {
+  width: var(--w-skeleton-w);
+}
+
+.w-skeleton--block {
+  --w-skeleton-h: var(--w-skeleton-block-md);
+}
+
+.w-skeleton--sm {
+  --w-skeleton-h: var(--w-skeleton-block-sm);
+}
+
+.w-skeleton--md {
+  --w-skeleton-h: var(--w-skeleton-block-md);
+}
+
+.w-skeleton--lg {
+  --w-skeleton-h: var(--w-skeleton-block-lg);
+}
+
+.w-skeleton--card {
+  min-height: var(--w-skeleton-h);
+}
+
+.w-skeleton__bloco.p-skeleton {
+  height: var(--w-skeleton-h);
+  border-radius: var(--w-radius-lg);
+}
+
 /* Conteúdo que acabou de chegar: fade + leve subida. Só visual, nunca atrasa o dado. */
 @keyframes w-chegada {
   from {

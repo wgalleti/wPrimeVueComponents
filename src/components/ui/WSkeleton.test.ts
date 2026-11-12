@@ -21,4 +21,18 @@ describe('WSkeleton', () => {
     expect(l[2].classes()).toContain('w-skeleton__linha--curta')
     expect(l[0].classes()).not.toContain('w-skeleton__linha--curta')
   })
+  it('block desenha um retângulo, md por padrão', () => {
+    const w = mount(WSkeleton, { props: { variant: 'block' } })
+    expect(w.findAll('.w-skeleton__bloco')).toHaveLength(1)
+    expect(w.classes()).toContain('w-skeleton--block')
+  })
+  it('size vira classe; height/width viram knobs inline', () => {
+    const w = mount(WSkeleton, {
+      props: { variant: 'card', size: 'lg', height: 'var(--w-chart-h)', width: 'var(--w-kpi-min)' },
+    })
+    expect(w.classes()).toContain('w-skeleton--lg')
+    const style = w.attributes('style') ?? ''
+    expect(style).toContain('--w-skeleton-h: var(--w-chart-h)')
+    expect(style).toContain('--w-skeleton-w: var(--w-kpi-min)')
+  })
 })

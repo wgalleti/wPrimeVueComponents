@@ -20,3 +20,18 @@ const { showSkeleton } = useDelayedLoading(carregando)
 
 A classe `.w-chegada` faz o conteúdo entrar com fade e leve subida (`--w-motion-fast`); com
 `prefers-reduced-motion: reduce` a animação some, assim como a do `WSkeleton`.
+
+## Bloco e tamanho
+
+`variant="block"` é um retângulo só — o esqueleto da figura de painel (KPI) ou da área de gráfico.
+A altura vem por nome (`size`: `sm` 3rem, `md` 6rem, `lg` a altura do `WChart`; tokens
+`--w-skeleton-block-*`) ou por `height`, sempre um token. `width` limita a largura. No `card`,
+`size`/`height` viram altura mínima, para o cartão vazio ter o tamanho do cartão cheio.
+
+```vue
+<WKpiGrid v-if="showSkeleton">
+  <WSkeleton v-for="n in 4" :key="n" variant="block" size="md" />
+</WKpiGrid>
+<WSkeleton variant="block" height="var(--w-chart-h)" />
+<WSkeleton variant="card" size="lg" />
+```

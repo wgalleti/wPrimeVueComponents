@@ -209,6 +209,9 @@
   ); /* recuo lateral do WSkeleton rows: o da célula de tabela (Aura) */
   --w-skeleton-title-h: 1.5rem; /* altura do título do WSkeleton cartão */
   --w-skeleton-card-pad: var(--w-card-pad); /* respiro do WSkeleton cartão */
+  --w-skeleton-block-sm: 3rem; /* WSkeleton size sm: linha de figura, chip grande */
+  --w-skeleton-block-md: 6rem; /* WSkeleton size md: figura de painel (KPI) */
+  --w-skeleton-block-lg: var(--w-chart-h); /* WSkeleton size lg: área de gráfico */
   --w-arrival-shift: 0.375rem; /* deslocamento inicial da .w-chegada */
   --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
