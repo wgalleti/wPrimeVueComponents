@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useUrlState } from '@/composables/useUrlState'
 import type { TabItem } from '@/types/tabs'
 
 /**
@@ -8,17 +9,35 @@ import type { TabItem } from '@/types/tabs'
  * Controlada: só emite `update:modelValue` — quem decide o que renderizar é a
  * página. Navegação por teclado com ←/→ (padrão ARIA de tablist).
  */
-defineProps<{
+const props = defineProps<{
   /** `value` da aba ativa. */
   modelValue: string
   items: TabItem[]
   /** Rótulo do grupo para leitores de tela. */
   ariaLabel?: string
+  /** Liga o `v-model` à query `?<urlKey>=` (`router.replace`): a aba sobrevive ao F5 e às abas
+   *  de rota. Valor fora dos `items` (ou de aba desabilitada) cai na aba inicial; essa aba (o
+   *  `modelValue` da montagem) fica fora da URL. Exige `vue-router`; sem ele, avisa em dev. */
+  urlKey?: string
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
+
+// Aba inicial = padrão: não vai para a URL. Lida da query antes de qualquer render.
+const urlSync = props.urlKey ? useUrlState() : null
+const padrao = props.modelValue
+if (urlSync && props.urlKey) {
+  const url = urlSync.get(props.urlKey)
+  const alvo = props.items.find((i) => i.value === url && !i.disabled)
+  if (alvo && alvo.value !== props.modelValue) emit('update:modelValue', alvo.value)
+  else if (url !== undefined && !alvo) urlSync.write({ [props.urlKey]: null })
+  watch(
+    () => props.modelValue,
+    (v) => urlSync.write({ [props.urlKey as string]: v === padrao ? null : v }),
+  )
+}
 
 const botoes = ref<HTMLButtonElement[]>([])
 

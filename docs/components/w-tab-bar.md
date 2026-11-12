@@ -31,3 +31,14 @@ const abas: TabItem[] = [
   <div v-else-if="aba === 'tarefas'">...</div>
 </template>
 ```
+
+## Aba na URL (`urlKey`)
+
+`url-key="aba"` liga o `v-model` à query `?aba=` (`router.replace`, nunca `push`): a aba sobrevive
+ao F5 e à volta a uma aba de rota. A aba inicial (o valor do `v-model` na montagem) é o padrão e
+fica fora da URL; valor desconhecido ou de aba desabilitada cai nela. Só grava enquanto a rota é a
+da montagem. Exige `vue-router`; sem ele avisa em dev e é ignorado.
+
+```vue
+<WTabBar v-model="aba" :items="abas" url-key="aba" />
+```
