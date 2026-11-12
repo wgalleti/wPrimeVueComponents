@@ -13,6 +13,7 @@ import { useCrudManager } from '@/composables/useCrudManager'
 import { W_DATA_PROVIDER_KEY, W_CONFIG_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { CrudManagerConfig } from '@/types/manager'
+import { resetWarnOnce } from '@/utils/warnOnce'
 
 vi.mock('@/composables/useAppToast', () => ({
   useAppToast: () => ({ success: vi.fn(), error: vi.fn(), info: vi.fn(), warn: vi.fn() }),
@@ -336,8 +337,12 @@ describe('WCrudView — motivo da ação bloqueada na linha', () => {
     const botoes = w.findAll('button').filter((b) => b.find('.pi-ban').exists())
     expect(botoes).toHaveLength(2)
     expect(botoes[0].attributes('disabled')).toBeDefined()
-    expect(botoes[0].attributes('aria-label')).toBe('Você não pode desativar o próprio acesso')
-    expect(botoes[0].attributes('title')).toBe('Você não pode desativar o próprio acesso')
+    expect(botoes[0].attributes('aria-label')).toBe(
+      'Desativar acesso: Você não pode desativar o próprio acesso',
+    )
+    expect(botoes[0].attributes('title')).toBe(
+      'Desativar acesso: Você não pode desativar o próprio acesso',
+    )
     expect(botoes[1].attributes('aria-label')).toBe('Desativar acesso')
     w.unmount()
   })
@@ -1128,6 +1133,29 @@ describe('WCrudView — chegada suave', () => {
     expect(w.find('.p-datatable-mask').exists()).toBe(true)
     liberar({ data: [], page: 1, page_size: 20, rows: 0 })
     await flushPromises()
+    w.unmount()
+  })
+})
+
+describe('WCrudView — severity de status em ação', () => {
+  it('avisa uma vez por ação em DEV e mantém o mapeamento (danger vermelho, o resto ghost/primary)', async () => {
+    resetWarnOnce()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const w = montar({
+      rowActions: [
+        { action: 'ok', icon: 'pi pi-check', tooltip: 'Ok', severity: 'success' },
+        { action: 'del', icon: 'pi pi-trash', tooltip: 'Del', severity: 'danger' },
+      ],
+    })
+    await flushPromises()
+    montar({ rowActions: [{ action: 'ok', icon: 'pi pi-check', severity: 'success' }] })
+    await flushPromises()
+    const avisos = warn.mock.calls.filter((c) => String(c[0]).includes('"ok"'))
+    expect(avisos).toHaveLength(1)
+    expect(warn.mock.calls.some((c) => String(c[0]).includes('"del"'))).toBe(false)
+    expect(w.find('[aria-label="Ok"]').classes()).toContain('w-button--ghost')
+    expect(w.find('[aria-label="Del"]').classes()).toContain('w-button--danger')
+    warn.mockRestore()
     w.unmount()
   })
 })

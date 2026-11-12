@@ -12,6 +12,7 @@ import {
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import WButton from '@/components/ui/WButton.vue'
+import { warnOnce } from '@/utils/warnOnce'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
@@ -354,7 +355,6 @@ const defaultActions = computed<RowAction[]>(() => {
       action: 'duplicate',
       icon: 'pi pi-copy',
       tooltip: 'Duplicar',
-      severity: 'info',
     })
   }
   if (props.crud.config.canDelete !== false) {
@@ -370,6 +370,23 @@ const defaultActions = computed<RowAction[]>(() => {
 
 const effectiveRowActions = computed<RowAction[]>(
   () => props.crud.config.rowActions ?? defaultActions.value,
+)
+
+// Cor de status nunca é cor de botão: `success|warn|info|contrast` caem em `ghost`/`primary`.
+const SEVERIDADES_DE_STATUS = ['success', 'warn', 'info', 'contrast']
+watch(
+  [effectiveRowActions, () => props.crud.config.bulkActions],
+  ([rows, bulks]) => {
+    for (const a of [...rows, ...(bulks ?? [])]) {
+      if (a.severity && SEVERIDADES_DE_STATUS.includes(a.severity)) {
+        warnOnce(
+          `crud-action:${a.action}`,
+          `[WCrudView] a ação "${a.action}" usa severity "${a.severity}": cor de status não é cor de botão e foi ignorada (só "danger" muda o botão).`,
+        )
+      }
+    }
+  },
+  { immediate: true },
 )
 
 const hasActions = computed(
@@ -389,7 +406,7 @@ function actionLabel(action: RowAction): string {
 /** Na linha: desabilitada com motivo, o motivo vira o nome e a dica ("Você não pode…"). */
 function actionHint(action: RowAction, data: Record<string, unknown> | null): string {
   const reason = data && isActionDisabled(action, data) ? action.disabledReason?.(data) : undefined
-  return reason ?? actionLabel(action)
+  return reason ? `${actionLabel(action)}: ${reason}` : actionLabel(action)
 }
 
 const csvLabel = computed(() =>

@@ -514,4 +514,12 @@ const crud = useCrudManager({
 ```
 
 `disabledReason(row)` acompanha `disabled(row)`: com a ação bloqueada na linha, o motivo
-substitui o `tooltip` no botão (dica, `title` e nome acessível).
+substitui o `tooltip` na dica e no `title`; o nome acessível fica "<tooltip>: <motivo>" (a ação
+continua nomeada).
+
+### `severity` em ação
+
+Cor de status nunca é cor de botão. Em ação de linha, card e trilho só `danger` muda o botão
+(vermelho); o resto vira `ghost`. Em `bulkActions`, `danger` é vermelho e o resto, `primary`.
+`success`, `warn`, `info` e `contrast` são `@deprecated`: continuam no tipo, são ignorados e
+emitem aviso em DEV (uma vez por ação).
