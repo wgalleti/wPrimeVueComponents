@@ -12,7 +12,8 @@ import type { CrudLabels } from './labels'
 export interface CrudManagerConfig<T> {
   endpoint: string
   columns: ColumnDef[]
-  form: FieldDef[]
+  /** Campos do formulário. Omitido (`[]`) numa tela somente leitura. */
+  form?: FieldDef[]
   /** Nº de colunas do grid do form dialog (default 2). Campos usam `colSpan`
    *  para ocupar frações do grid; grupos podem sobrepor via `fieldGroup.columns`. */
   formColumns?: number
@@ -139,5 +140,5 @@ export interface CrudManagerReturn<T> {
   clearColumnFilters(): void
 
   // config
-  config: CrudManagerConfig<T>
+  config: CrudManagerConfig<T> & { form: FieldDef[] }
 }

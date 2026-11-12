@@ -382,8 +382,8 @@ interface CrudManagerConfig<T> {
   /** Definicao das colunas da tabela */
   columns: ColumnDef[]
 
-  /** Definicao dos campos do formulario */
-  form: FieldDef[]
+  /** Definicao dos campos do formulario. Omitido (`[]`) numa tela somente leitura. */
+  form?: FieldDef[]
 
   /** Campo de chave primaria. Default: 'id' */
   pk?: string

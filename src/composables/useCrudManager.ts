@@ -4,6 +4,7 @@ import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { PaginationState, SortState } from '@/types/api'
 import type { CrudManagerConfig, CrudManagerReturn } from '@/types/manager'
+import type { FieldDef } from '@/types/field'
 import type { CrudLabels } from '@/types/labels'
 import { DEFAULT_CRUD_LABELS } from '@/types/labels'
 import { useAppToast } from './useAppToast'
@@ -38,7 +39,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 ): CrudManagerReturn<T> {
   const {
     endpoint,
-    form: formFields,
+    form: formFields = [],
     pk = 'id',
     searchDebounce = 300,
     partialUpdate = true,
@@ -67,8 +68,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
   const toast = useAppToast()
   const { confirmDelete: confirmDeleteDialog, confirmDiscard } = useAppConfirm()
   // Padrão do app (plugin) para o teclado no formulário; a tela que declara vence.
-  const configResolvida: CrudManagerConfig<T> = {
+  const configResolvida: CrudManagerConfig<T> & { form: FieldDef[] } = {
     ...config,
+    form: formFields,
     keyboardNav: config.keyboardNav ?? pluginConfig?.keyboardNav ?? false,
   }
 

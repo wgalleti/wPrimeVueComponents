@@ -180,6 +180,8 @@ interface RowAction<T = Record<string, unknown>> {
   severity?: 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast'
   visible?: (data: T) => boolean
   disabled?: (data: T) => boolean
+  /** Motivo do bloqueio na linha: vira tooltip, `title` e `aria-label` do botão desabilitado. */
+  disabledReason?: (data: T) => string | undefined
   handler?: (data: T) => void
 }
 ```

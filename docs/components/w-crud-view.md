@@ -72,7 +72,9 @@ clique so seleciona e o duplo clique no card abre.
 
 O clique tambem torna a linha **ativa** (`selectedRow`), o alvo das acoes do action rail —
 inclusive com `selectionMode: 'multiple'`, onde os checkboxes ficam intocados. Sem linha ativa,
-o rail age sobre o unico item marcado (exatamente 1).
+o rail age sobre o unico item marcado (exatamente 1). Sem nenhuma acao (somente leitura: sem
+criar, editar, excluir, `rowActions`, imprimir nem CSV) o rail nao e renderizado, e o estado
+vazio so convida a criar quando `canCreate` permite.
 
 ```ts
 const crud = useCrudManager({ endpoint: '/api/pedidos/', columns, form, openOnRowClick: true })
@@ -498,6 +500,18 @@ const crud = useCrudManager({
       severity: 'danger',
       visible: (data) => data.status !== 'finalizado',
     },
+    {
+      action: 'desativar',
+      icon: 'pi pi-ban',
+      tooltip: 'Desativar acesso',
+      disabled: (data) => data.id === usuarioAtual.id,
+      // Desabilitada, a linha diz por quê: vira tooltip, `title` e `aria-label` do botão.
+      disabledReason: (data) =>
+        data.id === usuarioAtual.id ? 'Você não pode desativar o próprio acesso' : undefined,
+    },
   ],
 })
 ```
+
+`disabledReason(row)` acompanha `disabled(row)`: com a ação bloqueada na linha, o motivo
+substitui o `tooltip` no botão (dica, `title` e nome acessível).

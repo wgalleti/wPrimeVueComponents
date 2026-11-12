@@ -120,6 +120,16 @@ describe('createConnectDataProvider', () => {
     expect(data).toMatchObject({ nome: '', ativo: false, prioridade: 0, qtd_total: '0' })
   })
 
+  it('list: count_aproximado chega em extras (total saturado); sem ele, extras vazio', async () => {
+    const { provider } = setup({
+      list: () => fromJson(ListParceriasResponseSchema, { count: '10000', count_aproximado: true }),
+    })
+    const res = await provider.list('parcerias')
+    expect(res.rows).toBe(10000)
+    expect(res.extras).toEqual({ count_aproximado: true })
+    expect((await setup().provider.list('parcerias')).extras).toEqual({})
+  })
+
   it('lista vazia ({} sem count/results) vira rows=0 e data=[]', async () => {
     const { provider } = setup({ list: () => ({}) })
     const res = await provider.list('parcerias')

@@ -139,6 +139,41 @@ describe('WCrudView — nome acessível dos botões só-ícone', () => {
   })
 })
 
+describe('WCrudView — somente leitura', () => {
+  const vazio = {
+    list: vi.fn().mockResolvedValue({ data: [], page: 1, page_size: 20, rows: 0 }),
+  }
+  const leitura = { form: undefined, canCreate: false, canEdit: false, canDelete: false }
+
+  it('sem ação nenhuma (nem CSV), não renderiza o trilho; o vazio não convida a criar', async () => {
+    const w = montar(leitura, { exportCsv: false }, vazio)
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.w-crud-rail').exists()).toBe(false)
+    expect(w.find('.w-crud-content--rail').exists()).toBe(false)
+    expect(w.find('.w-crud-empty-text').text()).toBe('Tente ajustar sua busca')
+    w.unmount()
+  })
+
+  it('com rowActions, o trilho volta; podendo criar, o vazio convida a criar', async () => {
+    const w = montar(
+      { ...leitura, rowActions: [{ action: 'abrir', icon: 'pi pi-eye', tooltip: 'Abrir' }] },
+      {},
+      vazio,
+    )
+    await flushPromises()
+    expect(w.find('.w-crud-rail').exists()).toBe(true)
+    w.unmount()
+    const c = montar({}, {}, vazio)
+    await flushPromises()
+    await c.vm.$nextTick()
+    expect(c.find('.w-crud-empty-text').text()).toBe(
+      'Tente ajustar sua busca ou crie um novo registro',
+    )
+    c.unmount()
+  })
+})
+
 describe('WCrudView — linhas compostas (opt-in)', () => {
   // dia local, como o componente compara; toISOString() dá o dia em UTC e falha à noite em UTC-3
   const ontem = dayjs().subtract(1, 'day').format('YYYY-MM-DD')
@@ -243,6 +278,67 @@ describe('WCrudView — contagem total junto ao título', () => {
     await flushPromises()
     await w.vm.$nextTick()
     expect(w.find('.p-paginator-current').text()).toBe('1–1 de 1')
+    w.unmount()
+  })
+
+  it('total aproximado (extras.count_aproximado) vira "10.000+" no paginador e na contagem', async () => {
+    const w = montar(
+      {},
+      { showHeader: false },
+      {
+        list: vi.fn().mockResolvedValue({
+          data: [{ id: 1, nome: 'Soja', ativo: true }],
+          page: 1,
+          page_size: 20,
+          rows: 10000,
+          extras: { count_aproximado: true },
+        }),
+      },
+    )
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.p-paginator-current').text()).toBe('1–20 de 10.000+')
+    expect(w.find('.w-crud-toolbar .w-crud-count').text()).toBe('10.000+ registros')
+    w.unmount()
+  })
+})
+
+describe('WCrudView — motivo da ação bloqueada na linha', () => {
+  it('disabledReason vira aria-label e title do botão desabilitado; sem bloqueio fica o tooltip', async () => {
+    const w = montar(
+      {
+        rowActions: [
+          {
+            action: 'desativar',
+            icon: 'pi pi-ban',
+            tooltip: 'Desativar acesso',
+            disabled: (r) => r.id === 1,
+            disabledReason: (r) =>
+              r.id === 1 ? 'Você não pode desativar o próprio acesso' : undefined,
+          },
+        ],
+      },
+      { actionRail: false },
+      {
+        list: vi.fn().mockResolvedValue({
+          data: [
+            { id: 1, nome: 'Eu' },
+            { id: 2, nome: 'Outro' },
+          ],
+          page: 1,
+          page_size: 20,
+          rows: 2,
+        }),
+      },
+    )
+    await flushPromises()
+    await w.vm.$nextTick()
+    const botoes = w.findAll('button').filter((b) => b.find('.pi-ban').exists())
+    expect(botoes).toHaveLength(2)
+    expect(botoes[0].attributes('disabled')).toBeDefined()
+    expect(botoes[0].attributes('aria-label')).toBe('Você não pode desativar o próprio acesso')
+    expect(botoes[0].attributes('title')).toBe('Você não pode desativar o próprio acesso')
+    expect(botoes[1].attributes('aria-label')).toBe('Desativar acesso')
     w.unmount()
   })
 })

@@ -181,11 +181,11 @@ export function createConnectDataProvider(
       params: DataProviderListParams = {},
     ): Promise<DataProviderListResponse<T>> {
       const req = toListRequest(params)
-      const { response, method } = await run<{ count: bigint | number; results: unknown[] }>(
-        endpoint,
-        'List',
-        req,
-      )
+      const { response, method } = await run<{
+        count: bigint | number
+        countAproximado?: boolean
+        results: unknown[]
+      }>(endpoint, 'List', req)
       const results = findField(method.output, 'results')
       if (!results || results.fieldKind !== 'list' || results.listKind !== 'message') {
         throw new Error(`${method.output.typeName}.results deve ser repeated message.`)
@@ -195,7 +195,8 @@ export function createConnectDataProvider(
         page: req.pagina,
         page_size: req.tamanho,
         rows: Number(response.count ?? 0),
-        extras: {},
+        // `bool count_aproximado` do ListXxxResponse: total parou no teto da API (WCrudView: "10.000+").
+        extras: response.countAproximado ? { count_aproximado: true } : {},
       }
     },
 

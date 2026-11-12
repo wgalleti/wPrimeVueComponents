@@ -53,6 +53,14 @@ describe('useCrudManager — guardas', () => {
 })
 
 describe('useCrudManager — fetch', () => {
+  it('somente leitura: sem `form`, monta, lista e expõe form vazio', async () => {
+    const list = okList([{ id: 1 }], 1)
+    const crud = setup({ endpoint: '/eventos', columns: [] }, { list })
+    await crud.init()
+    expect(crud.items.value).toHaveLength(1)
+    expect(crud.config.form).toEqual([])
+  })
+
   it('init busca a lista e popula itens/paginação', async () => {
     const list = okList([{ id: 1 }, { id: 2 }], 2)
     const crud = setup({ endpoint: '/produtos', columns: [], form: [] }, { list })

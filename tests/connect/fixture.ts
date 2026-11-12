@@ -98,6 +98,7 @@ const parceriaFile = create(FileDescriptorProtoSchema, {
       field: [
         f('count', 1, INT64),
         f('results', 2, MESSAGE, { label: REPEATED, typeName: '.app.v1.Parceria' }),
+        f('count_aproximado', 3, BOOL),
       ],
     },
     {
