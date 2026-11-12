@@ -38,3 +38,16 @@ import { WButton } from '@wgalleti/primevue-components'
   <WButton variant="secondary" label="Ver imóvel" :to="{ name: 'imovel', params: { id } }" />
 </template>
 ```
+
+## Link comum — `href`
+
+Com `href` o botão vira `<a>` com a mesma aparência: telefone, e-mail, arquivo. `download` baixa
+em vez de navegar (string = nome do arquivo); `target="_blank"` ganha
+`rel="noopener noreferrer"`. Desabilitado (ou `loading`), o link perde o `href` e fica
+`aria-disabled`.
+
+```vue
+<WButton variant="secondary" icon="pi pi-phone" label="Ligar" :href="`tel:${telefone}`" />
+<WButton variant="ghost" icon="pi pi-envelope" label="E-mail" :href="`mailto:${email}`" />
+<WButton icon="pi pi-download" label="Contrato" :href="url" download="contrato.pdf" />
+```

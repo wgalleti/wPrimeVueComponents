@@ -8,7 +8,7 @@ import type { ButtonSize, ButtonVariant } from '@/types/button'
 /**
  * Botão da suíte sobre o `Button` do PrimeVue: o app escolhe o papel (`variant`) e o tamanho,
  * nunca `severity`/`text`/`outlined` soltos. `loading` bloqueia o clique sem mudar a largura;
- * `to` vira RouterLink; `iconOnly` exige `ariaLabel`.
+ * `to` vira RouterLink; `href` vira `<a>` (tel:, mailto:, download); `iconOnly` exige `ariaLabel`.
  */
 defineOptions({ name: 'WButton' })
 
@@ -28,6 +28,12 @@ const props = withDefaults(
     ariaLabel?: string
     /** Destino: o botão vira RouterLink (exige vue-router). */
     to?: RouteLocationRaw
+    /** Link comum: o botão vira `<a href>` com a mesma aparência (`tel:`, `mailto:`, arquivo). */
+    href?: string
+    /** Com `href`: baixa em vez de navegar; string = nome do arquivo salvo. */
+    download?: boolean | string
+    /** Com `href`: alvo do link (`_blank` ganha `rel="noopener noreferrer"`). */
+    target?: string
     type?: 'button' | 'submit' | 'reset'
   }>(),
   {
@@ -56,6 +62,19 @@ if (props.size === 'small' || props.size === 'large') {
   )
 }
 
+// `<a>` não tem `disabled`: travado, o link perde o `href` e vira aria-disabled.
+const link = computed(() => {
+  if (props.to || !props.href) return null
+  const travado = props.disabled || props.loading
+  return {
+    href: travado ? undefined : props.href,
+    download: props.download === true ? '' : props.download || undefined,
+    target: props.target,
+    rel: props.target === '_blank' ? 'noopener noreferrer' : undefined,
+    'aria-disabled': travado || undefined,
+  }
+})
+
 if (import.meta.env.DEV && props.iconOnly && !props.ariaLabel) {
   console.warn('[WButton] `iconOnly` sem `ariaLabel`: o botão fica sem nome para leitor de tela.')
 }
@@ -63,9 +82,10 @@ if (import.meta.env.DEV && props.iconOnly && !props.ariaLabel) {
 
 <template>
   <Button
-    :as="to ? 'router-link' : undefined"
+    v-bind="link ?? {}"
+    :as="to ? 'router-link' : link ? 'a' : undefined"
     :to="to"
-    :type="to ? undefined : type"
+    :type="to || link ? undefined : type"
     :label="iconOnly ? undefined : label"
     :icon="icon"
     :icon-pos="iconPos"

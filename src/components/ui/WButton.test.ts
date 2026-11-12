@@ -90,4 +90,32 @@ describe('WButton', () => {
     expect(warn.mock.calls.some((c) => String(c[0]).includes('"sm"'))).toBe(true)
     warn.mockRestore()
   })
+
+  it('href vira <a> com a aparência do botão, sem type', () => {
+    const a = montar({ label: 'Ligar', href: 'tel:+5565999990000' }).find('a')
+    expect(a.attributes('href')).toBe('tel:+5565999990000')
+    expect(a.attributes('type')).toBeUndefined()
+    expect(a.classes()).toEqual(expect.arrayContaining(['p-button', 'w-button--primary']))
+  })
+
+  it('download e target _blank (com rel seguro)', () => {
+    const a = montar({
+      label: 'PDF',
+      href: '/f.pdf',
+      download: 'contrato.pdf',
+      target: '_blank',
+    }).find('a')
+    expect(a.attributes('download')).toBe('contrato.pdf')
+    expect(a.attributes('target')).toBe('_blank')
+    expect(a.attributes('rel')).toBe('noopener noreferrer')
+    expect(
+      montar({ label: 'x', href: '/f', download: true }).find('a').attributes('download'),
+    ).toBe('')
+  })
+
+  it('link desabilitado perde o href e marca aria-disabled', () => {
+    const a = montar({ label: 'x', href: 'mailto:a@b.c', disabled: true }).find('a')
+    expect(a.attributes('href')).toBeUndefined()
+    expect(a.attributes('aria-disabled')).toBe('true')
+  })
 })
