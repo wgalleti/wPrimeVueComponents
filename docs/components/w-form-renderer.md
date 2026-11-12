@@ -179,6 +179,18 @@ const fields = [
 Os três respeitam `disabled`, `visible`, `required` e `colSpan` como qualquer outro tipo, e nenhum
 deles é candidato a foco inicial (não têm campo de digitação).
 
+## Limite de caracteres — `maxLength`
+
+Em `text`, `email`, `password` e `textarea`, `maxLength` vira o `maxlength` nativo: a digitação
+para no limite. O contador `n/max` aparece sob o campo — ligado por padrão no `textarea`;
+`showCounter` liga ou desliga em qualquer um. O `validateAll` confere o limite de novo (valor que
+veio da API maior que o permitido), depois do `validate` próprio do campo.
+
+```ts
+{ field: 'titulo', label: 'Título', maxLength: 80, showCounter: true },
+{ field: 'descricao', label: 'Descrição', type: 'textarea', maxLength: 2000 },
+```
+
 ## Uso Basico — Formulario em Card
 
 ```vue

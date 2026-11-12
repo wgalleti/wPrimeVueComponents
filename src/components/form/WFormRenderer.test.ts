@@ -413,3 +413,40 @@ describe('FieldDef type: number — useGrouping', () => {
     w.unmount()
   })
 })
+
+describe('FieldDef maxLength', () => {
+  const validar = (w: VueWrapper) => (w.vm as { validateAll: () => string[] }).validateAll()
+
+  it('vira maxlength no input; contador só no textarea por padrão', () => {
+    const w = montar(
+      [
+        { field: 'nome', label: 'Nome', maxLength: 10 },
+        { field: 'obs', label: 'Obs', type: 'textarea', maxLength: 200 },
+      ],
+      { nome: 'abc', obs: 'olá' },
+    )
+    expect(w.find('input').attributes('maxlength')).toBe('10')
+    expect(w.find('textarea').attributes('maxlength')).toBe('200')
+    const contadores = w.findAll('.w-crud-form-counter')
+    expect(contadores).toHaveLength(1)
+    expect(contadores[0].text()).toBe('3/200')
+  })
+
+  it('showCounter liga no text e desliga no textarea', () => {
+    const w = montar(
+      [
+        { field: 'nome', label: 'Nome', maxLength: 10, showCounter: true },
+        { field: 'obs', label: 'Obs', type: 'textarea', maxLength: 200, showCounter: false },
+      ],
+      { nome: 'abc', obs: '' },
+    )
+    expect(w.findAll('.w-crud-form-counter').map((c) => c.text())).toEqual(['3/10'])
+  })
+
+  it('validateAll barra o valor maior que o limite, depois do validate próprio', () => {
+    const w = montar([{ field: 'nome', label: 'Nome', maxLength: 3 }], { nome: 'abcd' })
+    expect(validar(w)).toEqual(['Máximo de 3 caracteres.'])
+    const ok = montar([{ field: 'nome', label: 'Nome', maxLength: 3 }], { nome: 'abc' })
+    expect(validar(ok)).toEqual([])
+  })
+})

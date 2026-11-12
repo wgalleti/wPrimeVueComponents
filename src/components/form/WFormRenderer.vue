@@ -106,6 +106,33 @@ function inputAttrs(field: FieldDef): Record<string, string | undefined> {
   return { id: fieldId(field), ...ariaAttrs(field) }
 }
 
+/** Atributos nativos dos campos de digitação livre (text, email, password, textarea). */
+function textAttrs(field: FieldDef): Record<string, string | number | undefined> {
+  return { maxlength: field.maxLength }
+}
+
+/** `inputAttrs` + atributos de digitação, para InputText/Textarea. */
+function textInputAttrs(field: FieldDef): Record<string, string | number | undefined> {
+  return { ...inputAttrs(field), ...textAttrs(field) }
+}
+
+/** Contador "n/max": com `maxLength`, ligado por padrão só no textarea. */
+function showsCounter(field: FieldDef): boolean {
+  if (!field.maxLength) return false
+  return field.showCounter ?? field.type === 'textarea'
+}
+
+function charCount(field: FieldDef): number {
+  const v = props.formData[field.field]
+  return v == null ? 0 : String(v).length
+}
+
+/** O `maxlength` barra a digitação, não o valor que já veio da API. */
+function lengthError(field: FieldDef): string | null {
+  if (!field.maxLength || charCount(field) <= field.maxLength) return null
+  return `Máximo de ${field.maxLength} caracteres.`
+}
+
 /** Grupos sem input único (pílulas, chips, transfer, imagem): rotulados pelo label. */
 function groupAttrs(field: FieldDef): Record<string, string | undefined> {
   return {
@@ -452,6 +479,15 @@ function validateField(field: FieldDef) {
   }
 }
 
+/** Erro do campo no salvar: o `validate` próprio, senão o limite de `maxLength`. */
+function runValidation(field: FieldDef): string | null {
+  const own =
+    typeof field.validate === 'function'
+      ? field.validate(props.formData[field.field], validateContext())
+      : null
+  return own || lengthError(field)
+}
+
 /**
  * Só campos visíveis: um `validate` de campo oculto barraria o save sem ter onde
  * mostrar o erro (o campo não está na tela). O erro de campo que ficou oculto é
@@ -464,9 +500,9 @@ function validateAll(): string[] {
       fieldErrors[field.field] = null
       continue
     }
-    if (typeof field.validate === 'function') {
-      const error = field.validate(props.formData[field.field], validateContext())
-      fieldErrors[field.field] = error || null
+    if (typeof field.validate === 'function' || field.maxLength) {
+      const error = runValidation(field)
+      fieldErrors[field.field] = error
       if (error) errors.push(error)
     }
   }
@@ -735,7 +771,7 @@ defineExpose({ validateAll, clearErrors })
               <InputText
                 v-if="(!field.type || field.type === 'text') && field.mask"
                 v-maska="{ mask: convertMask(field.mask) }"
-                v-bind="inputAttrs(field)"
+                v-bind="textInputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
@@ -748,7 +784,7 @@ defineExpose({ validateAll, clearErrors })
               <!-- Text -->
               <InputText
                 v-else-if="!field.type || field.type === 'text'"
-                v-bind="inputAttrs(field)"
+                v-bind="textInputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
@@ -761,7 +797,7 @@ defineExpose({ validateAll, clearErrors })
               <!-- Email -->
               <InputText
                 v-else-if="field.type === 'email'"
-                v-bind="inputAttrs(field)"
+                v-bind="textInputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 type="email"
                 fluid
@@ -777,7 +813,7 @@ defineExpose({ validateAll, clearErrors })
                 v-else-if="field.type === 'password'"
                 :model-value="formData[field.field] as string"
                 :input-id="fieldId(field)"
-                :input-props="ariaAttrs(field)"
+                :input-props="{ ...ariaAttrs(field), ...textAttrs(field) }"
                 fluid
                 toggle-mask
                 :feedback="field.feedback !== false"
@@ -986,7 +1022,7 @@ defineExpose({ validateAll, clearErrors })
               <!-- Textarea -->
               <Textarea
                 v-else-if="field.type === 'textarea'"
-                v-bind="inputAttrs(field)"
+                v-bind="textInputAttrs(field)"
                 :model-value="formData[field.field] as string"
                 fluid
                 :autofocus="shouldAutofocus(field) || undefined"
@@ -1127,6 +1163,9 @@ defineExpose({ validateAll, clearErrors })
 
               <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
                 {{ field.hint }}
+              </small>
+              <small v-if="showsCounter(field)" class="w-crud-form-counter">
+                {{ charCount(field) }}/{{ field.maxLength }}
               </small>
               <small
                 v-if="cepError[field.field]"

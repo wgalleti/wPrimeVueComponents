@@ -196,6 +196,14 @@ export interface FieldDef {
   // mask
   mask?: string
 
+  // text / email / password / textarea
+  /** Limite de caracteres: vira `maxlength` no input (barra a digitação) e é conferido
+   *  de novo no `validateAll` (valor que veio da API maior que o limite). */
+  maxLength?: number
+  /** Mostra o contador "n/max" sob o campo (exige `maxLength`). Default: `true` no
+   *  `textarea`, `false` nos demais. */
+  showCounter?: boolean
+
   // textarea
   rows?: number
 

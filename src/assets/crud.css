@@ -734,6 +734,16 @@
   margin-top: var(--w-space-1);
 }
 
+/* Contador "n/max" do maxLength: à direita, sob o campo */
+.w-crud-form-counter {
+  display: block;
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  margin-top: var(--w-space-1);
+}
+
 /* Validation error */
 .w-crud-form-error {
   display: block;

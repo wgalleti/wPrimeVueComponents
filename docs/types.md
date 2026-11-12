@@ -222,6 +222,14 @@ interface FieldDef {
   /** Pattern da mascara (maska format). Ex: '###.###.###-##' */
   mask?: string
 
+  // --- Opcoes para 'text', 'email', 'password' e 'textarea' ---
+
+  /** Limite de caracteres: maxlength no input + conferido no validateAll */
+  maxLength?: number
+
+  /** Contador "n/max" (exige maxLength). Default: true no textarea */
+  showCounter?: boolean
+
   // --- Opcoes para 'textarea' ---
 
   /** Numero de linhas do textarea. Default: 3 */
