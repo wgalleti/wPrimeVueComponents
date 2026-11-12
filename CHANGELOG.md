@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.0.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.20.0...v2.0.0) (2026-11-12)
+
+### ⚠ BREAKING CHANGES
+
+* **crud:** urlState defaults to true, so every WCrudView now writes
+  search, page, sort, f_* and id to the route query.
+
+### Funcionalidades
+
+* **crud:** keep WCrudView state in the URL by default ([e7c828b](https://github.com/wgalleti/wPrimeVueComponents/commit/e7c828b9bdcacd740903304063dec33cd2f5022d))
+* **ui:** sync WTabBar with the URL query through urlKey ([fe0809f](https://github.com/wgalleti/wPrimeVueComponents/commit/fe0809f37e11b62249906f512130c0770a9eb9b0))
+
+### Correções
+
+* **crud:** keep the table paginator on the restored page ([1d40c0c](https://github.com/wgalleti/wPrimeVueComponents/commit/1d40c0c04cba6d1b94ac5bff4b8fbbddbd68e42d))
 ## [1.20.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.1...v1.20.0) (2026-11-12)
 
 ### Funcionalidades
