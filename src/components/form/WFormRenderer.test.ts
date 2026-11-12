@@ -474,3 +474,31 @@ describe('FieldDef autocomplete / spellcheck', () => {
     expect(w.find('input').attributes('autocomplete')).toBeUndefined()
   })
 })
+
+describe('opção desabilitada e descrição (select / choice)', () => {
+  const planos: FieldDef = {
+    field: 'plano',
+    label: 'Plano',
+    type: 'choice',
+    options: [
+      { label: 'Básico', value: 'B' },
+      { label: 'Pro', value: 'P', disabled: true, description: 'Exige contrato anual' },
+    ],
+  }
+
+  it('choice: opção travada fica desabilitada, mostra o motivo e não emite', async () => {
+    const w = montar([planos], { plano: 'B' })
+    const opcoes = w.findAll('.w-choice__option')
+    expect(opcoes[0].attributes('disabled')).toBeUndefined()
+    expect(opcoes[1].attributes('disabled')).toBeDefined()
+    expect(opcoes[1].find('.w-fk-option__desc').text()).toBe('Exige contrato anual')
+    await opcoes[1].trigger('click')
+    expect(emitido(w)).toEqual([])
+  })
+
+  it('select: liga o optionDisabled do PrimeVue no campo `disabled`', async () => {
+    const { default: Select } = await import('primevue/select')
+    const w = montar([{ ...planos, type: 'select' }], { plano: 'B' })
+    expect(w.findComponent(Select).props('optionDisabled')).toBe('disabled')
+  })
+})

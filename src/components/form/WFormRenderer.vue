@@ -365,13 +365,23 @@ function optionValueOf(field: FieldDef, option: Record<string, unknown>): unknow
   return option[field.optionValue || 'value']
 }
 
+/** Segunda linha da opção (`select`/`choice`): a chave `optionDescription`, default `description`. */
+function optionDescriptionOf(field: FieldDef, option: Record<string, unknown>): string {
+  const v = option[field.optionDescription || 'description']
+  return v == null ? '' : String(v)
+}
+
+function isOptionDisabled(option: Record<string, unknown>): boolean {
+  return option.disabled === true
+}
+
 function isOptionSelected(field: FieldDef, option: Record<string, unknown>): boolean {
   return props.formData[field.field] === optionValueOf(field, option)
 }
 
 /** Escolha única: clicar na opção ativa mantém a escolha (não desmarca). */
 function pickOption(field: FieldDef, option: Record<string, unknown>) {
-  if (isFieldDisabled(field)) return
+  if (isFieldDisabled(field) || isOptionDisabled(option)) return
   emit('update:field', field.field, optionValueOf(field, option))
 }
 
@@ -896,12 +906,24 @@ defineExpose({ validateAll, clearErrors })
                 :options="unwrapRef(field.options) as any[]"
                 :option-label="field.optionLabel || 'label'"
                 :option-value="field.optionValue || 'value'"
+                option-disabled="disabled"
                 :show-clear="field.showClear !== false"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :invalid="!!fieldError(field)"
                 @update:model-value="(val) => emit('update:field', field.field, val)"
-              />
+              >
+                <!-- Duas linhas (mesmo desenho da sugestão da FK): o rótulo e o que decide
+                     a escolha ou o motivo do bloqueio. -->
+                <template #option="{ option }">
+                  <span class="w-fk-option">
+                    <span class="w-fk-option__label">{{ optionLabelOf(field, option) }}</span>
+                    <span v-if="optionDescriptionOf(field, option)" class="w-fk-option__desc">
+                      {{ optionDescriptionOf(field, option) }}
+                    </span>
+                  </span>
+                </template>
+              </Select>
 
               <!-- AutoComplete (options locais) -->
               <AutoComplete
@@ -1070,9 +1092,12 @@ defineExpose({ validateAll, clearErrors })
                   :key="String(optionValueOf(field, option))"
                   type="button"
                   class="w-choice__option"
-                  :class="{ 'w-choice__option--on': isOptionSelected(field, option) }"
+                  :class="{
+                    'w-choice__option--on': isOptionSelected(field, option),
+                    'w-choice__option--desc': !!optionDescriptionOf(field, option),
+                  }"
                   :aria-pressed="isOptionSelected(field, option)"
-                  :disabled="isFieldDisabled(field)"
+                  :disabled="isFieldDisabled(field) || isOptionDisabled(option)"
                   @click="pickOption(field, option)"
                 >
                   <i
@@ -1080,7 +1105,11 @@ defineExpose({ validateAll, clearErrors })
                     :class="field.choiceIcon || 'pi pi-check-circle'"
                     aria-hidden="true"
                   />
-                  {{ optionLabelOf(field, option) }}
+                  <span v-if="optionDescriptionOf(field, option)" class="w-fk-option">
+                    <span class="w-fk-option__label">{{ optionLabelOf(field, option) }}</span>
+                    <span class="w-fk-option__desc">{{ optionDescriptionOf(field, option) }}</span>
+                  </span>
+                  <template v-else>{{ optionLabelOf(field, option) }}</template>
                 </button>
               </div>
 

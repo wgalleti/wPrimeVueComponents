@@ -30,6 +30,11 @@ export type FieldType =
   | 'chips'
 
 export interface SelectOption {
+  /** `select`/`choice` do FieldDef: opção visível mas não escolhível (ex.: plano indisponível). */
+  disabled?: boolean
+  /** `select`/`choice` do FieldDef: segunda linha da opção — o que decide a escolha ou o
+   *  motivo do bloqueio. A chave pode ser trocada por `FieldDef.optionDescription`. */
+  description?: string
   [key: string]: unknown
 }
 
@@ -117,7 +122,8 @@ export interface FieldDef {
   /** Segunda linha da opção, em texto de apoio — para o dado que **decide** a escolha
    *  aparecer antes dela, não depois (ex.: o saldo em estoque de um lote).
    *  É uma **chave** do registro; formate no backend, como já se faz com `{fk}_nome`.
-   *  Só afeta a lista de sugestões: escolhido o item, o campo mostra `optionLabel`. */
+   *  Só afeta a lista de sugestões: escolhido o item, o campo mostra `optionLabel`.
+   *  Vale também no `select` e no `choice`, onde o default é `description`. */
   optionDescription?: string
   optionValue?: string
   showClear?: boolean

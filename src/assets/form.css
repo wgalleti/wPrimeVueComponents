@@ -707,6 +707,13 @@
   font-weight: var(--w-fw-medium);
 }
 
+.w-choice__option--desc {
+  height: auto;
+  min-height: var(--w-control-h);
+  padding-block: var(--w-space-1);
+  text-align: start;
+}
+
 .w-choice__option:disabled {
   opacity: 0.6;
   cursor: default;

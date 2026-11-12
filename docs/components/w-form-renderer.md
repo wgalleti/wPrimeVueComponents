@@ -134,6 +134,24 @@ Mesma API, N opções, quebrando linha. Selecionado = borda `--primary` + fundo 
 }
 ```
 
+### Opção desabilitada e descrição (`select` e `choice`)
+
+A opção pode vir com `disabled: true` (aparece, mas não se escolhe) e `description` (segunda
+linha, em texto de apoio: o dado que decide a escolha ou o motivo do bloqueio). Para ler a
+descrição de outra chave, use `optionDescription` no FieldDef.
+
+```ts
+{
+  field: 'plano',
+  label: 'Plano',
+  type: 'select',
+  options: [
+    { label: 'Básico', value: 'B', description: 'Até 3 corretores' },
+    { label: 'Pro', value: 'P', disabled: true, description: 'Exige contrato anual' },
+  ],
+}
+```
+
 ### `chips` — valor múltiplo removível
 
 O valor é um **array**. Cada item pode ser o objeto inteiro (rótulo por `optionLabel`, default
