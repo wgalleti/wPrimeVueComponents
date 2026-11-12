@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import Button from 'primevue/button'
+import { warnOnce } from '@/utils/warnOnce'
 import type { RouteLocationRaw } from 'vue-router'
 import type { ButtonSize, ButtonVariant } from '@/types/button'
 
@@ -43,6 +45,17 @@ defineSlots<{
   default?: () => unknown
 }>()
 
+// `small`/`large` (vocabulário do PrimeVue) são aceitos; `large` não tem tamanho próprio na suíte.
+const tamanho = computed<'sm' | 'md'>(() =>
+  props.size === 'sm' || props.size === 'small' ? 'sm' : 'md',
+)
+if (props.size === 'small' || props.size === 'large') {
+  warnOnce(
+    `wbutton-size:${props.size}`,
+    `[WButton] size="${props.size}" não é da suíte: use "${props.size === 'small' ? 'sm' : 'md'}".`,
+  )
+}
+
 if (import.meta.env.DEV && props.iconOnly && !props.ariaLabel) {
   console.warn('[WButton] `iconOnly` sem `ariaLabel`: o botão fica sem nome para leitor de tela.')
 }
@@ -56,7 +69,7 @@ if (import.meta.env.DEV && props.iconOnly && !props.ariaLabel) {
     :label="iconOnly ? undefined : label"
     :icon="icon"
     :icon-pos="iconPos"
-    :size="size === 'sm' ? 'small' : undefined"
+    :size="tamanho === 'sm' ? 'small' : undefined"
     :severity="variant === 'danger' ? 'danger' : variant === 'ghost' ? 'secondary' : undefined"
     :outlined="variant === 'secondary'"
     :text="variant === 'ghost' || (variant === 'danger' && iconOnly)"
@@ -68,7 +81,7 @@ if (import.meta.env.DEV && props.iconOnly && !props.ariaLabel) {
     :class="[
       'w-button',
       `w-button--${variant}`,
-      `w-button--${size}`,
+      `w-button--${tamanho}`,
       { 'w-button--loading': loading, 'w-button--bare': !icon && !iconOnly },
     ]"
   >

@@ -82,4 +82,12 @@ describe('WButton', () => {
     const w = montar({}, { slots: { default: '<b class="custom">Ok</b>' } })
     expect(w.find('.custom').text()).toBe('Ok')
   })
+
+  it('size="small" vale como sm e avisa em DEV', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const b = montar({ label: 'x', size: 'small' }).find('button')
+    expect(b.classes()).toEqual(expect.arrayContaining(['p-button-sm', 'w-button--sm']))
+    expect(warn.mock.calls.some((c) => String(c[0]).includes('"sm"'))).toBe(true)
+    warn.mockRestore()
+  })
 })
