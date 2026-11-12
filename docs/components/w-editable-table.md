@@ -246,6 +246,32 @@ linha em que a coluna é a manchete para o total também ser.
 Com `card: 'value'` (fixo ou vindo da função), o `InputNumber` fica na posição da manchete,
 largura cheia e com o dígito no tamanho dela; a borda continua dizendo que ali se edita.
 
+## Seleção por linha — `selectable`
+
+Marca linhas do array em memória sem mexer nelas: checkbox por linha e "marcar todos" no
+cabeçalho (só as linhas presentes e selecionáveis; chaves de fora ficam intactas). As chaves saem
+de `rowKey` em `v-model:selected` — sem `rowKey` a chave é o índice, com aviso em DEV.
+`isRowSelectable(row, index)` trava a marcação (a já marcada continua desmarcável). Caso real:
+conciliar o extrato do banco.
+
+```vue
+<WEditableTable
+  v-model="lancamentos"
+  v-model:selected="aConciliar"
+  row-key="id"
+  selectable
+  :is-row-selectable="(l) => !l.conciliado"
+  :columns="[
+    { field: 'data', header: 'Data', width: 110, format: formatarData },
+    { field: 'historico', header: 'Lançamento' },
+    { field: 'dias', header: 'Dias', width: 70, align: 'right', decimals: 0 },
+    { field: 'valor', header: 'Valor', width: 130, align: 'right', decimals: 2, footer: 'sum' },
+  ]"
+/>
+```
+
+`align: 'right'` vale na célula, no cabeçalho e no rodapé (numérica já alinha à direita sozinha).
+
 ## Detalhes
 
 - **`add`** só avisa a intenção: quem sabe o formato da linha nova é o consumidor.

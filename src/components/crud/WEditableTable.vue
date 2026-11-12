@@ -3,6 +3,7 @@ import { computed, isRef, onBeforeUpdate, onMounted, onUpdated, ref } from 'vue'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
+import Checkbox from 'primevue/checkbox'
 import WDatePicker from '@/components/form/WDatePicker.vue'
 import { useCardFit } from '@/composables/useCardFit'
 import { useFormatters } from '@/composables/useFormatters'
@@ -65,6 +66,11 @@ const props = withDefaults(
     cardMode?: 'auto' | 'never' | 'always'
     /** Rótulo do abridor da expansão no card — lá não existe coluna de seta. */
     expansionLabel?: string
+    /** Liga a coluna de seleção (checkbox por linha e "marcar todos" no cabeçalho), sobre os
+     *  dados em memória; as chaves (`rowKey`) vão em `v-model:selected`. Não mexe nas linhas. */
+    selectable?: boolean
+    /** Diz se a linha pode ser marcada; default todas. A já marcada continua desmarcável. */
+    isRowSelectable?: (row: EditableRow, index: number) => boolean
   }>(),
   {
     modelValue: () => [],
@@ -76,8 +82,13 @@ const props = withDefaults(
     disabled: false,
     cardMode: 'auto',
     expansionLabel: 'Detalhes',
+    selectable: false,
+    isRowSelectable: undefined,
   },
 )
+
+/** Chaves (`rowKey`) das linhas marcadas. Chave que não está nas linhas fica intacta. */
+const selected = defineModel<(string | number)[]>('selected', { default: () => [] })
 
 const emit = defineEmits<{
   'update:modelValue': [rows: EditableRow[]]
@@ -119,6 +130,53 @@ function cardRole(column: EditableColumnDef, row: EditableRow): EditableCardRole
  *  ("Bags · A tratar"), senão "Sugestão" e "A tratar" perdem a unidade. */
 function cardLabel(column: EditableColumnDef): string {
   return column.group ? `${column.group} · ${column.header}` : column.header
+}
+
+// --- Seleção ---------------------------------------------------------------
+// Sobre o array em memória (ex.: lançamentos do extrato a conciliar). Sem `rowKey` a chave é o
+// índice, que muda ao remover linha — por isso o aviso em DEV.
+if (import.meta.env.DEV && props.selectable && !props.rowKey) {
+  console.warn('[WEditableTable] `selectable` sem `rowKey`: a seleção vai pelo índice da linha.')
+}
+
+const selectedSet = computed(() => new Set(selected.value))
+
+function isSelected(row: EditableRow, index: number): boolean {
+  return selectedSet.value.has(rowKeyOf(row, index))
+}
+
+function canSelect(row: EditableRow, index: number): boolean {
+  return props.isRowSelectable ? props.isRowSelectable(row, index) : true
+}
+
+/** Chaves que o "marcar todos" alcança: as linhas presentes e selecionáveis. */
+const selectableKeys = computed(() =>
+  props.modelValue.flatMap((row, i) => (canSelect(row, i) ? [rowKeyOf(row, i)] : [])),
+)
+const allChecked = computed(
+  () =>
+    selectableKeys.value.length > 0 && selectableKeys.value.every((k) => selectedSet.value.has(k)),
+)
+const someChecked = computed(
+  () => !allChecked.value && selectableKeys.value.some((k) => selectedSet.value.has(k)),
+)
+
+function toggleSelected(row: EditableRow, index: number) {
+  const key = rowKeyOf(row, index)
+  if (selectedSet.value.has(key)) selected.value = selected.value.filter((k) => k !== key)
+  else if (canSelect(row, index)) selected.value = [...selected.value, key]
+}
+
+function toggleAllSelected() {
+  const alcance = new Set(selectableKeys.value)
+  selected.value = allChecked.value
+    ? selected.value.filter((k) => !alcance.has(k))
+    : [...selected.value, ...selectableKeys.value.filter((k) => !selectedSet.value.has(k))]
+}
+
+function selectLabel(row: EditableRow): string {
+  const first = props.columns[0]
+  return first ? `Selecionar ${displayValue(first, row)}` : 'Selecionar linha'
 }
 
 // --- Expansão --------------------------------------------------------------
@@ -186,6 +244,7 @@ const pisoCss = computed(() => {
     c.width == null ? 'var(--w-col-title-min)' : widthOf(c.width),
   )
   if (props.expandable) partes.push('var(--w-icon-box)')
+  if (props.selectable) partes.push('var(--w-icon-box)')
   if (props.removable) partes.push('var(--w-col-remove)')
   return partes.length ? `calc(${partes.join(' + ')})` : undefined
 })
@@ -353,7 +412,11 @@ const footerLabelField = computed(() => {
 })
 
 const columnCount = computed(
-  () => props.columns.length + (props.expandable ? 1 : 0) + (props.removable ? 1 : 0),
+  () =>
+    props.columns.length +
+    (props.selectable ? 1 : 0) +
+    (props.expandable ? 1 : 0) +
+    (props.removable ? 1 : 0),
 )
 
 // --- Grupos de cabeçalho ---------------------------------------------------
@@ -420,6 +483,7 @@ const headerGroupCells = computed(() => {
       >
         <thead>
           <tr v-if="hasHeaderGroups" class="w-editable-table__group-row">
+            <th v-if="selectable" class="w-editable-table__toggle-col" />
             <th v-if="expandable" class="w-editable-table__toggle-col" />
             <th
               v-for="cell in headerGroupCells"
@@ -433,6 +497,16 @@ const headerGroupCells = computed(() => {
             <th v-if="removable" class="w-editable-table__action-col" />
           </tr>
           <tr>
+            <th v-if="selectable" class="w-editable-table__toggle-col">
+              <Checkbox
+                binary
+                :model-value="allChecked"
+                :indeterminate="someChecked"
+                :disabled="!selectableKeys.length"
+                aria-label="Marcar todas as linhas"
+                @update:model-value="toggleAllSelected"
+              />
+            </th>
             <th v-if="expandable" class="w-editable-table__toggle-col" />
             <th
               v-for="column in columns"
@@ -464,8 +538,20 @@ const headerGroupCells = computed(() => {
              alternância. -->
           <tr
             class="w-editable-table__row"
-            :class="{ 'w-editable-table__row--alt': index % 2 === 1 }"
+            :class="{
+              'w-editable-table__row--alt': index % 2 === 1,
+              'w-editable-table__row--selected': selectable && isSelected(row, index),
+            }"
           >
+            <td v-if="selectable" class="w-editable-table__toggle-col" data-card="actions">
+              <Checkbox
+                binary
+                :model-value="isSelected(row, index)"
+                :disabled="!isSelected(row, index) && !canSelect(row, index)"
+                :aria-label="selectLabel(row)"
+                @update:model-value="toggleSelected(row, index)"
+              />
+            </td>
             <td v-if="expandable" class="w-editable-table__toggle-col" data-card="expander">
               <button
                 type="button"
@@ -583,6 +669,7 @@ const headerGroupCells = computed(() => {
 
         <tfoot v-if="hasFooter">
           <tr class="w-editable-table__footer">
+            <td v-if="selectable" class="w-editable-table__toggle-col" data-card="hidden" />
             <td v-if="expandable" class="w-editable-table__toggle-col" data-card="hidden" />
             <!-- No card o rodapé vira o card de totais: só entram as colunas que
                somam (e o rótulo "Total" como manchete). Coluna sem soma viraria

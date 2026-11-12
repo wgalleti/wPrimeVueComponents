@@ -945,3 +945,60 @@ describe('WEditableTable — piso da grade', () => {
     expect(montar().find('.w-editable-table__scroll > table').exists()).toBe(true)
   })
 })
+
+describe('WEditableTable — seleção por linha (selectable)', () => {
+  const extrato: EditableRow[] = [
+    { id: 'a', data: '2026-11-01', historico: 'PIX', valor: 100 },
+    { id: 'b', data: '2026-11-02', historico: 'TED', valor: 250 },
+    { id: 'c', data: '2026-11-03', historico: 'Tarifa', valor: 5, conciliado: true },
+  ]
+  const cols: EditableColumnDef[] = [
+    { field: 'historico', header: 'Lançamento' },
+    { field: 'valor', header: 'Valor', align: 'right', decimals: 2 },
+  ]
+  const sel = (w: VueWrapper) => w.emitted('update:selected')!.at(-1)![0]
+  const montarSel = (props: Record<string, unknown> = {}) =>
+    mount(WEditableTable, {
+      props: {
+        modelValue: extrato,
+        columns: cols,
+        rowKey: 'id',
+        selectable: true,
+        isRowSelectable: (row: EditableRow) => !row.conciliado,
+        ...props,
+      },
+      global: { plugins: [PrimeVue] },
+    })
+
+  it('checkbox por linha emite as chaves; a não selecionável fica travada', async () => {
+    const w = montarSel({ selected: ['zz'] })
+    await w.find('input[aria-label="Selecionar TED"]').setValue(true)
+    expect(sel(w)).toEqual(['zz', 'b'])
+    expect(w.find('input[aria-label="Selecionar Tarifa"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('"marcar todos" alcança só as selecionáveis e preserva chaves de fora', async () => {
+    const w = montarSel({ selected: ['zz'] })
+    const todos = () => w.find('input[aria-label="Marcar todas as linhas"]')
+    await todos().setValue(true)
+    expect(sel(w)).toEqual(['zz', 'a', 'b'])
+    await w.setProps({ selected: ['zz', 'a', 'b'] })
+    await todos().setValue(false)
+    expect(sel(w)).toEqual(['zz'])
+  })
+
+  it('cabeçalho indeterminado com seleção parcial; linha marcada ganha a classe', () => {
+    const w = montarSel({ selected: ['a'] })
+    expect(
+      (w.find('input[aria-label="Marcar todas as linhas"]').element as HTMLInputElement)
+        .indeterminate,
+    ).toBe(true)
+    expect(w.findAll('.w-editable-table__row--selected')).toHaveLength(1)
+  })
+
+  it('align right da coluna vale na célula e no cabeçalho', () => {
+    const w = montarSel()
+    expect(w.findAll('th')[2].classes()).toContain('w-editable-table__cell--right')
+    expect(w.find('td[data-field="valor"]').classes()).toContain('w-editable-table__cell--right')
+  })
+})

@@ -37,12 +37,39 @@ export default defineComponentMeta({
   category: 'CRUD',
   icon: 'pi pi-table',
   summary:
-    'Tabela editável sobre estado local (sem manager): edição por célula, linha expansível e rodapé de totais.',
+    'Tabela editável sobre estado local (sem manager): edição por célula, seleção por linha, linha expansível e rodapé de totais.',
   examples: [
     {
       name: 'Lotes com totais',
       description: 'Colunas com footer: "sum" somam em pt-BR e fecham na régua do rodapé.',
       props: { modelValue: lotes, columns: colunas, removable: true, addLabel: 'Adicionar lote' },
+    },
+    {
+      name: 'Seleção (conciliação)',
+      description: 'selectable + v-model:selected com as chaves de rowKey; a conciliada não marca.',
+      props: {
+        modelValue: [
+          { id: 1, historico: 'PIX recebido', dias: 0, valor: 1500 },
+          { id: 2, historico: 'TED enviada', dias: 2, valor: -320.5 },
+          { id: 3, historico: 'Tarifa', dias: 5, valor: -12.9, conciliado: true },
+        ],
+        columns: [
+          { field: 'historico', header: 'Lançamento' },
+          { field: 'dias', header: 'Dias', width: 70, align: 'right', decimals: 0 },
+          {
+            field: 'valor',
+            header: 'Valor',
+            width: 130,
+            align: 'right',
+            decimals: 2,
+            footer: 'sum',
+          },
+        ] satisfies EditableColumnDef[],
+        rowKey: 'id',
+        selectable: true,
+        selected: [1],
+        isRowSelectable: (row: Record<string, unknown>) => !row.conciliado,
+      },
     },
     {
       name: 'Subtabela (insumos)',
