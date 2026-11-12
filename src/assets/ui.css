@@ -2506,6 +2506,30 @@
   background: var(--w-surface-2);
 }
 
+/* Alternador ligado: o fundo da pílula (surface) quase não se distingue do desligado
+   (surface-2), sobretudo no escuro — o ligado ganha um tom da cor primária. */
+.w-segmented--toggle.w-segmented--on {
+  background: color-mix(in srgb, var(--w-primary) 18%, var(--w-surface-2));
+  color: var(--w-fg);
+}
+
+/* fluid: ocupa a largura do contêiner; as opções dividem-na por igual. */
+.p-selectbutton.w-segmented--fluid {
+  display: flex;
+  width: 100%;
+}
+
+.w-segmented--fluid .p-togglebutton {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+.w-segmented--toggle.w-segmented--fluid {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
 .w-segmented .p-togglebutton:focus-visible,
 .w-segmented--toggle:focus-visible {
   outline: 2px solid var(--w-primary);

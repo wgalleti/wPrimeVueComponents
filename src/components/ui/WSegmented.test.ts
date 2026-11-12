@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
@@ -38,5 +39,22 @@ describe('WSegmented', () => {
   it('disabled bloqueia o alternador', () => {
     const w = mountIt({ options: [{ label: 'X', value: true }], modelValue: false, disabled: true })
     expect(w.find('button').attributes('disabled')).toBeDefined()
+  })
+
+  it('fluid marca a classe de largura total no grupo e no alternador', () => {
+    expect(mountIt({ options, modelValue: 'lista', fluid: true }).classes()).toContain(
+      'w-segmented--fluid',
+    )
+    expect(mountIt({ options, modelValue: 'lista' }).classes()).not.toContain('w-segmented--fluid')
+    const t = mountIt({ options: [{ label: 'X', value: true }], modelValue: false, fluid: true })
+    expect(t.classes()).toContain('w-segmented--fluid')
+  })
+
+  it('alternador ligado ganha fundo próprio, distinto do desligado', async () => {
+    const t = mountIt({ options: [{ label: 'X', value: true }], modelValue: true })
+    expect(t.classes()).toContain('w-segmented--on')
+    expect(readFileSync('src/assets/ui.css', 'utf8')).toMatch(
+      /\.w-segmented--toggle\.w-segmented--on \{\s*background: color-mix\(in srgb, var\(--w-primary\)/,
+    )
   })
 })

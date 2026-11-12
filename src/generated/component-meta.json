@@ -1038,8 +1038,8 @@
           "name": "autoSelectSingle",
           "type": "boolean | undefined",
           "required": false,
-          "default": "true",
-          "description": "Quando a lista (com os filtros/cascata atuais) tem **um** registro só, ele já\nentra selecionado — ao montar sem valor e ao preencher a cascata. Só no modo\nsimples; limpar o campo não redispara. `false` desliga."
+          "default": "false",
+          "description": "Quando a lista (com os filtros/cascata atuais) tem **um** registro só, ele já\nentra selecionado — ao montar sem valor e ao preencher a cascata. Só no modo\nsimples; limpar o campo não redispara. Default `false` (opt-in)."
         },
         {
           "name": "crudFields",
@@ -3972,6 +3972,13 @@
           "required": false,
           "default": "false",
           "description": ""
+        },
+        {
+          "name": "fluid",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Largura total do contêiner, com as opções dividindo-a por igual."
         },
         {
           "name": "modelValue",

@@ -21,8 +21,10 @@ const props = withDefaults(
     /** Nome acessível do grupo (ou do alternador, se o rótulo da opção não bastar). */
     ariaLabel?: string
     disabled?: boolean
+    /** Largura total do contêiner, com as opções dividindo-a por igual. */
+    fluid?: boolean
   }>(),
-  { multiple: false, size: 'md', disabled: false },
+  { multiple: false, size: 'md', disabled: false, fluid: false },
 )
 
 const model = defineModel<unknown>()
@@ -46,7 +48,7 @@ function flip() {
     v-if="toggle && option"
     type="button"
     class="w-segmented w-segmented--toggle"
-    :class="[`w-segmented--${size}`, { 'w-segmented--on': pressed }]"
+    :class="[`w-segmented--${size}`, { 'w-segmented--on': pressed, 'w-segmented--fluid': fluid }]"
     :aria-pressed="pressed"
     :aria-label="ariaLabel"
     :disabled="disabled"
@@ -66,7 +68,7 @@ function flip() {
     :size="size === 'sm' ? 'small' : undefined"
     :aria-label="ariaLabel"
     :disabled="disabled"
-    :class="['w-segmented', `w-segmented--${size}`]"
+    :class="['w-segmented', `w-segmented--${size}`, { 'w-segmented--fluid': fluid }]"
   >
     <template #option="{ option: o }">
       <i v-if="o.icon" :class="o.icon" aria-hidden="true" />

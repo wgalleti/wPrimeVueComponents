@@ -7,6 +7,8 @@ do app; sem valor literal na tela.
 - **Uma opção só** vira alternador (`aria-pressed`). O modelo é boolean, ou o valor da opção /
   `null` quando a opção não é boolean.
 - `ariaLabel` dá o nome do grupo; `size="sm"` para barras de ferramentas densas.
+- `fluid` ocupa a largura do contêiner, com as opções dividindo-a por igual (popovers, painéis).
+- O alternador ligado ganha um fundo próprio (tom da cor primária), distinto do desligado em claro e escuro.
 
 ## API
 
