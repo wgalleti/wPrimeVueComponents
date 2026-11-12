@@ -2296,6 +2296,25 @@
   text-align: center;
 }
 
+/* --- Grade: muitas operações rolam na horizontal; a coluna dos nomes fica fixa e legível --- */
+
+.w-permission-matrix:not(.w-permission-matrix--cards) .w-permission-matrix__table {
+  min-width: max-content;
+}
+
+.w-permission-matrix:not(.w-permission-matrix--cards) .w-permission-matrix__th--name,
+.w-permission-matrix:not(.w-permission-matrix--cards) .w-permission-matrix__name {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  min-width: var(--w-permission-name-min, 11rem);
+  background-color: var(--w-surface);
+}
+
+.w-permission-matrix:not(.w-permission-matrix--cards) .w-permission-matrix__row:hover .w-permission-matrix__name {
+  background-image: linear-gradient(var(--w-row-hover), var(--w-row-hover));
+}
+
 /* --- Card: a linha vira caixa; nome em cima, "Todas" e as operações quebrando linha --- */
 
 .w-permission-matrix--cards .w-permission-matrix__table,

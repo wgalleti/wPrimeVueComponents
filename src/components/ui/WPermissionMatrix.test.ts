@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
@@ -121,5 +122,19 @@ describe('WPermissionMatrix', () => {
     expect(card.classes()).toContain('w-permission-matrix--cards')
     expect(card.find('thead').exists()).toBe(false)
     expect(card.find('.w-permission-matrix__cell .w-permission-matrix__check').text()).toBe('Todas')
+  })
+})
+
+describe('WPermissionMatrix — muitas operações', () => {
+  // jsdom não calcula layout: confere a regra no CSS que a suíte publica.
+  const css = readFileSync('src/assets/ui.css', 'utf8')
+
+  it('a grade rola na horizontal e a coluna dos nomes fica fixa, com largura mínima', () => {
+    expect(css).toMatch(
+      /\.w-permission-matrix:not\(\.w-permission-matrix--cards\) \.w-permission-matrix__table \{\s*min-width: max-content;/,
+    )
+    expect(css).toMatch(
+      /__name \{\s*position: sticky;[^}]*min-width: var\(--w-permission-name-min, 11rem\);/,
+    )
   })
 })
