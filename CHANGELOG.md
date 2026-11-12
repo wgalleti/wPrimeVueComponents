@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.0.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.0.0...v2.0.1) (2026-11-12)
+
+### Correções
+
+* **chart:** resolve token colours to rgb so series keep their colour on hover ([5655c88](https://github.com/wgalleti/wPrimeVueComponents/commit/5655c8822d63d0cb86c9a717625a6fe1551bad20))
 ## [2.0.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.20.0...v2.0.0) (2026-11-12)
 
 ### ⚠ BREAKING CHANGES
