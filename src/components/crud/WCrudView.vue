@@ -241,8 +241,12 @@ function setView(mode: 'table' | 'cards'): void {
   const key = viewKey()
   if (key) storageSet(key, mode)
 }
-const paginatorFirst = computed(
-  () => (props.crud.pagination.page - 1) * props.crud.pagination.pageSize,
+// Sem total ainda, o paginador do PrimeVue volta para a página 1 quando `first` passa do total:
+// segura em 0 até a primeira carga, para a página restaurada (urlState) não ser perdida.
+const paginatorFirst = computed(() =>
+  props.crud.pagination.rows
+    ? (props.crud.pagination.page - 1) * props.crud.pagination.pageSize
+    : 0,
 )
 
 // --- Columns ---
@@ -1117,6 +1121,7 @@ onMounted(() => {
             :expanded-row-groups="isGrouped ? expandedGroupKeys : undefined"
             paginator
             :rows="crud.pagination.pageSize"
+            :first="paginatorFirst"
             :total-records="crud.pagination.rows"
             :rows-per-page-options="[10, 20, 50]"
             paginator-template="CurrentPageReport PrevPageLink NextPageLink"

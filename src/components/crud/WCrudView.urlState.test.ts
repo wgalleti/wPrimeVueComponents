@@ -54,7 +54,8 @@ async function montar(url: string, props: Record<string, unknown> = {}, bindRow 
     ],
     page: p.page,
     page_size: 20,
-    rows: 2,
+    // total coerente com a página pedida: com 2 o paginador voltaria à página 1, como faria com a API real
+    rows: 100,
   }))
   const provider: Partial<DataProvider> = { list }
   const selecionada = ref<Linha | null>(null)
@@ -119,6 +120,8 @@ describe('WCrudView — urlState', () => {
       page: 3,
       ordering: '-nome',
     })
+    // o paginador da tabela acompanha a página restaurada (página 3 de 20 → first 40)
+    expect(w.findComponent({ name: 'DataTable' }).props('first')).toBe(40)
     w.unmount()
   })
 
