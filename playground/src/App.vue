@@ -18,6 +18,8 @@ const links = [
   { label: 'DatePicker', to: '/datepicker', icon: 'pi pi-calendar' },
   { label: 'Recomendação (novos)', to: '/recomendacao', icon: 'pi pi-map' },
   { label: 'Markdown & Kanban', to: '/markdown-kanban', icon: 'pi pi-objects-column' },
+  { label: 'Paleta (Ctrl+K)', to: '/paleta', icon: 'pi pi-search' },
+  { label: 'Carregamento suave', to: '/carregamento', icon: 'pi pi-spinner' },
 ]
 
 // Publicado junto das docs (Pages), o playground vive em <docs>/playground/ —

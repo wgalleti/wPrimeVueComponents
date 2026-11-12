@@ -983,3 +983,53 @@ describe('WCrudView — groupBy', () => {
     w.unmount()
   })
 })
+
+describe('WCrudView — chegada suave', () => {
+  it('carregamento lento: esqueleto só depois do delay; rápido nunca mostra', async () => {
+    vi.useFakeTimers()
+    let liberar!: (v: unknown) => void
+    const w = montar(
+      {},
+      { loadingDelay: 150 },
+      { list: vi.fn().mockReturnValue(new Promise((r) => (liberar = r))) },
+    )
+    await nextTick()
+    expect(w.find('.w-skeleton').exists() && w.find('.w-skeleton').isVisible()).toBe(false)
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    expect(w.find('.w-skeleton').isVisible()).toBe(true)
+    liberar({ data: [{ id: 1, nome: 'Soja' }], page: 1, page_size: 20, rows: 1 })
+    await flushPromises()
+    expect(w.find('.w-skeleton').exists()).toBe(false)
+    w.unmount()
+    vi.useRealTimers()
+  })
+
+  it('skeleton=false volta ao loading do DataTable', async () => {
+    const w = montar(
+      {},
+      { skeleton: false },
+      { list: vi.fn().mockReturnValue(new Promise(() => {})) },
+    )
+    await nextTick()
+    expect(w.find('.p-datatable-mask').exists()).toBe(true)
+    expect(w.find('.w-skeleton').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('recarregar com linhas visíveis mantém o indicador do DataTable', async () => {
+    let liberar!: (v: unknown) => void
+    const lista = vi
+      .fn()
+      .mockResolvedValueOnce({ data: [{ id: 1, nome: 'Soja' }], page: 1, page_size: 20, rows: 1 })
+      .mockReturnValueOnce(new Promise((r) => (liberar = r)))
+    const w = montar({}, {}, { list: lista })
+    await flushPromises()
+    w.findComponent(WCrudView).props('crud').refresh()
+    await nextTick()
+    expect(w.find('.p-datatable-mask').exists()).toBe(true)
+    liberar({ data: [], page: 1, page_size: 20, rows: 0 })
+    await flushPromises()
+    w.unmount()
+  })
+})

@@ -62,5 +62,15 @@ export const router = createRouter({
       name: 'painel-operacional',
       component: () => import('./views/PainelOperacionalView.vue'),
     },
+    {
+      path: '/paleta',
+      name: 'paleta',
+      component: () => import('./views/PaletaView.vue'),
+    },
+    {
+      path: '/carregamento',
+      name: 'carregamento',
+      component: () => import('./views/CarregamentoView.vue'),
+    },
   ],
 })

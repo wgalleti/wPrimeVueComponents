@@ -60,6 +60,8 @@ export {
   WMarkdownToc,
   WDialog,
   WFlipCard,
+  WCommandPalette,
+  WSkeleton,
   WTabBar,
   WTabNav,
   WTabViewport,
@@ -82,6 +84,7 @@ export {
   useRouteTabs,
   useBreakpoint,
   BREAKPOINTS,
+  useDelayedLoading,
   usePendingForm,
   setPendingForm,
   listPendingForms,
@@ -93,12 +96,16 @@ export {
 } from './composables'
 export type {
   DateValueFormat,
+  UseDelayedLoadingOptions,
   PublishedVersion,
   PublishedVersionDeps,
   InstallPublishedVersionOptions,
   RouteLike,
   RouterLike,
 } from './composables'
+
+// Utils
+export { filterPaletteItems } from './utils/paletteFilter'
 
 // Data providers
 export { createAxiosDataProvider, createSupabaseDataProvider } from './data-providers'
@@ -121,6 +128,7 @@ export type {
   EditableColumnDef,
   EditableColumnEditor,
   EditableRow,
+  PaletteItem,
   CheckListItem,
   CheckListLevel,
   FlipCardLabels,
