@@ -502,3 +502,52 @@ describe('opção desabilitada e descrição (select / choice)', () => {
     expect(w.findComponent(Select).props('optionDisabled')).toBe('disabled')
   })
 })
+
+describe('type cep — consulta injetável', () => {
+  const endereco = { logradouro: 'Rua A', bairro: 'Centro', localidade: 'Cuiabá', uf: 'MT' }
+  const campoCep = (extra: Partial<FieldDef> = {}): FieldDef => ({
+    field: 'cep',
+    label: 'CEP',
+    type: 'cep',
+    cepFields: { logradouro: 'rua', uf: 'estado' },
+    ...extra,
+  })
+
+  async function digitar(w: VueWrapper, valor: string) {
+    const input = w.find('input')
+    ;(input.element as HTMLInputElement).value = valor
+    await input.trigger('input')
+    await vi.advanceTimersByTimeAsync(400)
+  }
+
+  it('usa a consulta do plugin e preenche os campos mapeados', async () => {
+    vi.useFakeTimers()
+    const { W_CONFIG_KEY } = await import('@/types/plugin')
+    const lookup = vi.fn().mockResolvedValue(endereco)
+    const w = mount(WFormRenderer, {
+      props: { fields: [campoCep()], formData: {}, isEditing: false },
+      global: { plugins: [PrimeVue], provide: { [W_CONFIG_KEY]: { cepLookup: lookup } } },
+    })
+    await digitar(w, '78000-000')
+    expect(lookup).toHaveBeenCalledWith('78000000')
+    expect(emitido(w)).toContainEqual(['rua', 'Rua A'])
+    expect(emitido(w)).toContainEqual(['estado', 'MT'])
+    vi.useRealTimers()
+  })
+
+  it('a do campo vence a do plugin; erro vira o aviso de não encontrado', async () => {
+    vi.useFakeTimers()
+    const { W_CONFIG_KEY } = await import('@/types/plugin')
+    const doPlugin = vi.fn()
+    const doCampo = vi.fn().mockRejectedValue(new Error('rede'))
+    const w = mount(WFormRenderer, {
+      props: { fields: [campoCep({ cepLookup: doCampo })], formData: {}, isEditing: false },
+      global: { plugins: [PrimeVue], provide: { [W_CONFIG_KEY]: { cepLookup: doPlugin } } },
+    })
+    await digitar(w, '78000000')
+    expect(doCampo).toHaveBeenCalled()
+    expect(doPlugin).not.toHaveBeenCalled()
+    expect(w.find('.w-crud-form-cep-error').exists()).toBe(true)
+    vi.useRealTimers()
+  })
+})

@@ -14,6 +14,8 @@ export type {
   FieldValidateContext,
   FkCrudConfig,
   SelectOption,
+  CepAddress,
+  CepLookup,
   FieldDependency,
 } from './field'
 

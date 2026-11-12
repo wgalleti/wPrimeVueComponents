@@ -38,6 +38,18 @@ export interface SelectOption {
   [key: string]: unknown
 }
 
+/** Endereço devolvido pela consulta de CEP (formato do ViaCEP). */
+export interface CepAddress {
+  logradouro?: string
+  bairro?: string
+  localidade?: string
+  uf?: string
+  complemento?: string
+}
+
+/** Consulta de CEP: recebe os 8 dígitos e devolve o endereço, ou `null` se não achar. */
+export type CepLookup = (cep: string) => Promise<CepAddress | null>
+
 /**
  * Filtro em cascata (drill-down) de um campo FK: torna a busca dependente do valor
  * de outro campo do formulário, aplicando-o como filtro na requisição à API.
@@ -245,6 +257,8 @@ export interface FieldDef {
   accept?: string
 
   // cep
+  /** Consulta própria do CEP deste campo; vence a `cepLookup` do plugin (padrão: ViaCEP). */
+  cepLookup?: CepLookup
   /** For type 'cep' — maps ViaCEP response fields to form field names.
    *  Keys are ViaCEP response names (logradouro, bairro, localidade, uf, complemento).
    *  Values are the form field names to populate. Omit keys to skip fields. */

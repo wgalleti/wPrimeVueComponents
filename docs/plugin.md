@@ -86,8 +86,26 @@ interface WPluginOptions {
    * Default: false
    */
   keyboardNav?: boolean
+
+  /**
+   * Consulta de CEP dos campos `type: 'cep'`: recebe os 8 dígitos e devolve
+   * `{ logradouro, bairro, localidade, uf, complemento }` ou `null`. O campo
+   * troca a sua com `FieldDef.cepLookup`. Default: ViaCEP direto do navegador.
+   */
+  cepLookup?: (cep: string) => Promise<CepAddress | null>
 }
 ```
+
+### Consulta de CEP pela própria API
+
+```ts
+app.use(WPrimeVuePlugin, {
+  axios: api,
+  cepLookup: async (cep) => (await api.get(`/cep/${cep}/`)).data ?? null,
+})
+```
+
+Consulta que lança cai no mesmo aviso de "CEP não encontrado" do campo.
 
 ## Como Funciona
 

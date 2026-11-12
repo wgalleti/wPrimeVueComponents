@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, isRef, watch, useId, useSlots } from 'vue'
+import { computed, inject, reactive, isRef, watch, useId, useSlots } from 'vue'
 import { vMaska } from 'maska/vue'
 import { isFieldVisible } from '@/utils/formRecord'
 import InputText from 'primevue/inputtext'
@@ -17,6 +17,7 @@ import WMoneyInput from '@/components/form/WMoneyInput.vue'
 import WImageCropper from '@/components/form/WImageCropper.vue'
 import WTransferList from '@/components/form/WTransferList.vue'
 import { lookupCep } from '@/utils/cep'
+import { W_CONFIG_KEY, type WPluginConfig } from '@/types/plugin'
 
 const props = withDefaults(
   defineProps<{
@@ -149,6 +150,9 @@ function groupAttrs(field: FieldDef): Record<string, string | undefined> {
 }
 
 // --- CEP state ---
+// Ordem da consulta: a do campo, a do plugin, o ViaCEP (também quando não há plugin, ex.: teste).
+const pluginConfig = inject<WPluginConfig | undefined>(W_CONFIG_KEY, undefined)
+
 const cepLoading = reactive<Record<string, boolean>>({})
 const cepError = reactive<Record<string, string | null>>({})
 const cepTimers = reactive<Record<string, ReturnType<typeof setTimeout> | null>>({})
@@ -172,7 +176,9 @@ function onCepInput(field: FieldDef, event: Event) {
       cepLoading[field.field] = true
       cepError[field.field] = null
       try {
-        const result = await lookupCep(digits)
+        const lookup = field.cepLookup ?? pluginConfig?.cepLookup ?? lookupCep
+        // Consulta que lança (rede, 5xx da API do app) cai no mesmo aviso de "não encontrado".
+        const result = await lookup(digits).catch(() => null)
         if (!result) {
           cepError[field.field] = 'CEP não encontrado. Preencha os campos manualmente.'
         } else {

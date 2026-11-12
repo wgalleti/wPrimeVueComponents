@@ -131,6 +131,8 @@ export type {
   FkCrudConfig,
   FieldType,
   SelectOption,
+  CepAddress,
+  CepLookup,
   EditableColumnDef,
   EditableColumnEditor,
   EditableRow,

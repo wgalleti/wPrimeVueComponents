@@ -1,5 +1,6 @@
 import type { AxiosInstance } from 'axios'
 import type { DataProvider } from './dataProvider'
+import type { CepLookup } from './field'
 
 export interface WPluginOptions {
   axios?: AxiosInstance
@@ -20,6 +21,11 @@ export interface WPluginOptions {
    * avança). A tela que declara `keyboardNav` no `useCrudManager` vence. Default: `false`.
    */
   keyboardNav?: boolean
+  /**
+   * Consulta de CEP dos campos `type: 'cep'` (ex.: um endpoint da própria API). O campo pode
+   * trocar a sua com `FieldDef.cepLookup`. Default: ViaCEP direto do navegador.
+   */
+  cepLookup?: CepLookup
 }
 
 export interface WPluginConfig {
@@ -31,6 +37,7 @@ export interface WPluginConfig {
   locale: string
   currency: string
   keyboardNav: boolean
+  cepLookup: CepLookup
 }
 
 export const W_AXIOS_KEY = Symbol('w-axios')

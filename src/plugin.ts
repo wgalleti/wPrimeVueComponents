@@ -12,6 +12,7 @@ import {
 } from './components'
 import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
 import { patchDialogEscapeStack } from './utils/dialogEscapeStack'
+import { lookupCep } from './utils/cep'
 
 export const WPrimeVuePlugin: Plugin = {
   install(app: App, options: WPluginOptions) {
@@ -32,6 +33,7 @@ export const WPrimeVuePlugin: Plugin = {
       locale: options.locale ?? 'pt-BR',
       currency: options.currency ?? 'BRL',
       keyboardNav: options.keyboardNav ?? false,
+      cepLookup: options.cepLookup ?? lookupCep,
     }
 
     if (options.axios) {
