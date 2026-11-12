@@ -756,34 +756,11 @@ describe('WEditableTable — card pela largura do componente', () => {
 
   const emCard = (w: VueWrapper) => w.find('.w-editable-table--cards').exists()
 
-  afterEach(() => {
-    vi.unstubAllGlobals()
-  })
-
-  it('abaixo de 840px de largura do elemento vira card; acima, tabela', async () => {
-    instalarResizeObserver()
-    const w = montar()
-    await largura(700)
-    expect(w.find('.w-editable-table--cards').exists()).toBe(true)
-    expect(w.find('table').attributes('role')).toBe('presentation')
-    await largura(900)
-    expect(w.find('.w-editable-table--cards').exists()).toBe(false)
-  })
-
-  it('largura 0 (escondido) mantém o modo que estava', async () => {
-    instalarResizeObserver()
-    const w = montar()
-    await largura(700)
-    await largura(0)
-    expect(w.find('.w-editable-table--cards').exists()).toBe(true)
-  })
-
-  it('a janela não decide: matchMedia estreito com elemento largo continua tabela', async () => {
-    instalarResizeObserver()
+  function janela(retrato: boolean) {
     vi.stubGlobal(
       'matchMedia',
       vi.fn().mockImplementation((query: string) => ({
-        matches: true,
+        matches: retrato && query.includes('max-width: 839px'),
         media: query,
         onchange: null,
         addEventListener: vi.fn(),
@@ -793,16 +770,47 @@ describe('WEditableTable — card pela largura do componente', () => {
         dispatchEvent: vi.fn(),
       })),
     )
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('janela abaixo de 840px (tablet em pé) vira card mesmo com o elemento largo', async () => {
+    instalarResizeObserver()
+    janela(true)
     const w = montar()
     await largura(900)
-    expect(w.find('.w-editable-table--cards').exists()).toBe(false)
+    expect(emCard(w)).toBe(true)
+    expect(w.find('table').attributes('role')).toBe('presentation')
+  })
+
+  it('janela larga com o elemento abaixo de 840 mas acima do piso (diálogo) fica na tabela', async () => {
+    instalarResizeObserver()
+    janela(false)
+    const w = montar()
+    await piso(w, 500)
+    await largura(770)
+    expect(emCard(w)).toBe(false)
+  })
+
+  it('largura 0 (escondido) mantém o modo que estava', async () => {
+    instalarResizeObserver()
+    const w = montar()
+    await piso(w, 960)
+    await largura(700)
+    await largura(0)
+    expect(emCard(w)).toBe(true)
   })
 
   // O re-render sai no microtask do mount, antes da pintura — daí o nextTick.
   it('mede no mount, antes do observer: já nasce card sem piscar a grade', async () => {
     vi.stubGlobal('ResizeObserver', undefined)
     const original = HTMLElement.prototype.getBoundingClientRect
-    HTMLElement.prototype.getBoundingClientRect = () => ({ width: 700 }) as DOMRect
+    HTMLElement.prototype.getBoundingClientRect = function (this: HTMLElement) {
+      const sonda = this.parentElement?.classList.contains('w-editable-table__probe')
+      return { width: sonda ? 960 : 700 } as DOMRect
+    }
     try {
       const w = montar()
       await nextTick()
@@ -843,6 +851,7 @@ describe('WEditableTable — card pela largura do componente', () => {
   it('no card a sonda segue com a largura do piso (a volta à grade não oscila)', async () => {
     instalarResizeObserver()
     const w = montar()
+    await piso(w, 960)
     await largura(700)
     expect(emCard(w)).toBe(true)
     expect(w.find('table').attributes('style')).toBeUndefined()
@@ -857,14 +866,12 @@ describe('WEditableTable — card pela largura do componente', () => {
     expect(emCard(w)).toBe(false)
   })
 
-  it('piso 0 (não medido) não vale como "cabe": fica a régua de 840', async () => {
+  it('piso 0 (não medido): o elemento nunca decide, só a janela', async () => {
     instalarResizeObserver()
     const w = montar()
     await piso(w, 0)
-    await largura(855)
+    await largura(300)
     expect(emCard(w)).toBe(false)
-    await largura(800)
-    expect(emCard(w)).toBe(true)
   })
 
   it('volta para a grade só com folga acima do limite (sem oscilar na borda)', async () => {
@@ -1000,5 +1007,27 @@ describe('WEditableTable — seleção por linha (selectable)', () => {
     const w = montarSel()
     expect(w.findAll('th')[2].classes()).toContain('w-editable-table__cell--right')
     expect(w.find('td[data-field="valor"]').classes()).toContain('w-editable-table__cell--right')
+  })
+})
+
+describe('WEditableTable — card com seleção', () => {
+  it('o card mostra todas as colunas e o controle de seleção', () => {
+    const w = mount(WEditableTable, {
+      props: {
+        modelValue: [{ id: 'a', historico: 'PIX', valor: 100, conciliado: false }],
+        columns: [
+          { field: 'historico', header: 'Lançamento' },
+          { field: 'valor', header: 'Valor', decimals: 2 },
+          { field: 'conciliado', header: 'Conciliado' },
+        ],
+        selectable: true,
+        rowKey: 'id',
+        cardMode: 'always',
+      },
+      global: { plugins: [PrimeVue] },
+    })
+    const rotulos = w.findAll('.w-editable-table__card-label').map((l) => l.text())
+    expect(rotulos).toEqual(['Lançamento', 'Valor', 'Conciliado'])
+    expect(w.find('tbody input[type="checkbox"]').exists()).toBe(true)
   })
 })

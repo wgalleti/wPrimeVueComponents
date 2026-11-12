@@ -83,15 +83,17 @@ function adicionar() {
 
 ## Modo card (componente estreito) {#modo-card-tablet-em-pe}
 
-Quando o **próprio componente** é mais estreito que **840px** (a fronteira da régua,
-`BREAKPOINTS.retrato`) **ou que o piso da grade** — o que for maior —, a tabela vira uma lista de
-cards, um card por linha, como o `WCrudView` já faz com a listagem. `cardMode` controla: `auto` (default, segue a largura do componente),
+Quando a **janela** é mais estreita que **840px** (a fronteira da régua,
+`BREAKPOINTS.retrato`, via `useBreakpoint`) **ou o próprio componente é mais estreito que o piso
+da grade**, a tabela vira uma lista de
+cards, um card por linha, como o `WCrudView` já faz com a listagem. `cardMode` controla: `auto` (default, segue a janela e o piso),
 `never` (planilha que só existe em grade) e `always` (vitrine e teste).
 
-### Largura do componente, não da janela {#largura-do-componente}
+### Régua na janela, piso no componente {#largura-do-componente}
 
-A régua mede o elemento (ResizeObserver), não a janela. Com a barra lateral do app, a janela
-passa de 840px bem antes de a tabela caber; medindo a janela, nessa faixa a coluna sem `width`
+O **piso** mede o elemento (ResizeObserver); a régua de 840 é a da janela — assim uma tabela dentro
+de um diálogo de 770px numa tela larga continua em grade se o piso couber. Com a barra lateral do app (ou num diálogo), a janela
+passa de 840px bem antes de a tabela caber; sem o piso, nessa faixa a coluna sem `width`
 (o título) ficava com zero — nome uma letra por linha, input por cima do título, cabeçalhos
 sobrepostos.
 
@@ -102,7 +104,7 @@ sobrepostos.
 - **Sem ResizeObserver** (SSR, teste em jsdom): fica a grade, como antes.
 - **Piso da grade**: larguras fixas + `--w-col-title-min` por coluna fluida (+ expansor e
   lixeira), ajustável pelo token `--col-title-min` do app. Componente mais estreito que o piso
-  **vira card**, mesmo acima de 840px: rolar na horizontal esconderia justamente a coluna da
+  **vira card**, mesmo com a janela acima de 840px: rolar na horizontal esconderia justamente a coluna da
   direita — o total que a pessoa veio ver. A rolagem do wrapper `.w-editable-table__scroll`
   (a tabela ganha `min-width` = piso) fica como **última defesa**: `cardMode: 'never'` ou piso
   que não deu para medir.
@@ -118,7 +120,7 @@ sobrepostos.
   (~15px); por isso a volta do card para a grade exige **24px de folga** acima do limite, e a
   entrada no card é no limite exato. A folga só vale depois de uma troca feita pelo observer; o
   card decidido na montagem não a ganha.
-- **Piso 0 é "não sei", nunca "cabe"** (jsdom, tabela sem colunas): vale só a régua de 840.
+- **Piso 0 é "não sei", nunca "cabe"** (jsdom, tabela sem colunas): a régua é só a da janela (grade acima de 840).
   Coluna com `width` em `%` entra no piso resolvida contra a largura do componente — a mesma
   base do `min-width` da tabela.
 - **Subtabela da expansão** mede a si mesma: dentro de uma linha aberta, ela pode virar card

@@ -5,6 +5,7 @@ import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import Checkbox from 'primevue/checkbox'
 import WDatePicker from '@/components/form/WDatePicker.vue'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useCardFit } from '@/composables/useCardFit'
 import { useFormatters } from '@/composables/useFormatters'
 import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/editableTable'
@@ -22,11 +23,11 @@ import type { EditableCardRole, EditableColumnDef, EditableRow } from '@/types/e
  * A subtabela de insumos do design é este mesmo componente dentro do slot
  * `#expansion` — não existe componente separado para "tabela filha".
  *
- * **Componente mais estreito que 840px ou que o piso da grade: a tabela vira
- * card**, uma linha por card, como o `WCrudView` já faz com a listagem. A régua é a largura do PRÓPRIO
- * componente, não a da janela: com a barra lateral do app, a janela passa de 840
- * muito antes de a tabela caber, e era nessa faixa que a coluna do título caía a
- * zero. E vira sem tela paralela: a marcação é a
+ * **Janela abaixo de 840px, ou componente mais estreito que o piso da grade: a
+ * tabela vira card**, uma linha por card, como o `WCrudView` já faz com a listagem.
+ * A régua de 840 é a da janela; o piso é medido no PRÓPRIO componente (com a barra
+ * lateral ou num diálogo a janela é larga, mas a tabela só cabe se o piso couber).
+ * E vira sem tela paralela: a marcação é a
  * MESMA — o `<table>` troca de display e cada `<tbody>` (que já era uma linha)
  * vira o card. É isso que mantém os slots `#cell-*`, os editores e a expansão
  * funcionando iguais nas duas larguras; duplicar a árvore para o tablet daria
@@ -58,9 +59,8 @@ const props = withDefaults(
     /** Campo usado como `key` das linhas. Sem ele, a chave é o índice. */
     rowKey?: string
     /**
-     * Quando a tabela vira card. `auto` (default) segue a largura do próprio
-     * componente (não da janela): card abaixo de 840px ou do piso da grade, o que
-     * for maior; tabela acima. `never` mantém a tabela em qualquer largura (planilha
+     * Quando a tabela vira card. `auto` (default) segue a janela (card abaixo de
+     * 840px) e o piso da grade medido no próprio componente; tabela nos demais casos. `never` mantém a tabela em qualquer largura (planilha
      * que só faz sentido em grade, rola na horizontal); `always` é para vitrine e teste.
      */
     cardMode?: 'auto' | 'never' | 'always'
@@ -104,10 +104,15 @@ const { formatNumber } = useFormatters()
 // `WCrudView`). O CSS só segue a classe `--cards` que sai daqui — uma fonte só.
 const raiz = ref<HTMLElement | null>(null)
 const sonda = ref<HTMLElement | null>(null)
-const { estreito } = useCardFit(raiz, sonda)
+// A régua de 840 é da JANELA (tablet em pé, `useBreakpoint`); o elemento só decide pelo piso
+// da grade (`regua: 0`). Uma tabela num diálogo de 770px em tela de 1440 cabe em grade.
+const { isRetrato } = useBreakpoint()
+const { estreito } = useCardFit(raiz, sonda, { regua: 0 })
 
 const emCard = computed(
-  () => props.cardMode === 'always' || (props.cardMode !== 'never' && estreito.value),
+  () =>
+    props.cardMode === 'always' ||
+    (props.cardMode !== 'never' && (isRetrato.value || estreito.value)),
 )
 
 /** O título é da tabela, não da linha: o primeiro `card: 'title'` FIXO, senão a
