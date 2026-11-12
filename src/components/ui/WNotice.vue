@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 
 /**
- * Aviso em linha (substitui `Message`). `danger` e `warn` anunciam na hora (`role="alert"`);
- * `info` e `success` esperam a vez (`role="status"`). `closable` emite `close`: quem dispensa
+ * Aviso em linha (substitui `Message`). só `danger` anuncia na hora (`role="alert"`);
+ * `warn`, `info` e `success` esperam a vez (`role="status"`). `closable` emite `close`: quem dispensa
  * o aviso é o consumidor.
  */
 const props = withDefaults(
@@ -25,9 +25,7 @@ defineSlots<{
   default?: () => unknown
 }>()
 
-const role = computed(() =>
-  props.severity === 'danger' || props.severity === 'warn' ? 'alert' : 'status',
-)
+const role = computed(() => (props.severity === 'danger' ? 'alert' : 'status'))
 </script>
 
 <template>

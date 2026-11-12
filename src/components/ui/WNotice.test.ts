@@ -4,12 +4,12 @@ import { mount } from '@vue/test-utils'
 import WNotice from './WNotice.vue'
 
 describe('WNotice', () => {
-  it('danger e warn usam role alert; info e success, status', () => {
+  it('só danger usa role alert; warn, info e success, status', () => {
     const role = (severity: 'info' | 'warn' | 'danger' | 'success') =>
       mount(WNotice, { props: { severity } }).attributes('role')
     expect([role('danger'), role('warn'), role('info'), role('success')]).toEqual([
       'alert',
-      'alert',
+      'status',
       'status',
       'status',
     ])

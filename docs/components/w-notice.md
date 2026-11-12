@@ -3,7 +3,7 @@
 Aviso em linha, no lugar de `Message`. Cores pelos tokens de status (`-soft`).
 
 - `severity`: `info`, `warn`, `danger`, `success`.
-- `role` automático: `alert` para `danger` e `warn` (anuncia na hora), `status` para os demais.
+- `role` automático: `alert` só para `danger` (anuncia na hora), `status` para os demais (`warn` inclusive).
 - `closable` mostra o botão de fechar e emite `close`; quem esconde o aviso é o consumidor.
 - Conteúdo no slot padrão; `title` opcional.
 
