@@ -205,9 +205,7 @@ function remove(keys: GroupedSelectKey[]) {
 
 // Linha travada só pode ser desmarcada, nunca marcada; a fixa nem isso; a trava global bloqueia tudo.
 function rowDisabled(row: Row) {
-  return (
-    !props.selectable || row.locked || (!row.selectable && !selectedSet.value.has(row.key))
-  )
+  return !props.selectable || row.locked || (!row.selectable && !selectedSet.value.has(row.key))
 }
 
 // O Checkbox do PrimeVue guarda o próprio valor ao clicar; se o pai recusar a mudança ele
@@ -406,10 +404,7 @@ function rowLabel(data: Record<string, unknown>) {
                       :row-data="row.data"
                     />
                   </slot>
-                  <span
-                    v-if="ci === 0 && row.locked"
-                    class="w-grouped-select-list__fixed"
-                  >
+                  <span v-if="ci === 0 && row.locked" class="w-grouped-select-list__fixed">
                     <i class="pi pi-lock" aria-hidden="true" />
                     <span v-if="row.lockedReason">{{ row.lockedReason }}</span>
                     <span v-else class="w-grouped-select-list__sr">Fixo</span>

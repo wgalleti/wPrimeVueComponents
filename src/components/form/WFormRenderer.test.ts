@@ -415,7 +415,8 @@ describe('FieldDef type: number — useGrouping', () => {
 })
 
 describe('FieldDef maxLength', () => {
-  const validar = (w: VueWrapper) => (w.vm as { validateAll: () => string[] }).validateAll()
+  const validar = (w: VueWrapper) =>
+    (w.vm as unknown as { validateAll: () => string[] }).validateAll()
 
   it('vira maxlength no input; contador só no textarea por padrão', () => {
     const w = montar(
