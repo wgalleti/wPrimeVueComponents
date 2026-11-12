@@ -2,15 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-## Unreleased (1.20.0)
+## [1.20.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.1...v1.20.0) (2026-11-12)
 
 ### Funcionalidades
 
-* **ui:** `WCommandPalette` (Ctrl/⌘+K) e `filterPaletteItems`: paleta de comandos genérica, sem router nem permissão
-* **ui:** `WSkeleton` (`rows`, `card`, `text`) e classe `.w-chegada` (fade + subida, respeita `prefers-reduced-motion`)
-* **composables:** `useDelayedLoading` — esqueleto só se o carregamento passar de `delay` ms (default 150)
-* **crud:** `WCrudView` usa esqueleto com delay no lugar do spinner seco; `skeleton` / `loadingDelay` (opt-out: `:skeleton="false"`)
-
+* **crud:** show a delayed skeleton on first load with WSkeleton and useDelayedLoading ([36f2715](https://github.com/wgalleti/wPrimeVueComponents/commit/36f271514e3f84c54c46daca13b1b1e84cada790))
+* **ui:** add WCommandPalette with accent-insensitive search and Ctrl/Cmd+K ([651b635](https://github.com/wgalleti/wPrimeVueComponents/commit/651b6355dbebaac8d2500da2c2ac765d2828ef5d))
 ## [1.19.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v1.19.0...v1.19.1) (2026-11-11)
 
 ### Correções
