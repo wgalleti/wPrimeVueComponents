@@ -191,6 +191,17 @@ veio da API maior que o permitido), depois do `validate` próprio do campo.
 { field: 'descricao', label: 'Descrição', type: 'textarea', maxLength: 2000 },
 ```
 
+## `autocomplete` e `spellcheck`
+
+Também em `text`, `email`, `password` e `textarea`: os dois vão direto ao input nativo. Use
+`autocomplete: 'new-password'` na senha que se cadastra (o navegador oferece gerar em vez de
+preencher a salva) e `spellcheck: false` em código, placa, e-mail.
+
+```ts
+{ field: 'senha', label: 'Senha', type: 'password', autocomplete: 'new-password' },
+{ field: 'codigo', label: 'Código', spellcheck: false, autocomplete: 'off' },
+```
+
 ## Uso Basico — Formulario em Card
 
 ```vue

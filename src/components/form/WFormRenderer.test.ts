@@ -450,3 +450,27 @@ describe('FieldDef maxLength', () => {
     expect(validar(ok)).toEqual([])
   })
 })
+
+describe('FieldDef autocomplete / spellcheck', () => {
+  it('vão ao input nativo do text, textarea e password', () => {
+    const w = montar(
+      [
+        { field: 'codigo', label: 'Código', autocomplete: 'off', spellcheck: false },
+        { field: 'obs', label: 'Obs', type: 'textarea', spellcheck: true },
+        { field: 'senha', label: 'Senha', type: 'password', autocomplete: 'new-password' },
+      ],
+      { codigo: '', obs: '', senha: '' },
+    )
+    const inputs = w.findAll('input')
+    expect(inputs[0].attributes('autocomplete')).toBe('off')
+    expect(inputs[0].attributes('spellcheck')).toBe('false')
+    expect(w.find('textarea').attributes('spellcheck')).toBe('true')
+    expect(w.find('input[type="password"]').attributes('autocomplete')).toBe('new-password')
+  })
+
+  it('omitidos não viram atributo', () => {
+    const w = montar([{ field: 'nome', label: 'Nome' }], { nome: '' })
+    expect(w.find('input').attributes('spellcheck')).toBeUndefined()
+    expect(w.find('input').attributes('autocomplete')).toBeUndefined()
+  })
+})

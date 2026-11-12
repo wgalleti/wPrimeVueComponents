@@ -108,7 +108,11 @@ function inputAttrs(field: FieldDef): Record<string, string | undefined> {
 
 /** Atributos nativos dos campos de digitação livre (text, email, password, textarea). */
 function textAttrs(field: FieldDef): Record<string, string | number | undefined> {
-  return { maxlength: field.maxLength }
+  return {
+    maxlength: field.maxLength,
+    autocomplete: field.autocomplete,
+    spellcheck: field.spellcheck == null ? undefined : String(field.spellcheck),
+  }
 }
 
 /** `inputAttrs` + atributos de digitação, para InputText/Textarea. */

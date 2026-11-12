@@ -203,6 +203,10 @@ export interface FieldDef {
   /** Mostra o contador "n/max" sob o campo (exige `maxLength`). Default: `true` no
    *  `textarea`, `false` nos demais. */
   showCounter?: boolean
+  /** Atributo `autocomplete` do input (ex.: `'new-password'`, `'off'`, `'email'`). */
+  autocomplete?: string
+  /** Atributo `spellcheck` do input; omitido segue o navegador. */
+  spellcheck?: boolean
 
   // textarea
   rows?: number

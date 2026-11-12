@@ -230,6 +230,12 @@ interface FieldDef {
   /** Contador "n/max" (exige maxLength). Default: true no textarea */
   showCounter?: boolean
 
+  /** Atributo autocomplete do input ('new-password', 'off', 'email'…) */
+  autocomplete?: string
+
+  /** Atributo spellcheck do input; omitido segue o navegador */
+  spellcheck?: boolean
+
   // --- Opcoes para 'textarea' ---
 
   /** Numero de linhas do textarea. Default: 3 */
