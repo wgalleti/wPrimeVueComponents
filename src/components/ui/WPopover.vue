@@ -7,7 +7,7 @@ import { useTabOverlay } from '@/utils/tabOverlay'
  * `Popover` do PrimeVue com a âncora resolvida pela navegação por abas (o mesmo motivo do
  * `WDialog`): dentro de uma aba pendura no pane dela, fora cai no `body`. Passthrough total
  * de props, eventos e slots; um `append-to` explícito vence o default. Abre por ref:
- * `toggle(event)`, `show(event, target?)`, `hide()`.
+ * `toggle(event, target?)`, `show(event, target?)`, `hide()` — os únicos caminhos suportados.
  */
 defineOptions({ name: 'WPopover', inheritAttrs: false })
 
@@ -25,9 +25,13 @@ onMounted(() => {
   const p = inner.value as unknown as PopoverInternals | null
   if (!p) return
   const align = p.alignOverlay
+  // Internos do PrimeVue: se uma versão os tirar, fica o comportamento padrão dele.
+  if (typeof align !== 'function') return
   p.alignOverlay = () => {
-    align()
-    if (p.container && p.target) fit(p.container, p.target)
+    align.call(p)
+    if (p.container instanceof HTMLElement && p.target instanceof HTMLElement) {
+      fit(p.container, p.target)
+    }
   }
 })
 

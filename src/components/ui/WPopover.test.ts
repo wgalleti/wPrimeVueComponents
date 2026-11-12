@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { defineComponent, h, ref, shallowRef } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Popover from 'primevue/popover'
 import WPopover from './WPopover.vue'
 import { W_TAB_HOST_KEY, type TabHostContext } from '@/types/routeTabs'
 
@@ -68,5 +69,32 @@ describe('WPopover — âncora por aba', () => {
     await w.find('.gatilho').trigger('click')
     await flushPromises()
     expect(document.body.querySelector('.p-popover')).toBeNull()
+  })
+
+  it('sem alignOverlay interno do PrimeVue, abre sem TypeError', async () => {
+    const mixin = {
+      mounted(this: Record<string, unknown>) {
+        if ('alignOverlay' in this) this.alignOverlay = undefined
+      },
+    }
+    const erros: unknown[] = []
+    const w = mount(WPopover, {
+      attachTo: document.body,
+      global: {
+        plugins: [PrimeVue],
+        mixins: [mixin],
+        config: { errorHandler: (e) => erros.push(e) },
+      },
+      slots: { default: () => h('p', { class: 'conteudo' }, 'corpo') },
+    })
+    await flushPromises()
+    const alvo = document.createElement('button')
+    document.body.appendChild(alvo)
+    w.vm.toggle(new Event('click'), alvo)
+    await flushPromises()
+    const interno = w.findComponent(Popover).vm as unknown as { alignOverlay?: () => void }
+    expect(() => interno.alignOverlay?.()).not.toThrow()
+    expect(erros).toEqual([])
+    expect(document.body.querySelector('.p-popover .conteudo')).toBeTruthy()
   })
 })

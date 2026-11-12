@@ -9,7 +9,8 @@ import { useTabOverlay } from '@/utils/tabOverlay'
 /**
  * Menu de ações sobre `Menu` (popup) ou `ContextMenu` do PrimeVue, ancorado na navegação por
  * abas como o `WDialog`: dentro de uma aba pendura no pane dela, fora cai no `body`. Abre por
- * ref: `toggle(event)` (popup, no botão) ou `show(event)` (context, no ponteiro); `hide()`.
+ * ref: `toggle(event, target?)` (popup, no botão) ou `show(event, target?)` (context, no ponteiro);
+ * `hide()`. São os únicos caminhos suportados (o deslocamento do pane é gravado ali).
  * Props/eventos/slots do PrimeVue passam direto; `append-to` explícito vence o default.
  */
 defineOptions({ name: 'WMenu', inheritAttrs: false })
@@ -29,13 +30,13 @@ const inner = ref<{
   hide: () => void
 } | null>(null)
 
-function toggle(event: Event): void {
+function toggle(event: Event, target?: unknown): void {
   sync()
-  inner.value?.toggle(event)
+  inner.value?.toggle(event, target)
 }
-function show(event: Event): void {
+function show(event: Event, target?: unknown): void {
   sync()
-  inner.value?.show(event)
+  inner.value?.show(event, target)
 }
 function hide(): void {
   inner.value?.hide()

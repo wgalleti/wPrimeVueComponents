@@ -11,7 +11,9 @@ posicionado; o `WPopover` grava o deslocamento do pane antes de abrir e o CSS da
 devolve — o popover aparece colado no gatilho, como no `body`.
 
 É **passthrough**: props, eventos e slots do `Popover` passam direto; um `append-to`
-explícito vence o default. Abre por ref: `toggle(event)`, `show(event, target?)`, `hide()`.
+explícito vence o default. Abre por ref: `toggle(event, target?)`, `show(event, target?)`, `hide()` — são os únicos
+caminhos suportados: só eles gravam o deslocamento do pane (abrir por outro caminho cai em
+`0px`, o fallback do CSS, e o overlay pode aparecer deslocado dentro de uma aba).
 
 ## API
 

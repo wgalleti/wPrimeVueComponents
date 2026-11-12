@@ -7,8 +7,9 @@ botão ou no ponteiro — o deslocamento do pane é compensado como no
 [WPopover](/components/w-popover).
 
 - `items`: `MenuItem[]` do PrimeVue (`label`, `icon`, `command`, `separator`, `items`…).
-- `mode`: `popup` (padrão) abre no botão com `toggle(event)`; `context` abre no ponteiro com
-  `show(event)` (clique direito).
+- `mode`: `popup` (padrão) abre no botão com `toggle(event, target?)`; `context` abre no ponteiro com
+  `show(event, target?)` (clique direito). São os únicos caminhos suportados: só eles gravam o
+  deslocamento do pane (abrir por outro caminho cai no fallback `0px` do CSS).
 - `hide()` fecha. Props, eventos e slots do PrimeVue passam direto; `append-to` explícito vence.
 
 ## API

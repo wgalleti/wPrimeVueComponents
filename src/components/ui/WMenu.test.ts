@@ -77,4 +77,17 @@ describe('WMenu', () => {
     await abrir('context')
     expect(document.body.querySelector('.p-contextmenu')?.textContent).toContain('Duplicar')
   })
+
+  it('toggle e show repassam o target ao PrimeVue', async () => {
+    const Menu = (await import('primevue/menu')).default as unknown as {
+      methods: { toggle: (...a: unknown[]) => void }
+    }
+    const spy = vi.spyOn(Menu.methods, 'toggle').mockImplementation(() => undefined)
+    const w = mount(WMenu, { props: { items: [{ label: 'A' }] }, global: { plugins: [PrimeVue] } })
+    const alvo = document.createElement('button')
+    const ev = new Event('click')
+    w.vm.toggle(ev, alvo)
+    expect(spy).toHaveBeenCalledWith(ev, alvo)
+    spy.mockRestore()
+  })
 })

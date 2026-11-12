@@ -343,5 +343,5 @@
    do documento e o pane é posicionado — o translate devolve o deslocamento do pane, gravado
    em --w-overlay-shift-* por useTabOverlay antes de abrir. */
 .w-tab-viewport__pane > .w-tab-overlay {
-  translate: var(--w-overlay-shift-x) var(--w-overlay-shift-y);
+  translate: var(--w-overlay-shift-x, 0px) var(--w-overlay-shift-y, 0px); /* fallback: aberto fora de toggle/show */
 }
