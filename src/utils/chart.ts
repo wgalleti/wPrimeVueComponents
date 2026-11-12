@@ -55,6 +55,39 @@ const token = (name: string, fallback = ''): string => {
   return value || fallback
 }
 
+const SENTINELA = '#010203'
+let sonda: CanvasRenderingContext2D | null | undefined
+
+/**
+ * Cor de token em `rgb()`/`rgba()`. `getPropertyValue` devolve a propriedade como foi
+ * declarada (`color-mix(…)`, `oklch(from …)`): o canvas até pinta essa string, mas o
+ * ECharts não sabe lê-la para derivar a cor de destaque, e a série fica cinza ou
+ * transparente no hover. Pintar um pixel faz o navegador resolver qualquer sintaxe.
+ * Sem canvas (teste, SSR) ou com valor que o navegador recusa, devolve o texto original.
+ */
+export function absoluteColor(value: string): string {
+  if (!value || typeof document === 'undefined') return value
+  if (sonda === undefined) {
+    try {
+      sonda = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+    } catch {
+      sonda = null
+    }
+  }
+  if (!sonda) return value
+  sonda.clearRect(0, 0, 1, 1)
+  // valor que o navegador recusa não troca o fillStyle: sem a sentinela, um token quebrado
+  // sairia pintado com a cor da chamada anterior
+  sonda.fillStyle = SENTINELA
+  sonda.fillStyle = value
+  if (sonda.fillStyle === SENTINELA) return value
+  sonda.fillRect(0, 0, 1, 1)
+  const [r, g, b, a] = sonda.getImageData(0, 0, 1, 1).data
+  return a === 255 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${+(a / 255).toFixed(3)})`
+}
+
+const tokenColor = (name: string): string => absoluteColor(token(name))
+
 /** Objeto de tema do ECharts (o registro formal de tema é dispensável no init). */
 export type ChartTheme = Record<string, unknown>
 
@@ -69,10 +102,10 @@ export type WChartOption = Record<string, unknown>
  * reconstrói sozinho quando o atributo de tema do documento muda.
  */
 export function buildChartTheme(): ChartTheme {
-  const fg = token('--w-fg')
-  const fgMuted = token('--w-fg-muted')
-  const border = token('--w-border')
-  const surface = token('--w-surface')
+  const fg = tokenColor('--w-fg')
+  const fgMuted = tokenColor('--w-fg-muted')
+  const border = tokenColor('--w-border')
+  const surface = tokenColor('--w-surface')
   const fontFamily = token('--font-sans', 'sans-serif')
 
   const axis = {
@@ -84,7 +117,7 @@ export function buildChartTheme(): ChartTheme {
   }
 
   return {
-    color: [1, 2, 3, 4, 5, 6].map((i) => token(`--w-viz-${i}`)),
+    color: [1, 2, 3, 4, 5, 6].map((i) => tokenColor(`--w-viz-${i}`)),
     backgroundColor: 'transparent',
     textStyle: { color: fg, fontFamily },
     categoryAxis: { ...axis, splitLine: { show: false } },
