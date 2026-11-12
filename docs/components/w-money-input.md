@@ -30,3 +30,13 @@ const percentual = ref(15)
   <WMoneyInput v-model="percentual" suffix="%" :decimals="1" />
 </template>
 ```
+
+## Limites — `min` / `max`
+
+Piso e teto inclusivos, também no modo percentual. O valor é ajustado **ao sair do campo**, não
+a cada dígito (digitar `150` a caminho de `15,00` passaria pelo teto). No FieldDef
+(`type: 'currency'` com `fillFromRight`), `min`/`max` do campo chegam aqui.
+
+```vue
+<WMoneyInput v-model="comissao" suffix="%" :decimals="2" :min="0" :max="100" />
+```

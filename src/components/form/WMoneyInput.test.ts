@@ -29,4 +29,19 @@ describe('WMoneyInput', () => {
       expect(input.attributes('aria-required')).toBe('true')
     }
   })
+
+  it('min/max: clamp só ao sair do campo, inclusive no modo %', async () => {
+    const w = montar({ modelValue: 150, suffix: '%', min: 0, max: 100 })
+    expect(w.emitted('update:modelValue')).toBeUndefined()
+    await w.find('input').trigger('blur')
+    expect(w.emitted('update:modelValue')?.at(-1)).toEqual([100])
+
+    const baixo = montar({ modelValue: 2, min: 5 })
+    await baixo.find('input').trigger('blur')
+    expect(baixo.emitted('update:modelValue')?.at(-1)).toEqual([5])
+
+    const dentro = montar({ modelValue: 50, min: 0, max: 100 })
+    await dentro.find('input').trigger('blur')
+    expect(dentro.emitted('update:modelValue')).toBeUndefined()
+  })
 })

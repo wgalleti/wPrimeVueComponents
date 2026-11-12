@@ -871,6 +871,8 @@ defineExpose({ validateAll, clearErrors })
                 :input-id="fieldId(field)"
                 :input-attrs="ariaAttrs(field)"
                 :decimals="field.decimals ?? 2"
+                :min="field.min"
+                :max="field.max"
                 currency
                 :prefix="field.prefix"
                 :suffix="field.suffix"

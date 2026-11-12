@@ -18,6 +18,10 @@ const props = withDefaults(
     suffix?: string
     /** Display locale for grouping/decimal separators (default: 'pt-BR'). */
     locale?: string
+    /** Piso do valor (inclusive): ao sair do campo, abaixo dele vira ele. */
+    min?: number
+    /** Teto do valor (inclusive): ao sair do campo, acima dele vira ele (ex.: 100 no modo %). */
+    max?: number
     disabled?: boolean
     placeholder?: string
     invalid?: boolean
@@ -62,6 +66,16 @@ function onInput(event: Event) {
   const num = Number(digits) / Math.pow(10, props.decimals)
   emit('update:modelValue', num)
 }
+
+// Clamp no blur, não a cada dígito: digitar "150" a caminho de "15,00" passaria pelo teto.
+function onBlur() {
+  const v = props.modelValue
+  if (v == null || Number.isNaN(v)) return
+  let next = v
+  if (props.max != null && next > props.max) next = props.max
+  if (props.min != null && next < props.min) next = props.min
+  if (next !== v) emit('update:modelValue', next)
+}
 </script>
 
 <template>
@@ -77,6 +91,7 @@ function onInput(event: Event) {
       :disabled="disabled"
       :invalid="invalid"
       @input="onInput"
+      @blur="onBlur"
     />
     <InputGroupAddon v-if="suffix">{{ suffix }}</InputGroupAddon>
   </InputGroup>
@@ -92,5 +107,6 @@ function onInput(event: Event) {
     :disabled="disabled"
     :invalid="invalid"
     @input="onInput"
+    @blur="onBlur"
   />
 </template>

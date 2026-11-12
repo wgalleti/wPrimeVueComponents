@@ -11,7 +11,7 @@ export default defineComponentMeta({
     },
     {
       name: 'Percentual',
-      props: { modelValue: 15, suffix: '%', decimals: 1 },
+      props: { modelValue: 15, suffix: '%', decimals: 1, min: 0, max: 100 },
     },
     {
       name: 'Vazio',
