@@ -2157,6 +2157,20 @@
   margin-inline-start: var(--w-space-2);
 }
 
+/* Linha fixa (`isLocked`): cadeado + dica ao lado do rótulo, em texto de apoio */
+.w-grouped-select-list__fixed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  margin-inline-start: var(--w-space-2);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+}
+
+.w-grouped-select-list__row--fixed {
+  color: var(--w-fg-muted);
+}
+
 .w-grouped-select-list__state td {
   padding: var(--w-space-6) var(--w-space-3);
   color: var(--w-fg-muted);

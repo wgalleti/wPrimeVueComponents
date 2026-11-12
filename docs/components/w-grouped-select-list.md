@@ -70,3 +70,21 @@ const items = [
 Slots: `group-header` e `group-meta` recebem `{ groupKey, label, items, selectedCount,
 selectableCount, collapsed }`; `column-<campo>` recebe `{ data, column, value }`; `row-actions`
 recebe `{ data }`; `summary` e `empty` não têm escopo.
+
+## Linha fixa — `isLocked`
+
+Diferente de `isSelectable` (a linha travada ainda pode ser desmarcada), a linha **fixa** não muda
+em nenhum sentido: nem pelo clique, nem por "selecionar todos"/"limpar" do grupo ou da barra. Fica
+como está em `selection`, com cadeado, `aria-disabled` e a dica de `lockedReason` (badge e `title`).
+Caso real: a matriz de acesso do perfil, em que "Gerenciar perfis" nunca sai do dono.
+
+```vue
+<WGroupedSelectList
+  v-model:selection="permissoes"
+  :items="telas"
+  :columns="colunas"
+  group-by="modulo"
+  :is-locked="(t) => t.codigo === 'perfis.gerenciar'"
+  :locked-reason="() => 'Sempre ativo para o dono'"
+/>
+```

@@ -238,4 +238,44 @@ describe('WGroupedSelectList', () => {
     await w.setProps({ selection: [1] })
     expect(calls).toBe(before)
   })
+
+  describe('linhas fixas (isLocked)', () => {
+    const fixa = (i: Record<string, unknown>) => i.id === 1
+    const comFixa = (extra: Record<string, unknown> = {}) =>
+      make({ isLocked: fixa, lockedReason: () => 'Sempre ativo', ...extra })
+
+    it('não muda pelo clique: checkbox desabilitado, aria-disabled, cadeado e dica', () => {
+      const w = comFixa({ selection: [1] })
+      expect(rowBox(w, 'A').attributes('disabled')).toBeDefined()
+      const tr = w.findAll('.w-grouped-select-list__row')[0]
+      expect(tr.attributes('aria-disabled')).toBe('true')
+      expect(tr.attributes('title')).toBe('Sempre ativo')
+      expect(tr.find('.w-grouped-select-list__fixed').text()).toContain('Sempre ativo')
+      expect(tr.find('.pi-lock').exists()).toBe(true)
+    })
+
+    it('o grupo marca e limpa sem tocar na fixa (marcada fica, desmarcada fica)', async () => {
+      const marcada = comFixa({ selection: [1] })
+      await marcada.find('input[aria-label="Selecionar Norte"]').setValue(true)
+      expect(last(marcada)).toEqual([1, 4])
+      await marcada.setProps({ selection: [1, 4] })
+      await marcada.find('input[aria-label="Selecionar Norte"]').setValue(false)
+      expect(last(marcada)).toEqual([1])
+
+      const desmarcada = comFixa()
+      await desmarcada.find('input[aria-label="Selecionar Norte"]').setValue(true)
+      expect(last(desmarcada)).toEqual([4])
+    })
+
+    it('selecionar todos / limpar também respeitam a fixa', async () => {
+      const w = comFixa({ selection: [1] })
+      const link = () => w.find('.w-grouped-select-list__link')
+      await link().trigger('click')
+      expect(last(w)).toEqual([1, 4, 2])
+      await w.setProps({ selection: [1, 4, 2] })
+      expect(link().text()).toBe('Limpar seleção')
+      await link().trigger('click')
+      expect(last(w)).toEqual([1])
+    })
+  })
 })

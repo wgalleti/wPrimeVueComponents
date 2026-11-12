@@ -44,5 +44,19 @@ export default defineComponentMeta({
         ],
       },
     },
+    {
+      name: 'Com linha fixa',
+      props: {
+        columns,
+        groupBy: 'area',
+        selection: [1],
+        isLocked: (item: Record<string, unknown>) => item.id === 1,
+        lockedReason: () => 'Sempre ativo',
+        items: [
+          { id: 1, area: 'Perfis', nome: 'Gerenciar perfis', quantidade: 1, status: 'Livre' },
+          { id: 2, area: 'Perfis', nome: 'Ver perfis', quantidade: 1, status: 'Livre' },
+        ],
+      },
+    },
   ],
 })

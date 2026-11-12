@@ -30,6 +30,11 @@ const props = withDefaults(
     isSelectable?: (item: Record<string, unknown>) => boolean
     /** Texto do badge nas linhas não selecionáveis. */
     disabledReason?: (item: Record<string, unknown>) => string | null | undefined
+    /** Linha fixa: não muda em nenhum sentido — nem pelo clique, nem por "selecionar todos" ou
+     *  "limpar" (do grupo ou geral). Fica como está em `selection`, com cadeado e `aria-disabled`. */
+    isLocked?: (item: Record<string, unknown>) => boolean
+    /** Dica da linha fixa (badge ao lado do cadeado e `title`), ex.: "Sempre ativo para o dono". */
+    lockedReason?: (item: Record<string, unknown>) => string | null | undefined
     /** Com linhas já na tela elas continuam visíveis, com uma barra de carregamento; o placeholder só aparece sem linhas. */
     loading?: boolean
     emptyMessage?: string
@@ -44,6 +49,8 @@ const props = withDefaults(
     selectable: true,
     isSelectable: undefined,
     disabledReason: undefined,
+    isLocked: undefined,
+    lockedReason: undefined,
     loading: false,
     emptyMessage: 'Nenhum registro.',
     selectAllLabel: 'Selecionar todos os resultados',
@@ -70,6 +77,8 @@ type Row = {
   key: GroupedSelectKey
   selectable: boolean
   reason: string | null
+  locked: boolean
+  lockedReason: string | null
 }
 type GroupBase = {
   key: string
@@ -78,7 +87,10 @@ type GroupBase = {
   items: Record<string, unknown>[]
   rows: Row[]
   rowKeys: GroupedSelectKey[]
+  /** Linhas que o gesto pode MARCAR: selecionáveis e não fixas. */
   selectableKeys: GroupedSelectKey[]
+  /** Linhas que o gesto pode DESMARCAR: tudo menos as fixas. */
+  freeKeys: GroupedSelectKey[]
 }
 type Group = GroupBase & {
   scope: GroupedSelectGroupScope
@@ -107,7 +119,16 @@ const structure = computed<GroupBase[]>(() => {
       const selectable = rowSelectable(data)
       // O badge só existe quando a trava é da linha; a global (`selectable=false`) não explica nada.
       const reason = props.selectable && !selectable ? (props.disabledReason?.(data) ?? null) : null
-      return { data, key: data[props.dataKey] as GroupedSelectKey, selectable, reason }
+      const locked = props.isLocked?.(data) ?? false
+      const lockedReason = locked ? (props.lockedReason?.(data) ?? null) : null
+      return {
+        data,
+        key: data[props.dataKey] as GroupedSelectKey,
+        selectable: selectable && !locked,
+        reason: locked ? null : reason,
+        locked,
+        lockedReason,
+      }
     })
     return {
       key,
@@ -117,6 +138,7 @@ const structure = computed<GroupBase[]>(() => {
       rows,
       rowKeys: rows.map((r) => r.key),
       selectableKeys: rows.filter((r) => r.selectable).map((r) => r.key),
+      freeKeys: rows.filter((r) => !r.locked).map((r) => r.key),
     }
   })
 })
@@ -144,8 +166,9 @@ const groups = computed<Group[]>(() =>
 )
 
 const allSelectableKeys = computed(() => structure.value.flatMap((g) => g.selectableKeys))
-const allRowKeys = computed(() => structure.value.flatMap((g) => g.rowKeys))
-const selectedInItems = computed(() => allRowKeys.value.filter((k) => selectedSet.value.has(k)))
+const allFreeKeys = computed(() => structure.value.flatMap((g) => g.freeKeys))
+// Seleção que o gesto alcança: a das linhas fixas não conta para "limpar".
+const selectedInItems = computed(() => allFreeKeys.value.filter((k) => selectedSet.value.has(k)))
 // Modo "limpar": tudo o que dá para marcar está marcado, ou só sobraram linhas travadas marcadas.
 const clearMode = computed(() =>
   allSelectableKeys.value.length > 0
@@ -168,9 +191,11 @@ function remove(keys: GroupedSelectKey[]) {
   return selection.value.filter((k) => !drop.has(k))
 }
 
-// Linha travada só pode ser desmarcada, nunca marcada; a trava global bloqueia tudo.
+// Linha travada só pode ser desmarcada, nunca marcada; a fixa nem isso; a trava global bloqueia tudo.
 function rowDisabled(row: Row) {
-  return !props.selectable || (!row.selectable && !selectedSet.value.has(row.key))
+  return (
+    !props.selectable || row.locked || (!row.selectable && !selectedSet.value.has(row.key))
+  )
 }
 
 // O Checkbox do PrimeVue guarda o próprio valor ao clicar; se o pai recusar a mudança ele
@@ -191,12 +216,12 @@ function toggleRow(row: Row) {
 
 function toggleGroup(group: Group) {
   if (!props.selectable || group.selectableKeys.length === 0) return
-  // Ao limpar, sai também o que está selecionado e travado dentro do grupo.
-  commitSelection(group.checked ? remove(group.rowKeys) : add(group.selectableKeys))
+  // Ao limpar, sai também o que está selecionado e travado dentro do grupo (o fixo fica).
+  commitSelection(group.checked ? remove(group.freeKeys) : add(group.selectableKeys))
 }
 
 function toggleAll() {
-  commitSelection(clearMode.value ? remove(allRowKeys.value) : add(allSelectableKeys.value))
+  commitSelection(clearMode.value ? remove(allFreeKeys.value) : add(allSelectableKeys.value))
 }
 
 function toggleCollapsed(key: string) {
@@ -319,7 +344,10 @@ function rowLabel(data: Record<string, unknown>) {
                 :class="{
                   'w-grouped-select-list__row--selected': selectedSet.has(row.key),
                   'w-grouped-select-list__row--locked': !row.selectable,
+                  'w-grouped-select-list__row--fixed': row.locked,
                 }"
+                :aria-disabled="row.locked || undefined"
+                :title="row.lockedReason ?? undefined"
               >
                 <td class="w-grouped-select-list__td w-grouped-select-list__td--check">
                   <Checkbox
@@ -350,6 +378,14 @@ function rowLabel(data: Record<string, unknown>) {
                       :row-data="row.data"
                     />
                   </slot>
+                  <span
+                    v-if="ci === 0 && row.locked"
+                    class="w-grouped-select-list__fixed"
+                  >
+                    <i class="pi pi-lock" aria-hidden="true" />
+                    <span v-if="row.lockedReason">{{ row.lockedReason }}</span>
+                    <span v-else class="w-grouped-select-list__sr">Fixo</span>
+                  </span>
                   <Tag
                     v-if="ci === 0 && row.reason"
                     :value="row.reason"
