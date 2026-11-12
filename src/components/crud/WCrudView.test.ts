@@ -5,6 +5,7 @@
 import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h, nextTick } from 'vue'
+import dayjs from 'dayjs'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
 import WCrudView from './WCrudView.vue'
@@ -139,7 +140,8 @@ describe('WCrudView — nome acessível dos botões só-ícone', () => {
 })
 
 describe('WCrudView — linhas compostas (opt-in)', () => {
-  const ontem = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10)
+  // dia local, como o componente compara; toISOString() dá o dia em UTC e falha à noite em UTC-3
+  const ontem = dayjs().subtract(1, 'day').format('YYYY-MM-DD')
   const colunas = [
     { field: 'nome', header: 'Nome', type: 'identity' as const, secondary: 'email' },
     {
