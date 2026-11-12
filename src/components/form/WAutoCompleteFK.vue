@@ -76,7 +76,7 @@ const props = withDefaults(
     canDelete?: boolean
     /** Quando a lista (com os filtros/cascata atuais) tem **um** registro só, ele já
      *  entra selecionado — ao montar sem valor e ao preencher a cascata. Só no modo
-     *  simples; limpar o campo não redispara. `false` desliga. */
+     *  simples; limpar o campo não redispara. Default `false` (opt-in). */
     autoSelectSingle?: boolean
     crudFields?: FieldDef[]
     crudColumns?: ColumnDef[]
@@ -110,7 +110,7 @@ const props = withDefaults(
     canCreate: undefined,
     canEdit: undefined,
     canDelete: undefined,
-    autoSelectSingle: true,
+    autoSelectSingle: false,
     dialogWidth: '480px',
     autofocus: false,
   },

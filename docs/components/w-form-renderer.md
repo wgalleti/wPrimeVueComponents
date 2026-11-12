@@ -86,7 +86,7 @@ Todos os tipos do `FieldDef` sao suportados:
 | `datetime` | DatePicker showTime | Formato 24h |
 | `select` | Select | `options`, `optionLabel` |
 | `autocomplete` | AutoComplete | Com filtragem local |
-| `fk` | WAutoCompleteFK | Busca na API + modal + CRUD inline; `↓` abre a lista, Enter com texto novo cadastra, `autoSelectSingle` (default `true`) preenche quando há um registro só |
+| `fk` | WAutoCompleteFK | Busca na API + modal + CRUD inline; `↓` abre a lista, Enter com texto novo cadastra, `autoSelectSingle` (opt-in, default `false`) preenche quando há um registro só |
 | `switch` | ToggleSwitch | Com `switchLabel` |
 | `textarea` | Textarea | `rows` configuravel |
 | `color` | ColorPicker | Com input hex |

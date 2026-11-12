@@ -182,8 +182,8 @@ export interface FieldDef {
   canEdit?: boolean
   canDelete?: boolean
   /** FK: quando a lista (com filtros/cascata atuais) tem um registro só, ele já entra
-   *  selecionado — ao abrir sem valor e ao preencher a cascata. Default `true`;
-   *  `false` desliga. */
+   *  selecionado — ao abrir sem valor e ao preencher a cascata. Default `false`
+   *  (opt-in): sem isso, filtro de listagem e formulário de criação não vêm preenchidos. */
   autoSelectSingle?: boolean
 
   // number / currency

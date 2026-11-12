@@ -197,7 +197,7 @@ interface FieldDef {
   crudColumns?: ColumnDef[]
 
   /** Lista com um registro so ja entra selecionada (ao abrir sem valor e ao
-   *  preencher a cascata). Default: true */
+   *  preencher a cascata). Default: false (opt-in) */
   autoSelectSingle?: boolean
 
   // --- Opcoes para 'number' e 'currency' ---

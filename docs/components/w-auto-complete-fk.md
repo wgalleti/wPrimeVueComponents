@@ -54,13 +54,13 @@ selecionado não é "novo".
 Quando a lista — com `endpointParams` e a cascata (`drilldown`) atuais — tem **um registro só**,
 ele já entra selecionado (e sai no `update:modelValue`). Dispara ao montar sem valor e quando a
 cascata passa a estar preenchida; **não** dispara quando o usuário limpa o campo, senão limpar
-ficaria impossível. Só no modo simples (`multiple` ignora). Default `true`; `false` desliga:
+ficaria impossível. Só no modo simples (`multiple` ignora). Default `false` (opt-in; era `true` nas versões até 2.0, o que pré-filtrava listagens e pré-preenchia criações) — `true` liga:
 
 ```vue
-<WAutoCompleteFK v-model="local" endpoint="/api/v1/locais/" :auto-select-single="false" />
+<WAutoCompleteFK v-model="local" endpoint="/api/v1/locais/" :auto-select-single="true" />
 ```
 
-No `FieldDef` (`type: 'fk'`), a chave é a mesma: `autoSelectSingle: false`.
+No `FieldDef` (`type: 'fk'`), a chave é a mesma: `autoSelectSingle: true`.
 
 ### Modal de Busca
 - Botao de lupa abre modal com DataTable completo
