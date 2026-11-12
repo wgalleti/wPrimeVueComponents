@@ -3594,6 +3594,130 @@
         }
       ]
     },
+    "WPermissionMatrix": {
+      "file": "src/components/ui/WPermissionMatrix.vue",
+      "props": [
+        {
+          "name": "rows",
+          "type": "PermissionRow[]",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "operations",
+          "type": "PermissionOperation[]",
+          "required": true,
+          "default": null,
+          "description": "Colunas, na ordem. Linha que não tem a operação: `isAvailable`."
+        },
+        {
+          "name": "rowKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"id\"",
+          "description": "Campo que identifica a linha (chave no valor)."
+        },
+        {
+          "name": "rowLabel",
+          "type": "string | ((row: PermissionRow) => string) | undefined",
+          "required": false,
+          "default": "\"label\"",
+          "description": "Campo (ou função) com o nome da linha."
+        },
+        {
+          "name": "groupBy",
+          "type": "string | ((row: PermissionRow) => string) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Campo (ou função) que agrupa as linhas; a ordem dos grupos é a da primeira aparição."
+        },
+        {
+          "name": "groupLabel",
+          "type": "((groupKey: string, rows: PermissionRow[]) => string) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Rótulo do grupo; default a própria chave."
+        },
+        {
+          "name": "isAvailable",
+          "type": "((row: PermissionRow, operation: string) => boolean) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "A linha tem esta operação? Default todas. Célula sem operação fica vazia."
+        },
+        {
+          "name": "isLocked",
+          "type": "((row: PermissionRow, operation: string) => boolean) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Célula fixa: não muda pelo clique nem por nenhum \"marcar tudo\"."
+        },
+        {
+          "name": "lockedReason",
+          "type": "((row: PermissionRow, operation: string) => string | null | undefined) | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Motivo da célula fixa: `title` e uma linha de apoio sob o nome da linha."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Trava a matriz inteira (leitura)."
+        },
+        {
+          "name": "rowHeader",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Tela\"",
+          "description": "Cabeçalho da coluna dos nomes."
+        },
+        {
+          "name": "allLabel",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Todas\"",
+          "description": "Rótulo da coluna \"marcar a linha toda\"."
+        },
+        {
+          "name": "emptyMessage",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Nenhum item.\"",
+          "description": ""
+        },
+        {
+          "name": "cardMode",
+          "type": "\"auto\" | \"never\" | \"always\" | undefined",
+          "required": false,
+          "default": "\"auto\"",
+          "description": "`auto` vira card abaixo de 840px da largura do componente; `never`/`always` fixam."
+        },
+        {
+          "name": "modelValue",
+          "type": "PermissionValue | undefined",
+          "required": false,
+          "default": "{}",
+          "description": "id da linha → operações marcadas. Sem v-model do pai o estado é local."
+        }
+      ],
+      "events": [
+        {
+          "name": "update:modelValue",
+          "type": "[value: PermissionValue]",
+          "description": ""
+        }
+      ],
+      "slots": [
+        {
+          "name": "empty",
+          "type": "any",
+          "description": "Substitui a mensagem sem linhas."
+        }
+      ]
+    },
     "WPopover": {
       "file": "src/components/ui/WPopover.vue",
       "props": [],

@@ -57,6 +57,7 @@ export {
   WInlineCell,
   WAttentionList,
   WGroupedSelectList,
+  WPermissionMatrix,
   WMapSelect,
   WMarkdownView,
   WMarkdownEditor,
@@ -150,6 +151,9 @@ export type {
   CrudGroupScope,
   GroupedSelectGroupScope,
   GroupedSelectKey,
+  PermissionOperation,
+  PermissionRow,
+  PermissionValue,
   // TabItem faltava aqui — a doc do WTabBar ensina importar da raiz.
   TabItem,
   RouteTab,

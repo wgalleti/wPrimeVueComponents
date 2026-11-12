@@ -2178,6 +2178,177 @@
 }
 
 /* ==========================================================
+   WPermissionMatrix — .w-permission-matrix
+   Grade linha × operação; abaixo de 840px do componente cada linha vira card
+   (mesma marcação, outro display — como o WEditableTable).
+   ========================================================== */
+
+.w-permission-matrix {
+  min-width: 0;
+}
+
+.w-permission-matrix__scroll {
+  overflow-x: auto;
+}
+
+.w-permission-matrix__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--w-text-sm);
+}
+
+.w-permission-matrix__th {
+  padding: var(--w-cell-py) var(--w-space-3);
+  border-bottom: 1px solid var(--w-border);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-semibold);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.w-permission-matrix__th--name {
+  text-align: start;
+}
+
+.w-permission-matrix__col-head {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--w-space-1);
+}
+
+.w-permission-matrix__group-row th {
+  padding: var(--w-space-2) var(--w-space-3);
+  border-top: 1px solid var(--w-border);
+  background: var(--w-surface-2);
+  text-align: start;
+}
+
+.w-permission-matrix__group-head {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+}
+
+.w-permission-matrix__group-label {
+  font-weight: var(--w-fw-semibold);
+}
+
+.w-permission-matrix__row {
+  border-bottom: 1px solid var(--w-border);
+}
+
+.w-permission-matrix__row:hover {
+  background: var(--w-row-hover);
+}
+
+.w-permission-matrix__name {
+  padding: var(--w-cell-py) var(--w-space-3);
+  font-weight: var(--w-fw-medium);
+  text-align: start;
+}
+
+.w-permission-matrix__name-label {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.w-permission-matrix__note {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-1);
+  margin-top: var(--w-space-05);
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+  font-weight: var(--w-fw-regular);
+}
+
+.w-permission-matrix__cell {
+  padding: var(--w-cell-py) var(--w-space-3);
+  text-align: center;
+}
+
+.w-permission-matrix__check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  cursor: pointer;
+}
+
+.w-permission-matrix__cell--locked .w-permission-matrix__check,
+.w-permission-matrix--disabled .w-permission-matrix__check {
+  cursor: default;
+}
+
+.w-permission-matrix__lock {
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
+}
+
+.w-permission-matrix__na {
+  color: var(--w-fg-subtle);
+}
+
+.w-permission-matrix__state td {
+  padding: var(--w-space-6) var(--w-space-3);
+  color: var(--w-fg-muted);
+  text-align: center;
+}
+
+/* --- Card: a linha vira caixa; nome em cima, "Todas" e as operações quebrando linha --- */
+
+.w-permission-matrix--cards .w-permission-matrix__table,
+.w-permission-matrix--cards .w-permission-matrix__group,
+.w-permission-matrix--cards .w-permission-matrix__state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--w-space-3);
+}
+
+.w-permission-matrix--cards .w-permission-matrix__table {
+  gap: var(--w-space-5);
+}
+
+.w-permission-matrix--cards .w-permission-matrix__group-row,
+.w-permission-matrix--cards .w-permission-matrix__group-row th {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.w-permission-matrix--cards .w-permission-matrix__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--w-space-2) var(--w-space-5);
+  padding: var(--w-space-3) var(--w-space-4);
+  border: 1px solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  background: var(--w-surface);
+}
+
+.w-permission-matrix--cards .w-permission-matrix__name {
+  flex: 1 0 100%;
+  padding: 0;
+}
+
+.w-permission-matrix--cards .w-permission-matrix__cell {
+  padding: 0;
+}
+
+.w-permission-matrix--cards .w-permission-matrix__cell--all {
+  flex: 1 0 100%;
+  color: var(--w-fg-muted);
+  text-align: start;
+}
+
+.w-permission-matrix--cards .w-permission-matrix__cell--na {
+  display: none;
+}
+
+/* ==========================================================
    WSkeleton e .w-chegada — chegada suave dos dados
    ========================================================== */
 

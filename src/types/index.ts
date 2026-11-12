@@ -32,6 +32,7 @@ export type { AttentionItem, AttentionItemClickEvent, AttentionSeverity } from '
 
 export type { CrudGroupScope } from './crudGroup'
 export type { GroupedSelectGroupScope, GroupedSelectKey } from './groupedSelectList'
+export type { PermissionOperation, PermissionRow, PermissionValue } from './permissionMatrix'
 
 export type { CalendarEvent, CalendarEventState, CalendarMoveEvent } from './calendar'
 

@@ -100,6 +100,7 @@ export default defineConfig({
               { text: 'WProgressFlow', link: '/components/w-progress-flow' },
               { text: 'WProgress', link: '/components/w-progress' },
               { text: 'WNotice', link: '/components/w-notice' },
+              { text: 'WPermissionMatrix', link: '/components/w-permission-matrix' },
               { text: 'WPopover', link: '/components/w-popover' },
               { text: 'WSegmented', link: '/components/w-segmented' },
               { text: 'WSkeleton', link: '/components/w-skeleton' },
