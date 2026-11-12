@@ -997,6 +997,38 @@ describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
       expect(aberto(w)).toBe(true)
     })
 
+    it('mostra todas as colunas visíveis (sem teto de 4) e, com cardFields, só as primeiras', async () => {
+      const columns = ['a', 'b', 'c', 'd', 'e', 'f'].map((field) => ({ field, header: field }))
+      const w = await pronto({ columns }, { defaultView: 'cards', actionRail: false })
+      expect(card(w).findAll('.w-crud-card-row')).toHaveLength(6)
+      w.unmount()
+      const w2 = await pronto({ columns }, { defaultView: 'cards', cardFields: 2 })
+      expect(w2.find('.w-crud-card').findAll('.w-crud-card-row')).toHaveLength(2)
+      w2.unmount()
+    })
+
+    it('seleção múltipla: o card traz a caixa de seleção que marca e desmarca a linha', async () => {
+      const w = await pronto({ selectionMode: 'multiple' }, { defaultView: 'cards' })
+      const caixa = () => card(w).find('.w-crud-card-select input[type="checkbox"]')
+      expect(caixa().exists()).toBe(true)
+      await caixa().setValue(true)
+      expect(card(w).classes()).toContain('w-crud-card--selected')
+      const crud = w.findComponent(WCrudView).props('crud') as {
+        selectedItems: { value: unknown[] }
+      }
+      expect(crud.selectedItems.value).toHaveLength(1)
+      await caixa().setValue(false)
+      expect(crud.selectedItems.value).toHaveLength(0)
+      expect(cliques(w)).toHaveLength(0)
+      w.unmount()
+    })
+
+    it('sem seleção múltipla não há caixa no card', async () => {
+      const w = await pronto({}, { defaultView: 'cards' })
+      expect(card(w).find('.w-crud-card-select').exists()).toBe(false)
+      w.unmount()
+    })
+
     it('openOnRowClick: o clique simples abre a edição', async () => {
       const w = await pronto({ openOnRowClick: true }, { defaultView: 'cards' })
       await card(w).find('.w-crud-card-body').trigger('click')

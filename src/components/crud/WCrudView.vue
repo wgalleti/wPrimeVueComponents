@@ -75,6 +75,7 @@ const props = withDefaults(
     expandable?: boolean
     viewToggle?: boolean
     defaultView?: 'table' | 'cards'
+    /** Quantas colunas visíveis entram no card (a primeira é o título). Sem valor, todas. */
     cardFields?: number
     /**
      * Quando a largura FORÇA os cards. `auto` (default) segue a largura da área da
@@ -140,7 +141,7 @@ const props = withDefaults(
     expandable: false,
     viewToggle: true,
     defaultView: 'table',
-    cardFields: 4,
+    cardFields: undefined,
     cardMode: 'auto',
     composed: false,
     actionRail: true,
@@ -619,6 +620,17 @@ const cardSections = computed(() => {
 
 // Seleção múltipla — opt-in via config.selectionMode: 'multiple'.
 const isMultiSelect = computed(() => props.crud.config.selectionMode === 'multiple')
+
+// No card a caixa de seleção faz o papel da coluna de seleção da tabela.
+const rowPk = (row: Record<string, unknown>) => row[props.crud.config.pk || 'id']
+const isChecked = (row: Record<string, unknown>) =>
+  props.crud.selectedItems.value.some((r) => rowPk(r) === rowPk(row))
+function toggleChecked(row: Record<string, unknown>) {
+  const atual = props.crud.selectedItems.value
+  props.crud.selectedItems.value = isChecked(row)
+    ? atual.filter((r) => rowPk(r) !== rowPk(row))
+    : [...atual, row]
+}
 
 // O tipo do PrimeVue não expõe `$el`; só precisamos do elemento raiz para o scroll.
 const tableRef = ref<{ $el?: HTMLElement } | null>(null)
@@ -1696,7 +1708,13 @@ onMounted(() => {
                 :class="
                   cardBare
                     ? 'w-crud-card-bare'
-                    : ['w-crud-card', { 'w-crud-card--selected': selectedRow === row }]
+                    : [
+                        'w-crud-card',
+                        {
+                          'w-crud-card--selected':
+                            selectedRow === row || (isMultiSelect && isChecked(row)),
+                        },
+                      ]
                 "
                 @click="onCardClick($event, row)"
                 @dblclick="onCardDblClick(row)"
@@ -1714,6 +1732,15 @@ onMounted(() => {
                   :index="section.offset + idx"
                 >
                   <div class="w-crud-card-body">
+                    <label v-if="isMultiSelect" class="w-crud-card-select">
+                      <Checkbox
+                        binary
+                        :model-value="isChecked(row)"
+                        :aria-label="`Selecionar ${String(row[cardColumns[0]?.field] ?? '')}`"
+                        @update:model-value="toggleChecked(row)"
+                      />
+                      <span>Selecionar</span>
+                    </label>
                     <div
                       v-for="(col, ci) in cardColumns"
                       :key="col.field"

@@ -286,9 +286,10 @@ do dialog). Ambos recebem `{ formData, isEditing }`.
 ## Tabela e cards
 
 A visão alterna entre `table` (linha) e `cards` pelo botão da toolbar; `defaultView` decide a
-inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFields` (default
-`4`) diz quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
-`rótulo: valor`. Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
+inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFields` (sem valor =
+todas) limita quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
+`rótulo: valor`. Com `selectionMode: 'multiple'` cada card traz a caixa "Selecionar" (a mesma
+seleção da tabela). Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
 
 ### Agrupar linhas
 

@@ -909,6 +909,15 @@
   min-width: 0;
 }
 
+.w-crud-card-select {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  font-size: var(--w-text-xs);
+  color: var(--w-fg-muted);
+  cursor: pointer;
+}
+
 .w-crud-card-row {
   display: flex;
   align-items: baseline;
