@@ -40,6 +40,11 @@ tablets em retrato receberia o layout de paisagem.
 Todas são `readonly` e reativas: mudam quando a janela muda de tamanho ou o aparelho gira. Os
 listeners são soltos sozinhos ao sair do escopo do componente.
 
+**SSR e hidratação:** num componente, a janela só é lida no `onMounted`. Antes disso (e no
+servidor) a resposta é o layout de mesa — `isPaisagem` e `isDesktop` `true`, o resto `false` —
+então o HTML do servidor e o primeiro render do cliente saem iguais. Fora de componente
+(escopo avulso) a leitura é imediata.
+
 `isToque` é **independente da largura**: um notebook com tela sensível reporta `pointer: fine`
 (o ponteiro primário é o trackpad) e não entra; um tablet deitado em 1280px reporta `coarse` e
 entra. Alvo de toque segue o ponteiro; layout segue a largura.

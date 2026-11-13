@@ -1,4 +1,4 @@
-import { onScopeDispose, readonly, ref, type Ref } from 'vue'
+import { getCurrentInstance, onMounted, onScopeDispose, readonly, ref, type Ref } from 'vue'
 
 /**
  * Faixas de largura da suite — a régua de layout.
@@ -27,30 +27,39 @@ export const BREAKPOINTS = {
   desktop: 1200,
 } as const
 
-/** Uma media query reativa, com limpeza automática ao sair do escopo. */
-function useMediaQuery(query: string): Ref<boolean> {
-  const matches = ref(false)
+/**
+ * Uma media query reativa, com limpeza automática ao sair do escopo.
+ *
+ * Dentro de componente o valor começa em `inicial` e só lê a janela no `onMounted`:
+ * o servidor e o primeiro render do cliente saem iguais e a hidratação não diverge.
+ * Fora de componente (escopo avulso, teste) lê na hora.
+ */
+function useMediaQuery(query: string, inicial: boolean): Ref<boolean> {
+  const matches = ref(inicial)
 
-  // Sem `window` (SSR, teste em ambiente node) a resposta é `false` — o layout
-  // de mesa é o default e o cliente corrige na hidratação.
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return matches
+  const ligar = () => {
+    // Sem `window` (SSR, teste em ambiente node) fica o valor inicial — o layout de mesa.
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mql = window.matchMedia(query)
+    matches.value = mql.matches
+    const onChange = (event: MediaQueryListEvent) => {
+      matches.value = event.matches
+    }
+    mql.addEventListener('change', onChange)
+    onScopeDispose(() => mql.removeEventListener('change', onChange))
   }
 
-  const mql = window.matchMedia(query)
-  matches.value = mql.matches
-
-  const onChange = (event: MediaQueryListEvent) => {
-    matches.value = event.matches
-  }
-  mql.addEventListener('change', onChange)
-  onScopeDispose(() => mql.removeEventListener('change', onChange))
+  if (getCurrentInstance()) onMounted(ligar)
+  else ligar()
 
   return matches
 }
 
 /**
  * Em qual faixa a janela está, e se o ponteiro primário é o dedo.
+ *
+ * Antes da montagem (e no servidor) responde o layout de mesa: paisagem e desktop
+ * `true`, o resto `false`. A faixa real chega no `onMounted`.
  *
  * `isToque` vem de `pointer: coarse` — o ponteiro **primário**, então notebook
  * com tela sensível continua reportando `fine` e não é afetado.
@@ -61,14 +70,14 @@ function useMediaQuery(query: string): Ref<boolean> {
  * ```
  */
 export function useBreakpoint() {
-  const isCelular = useMediaQuery(`(max-width: ${BREAKPOINTS.celular - 1}px)`)
+  const isCelular = useMediaQuery(`(max-width: ${BREAKPOINTS.celular - 1}px)`, false)
   /** Tablet em pé ou menor: um painel por vez. */
-  const isRetrato = useMediaQuery(`(max-width: ${BREAKPOINTS.retrato - 1}px)`)
+  const isRetrato = useMediaQuery(`(max-width: ${BREAKPOINTS.retrato - 1}px)`, false)
   /** Tablet deitado ou maior: cabem dois painéis. */
-  const isPaisagem = useMediaQuery(`(min-width: ${BREAKPOINTS.retrato}px)`)
-  const isDesktop = useMediaQuery(`(min-width: ${BREAKPOINTS.desktop}px)`)
+  const isPaisagem = useMediaQuery(`(min-width: ${BREAKPOINTS.retrato}px)`, true)
+  const isDesktop = useMediaQuery(`(min-width: ${BREAKPOINTS.desktop}px)`, true)
   /** O dedo é o ponteiro: alvos maiores, sem hover. */
-  const isToque = useMediaQuery('(pointer: coarse)')
+  const isToque = useMediaQuery('(pointer: coarse)', false)
 
   return {
     isCelular: readonly(isCelular),
