@@ -1,15 +1,6 @@
-import type { App, Plugin } from 'vue'
+import { defineAsyncComponent, type App, type Component, type Plugin } from 'vue'
 import type { WPluginOptions, WPluginConfig } from './types/plugin'
 import { W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from './types/plugin'
-import {
-  WCrudView,
-  WCrudFormDialog,
-  WCrudColumnRenderer,
-  WAutoCompleteFK,
-  WMoneyInput,
-  WTransferList,
-  WTreeSelect,
-} from './components'
 import { createAxiosDataProvider } from './data-providers/axiosDataProvider'
 import { patchDialogEscapeStack } from './utils/dialogEscapeStack'
 import { lookupCep } from './utils/cep'
@@ -46,13 +37,20 @@ export const WPrimeVuePlugin: Plugin = {
     }
 
     if (options.registerComponents !== false) {
-      app.component('WCrudView', WCrudView)
-      app.component('WCrudFormDialog', WCrudFormDialog)
-      app.component('WCrudColumnRenderer', WCrudColumnRenderer)
-      app.component('WAutoCompleteFK', WAutoCompleteFK)
-      app.component('WMoneyInput', WMoneyInput)
-      app.component('WTransferList', WTransferList)
-      app.component('WTreeSelect', WTreeSelect)
+      // Registro global por import() dinâmico: o app que só instala o plugin (vitrine) não leva
+      // WCrudView, DataTable e cia. no pacote de entrada; o chunk vem na primeira renderização.
+      const globais: Record<string, () => Promise<{ default: Component }>> = {
+        WCrudView: () => import('./components/crud/WCrudView.vue'),
+        WCrudFormDialog: () => import('./components/crud/WCrudFormDialog.vue'),
+        WCrudColumnRenderer: () => import('./components/crud/WCrudColumnRenderer.vue'),
+        WAutoCompleteFK: () => import('./components/form/WAutoCompleteFK.vue'),
+        WMoneyInput: () => import('./components/form/WMoneyInput.vue'),
+        WTransferList: () => import('./components/form/WTransferList.vue'),
+        WTreeSelect: () => import('./components/form/WTreeSelect.vue'),
+      }
+      for (const [nome, carregar] of Object.entries(globais)) {
+        app.component(nome, defineAsyncComponent(carregar))
+      }
     }
   },
 }
