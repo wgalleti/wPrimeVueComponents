@@ -10,7 +10,7 @@ import WButton from '@/components/ui/WButton.vue'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
-import { W_DATA_PROVIDER_KEY } from '@/types/plugin'
+import { MISSING_DATA_PROVIDER, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { FieldDef, FieldSubRowsFetch, FkCrudConfig } from '@/types/field'
 import type { ColumnDef } from '@/types/column'
@@ -132,7 +132,7 @@ defineOptions({ inheritAttrs: false })
 
 const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
 if (!dataProvider) {
-  throw new Error('[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin.')
+  throw new Error(`[wPrimeVueComponents] ${MISSING_DATA_PROVIDER} WAutoCompleteFK.`)
 }
 const provider = dataProvider
 

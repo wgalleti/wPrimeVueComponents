@@ -15,14 +15,11 @@ import { patchDialogEscapeStack } from './utils/dialogEscapeStack'
 import { lookupCep } from './utils/cep'
 
 export const WPrimeVuePlugin: Plugin = {
-  install(app: App, options: WPluginOptions) {
-    if (!options?.axios && !options?.dataProvider) {
-      throw new Error(
-        '[wPrimeVueComponents] Informe "axios" ou "dataProvider" ao registrar o WPrimeVuePlugin.',
-      )
-    }
-
-    const dataProvider = options.dataProvider ?? createAxiosDataProvider(options.axios!)
+  install(app: App, options: WPluginOptions = {}) {
+    // Sem provedor o plugin instala igual (vitrine, SSR): só os componentes de dados
+    // (useApi, useCrudManager, WAutoCompleteFK) acusam a falta, na hora do uso.
+    const dataProvider =
+      options.dataProvider ?? (options.axios ? createAxiosDataProvider(options.axios) : undefined)
 
     const config: WPluginConfig = {
       axios: options.axios,
@@ -39,7 +36,9 @@ export const WPrimeVuePlugin: Plugin = {
     if (options.axios) {
       app.provide(W_AXIOS_KEY, options.axios)
     }
-    app.provide(W_DATA_PROVIDER_KEY, dataProvider)
+    if (dataProvider) {
+      app.provide(W_DATA_PROVIDER_KEY, dataProvider)
+    }
     app.provide(W_CONFIG_KEY, config)
 
     if (options.patchDialogEscape !== false) {

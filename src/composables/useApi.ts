@@ -1,6 +1,6 @@
 import { ref, reactive, inject } from 'vue'
 import type { PaginationState, SortState, UseApiOptions, UseApiReturn } from '@/types/api'
-import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
+import { MISSING_DATA_PROVIDER, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 
@@ -9,9 +9,7 @@ export function useApi<T = Record<string, unknown>>(options: UseApiOptions): Use
 
   const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
   if (!dataProvider) {
-    throw new Error(
-      '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useApi.',
-    )
+    throw new Error(`[wPrimeVueComponents] ${MISSING_DATA_PROVIDER} useApi.`)
   }
   const provider = dataProvider
 

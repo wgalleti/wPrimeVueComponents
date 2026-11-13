@@ -1,5 +1,5 @@
 import { ref, reactive, computed, inject, watch } from 'vue'
-import { W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
+import { MISSING_DATA_PROVIDER, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from '@/types/plugin'
 import type { WPluginConfig } from '@/types/plugin'
 import type { DataProvider } from '@/types/dataProvider'
 import type { PaginationState, SortState } from '@/types/api'
@@ -55,9 +55,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
   const dataProvider = inject<DataProvider>(W_DATA_PROVIDER_KEY)
   if (!dataProvider) {
-    throw new Error(
-      '[wPrimeVueComponents] dataProvider não encontrado. Registre o WPrimeVuePlugin antes de usar useCrudManager.',
-    )
+    throw new Error(`[wPrimeVueComponents] ${MISSING_DATA_PROVIDER} useCrudManager.`)
   }
   const provider = dataProvider
 

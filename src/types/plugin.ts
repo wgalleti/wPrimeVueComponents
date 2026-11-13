@@ -30,7 +30,8 @@ export interface WPluginOptions {
 
 export interface WPluginConfig {
   axios?: AxiosInstance
-  dataProvider: DataProvider
+  /** Ausente quando o app registra o plugin sem `axios` nem `dataProvider`. */
+  dataProvider?: DataProvider
   defaultPageSize: number
   dateFormat: string
   dateTimeFormat: string
@@ -39,6 +40,10 @@ export interface WPluginConfig {
   keyboardNav: boolean
   cepLookup: CepLookup
 }
+
+/** Mensagem dos componentes de dados quando o plugin foi registrado sem provedor. */
+export const MISSING_DATA_PROVIDER =
+  'dataProvider não encontrado. Registre o WPrimeVuePlugin com "axios" ou "dataProvider" (app.use(WPrimeVuePlugin, { axios })) antes de usar'
 
 export const W_AXIOS_KEY = Symbol('w-axios')
 export const W_DATA_PROVIDER_KEY = Symbol('w-data-provider')
