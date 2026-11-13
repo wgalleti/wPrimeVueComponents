@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip'
 import WGroupedSelectList from './WGroupedSelectList.vue'
 import type { ColumnDef } from '@/types/column'
 
@@ -29,7 +30,7 @@ function make(extra: Record<string, unknown> = {}, slots: Record<string, unknown
       ...extra,
     },
     slots: slots as never,
-    global: { plugins: [PrimeVue] },
+    global: { plugins: [PrimeVue], directives: { tooltip: Tooltip } },
   })
 }
 

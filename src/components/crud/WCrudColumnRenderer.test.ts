@@ -2,6 +2,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Tooltip from 'primevue/tooltip'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import type { ColumnDef } from '@/types/column'
@@ -9,7 +10,7 @@ import type { ColumnDef } from '@/types/column'
 function montar(column: ColumnDef, value: unknown, rowData: Record<string, unknown> = {}) {
   return mount(WCrudColumnRenderer, {
     props: { column, value, rowData },
-    global: { plugins: [PrimeVue] },
+    global: { plugins: [PrimeVue], directives: { tooltip: Tooltip } },
   })
 }
 
@@ -208,7 +209,7 @@ describe('WCrudColumnRenderer — `to` (link na célula)', () => {
           r: {},
         }),
       },
-      { global: { plugins: [PrimeVue, router] } },
+      { global: { plugins: [PrimeVue, router], directives: { tooltip: Tooltip } } },
     )
     const a = w.find('a.w-cell-link')
     expect(a.attributes('href')).toBe('/x')

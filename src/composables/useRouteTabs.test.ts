@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { defineComponent } from 'vue'
 import { createMemoryHistory, createRouter, type Router } from 'vue-router'
 import { useRouteTabs } from './useRouteTabs'
@@ -347,6 +347,8 @@ describe('useRouteTabs — persistência', () => {
   })
 
   it('aba salva que virou redirect, sumiu ou saiu de isTabRoute não volta', async () => {
+    // '/sumiu' não casa rota de propósito: o router avisa, e o aviso é esperado aqui
+    const aviso = vi.spyOn(console, 'warn').mockImplementation(() => {})
     dados['w-route-tabs'] = JSON.stringify({
       v: 1,
       activeKey: '/clientes',
@@ -366,6 +368,8 @@ describe('useRouteTabs — persistência', () => {
     await router.push('/notas/1')
     // filha de pai com `redirect` continua: só o último registro conta
     expect(api.tabs.value.map((t) => t.key)).toEqual(['/clientes', '/modulo/painel', '/notas/1'])
+    expect(aviso).toHaveBeenCalledWith(expect.stringContaining('/sumiu'))
+    aviso.mockRestore()
   })
 
   it('storageKey mudou (outro usuário, sem reload) → zera e restaura as certas', async () => {
