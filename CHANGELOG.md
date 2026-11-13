@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.0...v2.3.1) (2026-11-13)
+
+### Correções
+
+* **crud:** read the persisted WCrudView view mode after mount ([ff7071e](https://github.com/wgalleti/wPrimeVueComponents/commit/ff7071e56785435c2c4f1be59671439fd765ea86))
+* **plugin:** install without axios or dataProvider and fail at the data component that needs one ([f3a2a2a](https://github.com/wgalleti/wPrimeVueComponents/commit/f3a2a2af5f38d60869f150948f8249eb207bc501))
+* **ui:** start useBreakpoint on the desktop layout and read the window after mount ([d9bab8a](https://github.com/wgalleti/wPrimeVueComponents/commit/d9bab8ab0c92bef3dbb3ac7b617193a453fb4547))
+
+### Documentação
+
+* register the suite in Nuxt and list the client-only pieces ([9e4bf66](https://github.com/wgalleti/wPrimeVueComponents/commit/9e4bf668a0a7c884c62d06d10b121479b2f1d499))
 ## [2.3.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.2.0...v2.3.0) (2026-11-13)
 
 ### Funcionalidades
