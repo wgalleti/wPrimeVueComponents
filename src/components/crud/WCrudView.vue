@@ -180,8 +180,8 @@ const expandedRows = ref({})
 
 // Persistência do modo de visualização (opt-in via `persistState`): a escolha do
 // usuário fica em localStorage sob a MESMA chave base do grid (rota + grid, provida
-// pelo consumidor). Leitura síncrona no setup evita flash table→cards. Default =
-// `defaultView` (por padrão 'table' = linha).
+// pelo consumidor). Lida no `onMounted` (junto do resto do estado): o servidor e o
+// primeiro render do cliente saem com `defaultView` (por padrão 'table' = linha).
 function viewKey(): string | null {
   return props.persistState ? `wcrud:view:${props.persistState}` : null
 }
@@ -208,7 +208,7 @@ function loadView(): 'table' | 'cards' {
   }
   return props.defaultView
 }
-const displayMode = ref<'table' | 'cards'>(loadView())
+const displayMode = ref<'table' | 'cards'>(props.defaultView)
 
 // Área da listagem abaixo de 840px: cada linha vira card — título em destaque, o
 // resto como rótulo/valor — e o alternador some, porque nessa largura não existe
@@ -1080,6 +1080,7 @@ if (urlSync) {
 // --- Init ---
 
 onMounted(() => {
+  displayMode.value = loadView()
   loadColumnState()
   // URL ganha do localStorage quando traz busca ou filtro; senão `persistState` restaura.
   if (!urlHasFilters()) loadFilters()
