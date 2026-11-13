@@ -70,8 +70,15 @@ export default defineConfig({
         /^markdown-it-.*/,
         /^highlight\.js.*/,
         /^primevue\/.*/,
+        // dependência como as de cima; embutida, o preserveModules a gravaria em dist/node_modules,
+        // pasta que o npm pack descarta.
+        /^maska(\/.*)?$/,
       ],
       output: {
+        // Um arquivo por módulo em vez de um chunk `components-*` com tudo: o bundler do
+        // consumidor descarta o que não foi importado (sideEffects: só CSS no package.json).
+        preserveModules: true,
+        preserveModulesRoot: 'src',
         globals: {
           vue: 'Vue',
           primevue: 'PrimeVue',
