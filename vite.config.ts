@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
+      '@': resolve(import.meta.dirname, 'src'),
     },
   },
   build: {
@@ -24,14 +24,14 @@ export default defineConfig({
       // Multiplas entradas para subpath exports ("./components", etc.) e
       // tree-shaking mais granular no consumidor.
       entry: {
-        index: resolve(__dirname, 'src/index.ts'),
-        components: resolve(__dirname, 'src/components/index.ts'),
-        composables: resolve(__dirname, 'src/composables/index.ts'),
-        types: resolve(__dirname, 'src/types/index.ts'),
+        index: resolve(import.meta.dirname, 'src/index.ts'),
+        components: resolve(import.meta.dirname, 'src/components/index.ts'),
+        composables: resolve(import.meta.dirname, 'src/composables/index.ts'),
+        types: resolve(import.meta.dirname, 'src/types/index.ts'),
         // Plugins Vite (Node) para o app consumidor: `@wgalleti/primevue-components/vite`.
-        vite: resolve(__dirname, 'src/vite/index.ts'),
+        vite: resolve(import.meta.dirname, 'src/vite/index.ts'),
         // Provedor gRPC (Connect): subpath próprio para o projeto REST não precisar dos peers.
-        connect: resolve(__dirname, 'src/data-providers/connect/index.ts'),
+        connect: resolve(import.meta.dirname, 'src/data-providers/connect/index.ts'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,

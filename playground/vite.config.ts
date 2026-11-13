@@ -16,8 +16,8 @@ export default defineConfig({
       // <WStepSection>, <WSectionPanel>…): precisa do build do Vue com compilador.
       { find: /^vue$/, replacement: 'vue/dist/vue.esm-bundler.js' },
       // Lib internal @ alias must come first (more specific path)
-      { find: /^@\//, replacement: resolve(__dirname, '../src') + '/' },
-      { find: '@wgalleti/primevue-components', replacement: resolve(__dirname, '../src') },
+      { find: /^@\//, replacement: resolve(import.meta.dirname, '../src') + '/' },
+      { find: '@wgalleti/primevue-components', replacement: resolve(import.meta.dirname, '../src') },
     ],
   },
   server: {
