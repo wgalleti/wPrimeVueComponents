@@ -45,10 +45,14 @@ const okList = (data: AnyRecord[] = [], rows = data.length) =>
 
 describe('useCrudManager — guardas', () => {
   it('lança erro quando não há dataProvider registrado', () => {
+    // a falta do provider é o cenário: o aviso do Vue sobre o inject é esperado
+    const aviso = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const app = createApp({ render: () => null })
     expect(() =>
       app.runWithContext(() => useCrudManager({ endpoint: '/x', columns: [], form: [] })),
     ).toThrow(/dataProvider/)
+    expect(aviso).toHaveBeenCalledWith(expect.stringContaining('w-data-provider'))
+    aviso.mockRestore()
   })
 })
 

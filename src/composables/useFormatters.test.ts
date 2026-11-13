@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
+import { createApp } from 'vue'
 import { useFormatters } from './useFormatters'
 
-// Fora de um componente, o inject cai no default (pt-BR / BRL) — e' o que queremos testar.
-const f = useFormatters()
+// App sem o plugin: o inject cai no default (pt-BR / BRL) — e' o que queremos testar.
+const f = createApp({ render: () => null }).runWithContext(() => useFormatters())
 // ICU usa espacos especiais (NBSP / narrow-NBSP) entre simbolo e numero; normalizamos.
 const spaces = /[\u00A0\u202F]/g
 
