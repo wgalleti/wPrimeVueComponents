@@ -919,6 +919,35 @@ describe('WCrudView — clique na linha (row-click + openOnRowClick)', () => {
         expect(handler).toHaveBeenCalledWith(linha)
       })
 
+      it('recarga: o trilho passa a ler a cópia nova da linha ativa', async () => {
+        const desativar = {
+          action: 'desativar',
+          icon: 'pi pi-ban',
+          tooltip: 'Desativar',
+          visible: (r: Linha) => r.ativo === true,
+        }
+        const reativar = {
+          action: 'reativar',
+          icon: 'pi pi-replay',
+          tooltip: 'Reativar',
+          visible: (r: Linha) => r.ativo === false,
+        }
+        const w = await pronto({ rowActions: [desativar, reativar] })
+        await celula(w).trigger('click')
+        await nextTick()
+        expect(w.find('.w-crud-rail [aria-label="Desativar"]').exists()).toBe(true)
+        const crud = view(w).props('crud') as { items: { value: Linha[] } }
+        crud.items.value = [{ id: 1, nome: 'Soja', ativo: false }] // o que o refresh() devolve
+        await nextTick()
+        await nextTick()
+        expect(w.find('.w-crud-rail [aria-label="Reativar"]').exists()).toBe(true)
+        expect(w.find('.w-crud-rail [aria-label="Desativar"]').exists()).toBe(false)
+        crud.items.value = [{ id: 2, nome: 'Milho', ativo: true }] // a linha saiu da lista
+        await nextTick()
+        await nextTick()
+        expect(w.find('.w-crud-rail [aria-label="Desativar"]').attributes('disabled')).toBeDefined()
+      })
+
       it('multiselect: clique fora do checkbox ativa a linha sem marcar o checkbox', async () => {
         handler.mockClear()
         const w = await pronto({ rowActions: [acao], selectionMode: 'multiple' })

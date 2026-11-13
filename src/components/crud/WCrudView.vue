@@ -783,6 +783,19 @@ const railRow = computed<Record<string, unknown> | null>(() => {
   return isMultiSelect.value && marcados.length === 1 ? marcados[0] : null
 })
 
+// Recarga troca os objetos da lista: a linha ativa passa a ser a cópia nova (o trilho lê o
+// estado atual dela) ou some, se saiu da lista.
+watch(
+  () => props.crud.items.value,
+  (items) => {
+    const atual = selectedRow.value
+    if (!atual || items.includes(atual)) return
+    const pk = props.crud.config.pk || 'id'
+    const nova = items.find((r) => (r as Record<string, unknown>)[pk] === atual[pk])
+    selectedRow.value = (nova as Record<string, unknown> | undefined) ?? null
+  },
+)
+
 // Seleção múltipla: o DataTable não destaca a linha ativa sozinho.
 function rowClass(row: Record<string, unknown>) {
   const pk = props.crud.config.pk || 'id'
