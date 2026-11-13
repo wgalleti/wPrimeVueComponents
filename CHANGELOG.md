@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.1.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.0.1...v2.1.0) (2026-11-13)
+
+### ⚠ BREAKING CHANGES
+
+* **form:** autoSelectSingle defaults to false; pass
+
+### Funcionalidades
+
+* **crud:** select WEditableTable rows in memory with v-model:selected ([ea30ad1](https://github.com/wgalleti/wPrimeVueComponents/commit/ea30ad179f76a173f214c144ccf4303099871234))
+* **crud:** show approximate totals, explain disabled row actions and allow read-only lists without a form ([e342347](https://github.com/wgalleti/wPrimeVueComponents/commit/e3423476c654cb30803a700466545ccca001b848))
+* **crud:** warn in DEV on status severities in actions, keep the accessible name when a reason blocks the action ([cf521e3](https://github.com/wgalleti/wPrimeVueComponents/commit/cf521e3a936449ed8bdd2d99efd3a67bfc76e469))
+* **form:** clamp WMoneyInput to min and max on blur ([59022ae](https://github.com/wgalleti/wPrimeVueComponents/commit/59022ae92ba6cdc5753fbb05625e6f2a0fea82bc))
+* **form:** disable select and choice options and show a description line ([bd75e96](https://github.com/wgalleti/wPrimeVueComponents/commit/bd75e96b3ef1245b7977b7f1cc10605709e1f0e2))
+* **form:** inject the CEP lookup through the plugin or the field, ViaCEP stays the default ([c61f865](https://github.com/wgalleti/wPrimeVueComponents/commit/c61f865a564a81ed10f8ae1042b82a9324bd6b62))
+* **form:** limit text fields with FieldDef.maxLength and show an n/max counter ([e8c9db8](https://github.com/wgalleti/wPrimeVueComponents/commit/e8c9db82294a2c9fd8af6e66dcd10a3a2f53b2c1))
+* **form:** pass FieldDef.autocomplete and spellcheck to text inputs ([f337272](https://github.com/wgalleti/wPrimeVueComponents/commit/f3372720ae30b4ff1f64e0703ded49e1072f60c8))
+* **ui:** accept size small/large on WButton with a DEV hint ([18757b4](https://github.com/wgalleti/wPrimeVueComponents/commit/18757b4e84d0da4fe75a334ee0846d3a430fd8ed))
+* **ui:** add fluid to WSegmented and tint the toggle when on ([ebc611e](https://github.com/wgalleti/wPrimeVueComponents/commit/ebc611e037e27a0e01528c561fb1ffbaa2f638d7))
+* **ui:** add single selection mode to WGroupedSelectList ([995fdcf](https://github.com/wgalleti/wPrimeVueComponents/commit/995fdcfd154646ba3cc4c66fc5fbde6e622b80f2))
+* **ui:** add WButton, WPopover and WMenu, anchor overlays to the tab pane and use them inside the suite ([e83ca2d](https://github.com/wgalleti/wPrimeVueComponents/commit/e83ca2d17cf13cb18daafe5901d3c990dba75a83))
+* **ui:** add WPermissionMatrix for row by operation grants with locked cells and grid keyboard ([c8f3c09](https://github.com/wgalleti/wPrimeVueComponents/commit/c8f3c0918a55377fb16118c4c3ea332a753d1920))
+* **ui:** add WSegmented, WNotice and WProgress and let WStatusTag be removed ([69a7548](https://github.com/wgalleti/wPrimeVueComponents/commit/69a754869b912824c92c443ecc96cda69f628d1e))
+* **ui:** keep WGroupedSelectList locked rows fixed against clicks and bulk toggles ([ac2700a](https://github.com/wgalleti/wPrimeVueComponents/commit/ac2700a395ee3d5f4a1c21e8ea740cd05f3e2ada))
+* **ui:** render WButton as a plain link with href, download and target ([9d28b77](https://github.com/wgalleti/wPrimeVueComponents/commit/9d28b77a8f5ef6386ed3e5e8c9160fcc9faa22a5))
+* **ui:** size WSkeleton by token and add a block variant for panel figures ([d420841](https://github.com/wgalleti/wPrimeVueComponents/commit/d42084181c30e44040058bf8af4b9739c4b265cf))
+
+### Correções
+
+* **crud:** decide WEditableTable card by the window and keep the floor on the element ([8b07b83](https://github.com/wgalleti/wPrimeVueComponents/commit/8b07b83b329daee11045ee57daafbdb553bce7b7))
+* **crud:** show every visible column and the selection checkbox in WCrudView cards ([9af8c21](https://github.com/wgalleti/wPrimeVueComponents/commit/9af8c213774b3927b4d428ff9ff4ab14b1a79032))
+* **form:** make WAutoCompleteFK autoSelectSingle opt-in ([94b9ffc](https://github.com/wgalleti/wPrimeVueComponents/commit/94b9ffcb0e536844f6c47de71a031ee6362e9788))
+* **ui:** announce only danger WNotice as alert, warn becomes status ([2cc249d](https://github.com/wgalleti/wPrimeVueComponents/commit/2cc249d04fa1c6c9e2719ac2db0ec1b7181fe2ec))
+* **ui:** guard PrimeVue Popover internals, forward target in WMenu and fall back the pane shift to 0px ([a23eb54](https://github.com/wgalleti/wPrimeVueComponents/commit/a23eb548b017c875c3d889b402bedf84fd659657))
+* **ui:** make a disabled WButton visibly muted in both themes ([e950488](https://github.com/wgalleti/wPrimeVueComponents/commit/e95048830a8eb90a7e83ec0729dd03a73a80bcd5))
+* **ui:** scroll WPermissionMatrix horizontally with a fixed, readable name column ([5c12bb4](https://github.com/wgalleti/wPrimeVueComponents/commit/5c12bb4f58ac083a48366119b69be8d5d119ae75))
+* **ui:** wrap the WCalendarGrid day count below the date instead of colliding ([bdab6a7](https://github.com/wgalleti/wPrimeVueComponents/commit/bdab6a71396c533ed583892d5d6f608f4a9551cc))
+* **WMoneyInput:** resync the input text when the parent clamps or rejects the value ([cd8264c](https://github.com/wgalleti/wPrimeVueComponents/commit/cd8264c30fffbc8098359e83dcde4406dfdc1fbb))
 ## [2.0.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.0.0...v2.0.1) (2026-11-12)
 
 ### Correções
