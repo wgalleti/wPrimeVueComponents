@@ -35,7 +35,7 @@ app.provide(W_AXIOS_KEY, api)
 ```
 
 ::: warning Importante
-Os composables `useCrudManager` e `useApi` lancam erro se nao encontrarem o axios injetado.
+`useCrudManager`, `useApi` e `WAutoCompleteFK` lancam erro se nao encontrarem o provedor de dados injetado.
 :::
 
 ## Multiplas instancias de axios
@@ -57,3 +57,52 @@ provide(W_AXIOS_KEY, otherApi)
   <WCrudView :crud="crud" title="Dados Externos" />
 </template>
 ```
+
+## Sem provedor de dados (vitrine)
+
+`axios` e `dataProvider` são opcionais: um app que só usa componentes de apresentação
+(botão, diálogo, aviso, campo de data/moeda, menu…) registra o plugin sem eles. Só quem
+busca dados acusa a falta, na hora do uso: `useApi`, `useCrudManager` e `WAutoCompleteFK`
+lançam `dataProvider não encontrado. Registre o WPrimeVuePlugin com "axios" ou "dataProvider"…`.
+
+```ts
+app.use(WPrimeVuePlugin) // sem CRUD: nada de axios
+```
+
+## Nuxt / SSR
+
+A suíte renderiza no servidor (Nuxt 4) sem tocar `window`: o primeiro render do cliente é
+igual ao do servidor e o que depende da janela (faixa do `useBreakpoint`, modo
+tabela/cards guardado do `WCrudView`) só é lido no `onMounted`. Registre tudo num plugin do
+Nuxt, na mesma ordem do `main.ts`:
+
+```ts
+// plugins/primevue.ts
+import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
+import { WPrimeVuePlugin } from '@wgalleti/primevue-components'
+import '@wgalleti/primevue-components/style.css'
+
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.use(PrimeVue, { /* tema/pt do app */ })
+  nuxtApp.vueApp.use(ToastService)
+  nuxtApp.vueApp.use(ConfirmationService)
+  nuxtApp.vueApp.use(WPrimeVuePlugin) // com { axios } ou { dataProvider } se houver CRUD
+})
+```
+
+```ts
+// nuxt.config.ts — se o build do servidor reclamar de import de CSS/ESM do pacote
+export default defineNuxtConfig({
+  build: { transpile: ['@wgalleti/primevue-components'] },
+})
+```
+
+- **Antes da montagem**, `useBreakpoint` responde o layout de mesa (`isPaisagem` e
+  `isDesktop` `true`, o resto `false`); a faixa real chega no `onMounted`.
+- **Só no cliente** (envolva em `<ClientOnly>`): `WChart`, `WMapSelect`, `WImageCropper`,
+  `WMarkdownView`/`WMarkdownEditor` (o DOMPurify precisa do DOM) e a navegação por abas (`useRouteTabs`, `WTabNav`, `WTabViewport`) —
+  `useRouteTabs` guarda estado do usuário num singleton de módulo, que no servidor seria
+  compartilhado entre requisições.
+- Testado por `tests/ssr.test.ts` (`renderToString` sem `window`, plugin sem provedor).

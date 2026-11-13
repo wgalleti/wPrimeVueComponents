@@ -63,6 +63,8 @@ app.use(WPrimeVuePlugin, {
 })
 ```
 
+> **Sem CRUD (vitrine, Nuxt/SSR):** `axios`/`dataProvider` são opcionais — `app.use(WPrimeVuePlugin)` basta; só `useApi`, `useCrudManager` e `WAutoCompleteFK` exigem o provedor. Registro no Nuxt e componentes só-cliente: [Plugin › Nuxt / SSR](https://wgalleti.github.io/wPrimeVueComponents/guide/plugin#nuxt-ssr).
+
 > **Ordem importa:** registre o `WPrimeVuePlugin` **depois** de `PrimeVue`, `ToastService` e `ConfirmationService` — os componentes usam Toast/Confirm.
 
 ### Setup com Supabase

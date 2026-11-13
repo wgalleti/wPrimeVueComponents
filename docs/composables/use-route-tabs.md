@@ -5,6 +5,12 @@ Estado da navegação por abas de rota — o dono da lista que
 vez no boot, guarde a instância num módulo do app e passe-a por prop (regra da suite:
 nenhum estado global dentro de componente).
 
+::: warning Só no cliente
+A instância é um singleton de módulo com o estado do usuário: não use em SSR (no servidor ela
+seria compartilhada entre requisições). Num app Nuxt, crie-a num plugin `.client.ts` e
+renderize `WTabNav`/`WTabViewport` dentro de `<ClientOnly>`.
+:::
+
 Instala um `router.afterEach`: rota aceita por `isTabRoute` vira aba. O que é "uma aba"
 é o parâmetro **`mode`**:
 
