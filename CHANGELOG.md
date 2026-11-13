@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.2.0...v2.3.0) (2026-11-13)
+
+### Funcionalidades
+
+* **deps:** move mermaid to 12 and keep the dagre classic diagram look ([c793f13](https://github.com/wgalleti/wPrimeVueComponents/commit/c793f130e9c11a8c448f55d74d620d51c9f5e73e))
+
+### Correções
+
+* **docs:** wrap the accessible name placeholder in a code span so the site builds ([86a4979](https://github.com/wgalleti/wPrimeVueComponents/commit/86a4979eb872abc747b46ecf914fa72072832cd5))
 ## [2.2.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.1.0...v2.2.0) (2026-11-13)
 
 ### Correções
