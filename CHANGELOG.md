@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.3.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.1...v2.3.2) (2026-11-13)
+
+### Performance
+
+* **plugin:** register the global CRUD and form components through async imports ([692cc51](https://github.com/wgalleti/wPrimeVueComponents/commit/692cc518c6b7a9c256ea2a323df042c6d32d9c5f))
 ## [2.3.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.0...v2.3.1) (2026-11-13)
 
 ### Correções
