@@ -237,6 +237,9 @@ function configurarMermaid(mermaid: Awaited<ReturnType<typeof carregarMermaid>>)
     startOnLoad: false,
     securityLevel: 'strict',
     theme: 'base',
+    // mermaid 12 mudou o padrão para ELK + neo; dagre + classic mantêm o desenho de antes
+    layout: 'dagre',
+    look: 'classic',
     fontFamily: token(estilo, '--font-sans', 'inherit'),
     flowchart: { useMaxWidth: true },
     themeVariables: {
