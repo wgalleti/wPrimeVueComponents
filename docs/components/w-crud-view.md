@@ -515,7 +515,7 @@ const crud = useCrudManager({
 ```
 
 `disabledReason(row)` acompanha `disabled(row)`: com a ação bloqueada na linha, o motivo
-substitui o `tooltip` na dica e no `title`; o nome acessível fica "<tooltip>: <motivo>" (a ação
+substitui o `tooltip` na dica e no `title`; o nome acessível fica `"<tooltip>: <motivo>"` (a ação
 continua nomeada).
 
 ### `severity` em ação
