@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.2.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.1.0...v2.2.0) (2026-11-13)
+
+### Correções
+
+* **crud:** rebind active row after list reload ([a3aacbb](https://github.com/wgalleti/wPrimeVueComponents/commit/a3aacbbbcaac4b516109d46afa15cc0b33e48c27))
 ## [2.1.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.0.1...v2.1.0) (2026-11-13)
 
 ### ⚠ BREAKING CHANGES
