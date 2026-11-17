@@ -140,6 +140,54 @@ describe('WCrudView — nome acessível dos botões só-ícone', () => {
   })
 })
 
+describe('WCrudView — trilho vira menu ⋮ no celular', () => {
+  function janelaCelular(celular: boolean) {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: celular && query.startsWith('(max-width: 599'),
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+  }
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('no celular: sem trilho lateral; ⋮ ao lado da busca e o exportar sai da toolbar', async () => {
+    janelaCelular(true)
+    const w = montar({}, { exportCsv: true, csvScope: 'page' })
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.w-crud-rail').exists()).toBe(false)
+    expect(w.find('.w-crud').classes()).toContain('w-crud--rail-menu')
+    const linha = w.find('.w-crud-search-row')
+    expect(linha.find('input[aria-label="Buscar"]').exists()).toBe(true)
+    expect(linha.find('[aria-label="Ações"]').exists()).toBe(true)
+    expect(w.find('.w-crud-toolbar-end [aria-label="Exportar página (CSV)"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('na mesa, ou com railMenu="never", o trilho fica na lateral', async () => {
+    janelaCelular(false)
+    const mesa = montar({}, { exportCsv: true })
+    await flushPromises()
+    expect(mesa.find('.w-crud-rail').exists()).toBe(true)
+    expect(mesa.find('[aria-label="Ações"]').exists()).toBe(false)
+    mesa.unmount()
+
+    janelaCelular(true)
+    const nunca = montar({}, { exportCsv: true, railMenu: 'never' })
+    await flushPromises()
+    expect(nunca.find('.w-crud-rail').exists()).toBe(true)
+    nunca.unmount()
+  })
+})
+
 describe('WCrudView — somente leitura', () => {
   const vazio = {
     list: vi.fn().mockResolvedValue({ data: [], page: 1, page_size: 20, rows: 0 }),

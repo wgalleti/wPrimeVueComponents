@@ -526,6 +526,13 @@
           "description": ""
         },
         {
+          "name": "railMenu",
+          "type": "\"auto\" | \"never\" | undefined",
+          "required": false,
+          "default": "\"auto\"",
+          "description": "No celular (`useBreakpoint().isCelular`) o trilho de ações sai da lateral e vira um\nbotão ⋮ ao lado da busca, que abre as mesmas ações num menu; a busca ocupa a largura\ndo card. `auto` (default) faz isso só no celular; `never` mantém o trilho sempre."
+        },
+        {
           "name": "contextMenu",
           "type": "boolean | undefined",
           "required": false,
@@ -673,6 +680,11 @@
           "description": ""
         },
         {
+          "name": "rail-actions",
+          "type": "{ selected: Record<string, unknown> | null; crud: CrudManagerReturn<any>; }",
+          "description": ""
+        },
+        {
           "name": "toolbar-start",
           "type": "{}",
           "description": ""
@@ -715,11 +727,6 @@
         {
           "name": "card",
           "type": "{ data: Record<string, unknown>; crud: CrudManagerReturn<any>; columns: ColumnDef[]; index: number; }",
-          "description": ""
-        },
-        {
-          "name": "rail-actions",
-          "type": "{ selected: Record<string, unknown> | null; crud: CrudManagerReturn<any>; }",
           "description": ""
         },
         {
