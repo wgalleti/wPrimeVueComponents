@@ -1000,9 +1000,11 @@
   margin-top: var(--w-space-3);
 }
 
+/* Anel por DENTRO: por fora ele era cortado nas laterais quando o card encosta na borda da
+   área que rola (celular), e a seleção ficava com 2px em cima/embaixo e 1px dos lados. */
 .w-crud-card--selected {
   border-color: var(--w-primary);
-  box-shadow: 0 0 0 1px var(--w-primary);
+  box-shadow: inset 0 0 0 1px var(--w-primary);
 }
 
 /* ==========================================================
