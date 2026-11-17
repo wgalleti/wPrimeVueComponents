@@ -2,6 +2,7 @@
 //
 // Cobre o nome acessível dos botões só-ícone (toolbar, ações de linha, rail).
 // Tooltip do PrimeVue não vira nome — cada um precisa de `aria-label`.
+import { readFileSync } from 'node:fs'
 import { describe, it, expect, vi, beforeAll, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h, nextTick } from 'vue'
@@ -43,6 +44,7 @@ function montar(
   config: Partial<CrudManagerConfig<Linha>> = {},
   props: Record<string, unknown> = {},
   extraProvider: Partial<DataProvider> = {},
+  slots: Record<string, () => unknown> = {},
 ) {
   const provider: Partial<DataProvider> = {
     list: vi.fn().mockResolvedValue({
@@ -61,7 +63,7 @@ function montar(
         form: [{ field: 'nome', label: 'Nome', type: 'text' }],
         ...config,
       })
-      return () => h(WCrudView, { crud, title: 'Itens', ...props })
+      return () => h(WCrudView, { crud, title: 'Itens', ...props }, slots)
     },
   })
   return mount(Host, {
@@ -1265,6 +1267,172 @@ describe('WCrudView — severity de status em ação', () => {
     expect(w.find('[aria-label="Ok"]').classes()).toContain('w-button--ghost')
     expect(w.find('[aria-label="Del"]').classes()).toContain('w-button--danger')
     warn.mockRestore()
+    w.unmount()
+  })
+})
+
+describe('WCrudView — cabeçalho quebra linha (CSS)', () => {
+  // jsdom não calcula layout: confere as regras em crud.css (modelo: .w-page-header).
+  const css = readFileSync('src/assets/crud.css', 'utf8')
+  const regra = (seletor: string) =>
+    css.match(new RegExp(`\\n${seletor.replace(/\./g, '\\.')} \\{([^}]*)\\}`))?.[1] ?? ''
+
+  it('o cabeçalho quebra, o bloco de título tem base própria e as ações não ficam rígidas', () => {
+    expect(regra('.w-crud-header')).toContain('flex-wrap: wrap')
+    expect(regra('.w-crud-header-content')).toMatch(/flex: 1 1 16rem/)
+    expect(regra('.w-crud-header-content')).toMatch(/min-width: 0/)
+    expect(regra('.w-crud-header-actions')).toContain('flex-wrap: wrap')
+    expect(regra('.w-crud-header-actions')).not.toContain('flex-shrink: 0')
+  })
+})
+
+describe('WCrudView — filtros num drawer no celular', () => {
+  function janelaCelular(celular: boolean) {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: celular && query.startsWith('(max-width: 599'),
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+  }
+  afterEach(() => vi.unstubAllGlobals())
+
+  const slotFiltros = { 'toolbar-filters': () => h('span', { class: 'meu-filtro' }, 'Período') }
+  const configFiltro = {
+    columns: [{ field: 'nome', header: 'Nome', filter: { type: 'text' as const } }],
+  }
+
+  it('no celular: filtros saem da toolbar; botão "Filtros" abre o drawer com o slot', async () => {
+    janelaCelular(true)
+    const w = montar({}, {}, {}, slotFiltros)
+    await flushPromises()
+    await w.vm.$nextTick()
+    expect(w.find('.w-crud-toolbar .meu-filtro').exists()).toBe(false)
+    const botao = w.find('[aria-label="Filtros"]')
+    expect(botao.exists()).toBe(true)
+    expect(w.find('.w-crud-search-row [aria-label="Filtros"]').exists()).toBe(true)
+    expect(w.find('.w-crud-filters-btn__count').exists()).toBe(false)
+    expect(w.find('.meu-filtro').exists()).toBe(false)
+
+    await botao.trigger('click')
+    await flushPromises()
+    const drawer = w.find('.w-crud-filters-drawer')
+    expect(drawer.exists()).toBe(true)
+    expect(drawer.find('.meu-filtro').text()).toBe('Período')
+    w.unmount()
+  })
+
+  it('contador = filtros ativos (mesma fonte do "Limpar filtros"); limpar mora no drawer', async () => {
+    janelaCelular(true)
+    const w = montar(configFiltro, {}, {}, slotFiltros)
+    await flushPromises()
+    const crud = w.findComponent(WCrudView).props('crud') as ReturnType<typeof useCrudManager>
+    crud.setColumnFilter('nome', 'soja')
+    crud.setColumnFilter('periodo', '2026-01')
+    await flushPromises()
+    expect(w.find('.w-crud-filters-btn__count').text()).toBe('2')
+    expect(w.find('.w-crud-toolbar [aria-label="Nome"]').exists()).toBe(false)
+
+    await w.find('[aria-label="Filtros"]').trigger('click')
+    await flushPromises()
+    const drawer = w.find('.w-crud-filters-drawer')
+    expect(drawer.find('input[aria-label="Nome"]').exists()).toBe(true)
+    const limpar = drawer.findAll('button').find((b) => b.text() === 'Limpar filtros')
+    expect(limpar).toBeTruthy()
+    await limpar?.trigger('click')
+    await flushPromises()
+    expect(w.find('.w-crud-filters-btn__count').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('na mesa nada muda: filtros na toolbar e sem botão "Filtros"', async () => {
+    janelaCelular(false)
+    const w = montar(configFiltro, {}, {}, slotFiltros)
+    await flushPromises()
+    expect(w.find('.w-crud-toolbar .meu-filtro').exists()).toBe(true)
+    expect(w.find('.w-crud-toolbar [aria-label="Nome"]').exists()).toBe(true)
+    expect(w.find('[aria-label="Filtros"]').exists()).toBe(false)
+    expect(w.find('.w-crud-filters-drawer').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('filtersDrawer="never" mantém os filtros na toolbar também no celular', async () => {
+    janelaCelular(true)
+    const w = montar({}, { filtersDrawer: 'never' }, {}, slotFiltros)
+    await flushPromises()
+    expect(w.find('.w-crud-toolbar .meu-filtro').exists()).toBe(true)
+    expect(w.find('[aria-label="Filtros"]').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('sem filtro nenhum não aparece botão no celular', async () => {
+    janelaCelular(true)
+    const w = montar()
+    await flushPromises()
+    expect(w.find('[aria-label="Filtros"]').exists()).toBe(false)
+    w.unmount()
+  })
+})
+
+describe('WCrudView — título do card por ColumnDef.card', () => {
+  const colunas = [
+    { field: 'id', header: 'Id' },
+    { field: 'nome', header: 'Nome', card: 'title' as const },
+    { field: 'status', header: 'Status' },
+  ]
+  const provider = {
+    list: vi.fn().mockResolvedValue({
+      data: [{ id: 12603, nome: 'Conta Soja', status: 'Aberta' }],
+      page: 1,
+      page_size: 20,
+      rows: 1,
+    }),
+  }
+  const titulo = (w: ReturnType<typeof montar>) => w.find('.w-crud-card-row--title')
+
+  it('card: "title" na 2ª coluna vira o título e sai do corpo', async () => {
+    const w = montar({ columns: colunas }, { defaultView: 'cards' }, provider)
+    await flushPromises()
+    expect(titulo(w).text()).toBe('Conta Soja')
+    const rotulos = w.findAll('.w-crud-card-label').map((l) => l.text())
+    expect(rotulos).toEqual(['Id', 'Status'])
+    w.unmount()
+  })
+
+  it('sem card: "title" segue a 1ª coluna visível', async () => {
+    const w = montar(
+      { columns: colunas.map(({ field, header }) => ({ field, header })) },
+      { defaultView: 'cards' },
+      provider,
+    )
+    await flushPromises()
+    expect(titulo(w).text()).toBe('12603')
+    w.unmount()
+  })
+
+  it('coluna card: "title" oculta não vira título', async () => {
+    const w = montar(
+      { columns: colunas.map((c) => (c.card ? { ...c, visible: false } : c)) },
+      { defaultView: 'cards' },
+      provider,
+    )
+    await flushPromises()
+    expect(titulo(w).text()).toBe('12603')
+    w.unmount()
+  })
+
+  it('a tabela da mesa não muda: ordem das colunas segue a do schema', async () => {
+    const w = montar({ columns: colunas }, {}, provider)
+    await flushPromises()
+    const cabecalhos = w.findAll('th').map((t) => t.text())
+    expect(cabecalhos.indexOf('Id')).toBeLessThan(cabecalhos.indexOf('Nome'))
     w.unmount()
   })
 })

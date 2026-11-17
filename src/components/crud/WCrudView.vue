@@ -15,7 +15,6 @@ import WButton from '@/components/ui/WButton.vue'
 import { warnOnce } from '@/utils/warnOnce'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
-import Select from 'primevue/select'
 import WPopover from '@/components/ui/WPopover.vue'
 import Checkbox from 'primevue/checkbox'
 import IconField from 'primevue/iconfield'
@@ -23,6 +22,7 @@ import InputIcon from 'primevue/inputicon'
 import Paginator from 'primevue/paginator'
 import WMenu from '@/components/ui/WMenu.vue'
 import Dialog from 'primevue/dialog'
+import Drawer from 'primevue/drawer'
 import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
@@ -32,6 +32,7 @@ import { useDelayedLoading } from '@/composables/useDelayedLoading'
 import WSkeleton from '@/components/ui/WSkeleton.vue'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
+import WCrudFilters from '@/internal/WCrudFilters.vue'
 import type { CrudGroupScope } from '@/types/crudGroup'
 import type { CrudManagerReturn } from '@/types/manager'
 import type { RowAction } from '@/types/action'
@@ -101,6 +102,11 @@ const props = withDefaults(
      *  botão ⋮ ao lado da busca, que abre as mesmas ações num menu; a busca ocupa a largura
      *  do card. `auto` (default) faz isso só no celular; `never` mantém o trilho sempre. */
     railMenu?: 'auto' | 'never'
+    /** No celular (`useBreakpoint().isCelular`) os filtros (declarativos, `toolbar-filters` e
+     *  "Limpar filtros") saem da toolbar e vão para um botão "Filtros" ao lado da busca, com o
+     *  nº de filtros ativos, que abre um drawer por baixo. `auto` (default) faz isso só no
+     *  celular e só quando há filtro; `never` mantém os filtros na toolbar sempre. */
+    filtersDrawer?: 'auto' | 'never'
     contextMenu?: boolean
     showPrint?: boolean
     exportCsv?: boolean
@@ -151,6 +157,7 @@ const props = withDefaults(
     composed: false,
     actionRail: true,
     railMenu: 'auto',
+    filtersDrawer: 'auto',
     contextMenu: true,
     showPrint: false,
     exportCsv: true,
@@ -343,11 +350,14 @@ function colAlignClass(col: { align?: string }) {
   return undefined
 }
 
-// Composto: a coluna `identity` é o título do card (avatar + duas linhas), onde estiver.
+// Título do card: a coluna `card: 'title'` (qualquer modo); senão, no composto, a `identity`
+// onde estiver; senão a 1ª coluna visível. A que vira título sai do corpo.
 const cardColumns = computed(() => {
   const cols = visibleColumns.value.slice(0, props.cardFields)
-  const id = props.composed ? visibleColumns.value.find((c) => c.type === 'identity') : undefined
-  return id ? [id, ...cols.filter((c) => c !== id)].slice(0, props.cardFields) : cols
+  const title =
+    visibleColumns.value.find((c) => c.card === 'title') ??
+    (props.composed ? visibleColumns.value.find((c) => c.type === 'identity') : undefined)
+  return title ? [title, ...cols.filter((c) => c !== title)].slice(0, props.cardFields) : cols
 })
 
 // --- Row Actions ---
@@ -703,10 +713,6 @@ function onCellEditComplete(e: {
 const filterableColumns = computed<ColumnDef[]>(() =>
   props.crud.config.columns.filter((c) => c.filter),
 )
-const booleanFilterOptions = [
-  { label: 'Sim', value: true },
-  { label: 'Não', value: false },
-]
 function fParam(col: ColumnDef): string {
   return col.filter?.param || col.field
 }
@@ -716,6 +722,21 @@ function onTextFilter(col: ColumnDef, value: string) {
   if (filterTimers[param]) clearTimeout(filterTimers[param])
   filterTimers[param] = setTimeout(() => props.crud.setColumnFilter(param, value || null), 300)
 }
+// Celular: os filtros saem da toolbar (que não cabe em 390px) e vão para um drawer. O contador
+// usa a mesma fonte do "Limpar filtros" (`crud.columnFilters`), que o `toolbar-filters` também
+// alimenta via `crud.setColumnFilter`.
+const filtersCollapsed = computed(
+  () =>
+    props.filtersDrawer === 'auto' &&
+    isCelular.value &&
+    (filterableColumns.value.length > 0 || !!slots['toolbar-filters']),
+)
+const filtersOpen = ref(false)
+const activeFilterCount = computed(() => Object.keys(props.crud.columnFilters).length)
+watch(filtersCollapsed, (v) => {
+  if (!v) filtersOpen.value = false
+})
+
 const cm = ref<InstanceType<typeof WMenu> | null>(null)
 
 function selectRow(row: Record<string, unknown>) {
@@ -1140,7 +1161,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-crud" :class="{ 'w-crud--composed': composed, 'w-crud--rail-menu': railCollapsed }">
+  <div
+    class="w-crud"
+    :class="{
+      'w-crud--composed': composed,
+      'w-crud--rail-menu': railCollapsed,
+      'w-crud--filters-drawer': filtersCollapsed,
+    }"
+  >
     <!-- Header -->
     <div v-if="showHeader" class="w-crud-header">
       <div class="w-crud-header-content">
@@ -1282,7 +1310,10 @@ onMounted(() => {
                 <div class="w-crud-toolbar-start">
                   <!-- Linha da busca: `display: contents` na mesa; no celular junta a busca, que ocupa
                        a largura do card, e o ⋮ com as ações do trilho. -->
-                  <div v-if="showSearch || railCollapsed" class="w-crud-search-row">
+                  <div
+                    v-if="showSearch || railCollapsed || filtersCollapsed"
+                    class="w-crud-search-row"
+                  >
                     <IconField v-if="showSearch">
                       <InputIcon class="pi pi-search" />
                       <InputText
@@ -1293,6 +1324,19 @@ onMounted(() => {
                         @input="crud.onSearch"
                       />
                     </IconField>
+                    <span v-if="filtersCollapsed" class="w-crud-filters-btn">
+                      <WButton
+                        variant="ghost"
+                        icon-only
+                        icon="pi pi-filter"
+                        aria-label="Filtros"
+                        aria-haspopup="dialog"
+                        @click="filtersOpen = true"
+                      />
+                      <span v-if="activeFilterCount > 0" class="w-crud-filters-btn__count">{{
+                        activeFilterCount
+                      }}</span>
+                    </span>
                     <template v-if="railCollapsed">
                       <slot name="rail-actions" :selected="railRow" :crud="crud" />
                       <WButton
@@ -1317,57 +1361,15 @@ onMounted(() => {
                   <slot name="toolbar-start" />
                   <!-- Filtros declarativos de coluna (ColumnDef.filter): moram na toolbar do
                        grid, ao lado da busca — nunca numa faixa própria acima da tabela. -->
-                  <template v-for="col in filterableColumns" :key="col.field">
-                    <InputText
-                      v-if="(col.filter?.type || 'text') === 'text'"
-                      :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
-                      :placeholder="col.filter?.placeholder || col.header"
-                      :aria-label="col.filter?.placeholder || col.header"
-                      size="small"
-                      @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
-                    />
-                    <Select
-                      v-else-if="col.filter?.type === 'select'"
-                      :model-value="crud.columnFilters[fParam(col)]"
-                      :options="col.filter?.options"
-                      option-label="label"
-                      option-value="value"
-                      :placeholder="col.filter?.placeholder || col.header"
-                      :aria-label="col.filter?.placeholder || col.header"
-                      show-clear
-                      size="small"
-                      @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-                    />
-                    <Select
-                      v-else-if="col.filter?.type === 'boolean'"
-                      :model-value="crud.columnFilters[fParam(col)]"
-                      :options="booleanFilterOptions"
-                      option-label="label"
-                      option-value="value"
-                      :placeholder="col.filter?.placeholder || col.header"
-                      :aria-label="col.filter?.placeholder || col.header"
-                      show-clear
-                      size="small"
-                      @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-                    />
-                    <InputNumber
-                      v-else-if="col.filter?.type === 'numeric'"
-                      :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
-                      :placeholder="col.filter?.placeholder || col.header"
-                      :aria-label="col.filter?.placeholder || col.header"
-                      size="small"
-                      @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
-                    />
-                  </template>
-                  <slot name="toolbar-filters" />
-                  <WButton
-                    v-if="Object.keys(crud.columnFilters).length"
-                    variant="ghost"
-                    label="Limpar filtros"
-                    icon="pi pi-filter-slash"
-                    size="sm"
-                    @click="crud.clearColumnFilters()"
-                  />
+                  <WCrudFilters
+                    v-if="!filtersCollapsed"
+                    :crud="crud"
+                    :columns="filterableColumns"
+                    :param-of="fParam"
+                    :on-text="onTextFilter"
+                  >
+                    <slot name="toolbar-filters" />
+                  </WCrudFilters>
                 </div>
                 <div class="w-crud-toolbar-end">
                   <slot name="toolbar-actions" />
@@ -1588,7 +1590,7 @@ onMounted(() => {
             <div class="w-crud-toolbar-start">
               <!-- Linha da busca: `display: contents` na mesa; no celular junta a busca, que ocupa
                    a largura do card, e o ⋮ com as ações do trilho. -->
-              <div v-if="showSearch || railCollapsed" class="w-crud-search-row">
+              <div v-if="showSearch || railCollapsed || filtersCollapsed" class="w-crud-search-row">
                 <IconField v-if="showSearch">
                   <InputIcon class="pi pi-search" />
                   <InputText
@@ -1599,6 +1601,19 @@ onMounted(() => {
                     @input="crud.onSearch"
                   />
                 </IconField>
+                <span v-if="filtersCollapsed" class="w-crud-filters-btn">
+                  <WButton
+                    variant="ghost"
+                    icon-only
+                    icon="pi pi-filter"
+                    aria-label="Filtros"
+                    aria-haspopup="dialog"
+                    @click="filtersOpen = true"
+                  />
+                  <span v-if="activeFilterCount > 0" class="w-crud-filters-btn__count">{{
+                    activeFilterCount
+                  }}</span>
+                </span>
                 <template v-if="railCollapsed">
                   <slot name="rail-actions" :selected="railRow" :crud="crud" />
                   <WButton
@@ -1623,57 +1638,15 @@ onMounted(() => {
               <slot name="toolbar-start" />
               <!-- Filtros declarativos de coluna (ColumnDef.filter): moram na toolbar do
                    grid, ao lado da busca — nunca numa faixa própria acima da tabela. -->
-              <template v-for="col in filterableColumns" :key="col.field">
-                <InputText
-                  v-if="(col.filter?.type || 'text') === 'text'"
-                  :model-value="(crud.columnFilters[fParam(col)] as string) ?? ''"
-                  :placeholder="col.filter?.placeholder || col.header"
-                  :aria-label="col.filter?.placeholder || col.header"
-                  size="small"
-                  @input="(e: Event) => onTextFilter(col, (e.target as HTMLInputElement).value)"
-                />
-                <Select
-                  v-else-if="col.filter?.type === 'select'"
-                  :model-value="crud.columnFilters[fParam(col)]"
-                  :options="col.filter?.options"
-                  option-label="label"
-                  option-value="value"
-                  :placeholder="col.filter?.placeholder || col.header"
-                  :aria-label="col.filter?.placeholder || col.header"
-                  show-clear
-                  size="small"
-                  @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-                />
-                <Select
-                  v-else-if="col.filter?.type === 'boolean'"
-                  :model-value="crud.columnFilters[fParam(col)]"
-                  :options="booleanFilterOptions"
-                  option-label="label"
-                  option-value="value"
-                  :placeholder="col.filter?.placeholder || col.header"
-                  :aria-label="col.filter?.placeholder || col.header"
-                  show-clear
-                  size="small"
-                  @update:model-value="(v: unknown) => crud.setColumnFilter(fParam(col), v)"
-                />
-                <InputNumber
-                  v-else-if="col.filter?.type === 'numeric'"
-                  :model-value="(crud.columnFilters[fParam(col)] as number) ?? null"
-                  :placeholder="col.filter?.placeholder || col.header"
-                  :aria-label="col.filter?.placeholder || col.header"
-                  size="small"
-                  @update:model-value="(v: number) => crud.setColumnFilter(fParam(col), v)"
-                />
-              </template>
-              <slot name="toolbar-filters" />
-              <WButton
-                v-if="Object.keys(crud.columnFilters).length"
-                variant="ghost"
-                label="Limpar filtros"
-                icon="pi pi-filter-slash"
-                size="sm"
-                @click="crud.clearColumnFilters()"
-              />
+              <WCrudFilters
+                v-if="!filtersCollapsed"
+                :crud="crud"
+                :columns="filterableColumns"
+                :param-of="fParam"
+                :on-text="onTextFilter"
+              >
+                <slot name="toolbar-filters" />
+              </WCrudFilters>
             </div>
             <div class="w-crud-toolbar-end">
               <slot name="toolbar-actions" />
@@ -1952,6 +1925,27 @@ onMounted(() => {
     <WMenu v-if="contextMenu" ref="cm" mode="context" :items="contextMenuItems" />
     <!-- Menu ⋮ do trilho recolhido (celular) -->
     <WMenu v-if="railCollapsed" ref="railMenuRef" :items="railMenuItems" />
+
+    <!-- Drawer de filtros (celular): o mesmo bloco da toolbar, ancorado no pane da aba -->
+    <Drawer
+      v-if="filtersCollapsed"
+      v-model:visible="filtersOpen"
+      position="bottom"
+      header="Filtros"
+      :append-to="tabHost?.hostEl.value ?? 'body'"
+      class="w-crud-filters-drawer"
+    >
+      <div class="w-crud-filters-drawer__body">
+        <WCrudFilters
+          :crud="crud"
+          :columns="filterableColumns"
+          :param-of="fParam"
+          :on-text="onTextFilter"
+        >
+          <slot name="toolbar-filters" />
+        </WCrudFilters>
+      </div>
+    </Drawer>
 
     <!-- Form Dialog -->
     <slot name="form-dialog" :crud="crud" :dialog-width="dialogWidth">

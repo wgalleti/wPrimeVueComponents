@@ -16,13 +16,16 @@
 /* --- Header --- */
 .w-crud-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--w-space-4);
   margin-bottom: var(--w-space-6);
 }
 
+/* Título com a linha inteira em tela estreita; as ações descem em vez de espremer o texto. */
 .w-crud-header-content {
+  flex: 1 1 16rem;
   min-width: 0;
 }
 
@@ -62,9 +65,9 @@
 
 .w-crud-header-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--w-space-2);
-  flex-shrink: 0;
 }
 
 /* --- KPI Cards --- */
@@ -424,18 +427,54 @@
 .w-crud-search-row {
   display: contents;
 }
-.w-crud--rail-menu .w-crud-search-row {
+:is(.w-crud--rail-menu, .w-crud--filters-drawer) .w-crud-search-row {
   display: flex;
   align-items: center;
   gap: var(--w-space-2);
   flex: 1 1 100%;
   min-width: 0;
 }
-.w-crud--rail-menu .w-crud-search-row .p-iconfield {
+:is(.w-crud--rail-menu, .w-crud--filters-drawer) .w-crud-search-row .p-iconfield {
   flex: 1;
   min-width: 0;
 }
-.w-crud--rail-menu .w-crud-search {
+:is(.w-crud--rail-menu, .w-crud--filters-drawer) .w-crud-search {
+  width: 100%;
+}
+
+/* Botão "Filtros" (celular): o contador de filtros ativos fica no canto do botão. */
+.w-crud-filters-btn {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.w-crud-filters-btn__count {
+  position: absolute;
+  top: calc(-1 * var(--w-space-05));
+  inset-inline-end: calc(-1 * var(--w-space-05));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--w-badge-h);
+  height: var(--w-badge-h);
+  padding: 0 var(--w-space-1);
+  border-radius: var(--w-radius-full);
+  background: var(--w-primary);
+  color: var(--w-primary-fg);
+  font-size: var(--w-text-2xs);
+  font-weight: var(--w-fw-bold);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* Conteúdo do drawer de filtros: um campo por linha, na largura do painel. */
+.w-crud-filters-drawer__body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--w-space-3);
+}
+.w-crud-filters-drawer__body > :not(.p-button) {
   width: 100%;
 }
 .w-crud-rail-menu-btn {
@@ -741,6 +780,25 @@
    e a pista ficava com 26px — meio knob. Largura é do tema, não da linha. */
 .w-crud-form-switch > .p-toggleswitch {
   flex: none;
+}
+
+/* Com ajuda: o interruptor ocupa as duas linhas à esquerda; rótulo em cima e a ajuda embaixo
+   dele — em qualquer largura. Ao lado do rótulo, a ajuda o espremia em 3 linhas. */
+.w-crud-form-switch--hint {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: center;
+  column-gap: var(--w-space-3);
+}
+
+.w-crud-form-switch--hint > .p-toggleswitch {
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.w-crud-form-switch--hint .w-crud-form-hint {
+  grid-column: 2;
+  margin-top: 0;
 }
 
 .w-crud-form-switch-label {

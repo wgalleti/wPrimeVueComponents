@@ -63,6 +63,11 @@ export interface ColumnDef {
   /** `type: 'boolean'` — cor do tag no `false` (default 'danger'). `null` = texto neutro,
    *  sem tag — para boolean que não é status (ex.: `nao_exige_analise` → "—"). */
   falseSeverity?: TagSeverity | null
+  /** Papel da coluna na visão em cards (mesmo nome do `EditableColumnDef.card`). `'title'`: esta
+   *  coluna vira o título do card (primeira posição) e sai do corpo — vale com ou sem `composed`
+   *  e vence a coluna `identity` do modo composto. Sem coluna `card: 'title'`, o título segue a
+   *  regra de sempre (1ª coluna visível; `identity` no `composed`). A tabela não muda. */
+  card?: 'title'
   /** Filtro declarativo desta coluna (aparece na toolbar do grid, junto da busca). */
   filter?: ColumnFilter
   /** Segunda linha abafada sob o valor, em qualquer tipo: nome de outro campo ou função. */

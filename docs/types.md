@@ -48,6 +48,9 @@ interface ColumnDef {
   /** Visibilidade da coluna. Default: true */
   visible?: boolean
 
+  /** Papel na visão em cards: 'title' faz desta coluna o título do card (fora do corpo). */
+  card?: 'title'
+
   /** Casas decimais para type 'number'. Default: 0 */
   decimals?: number
 

@@ -87,7 +87,7 @@ Todos os tipos do `FieldDef` sao suportados:
 | `select` | Select | `options`, `optionLabel` |
 | `autocomplete` | AutoComplete | Com filtragem local |
 | `fk` | WAutoCompleteFK | Busca na API + modal + CRUD inline; `↓` abre a lista, Enter com texto novo cadastra, `autoSelectSingle` (opt-in, default `false`) preenche quando há um registro só |
-| `switch` | ToggleSwitch | Com `switchLabel` |
+| `switch` | ToggleSwitch | Com `switchLabel`; com `hint` o interruptor ocupa as duas linhas à esquerda, rótulo em cima e a ajuda embaixo dele |
 | `textarea` | Textarea | `rows` configuravel |
 | `color` | ColorPicker | Com input hex |
 | `cpf_cnpj` | InputText + mask auto | Detecta CPF ou CNPJ |

@@ -2,6 +2,7 @@
 //
 // Cobre só os tipos de campo novos (segmented / choice / chips) — os demais já
 // são exercitados pelos testes de CRUD.
+import { readFileSync } from 'node:fs'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { defineComponent } from 'vue'
 import { mount, type VueWrapper } from '@vue/test-utils'
@@ -550,5 +551,42 @@ describe('type cep — consulta injetável', () => {
     expect(doPlugin).not.toHaveBeenCalled()
     expect(w.find('.w-crud-form-cep-error').exists()).toBe(true)
     vi.useRealTimers()
+  })
+})
+
+describe('WFormRenderer — switch com ajuda', () => {
+  const comAjuda: FieldDef = {
+    field: 'boas_vindas',
+    label: 'Boas-vindas enviadas',
+    type: 'switch',
+    hint: 'Marque quando o cliente já recebeu a mensagem',
+  }
+
+  it('com hint o switch ganha --hint e a ajuda fica ligada ao input', () => {
+    const w = montar([comAjuda], { boas_vindas: false })
+    const caixa = w.find('.w-crud-form-switch')
+    expect(caixa.classes()).toContain('w-crud-form-switch--hint')
+    const ajuda = caixa.find('.w-crud-form-hint')
+    expect(ajuda.text()).toBe('Marque quando o cliente já recebeu a mensagem')
+    expect(w.find('input[type="checkbox"]').attributes('aria-describedby')).toContain(
+      ajuda.attributes('id'),
+    )
+  })
+
+  it('sem hint nada muda: sem a classe --hint', () => {
+    const w = montar([{ field: 'ativo', label: 'Ativo', type: 'switch' }], { ativo: true })
+    expect(w.find('.w-crud-form-switch').classes()).not.toContain('w-crud-form-switch--hint')
+  })
+
+  it('CSS: grade auto 1fr, interruptor nas duas linhas e ajuda na 2ª embaixo do rótulo', () => {
+    // jsdom não calcula layout: confere as regras em crud.css.
+    const css = readFileSync('src/assets/crud.css', 'utf8')
+    expect(css).toMatch(
+      /\.w-crud-form-switch--hint \{[^}]*display: grid;[^}]*grid-template-columns: auto 1fr;/,
+    )
+    expect(css).toMatch(
+      /\.w-crud-form-switch--hint > \.p-toggleswitch \{[^}]*grid-row: 1 \/ span 2;/,
+    )
+    expect(css).toMatch(/\.w-crud-form-switch--hint \.w-crud-form-hint \{[^}]*grid-column: 2;/)
   })
 })

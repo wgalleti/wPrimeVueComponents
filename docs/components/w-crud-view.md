@@ -289,7 +289,9 @@ A visão alterna entre `table` (linha) e `cards` pelo botão da toolbar; `defaul
 inicial e `persistState` guarda a escolha do usuário em `localStorage`. `cardFields` (sem valor =
 todas) limita quantas colunas visíveis entram no card — a **primeira é o título**, as demais viram
 `rótulo: valor`. Com `selectionMode: 'multiple'` cada card traz a caixa "Selecionar" (a mesma
-seleção da tabela). Se o schema começa com um id técnico, reordene o `ColumnDef[]`.
+seleção da tabela). Se o schema começa com um id técnico, marque a coluna do nome com
+`card: 'title'`: ela vira o título do card (primeira posição, fora do corpo), com ou sem
+`composed`, e vence a coluna `identity` do modo composto. A tabela da mesa não muda.
 
 ### Agrupar linhas
 
@@ -445,6 +447,18 @@ para `crud.columnFilters` e a lista reconsulta.
 O slot `toolbar-filters` é para o que o declarativo não faz (FK assíncrona, período, toggle) —
 ele fala com o mesmo `crud.setColumnFilter`, então "Limpar filtros" limpa os dois. O que **não**
 é filtro (um funil clicável, KPIs) fica em `before-table`.
+
+### Celular: drawer de filtros
+
+Abaixo de 600 px (`useBreakpoint().isCelular`) os filtros — declarativos, `toolbar-filters` e
+"Limpar filtros" — saem da toolbar e vão para um botão **Filtros** (`pi-filter`) ao lado da
+busca/⋮. O botão mostra o número de filtros ativos (a mesma contagem que decide o "Limpar
+filtros": `crud.columnFilters`, que o slot também alimenta via `crud.setColumnFilter`) e abre um
+drawer por baixo, ancorado no pane da aba. O botão só existe quando há filtro. `filters-drawer="never"`
+mantém tudo na toolbar também no celular. Na mesa nada muda.
+
+Um filtro do slot que guarde o valor fora de `crud.columnFilters` não entra no contador. O
+conteúdo do slot só é montado enquanto o drawer está aberto.
 
 ## Contagem e paginador
 

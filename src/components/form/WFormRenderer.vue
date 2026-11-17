@@ -640,6 +640,7 @@ defineExpose({ validateAll, clearErrors })
             <div
               v-if="field.type === 'switch'"
               class="w-crud-form-switch"
+              :class="{ 'w-crud-form-switch--hint': field.hint }"
               :style="fieldSpanStyle(field, group)"
             >
               <ToggleSwitch
