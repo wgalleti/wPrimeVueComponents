@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.4.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.3...v2.4.0) (2026-11-17)
+
+### Funcionalidades
+
+* **crud:** filters drawer, card title column and wrapping header on phones ([1bc9970](https://github.com/wgalleti/wPrimeVueComponents/commit/1bc997015ef904475c40766ab0c894a239c02824))
+* **ui:** phone layouts for tab bar, route tabs, KPI grid and dialog ([fd870f6](https://github.com/wgalleti/wPrimeVueComponents/commit/fd870f6bb112719be36a60fe8a953d1b1db6a90f))
+
+### Correções
+
+* **ui:** stop squeezing header titles and progress labels on narrow screens ([6980bf5](https://github.com/wgalleti/wPrimeVueComponents/commit/6980bf5560b703ac1ebb667925e171b2491c59de))
 ## [2.3.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.2...v2.3.3) (2026-11-17)
 ## [2.3.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.1...v2.3.2) (2026-11-13)
 
