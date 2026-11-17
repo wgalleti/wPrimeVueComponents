@@ -26,6 +26,7 @@ import Dialog from 'primevue/dialog'
 import Tag from 'primevue/tag'
 import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useUrlState } from '@/composables/useUrlState'
 import { useDelayedLoading } from '@/composables/useDelayedLoading'
 import WSkeleton from '@/components/ui/WSkeleton.vue'
@@ -96,6 +97,10 @@ const props = withDefaults(
      *  próprio). O wrapper vira só a célula do grid. */
     cardBare?: boolean
     actionRail?: boolean
+    /** No celular (`useBreakpoint().isCelular`) o trilho de ações sai da lateral e vira um
+     *  botão ⋮ ao lado da busca, que abre as mesmas ações num menu; a busca ocupa a largura
+     *  do card. `auto` (default) faz isso só no celular; `never` mantém o trilho sempre. */
+    railMenu?: 'auto' | 'never'
     contextMenu?: boolean
     showPrint?: boolean
     exportCsv?: boolean
@@ -145,6 +150,7 @@ const props = withDefaults(
     cardMode: 'auto',
     composed: false,
     actionRail: true,
+    railMenu: 'auto',
     contextMenu: true,
     showPrint: false,
     exportCsv: true,
@@ -526,6 +532,14 @@ const railVisible = computed(
       props.exportCsv),
 )
 
+// Celular: o trilho vira o botão ⋮ ao lado da busca — a coluna de 56px da lateral espremia
+// os cards e a busca de largura fixa passava da borda.
+const { isCelular } = useBreakpoint()
+const railCollapsed = computed(
+  () => railVisible.value && props.railMenu === 'auto' && isCelular.value,
+)
+const railMenuRef = ref<InstanceType<typeof WMenu> | null>(null)
+
 // --- Selection (drives action rail + context menu) ---
 
 // Exposta como `v-model:selectedRow` para o consumidor sincronizar a seleção de
@@ -872,6 +886,40 @@ const contextMenuItems = computed<MenuItem[]>(() => {
   return items
 })
 
+// Itens do menu ⋮ (trilho recolhido no celular): as mesmas ações do trilho, na mesma ordem.
+// Ação de linha sem linha ativa fica desabilitada, como o botão do trilho.
+const railMenuItems = computed<MenuItem[]>(() => {
+  const row = railRow.value
+  const items: MenuItem[] = []
+  if (canCreate.value) {
+    items.push({ label: 'Novo', icon: 'pi pi-plus', command: () => props.crud.openCreateDialog() })
+  }
+  const acoes = effectiveRowActions.value.filter((a) => !row || isActionVisible(a, row))
+  if (items.length && acoes.length) items.push({ separator: true })
+  for (const action of acoes) {
+    items.push({
+      label: actionLabel(action),
+      icon: action.icon,
+      class: action.severity === 'danger' ? 'w-crud-ctx-danger' : undefined,
+      disabled: !row || isActionDisabled(action, row),
+      command: () => row && handleRowAction(action, row),
+    })
+  }
+  if (items.length && (props.showPrint || props.exportCsv)) items.push({ separator: true })
+  if (props.showPrint) {
+    items.push({
+      label: 'Imprimir',
+      icon: 'pi pi-print',
+      disabled: !row,
+      command: () => railPrint(),
+    })
+  }
+  if (props.exportCsv) {
+    items.push({ label: csvLabel.value, icon: 'pi pi-download', command: () => doExportCsv() })
+  }
+  return items
+})
+
 // --- Action rail handlers ---
 
 function railPrint() {
@@ -1092,7 +1140,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-crud" :class="{ 'w-crud--composed': composed }">
+  <div class="w-crud" :class="{ 'w-crud--composed': composed, 'w-crud--rail-menu': railCollapsed }">
     <!-- Header -->
     <div v-if="showHeader" class="w-crud-header">
       <div class="w-crud-header-content">
@@ -1136,7 +1184,7 @@ onMounted(() => {
     </slot>
 
     <!-- Content (table/cards + optional action rail) -->
-    <div class="w-crud-content" :class="{ 'w-crud-content--rail': railVisible }">
+    <div class="w-crud-content" :class="{ 'w-crud-content--rail': railVisible && !railCollapsed }">
       <div ref="conteudo" class="w-crud-content-main">
         <!-- Sonda do piso (só em `fit`): caixa com a largura do piso da tabela, que o
              navegador resolve e o ResizeObserver lê em px, presa num envelope de
@@ -1232,16 +1280,32 @@ onMounted(() => {
             <template #header>
               <div class="w-crud-toolbar">
                 <div class="w-crud-toolbar-start">
-                  <IconField v-if="showSearch">
-                    <InputIcon class="pi pi-search" />
-                    <InputText
-                      :model-value="crud.search.value"
-                      placeholder="Buscar..."
-                      aria-label="Buscar"
-                      class="w-crud-search"
-                      @input="crud.onSearch"
-                    />
-                  </IconField>
+                  <!-- Linha da busca: `display: contents` na mesa; no celular junta a busca, que ocupa
+                       a largura do card, e o ⋮ com as ações do trilho. -->
+                  <div v-if="showSearch || railCollapsed" class="w-crud-search-row">
+                    <IconField v-if="showSearch">
+                      <InputIcon class="pi pi-search" />
+                      <InputText
+                        :model-value="crud.search.value"
+                        placeholder="Buscar..."
+                        aria-label="Buscar"
+                        class="w-crud-search"
+                        @input="crud.onSearch"
+                      />
+                    </IconField>
+                    <template v-if="railCollapsed">
+                      <slot name="rail-actions" :selected="railRow" :crud="crud" />
+                      <WButton
+                        variant="ghost"
+                        icon-only
+                        icon="pi pi-ellipsis-v"
+                        aria-label="Ações"
+                        aria-haspopup="menu"
+                        class="w-crud-rail-menu-btn"
+                        @click="(e: Event) => railMenuRef?.toggle(e)"
+                      />
+                    </template>
+                  </div>
                   <span
                     v-if="!showHeader && showCount"
                     class="w-crud-count"
@@ -1359,7 +1423,7 @@ onMounted(() => {
                     </WPopover>
                   </template>
                   <WButton
-                    v-if="exportCsv"
+                    v-if="exportCsv && !railCollapsed"
                     v-tooltip.top="csvLabel"
                     variant="ghost"
                     icon-only
@@ -1522,16 +1586,32 @@ onMounted(() => {
         <div v-else class="w-crud-cards-wrap">
           <div class="w-crud-toolbar w-crud-toolbar--standalone">
             <div class="w-crud-toolbar-start">
-              <IconField v-if="showSearch">
-                <InputIcon class="pi pi-search" />
-                <InputText
-                  :model-value="crud.search.value"
-                  placeholder="Buscar..."
-                  aria-label="Buscar"
-                  class="w-crud-search"
-                  @input="crud.onSearch"
-                />
-              </IconField>
+              <!-- Linha da busca: `display: contents` na mesa; no celular junta a busca, que ocupa
+                   a largura do card, e o ⋮ com as ações do trilho. -->
+              <div v-if="showSearch || railCollapsed" class="w-crud-search-row">
+                <IconField v-if="showSearch">
+                  <InputIcon class="pi pi-search" />
+                  <InputText
+                    :model-value="crud.search.value"
+                    placeholder="Buscar..."
+                    aria-label="Buscar"
+                    class="w-crud-search"
+                    @input="crud.onSearch"
+                  />
+                </IconField>
+                <template v-if="railCollapsed">
+                  <slot name="rail-actions" :selected="railRow" :crud="crud" />
+                  <WButton
+                    variant="ghost"
+                    icon-only
+                    icon="pi pi-ellipsis-v"
+                    aria-label="Ações"
+                    aria-haspopup="menu"
+                    class="w-crud-rail-menu-btn"
+                    @click="(e: Event) => railMenuRef?.toggle(e)"
+                  />
+                </template>
+              </div>
               <span
                 v-if="!showHeader && showCount"
                 class="w-crud-count"
@@ -1618,7 +1698,7 @@ onMounted(() => {
                 />
               </template>
               <WButton
-                v-if="exportCsv"
+                v-if="exportCsv && !railCollapsed"
                 v-tooltip.top="csvLabel"
                 variant="ghost"
                 icon-only
@@ -1813,7 +1893,7 @@ onMounted(() => {
       <!-- /.w-crud-content-main -->
 
       <!-- Floating action rail (todas as actions vivem aqui) -->
-      <aside v-if="railVisible" class="w-crud-rail">
+      <aside v-if="railVisible && !railCollapsed" class="w-crud-rail">
         <WButton
           v-if="canCreate"
           v-tooltip.left="'Novo'"
@@ -1870,6 +1950,8 @@ onMounted(() => {
 
     <!-- Context menu -->
     <WMenu v-if="contextMenu" ref="cm" mode="context" :items="contextMenuItems" />
+    <!-- Menu ⋮ do trilho recolhido (celular) -->
+    <WMenu v-if="railCollapsed" ref="railMenuRef" :items="railMenuItems" />
 
     <!-- Form Dialog -->
     <slot name="form-dialog" :crud="crud" :dialog-width="dialogWidth">

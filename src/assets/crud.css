@@ -419,6 +419,30 @@
   max-width: 100%;
 }
 
+/* Linha da busca: na mesa não existe (os filhos entram direto na toolbar). No celular
+   (`railMenu`), a busca ocupa a largura do card e o ⋮ com as ações do trilho fica à direita. */
+.w-crud-search-row {
+  display: contents;
+}
+.w-crud--rail-menu .w-crud-search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.w-crud--rail-menu .w-crud-search-row .p-iconfield {
+  flex: 1;
+  min-width: 0;
+}
+.w-crud--rail-menu .w-crud-search {
+  width: 100%;
+}
+.w-crud-rail-menu-btn {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
 /* Barra de ações em lote (seleção múltipla): tint do primário, sem borda. */
 .w-crud-bulkbar {
   display: flex;
@@ -976,9 +1000,11 @@
   margin-top: var(--w-space-3);
 }
 
+/* Anel por DENTRO: por fora ele era cortado nas laterais quando o card encosta na borda da
+   área que rola (celular), e a seleção ficava com 2px em cima/embaixo e 1px dos lados. */
 .w-crud-card--selected {
   border-color: var(--w-primary);
-  box-shadow: 0 0 0 1px var(--w-primary);
+  box-shadow: inset 0 0 0 1px var(--w-primary);
 }
 
 /* ==========================================================
