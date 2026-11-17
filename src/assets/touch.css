@@ -50,17 +50,21 @@
   }
 }
 
-/* Tablet em pé: as ações do cabeçalho tomam a linha inteira e dividem a
-   largura entre si — em cima da mesma linha do título elas roubavam a largura
-   dele até sobrar uma letra por linha. */
+/* Tablet em pé: as ações do cabeçalho tomam a linha inteira (em cima da mesma linha do título
+   elas roubavam a largura dele até sobrar uma letra por linha). Uma linha que quebra: os botões
+   de texto dividem o que sobra; o só-ícone ("Atualizar") mantém o tamanho dele, sem virar caixa. */
 @media (max-width: 839px) {
   .w-page-header-actions {
     width: 100%;
   }
 
-  .w-page-header-actions .p-button {
-    flex: 1 1 10rem;
+  .w-page-header-actions .p-button:not(.p-button-icon-only) {
+    flex: 1 1 auto;
     justify-content: center;
+  }
+
+  .w-page-header-actions .p-button.p-button-icon-only {
+    flex: 0 0 auto;
   }
 }
 

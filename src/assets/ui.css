@@ -55,14 +55,18 @@
 
 .w-detail-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--w-space-4);
   margin-bottom: var(--w-space-4);
 }
 
+/* Em tela estreita o título fica com a linha inteira e as ações descem para baixo dele,
+   em vez de espremer o título até uma palavra por linha. */
 .w-detail-header-left {
   display: flex;
+  flex: 1 1 16rem;
   align-items: center;
   gap: var(--w-space-3);
   min-width: 0;
@@ -102,9 +106,9 @@
 
 .w-detail-header-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--w-space-2);
-  flex-shrink: 0;
 }
 
 /* ==========================================================
@@ -1027,6 +1031,35 @@
   left: calc(var(--w-progress-marker) / 2);
   width: 1px;
   background: var(--w-border);
+}
+
+/* Celular: 4–5 etapas lado a lado não cabem (rótulos se sobrepõem, a descrição quebra palavra
+   por palavra) — a régua horizontal vira a vertical: marcador à esquerda, texto ao lado. */
+@media (max-width: 599px) {
+  .w-progress-flow--horizontal {
+    flex-direction: column;
+    gap: var(--w-space-4);
+  }
+
+  .w-progress-flow--horizontal .w-progress-flow__step {
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: var(--w-space-3);
+    padding-right: 0;
+  }
+
+  .w-progress-flow--horizontal .w-progress-flow__step:not(:last-child)::after {
+    top: calc(var(--w-progress-marker) + var(--w-space-1));
+    bottom: calc(-1 * var(--w-space-4) + var(--w-space-1));
+    left: calc(var(--w-progress-marker) / 2);
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+
+  .w-progress-flow--horizontal .w-progress-flow__content {
+    padding-top: calc((var(--w-progress-marker) - 1.25em) / 2);
+  }
 }
 
 .w-progress-flow__step--done:not(:last-child)::after {
