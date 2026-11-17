@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import Select from 'primevue/select'
+import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useUrlState } from '@/composables/useUrlState'
 import type { TabItem } from '@/types/tabs'
 
@@ -7,7 +9,10 @@ import type { TabItem } from '@/types/tabs'
  * Barra de abas de TELA (não confundir com as abas dentro de um markdown).
  *
  * Controlada: só emite `update:modelValue` — quem decide o que renderizar é a
- * página. Navegação por teclado com ←/→ (padrão ARIA de tablist).
+ * página. Navegação por teclado com ←/→ (padrão ARIA de tablist). No celular
+ * (< 600px, `useBreakpoint().isCelular`) as abas viram um Select com as mesmas
+ * opções — a barra que quebra linha comia a tela. `isCelular` só vale depois da
+ * montagem, então o primeiro render é sempre a barra.
  */
 const props = defineProps<{
   /** `value` da aba ativa. */
@@ -39,11 +44,16 @@ if (urlSync && props.urlKey) {
   )
 }
 
+const { isCelular } = useBreakpoint()
+
 const botoes = ref<HTMLButtonElement[]>([])
 
 function registrar(el: unknown, indice: number): void {
   if (el instanceof HTMLButtonElement) botoes.value[indice] = el
 }
+
+const itemDe = (value: string): TabItem | undefined => props.items.find((i) => i.value === value)
+const temBadge = (item?: TabItem): boolean => item?.badge !== undefined && item?.badge !== null
 
 function selecionar(item: TabItem): void {
   if (!item.disabled) emit('update:modelValue', item.value)
@@ -64,7 +74,35 @@ function navegar(items: TabItem[], indice: number, passo: number): void {
 </script>
 
 <template>
-  <div class="w-tab-bar" role="tablist" :aria-label="ariaLabel">
+  <Select
+    v-if="isCelular"
+    class="w-tab-bar-select"
+    :model-value="modelValue"
+    :options="items"
+    option-label="label"
+    option-value="value"
+    option-disabled="disabled"
+    :aria-label="ariaLabel"
+    @update:model-value="(v: string | null) => v != null && emit('update:modelValue', v)"
+  >
+    <template #value="{ value }">
+      <span class="w-tab-bar__item-content">
+        <i v-if="itemDe(value)?.icon" :class="itemDe(value)?.icon" aria-hidden="true" />
+        <span>{{ itemDe(value)?.label }}</span>
+        <span v-if="temBadge(itemDe(value))" class="w-tab-bar__badge">{{
+          itemDe(value)?.badge
+        }}</span>
+      </span>
+    </template>
+    <template #option="{ option }">
+      <span class="w-tab-bar__item-content">
+        <i v-if="option.icon" :class="option.icon" aria-hidden="true" />
+        <span>{{ option.label }}</span>
+        <span v-if="temBadge(option)" class="w-tab-bar__badge">{{ option.badge }}</span>
+      </span>
+    </template>
+  </Select>
+  <div v-else class="w-tab-bar" role="tablist" :aria-label="ariaLabel">
     <button
       v-for="(item, indice) in items"
       :key="item.value"
@@ -82,7 +120,7 @@ function navegar(items: TabItem[], indice: number, passo: number): void {
     >
       <i v-if="item.icon" :class="item.icon" aria-hidden="true" />
       <span>{{ item.label }}</span>
-      <span v-if="item.badge !== undefined && item.badge !== null" class="w-tab-bar__badge">
+      <span v-if="temBadge(item)" class="w-tab-bar__badge">
         {{ item.badge }}
       </span>
     </button>

@@ -18,6 +18,8 @@ número na cor da severidade).
 ## Colunas
 
 - `columns` numérico (2–6): grade fixa, sempre esse número de colunas.
+  Em tela estreita as colunas fixas cedem: abaixo de 840 px, 3 a 6 colunas viram 2; abaixo de
+  600 px, qualquer número vira 1 coluna. A régua de 2 colunas é a de tablet em pé (a de 2 já cabe).
 - `columns="auto"`: a grade escolhe, pela **própria largura**, um número de colunas que
   fecha as linhas — nunca um card sozinho na última linha:
 

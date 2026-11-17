@@ -8,6 +8,8 @@ cai no `body`, como o `Dialog` de sempre.
 
 É **passthrough total**: todas as props, eventos (incluindo `v-model:visible`) e slots
 do `Dialog` passam direto. Um `append-to` explícito do consumidor vence o default.
+Sem `breakpoints` do consumidor, vale o padrão `{ '839px': '95vw', '599px': '100vw' }`
+(tablet em pé quase tela cheia, celular tela cheia); com `breakpoints` próprio, vale o dele.
 Use-o no lugar de importar `Dialog` do PrimeVue em app com navegação por abas.
 
 ## API

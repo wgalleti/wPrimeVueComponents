@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { readFileSync } from 'node:fs'
 import { describe, it, expect } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
@@ -146,5 +147,22 @@ describe('WKpiGrid — colunas', () => {
   it('ledger ativa a classe de faixa contínua w-kpi-grid--ledger', () => {
     expect(grid().classes()).not.toContain('w-kpi-grid--ledger')
     expect(grid({ ledger: true }).classes()).toContain('w-kpi-grid--ledger')
+  })
+})
+
+describe('WKpiGrid — régua de largura (CSS)', () => {
+  // jsdom não calcula layout: confere que a regra de cada faixa existe em form.css.
+  const css = readFileSync('src/assets/form.css', 'utf8')
+
+  it('< 840: de 3 a 6 colunas caem para 2', () => {
+    expect(css).toMatch(
+      /@media \(max-width: 839px\) \{[^@]*?\.w-kpi-grid--cols-6 \{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
+    )
+  })
+
+  it('< 600: qualquer número de colunas (2 a 6) vira uma só', () => {
+    const bloco = css.match(/@media \(max-width: 599px\) \{([^@]*?)\n\}/)?.[1] ?? ''
+    for (const n of [2, 3, 4, 5, 6]) expect(bloco).toContain(`.w-kpi-grid--cols-${n}`)
+    expect(bloco).toMatch(/grid-template-columns: 1fr;/)
   })
 })

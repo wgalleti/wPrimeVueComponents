@@ -80,6 +80,17 @@
   color: var(--w-primary);
 }
 
+/* Celular: o Select das abas ocupa a largura; ícone, rótulo e contador na mesma linha. */
+.w-tab-bar-select {
+  width: 100%;
+}
+
+.w-tab-bar__item-content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+}
+
 /* ==========================================================
    WTabNav — .w-tab-nav
    ==========================================================

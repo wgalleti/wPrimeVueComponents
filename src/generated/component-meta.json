@@ -533,6 +533,13 @@
           "description": "No celular (`useBreakpoint().isCelular`) o trilho de ações sai da lateral e vira um\nbotão ⋮ ao lado da busca, que abre as mesmas ações num menu; a busca ocupa a largura\ndo card. `auto` (default) faz isso só no celular; `never` mantém o trilho sempre."
         },
         {
+          "name": "filtersDrawer",
+          "type": "\"auto\" | \"never\" | undefined",
+          "required": false,
+          "default": "\"auto\"",
+          "description": "No celular (`useBreakpoint().isCelular`) os filtros (declarativos, `toolbar-filters` e\n\"Limpar filtros\") saem da toolbar e vão para um botão \"Filtros\" ao lado da busca, com o\nnº de filtros ativos, que abre um drawer por baixo. `auto` (default) faz isso só no\ncelular e só quando há filtro; `never` mantém os filtros na toolbar sempre."
+        },
+        {
           "name": "contextMenu",
           "type": "boolean | undefined",
           "required": false,

@@ -32,6 +32,13 @@ const abas: TabItem[] = [
 </template>
 ```
 
+## Celular
+
+Abaixo de 600 px (`useBreakpoint().isCelular`) a barra vira um **Select** com as mesmas abas
+(ícone, rótulo, contador; a desabilitada não é escolhível), mantendo `v-model`, `urlKey` e o
+`aria-label`. Como `isCelular` só lê a janela depois da montagem, o primeiro render é sempre a
+barra de abas; o Select entra logo em seguida. Fora do celular nada muda.
+
 ## Aba na URL (`urlKey`)
 
 `url-key="aba"` liga o `v-model` à query `?aba=` (`router.replace`, nunca `push`): a aba sobrevive

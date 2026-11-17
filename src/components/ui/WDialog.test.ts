@@ -74,3 +74,25 @@ describe('WDialog — âncora por aba', () => {
     expect(recebidos).toEqual([false])
   })
 })
+
+describe('WDialog — breakpoints', () => {
+  // O Dialog escreve as regras `@media` num <style> do <head>.
+  const css = () =>
+    Array.from(document.head.querySelectorAll('style'))
+      .map((e) => e.textContent)
+      .join('\n')
+
+  beforeEach(() => document.head.querySelectorAll('style').forEach((e) => e.remove()))
+
+  it('sem breakpoints do consumidor aplica o padrão da suíte (839px 95vw, 599px 100vw)', async () => {
+    await montar()
+    expect(css()).toMatch(/max-width:\s*839px[^}]*[^}]*95vw/)
+    expect(css()).toMatch(/max-width:\s*599px[^}]*[^}]*100vw/)
+  })
+
+  it('breakpoints do consumidor vencem o padrão', async () => {
+    await montar(undefined, { breakpoints: { '700px': '50vw' } })
+    expect(css()).toMatch(/max-width:\s*700px[^}]*50vw/)
+    expect(css()).not.toMatch(/max-width:\s*(839|599)px/)
+  })
+})

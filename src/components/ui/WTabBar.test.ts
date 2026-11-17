@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import PrimeVue from 'primevue/config'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import WTabBar from './WTabBar.vue'
@@ -131,5 +132,72 @@ describe('WTabBar — urlKey', () => {
     expect(w.findAll('[role="tab"]')).toHaveLength(3)
     expect(warn).toHaveBeenCalled()
     warn.mockRestore()
+  })
+})
+
+describe('WTabBar — celular vira Select', () => {
+  function janela(celular: boolean) {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((query: string) => ({
+        matches: celular && query.startsWith('(max-width: 599'),
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    )
+  }
+  afterEach(() => vi.unstubAllGlobals())
+
+  function montarSelect() {
+    return mount(WTabBar, {
+      props: { modelValue: 'documento', items: abas, ariaLabel: 'Seções' },
+      global: { plugins: [PrimeVue] },
+      attachTo: document.body,
+    })
+  }
+
+  it('no celular renderiza o select (sem tablist), com aria-label e a aba ativa com ícone', async () => {
+    janela(true)
+    const w = montarSelect()
+    await flushPromises()
+    expect(w.find('[role="tab"]').exists()).toBe(false)
+    expect(w.find('.p-select').exists()).toBe(true)
+    expect(w.find('[aria-label="Seções"]').exists()).toBe(true)
+    expect(w.find('.p-select-label').text()).toContain('Documento')
+    expect(w.find('.p-select-label i.pi-file').exists()).toBe(true)
+    w.unmount()
+  })
+
+  it('escolher uma opção emite update:modelValue; a desabilitada não é escolhível', async () => {
+    janela(true)
+    const w = montarSelect()
+    await flushPromises()
+    await w.find('.p-select').trigger('click')
+    await flushPromises()
+    const opcoes = Array.from(document.querySelectorAll<HTMLElement>('[role="option"]'))
+    expect(opcoes.map((o) => o.textContent?.trim())).toEqual([
+      'Documento',
+      'Tarefas3/8',
+      'Histórico',
+    ])
+    expect(opcoes[2].getAttribute('aria-disabled')).toBe('true')
+    opcoes[1].dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    await flushPromises()
+    expect(w.emitted('update:modelValue')).toEqual([['tarefas']])
+    w.unmount()
+  })
+
+  it('na mesa continua o tablist com botões role=tab', async () => {
+    janela(false)
+    const w = montarSelect()
+    await flushPromises()
+    expect(w.findAll('[role="tab"]')).toHaveLength(3)
+    expect(w.find('.p-select').exists()).toBe(false)
+    w.unmount()
   })
 })

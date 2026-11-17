@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import WMenu from './WMenu.vue'
 import type { MenuItem } from 'primevue/menuitem'
 import type { RouteTab, RouteTabsApi } from '@/types/routeTabs'
@@ -37,13 +37,24 @@ function registrar(el: unknown, indice: number): void {
   if (el instanceof HTMLElement) botoes.value[indice] = el
 }
 
-// A aba ativa sempre à vista — inclusive quando ativada por navegação
-// externa (sidebar, palette), não só por clique na barra.
-watch(activeKey, async () => {
+// A aba ativa sempre à vista — ao montar (aba restaurada), ao abrir/trocar por navegação externa
+// (sidebar, palette) e ao entrar aba nova. Rola só a faixa (`scrollLeft`): `scrollIntoView` também
+// rolaria a página e os ancestrais.
+function trazerAtivaParaVista(): void {
+  const lista = trilho.value
+  const aba = lista?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')
+  if (!lista || !aba) return
+  const faixa = lista.getBoundingClientRect()
+  const caixa = aba.getBoundingClientRect()
+  if (caixa.left < faixa.left) lista.scrollLeft += caixa.left - faixa.left
+  else if (caixa.right > faixa.right) lista.scrollLeft += caixa.right - faixa.right
+}
+
+watch([activeKey, () => items.value.length], async () => {
   await nextTick()
-  const indice = items.value.findIndex((t) => t.key === activeKey.value)
-  botoes.value[indice]?.scrollIntoView?.({ inline: 'nearest', block: 'nearest' })
+  trazerAtivaParaVista()
 })
+onMounted(trazerAtivaParaVista)
 
 function ativar(tab: RouteTab): void {
   emit('activate', tab)

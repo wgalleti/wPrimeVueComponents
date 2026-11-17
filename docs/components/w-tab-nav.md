@@ -94,6 +94,9 @@ troca entre abas). Calibragem via CSS vars do app consumidor, com fallbacks loca
 
 `prefers-reduced-motion: reduce` desativa a animação automaticamente.
 
+A aba ativa fica sempre à vista na faixa rolável — ao montar (aba restaurada), ao abrir e ao
+trocar por navegação externa —, rolando só a faixa na horizontal (nunca a página).
+
 ## API — WTabNav
 
 <ApiTable name="WTabNav" />

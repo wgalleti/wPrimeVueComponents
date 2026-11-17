@@ -607,10 +607,12 @@
 }
 
 @media (max-width: 839px) {
-  .w-kpi-grid--cols-2,
+  /* Tablet em pé: de 3 colunas para cima cai para 2 (a de 2 já cabe). */
   .w-kpi-grid--cols-3,
-  .w-kpi-grid--cols-4 {
-    grid-template-columns: 1fr;
+  .w-kpi-grid--cols-4,
+  .w-kpi-grid--cols-5,
+  .w-kpi-grid--cols-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .w-transfer {
@@ -619,6 +621,17 @@
 
   .w-transfer__controls {
     flex-direction: row;
+  }
+}
+
+/* Celular: uma coluna, qualquer que seja o número de colunas pedido. */
+@media (max-width: 599px) {
+  .w-kpi-grid--cols-2,
+  .w-kpi-grid--cols-3,
+  .w-kpi-grid--cols-4,
+  .w-kpi-grid--cols-5,
+  .w-kpi-grid--cols-6 {
+    grid-template-columns: 1fr;
   }
 }
 

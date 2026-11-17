@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { defineComponent } from 'vue'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
@@ -229,5 +229,60 @@ describe('WTabNav — ações', () => {
     expect(rotulos).toEqual(['Recarregar', 'Fechar', 'Fechar outras', 'Fechar todas'])
     expect(router.currentRoute.value.path).toBe('/a')
     expect(w.emitted('activate')).toBeUndefined()
+  })
+})
+
+describe('WTabNav — aba ativa à vista', () => {
+  // jsdom não calcula layout: a faixa mede 0–378 e a aba ativa fica em 966–1100 (caso do celular).
+  function medir(faixa: [number, number], ativa: [number, number]) {
+    return vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: HTMLElement,
+    ) {
+      const [left, right] = this.classList.contains('w-tab-nav__list')
+        ? faixa
+        : this.getAttribute('aria-selected') === 'true'
+          ? ativa
+          : [0, 0]
+      return { left, right, top: 0, bottom: 0, width: right - left, height: 0 } as DOMRect
+    })
+  }
+  afterEach(() => vi.restoreAllMocks())
+
+  it('ao trocar a aba ativa, rola a faixa até ela (sem tocar na página)', async () => {
+    const w = montar()
+    await router.push('/a')
+    await flushPromises()
+    medir([0, 378], [966, 1100])
+    const lista = w.find('.w-tab-nav__list').element as HTMLElement
+    const pagina = vi.spyOn(window, 'scrollTo')
+    await router.push('/b')
+    await flushPromises()
+    expect(lista.scrollLeft).toBe(1100 - 378)
+    expect(pagina).not.toHaveBeenCalled()
+  })
+
+  it('ao montar com a aba já ativa, também a traz à vista', async () => {
+    const primeira = montar()
+    await router.push('/a')
+    await flushPromises()
+    primeira.unmount()
+    medir([0, 378], [966, 1100])
+    const w = mount(WTabNav, {
+      props: { tabs: api },
+      global: { plugins: [router, PrimeVue] },
+      attachTo: document.body,
+    })
+    await flushPromises()
+    expect((w.find('.w-tab-nav__list').element as HTMLElement).scrollLeft).toBe(1100 - 378)
+  })
+
+  it('aba que já está visível não rola nada', async () => {
+    const w = montar()
+    await router.push('/a')
+    await flushPromises()
+    medir([0, 378], [10, 120])
+    await router.push('/b')
+    await flushPromises()
+    expect((w.find('.w-tab-nav__list').element as HTMLElement).scrollLeft).toBe(0)
   })
 })
