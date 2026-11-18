@@ -1054,6 +1054,38 @@
   font-size: var(--w-text-2xl);
 }
 
+/* Loader de marca (opt-in): a área da lista não colapsa antes do atraso, e a máscara da recarga
+   vira um véu claro por token com o loader no centro. */
+.w-crud-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(var(--w-loader-md) * 4);
+}
+
+/* só com a máscara do loader em tela: sem ele, a tabela de quem não configurou fica como sempre foi */
+.w-crud-table .p-datatable:has(> .w-crud-mask) {
+  position: relative;
+}
+
+.w-crud-table .p-datatable-mask.w-crud-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--w-loader-veil);
+}
+
+/* A máscara tem a altura da tabela, que passa da tela: o loader gruda perto do topo da área visível em vez de
+   ficar no meio da tabela, fora de vista. */
+.w-crud-table .p-datatable-mask.w-crud-mask .w-loader {
+  position: sticky;
+  top: calc(var(--w-loader-md) * 3);
+  margin-block: calc(var(--w-loader-md) * 2);
+}
+
 .w-crud-cards-wrap .w-crud-paginator {
   margin-top: var(--w-space-3);
 }

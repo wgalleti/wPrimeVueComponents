@@ -12,8 +12,8 @@ Grid responsivo para renderizar varios KPIs com layout consistente.
 <WKpiGrid :items="kpis" :columns="3" />
 ```
 
-Cada `KpiItem` repassa ao `WKpiCard` também `to`, `spark`, `size` e `tint` (`'value'` pinta o
-número na cor da severidade).
+Cada `KpiItem` repassa ao `WKpiCard` também `to`, `spark`, `size` (`default`, `compact` ou `hero`),
+`iconStyle` (`tile` ou `inline`) e `tint` (`'value'` pinta o número na cor da severidade).
 
 ## Colunas
 
@@ -43,6 +43,7 @@ número na cor da severidade).
   2×2. Os cortes são fixos (`@container` não aceita `var()`; régua em `tokens.css`).
   Acima de 8 itens não há degrau: a grade preenche com quantos couberem pelo piso
   `--w-kpi-min`, que o app ainda ajusta pelo nome curto (`--kpi-min`).
+
 - No `auto` a raiz é contêiner de largura (`container-type: inline-size`) e as colunas
   moram no trilho `.w-kpi-grid__track`: a grade ocupa a largura do pai e não se
   dimensiona pelo conteúdo — num pai que encolhe ao conteúdo (flex sem crescimento),
@@ -51,6 +52,39 @@ número na cor da severidade).
 Em qualquer modo o valor do card desce de tamanho quando o **card** estreita (ver
 [WKpiCard › Largura estreita](./w-kpi-card#largura-estreita)) — inclusive com `columns`
 numérico numa tela apertada.
+
+## Herói
+
+Item com `size: 'hero'` (o [card herói](./w-kpi-card#heroi): número grande, ícone em linha) ocupa
+**duas colunas**:
+
+- `columns` numérico: duas colunas a partir de 600 px de janela; abaixo disso a grade é de uma coluna
+  e o herói ocupa uma — nunca nasce coluna implícita.
+- `columns="auto"`: o herói **pesa duas células** na conta do `data-count` (3 itens com 1 herói
+  contam 4), então as colunas escolhidas ainda fecham a linha. Ele ocupa duas colunas nos degraus
+  com 2+ colunas e uma no degrau de 1 coluna.
+- Acima de 8 células o `auto` é auto-fit pelo piso `--w-kpi-min` (sem degrau): o herói ocupa uma
+  coluna, porque não há como saber, sem medir, que cabem duas.
+
+O herói só vem do item (`size` da grade não aceita `hero`) e vale também no slot `#item`, desde que
+o card seja filho direto da grade.
+
+```vue
+<WKpiGrid
+  :items="[
+    {
+      icon: 'pi pi-dollar',
+      label: 'Receita',
+      value: 'R$ 1,2 mi',
+      size: 'hero',
+      severity: 'success',
+    },
+    { icon: 'pi pi-users', label: 'Leads', value: 40, iconStyle: 'inline' },
+    { icon: 'pi pi-box', label: 'Pedidos', value: 7, iconStyle: 'inline' },
+  ]"
+  columns="auto"
+/>
+```
 
 ## Densa e tamanho
 

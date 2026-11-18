@@ -93,8 +93,32 @@ interface WPluginOptions {
    * troca a sua com `FieldDef.cepLookup`. Default: ViaCEP direto do navegador.
    */
   cepLookup?: (cep: string) => Promise<CepAddress | null>
+
+  /**
+   * Loader de marca (opt-in): imagem animada usada pelo WLoader e pelos componentes que a
+   * adotarem. Sem ele, nada muda. Leitura por `useLoaderConfig()`.
+   */
+  loader?: {
+    src: string // imagem animada (ex.: WebP)
+    srcset?: string // ex.: '/loader@2x.webp 2x'
+    still?: string // quadro parado, usado com prefers-reduced-motion
+    delay?: number // ms antes de aparecer. Default 300
+    minDuration?: number // ms mínimos em tela depois que apareceu. Default 500
+  }
 }
 ```
+
+### Loader de marca
+
+```ts
+app.use(WPrimeVuePlugin, {
+  axios: api,
+  loader: { src: '/loader.webp', srcset: '/loader@2x.webp 2x', still: '/loader.png' },
+})
+```
+
+Quem não usa o plugin e provê `W_CONFIG_KEY` à mão também vale: `useLoaderConfig()` lê por `inject`
+e devolve `null` se não achar `loader`. Veja o [WLoader](/components/w-loader).
 
 ### Consulta de CEP pela própria API
 

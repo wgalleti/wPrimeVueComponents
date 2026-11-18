@@ -166,3 +166,68 @@ describe('WKpiGrid — régua de largura (CSS)', () => {
     expect(bloco).toMatch(/grid-template-columns: 1fr;/)
   })
 })
+
+describe('WKpiGrid — item herói', () => {
+  const css = readFileSync('src/assets/ui.css', 'utf8')
+  const lista: KpiItem[] = [
+    { icon: 'pi pi-home', label: 'Receita', value: 'R$ 9 mi', size: 'hero', iconStyle: 'inline' },
+    { icon: 'pi pi-users', label: 'Leads', value: 40 },
+    { icon: 'pi pi-box', label: 'Pedidos', value: 7 },
+  ]
+  const grid = (props: Record<string, unknown> = {}) =>
+    mount(WKpiGrid, { props: { items: lista, ...props }, global: { plugins: [PrimeVue] } })
+
+  it('o item herói vira card hero, filho direto do trilho (alvo da regra de duas colunas)', () => {
+    const cards = grid().findAll('.w-kpi-grid__track > .w-kpi-card')
+    expect(cards[0].classes()).toContain('w-kpi-card--hero')
+    expect(cards[0].classes()).toContain('w-kpi-card--icon-inline')
+    expect(cards[1].classes()).not.toContain('w-kpi-card--hero')
+  })
+
+  it('repassa iconStyle do item ao card', () => {
+    const w = mount(WKpiGrid, {
+      props: { items: [{ icon: 'pi pi-home', label: 'A', value: 1, iconStyle: 'inline' }] },
+      global: { plugins: [PrimeVue] },
+    })
+    expect(w.find('.w-kpi-card').classes()).toContain('w-kpi-card--icon-inline')
+  })
+
+  it('no auto o herói pesa duas células no data-count (3 itens com 1 herói = 4 células)', () => {
+    expect(grid({ columns: 'auto' }).attributes('data-count')).toBe('4')
+    // 7 itens com 2 heróis = 9 células: acima de 8 não há degrau
+    const sete: KpiItem[] = Array.from({ length: 7 }, (_, i) => ({
+      icon: 'pi pi-home',
+      label: `K${i}`,
+      value: i,
+      size: i < 2 ? ('hero' as const) : undefined,
+    }))
+    expect(grid({ columns: 'auto', items: sete }).attributes('data-count')).toBeUndefined()
+  })
+
+  it('CSS: duas colunas nas fixas (1 em < 600 px) e, no auto, só onde o degrau tem 2+ colunas', () => {
+    expect(css).toMatch(/\.w-kpi-grid__track > \.w-kpi-card--hero \{\s*grid-column: span 2;/)
+    expect(css).toMatch(
+      /@media \(max-width: 599px\) \{\s*\.w-kpi-grid__track > \.w-kpi-card--hero \{\s*grid-column: auto;/,
+    )
+    expect(css).toMatch(/grid-column: span var\(--w-kpi-hero-span\);/)
+    // todo degrau que define colunas define também o span do herói
+    const colunas = css.match(/--w-kpi-cols: [2-8];/g) ?? []
+    const spans = css.match(/--w-kpi-hero-span: 2;/g) ?? []
+    expect(spans).toHaveLength(colunas.length)
+  })
+
+  it('color do item vira o tom do card (identidade vence a severidade); sem color, nenhum estilo', () => {
+    const w = mount(WKpiGrid, {
+      props: {
+        items: [
+          { icon: 'pi pi-home', label: 'A', value: 1, color: 'var(--produto-x)' },
+          { icon: 'pi pi-home', label: 'B', value: 2 },
+        ],
+      },
+      global: { plugins: [PrimeVue] },
+    })
+    const [comCor, semCor] = w.findAll('.w-kpi-card')
+    expect(comCor.attributes('style')).toContain('--w-card-tone: var(--produto-x)')
+    expect(semCor.attributes('style')).toBeUndefined()
+  })
+})

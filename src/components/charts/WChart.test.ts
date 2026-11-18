@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
+import { W_CONFIG_KEY } from '@/types/plugin'
 import WChart from './WChart.vue'
 
 // O WChart carrega o ECharts por import() dinâmico; aqui o núcleo é falso —
@@ -191,5 +192,115 @@ describe('WChart — clique no item (clickable + select)', () => {
     expect(instancia.on).toHaveBeenCalledTimes(2)
     w.unmount()
     expect(instancia.off).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('WChart — loader de marca', () => {
+  const comConfig = (props: Record<string, unknown> = {}) =>
+    mount(WChart, {
+      props: { option: OPTION, ...props },
+      global: {
+        provide: {
+          [W_CONFIG_KEY as symbol]: { loader: { src: '/l.gif', delay: 300, minDuration: 500 } },
+        },
+      },
+    })
+
+  it('sem config: showLoading como sempre e nenhuma camada nem classe nova', async () => {
+    const w = montar({ loading: true })
+    await flushPromises()
+    expect(instancia.showLoading).toHaveBeenCalled()
+    expect(w.find('.w-chart__loading').exists()).toBe(false)
+    expect(w.classes()).not.toContain('w-chart--loader')
+  })
+
+  it('com config: não chama showLoading; a camada vem após o delay e sai após o minDuration', async () => {
+    vi.useFakeTimers()
+    try {
+      const w = comConfig({ loading: true })
+      await flushPromises()
+      expect(instancia.showLoading).not.toHaveBeenCalled()
+      expect(w.classes()).toContain('w-chart--loader')
+      expect(w.find('.w-chart__loading').exists()).toBe(false)
+      await vi.advanceTimersByTimeAsync(300)
+      expect(w.find('.w-chart__loading .w-loader').exists()).toBe(true)
+      expect(w.find('.w-chart__canvas').exists()).toBe(true)
+
+      await w.setProps({ loading: false })
+      await vi.advanceTimersByTimeAsync(499)
+      expect(w.find('.w-chart__loading').exists()).toBe(true)
+      await vi.advanceTimersByTimeAsync(1)
+      expect(w.find('.w-chart__loading').exists()).toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('com config: empty + loading mostra a camada', async () => {
+    vi.useFakeTimers()
+    try {
+      const w = comConfig({ loading: true, empty: true })
+      await vi.advanceTimersByTimeAsync(300)
+      expect(w.find('.w-chart__loading').exists()).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('com print: sem camada, e o showLoading do ECharts segue valendo', async () => {
+    vi.useFakeTimers()
+    try {
+      const w = comConfig({ loading: true, print: true })
+      await flushPromises()
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(w.find('.w-chart__loading').exists()).toBe(false)
+      expect(w.classes()).not.toContain('w-chart--loader')
+      expect(instancia.showLoading).toHaveBeenCalled()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
+describe('WChart — variant', () => {
+  // árvore opaca: o teste só navega e compara folhas
+  interface Tema {
+    [chave: string]: Tema
+  }
+  const temaDoInit = (i = 0) => (init.mock.calls[i] as unknown[])[1] as Tema
+
+  it('sem variant usa o tema de hoje (grade sólida no eixo de valor)', async () => {
+    montar()
+    await flushPromises()
+    const tema = temaDoInit()
+    expect(tema.valueAxis.splitLine.lineStyle).not.toHaveProperty('type')
+    expect(tema.valueAxis.axisLine).toHaveProperty('lineStyle')
+    expect(tema.line.symbolSize).toBe(6)
+  })
+
+  it('editorial: grade tracejada e eixo de valor sem linha', async () => {
+    montar({ variant: 'editorial' })
+    await flushPromises()
+    const tema = temaDoInit()
+    expect(tema.valueAxis.splitLine.lineStyle.type).toBe('dashed')
+    expect(tema.valueAxis.axisLine).toEqual({ show: false })
+  })
+
+  it('print vence a variante (tema de impressão, sem animação)', async () => {
+    montar({ variant: 'editorial', print: true })
+    await flushPromises()
+    const tema = temaDoInit()
+    expect(tema.animation).toBe(false)
+    expect(tema.valueAxis.splitLine.lineStyle).not.toHaveProperty('type')
+  })
+
+  it('trocar a variante montado reconstrói o gráfico com o tema novo', async () => {
+    const w = montar()
+    await flushPromises()
+    await w.setProps({ variant: 'editorial' })
+    await flushPromises()
+    expect(init).toHaveBeenCalledTimes(2)
+    expect(instancia.dispose).toHaveBeenCalledTimes(1)
+    expect(temaDoInit(1).valueAxis.splitLine.lineStyle.type).toBe('dashed')
   })
 })

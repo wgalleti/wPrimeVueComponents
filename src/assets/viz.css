@@ -1156,3 +1156,27 @@
     transition: none;
   }
 }
+
+/* ==========================================================
+   WChart — .w-chart (loader de marca)
+   ==========================================================
+   Só com `loader` configurado no plugin (e sem `print`): a camada cobre a área
+   do gráfico; numa recarga o gráfico antigo fica atrás, esmaecido pelo véu. */
+.w-chart--loader {
+  position: relative;
+}
+
+.w-chart__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--w-loader-veil);
+}
+
+@media print {
+  .w-chart__loading {
+    display: none;
+  }
+}

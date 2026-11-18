@@ -9,6 +9,8 @@ const { showSkeleton } = useDelayedLoading(() => crud.loading.value, { delay: 15
 ```
 
 - Entrada: `Ref<boolean>` ou getter; `delay` em ms (default 150).
+- `minDuration` (ms, default 0): depois de visível, `showSkeleton` fica `true` por pelo menos esse
+  tempo, mesmo que o carregamento termine antes (o loader de marca não pisca). Com 0 some na hora.
 - `showSkeleton` vira `true` só se o carregamento passar de `delay`; volta a `false` assim que termina.
 - O timer é limpo ao sair do escopo (unmount).
 

@@ -4,7 +4,7 @@ export default defineComponentMeta({
   category: 'UI',
   icon: 'pi pi-chart-bar',
   summary:
-    'Card de indicador para dashboards: tendência, sparkline, variante compacta e card clicável (to/@click).',
+    'Card de indicador para dashboards: tendência, sparkline, variantes compacta e herói, ícone em linha e card clicável (to/@click).',
   examples: [
     {
       name: 'Básico',
@@ -52,6 +52,30 @@ export default defineComponentMeta({
         severity: 'info',
         size: 'compact',
         trend: { value: '+12%', direction: 'up' },
+      },
+    },
+    {
+      name: 'Herói',
+      props: {
+        label: 'Receita do mês',
+        value: 'R$ 1.284.300',
+        icon: 'pi pi-dollar',
+        severity: 'success',
+        size: 'hero',
+        trend: { value: '+8%', direction: 'up' },
+        hint: 'vs. mês anterior',
+        spark: [3, 5, 4, 8, 7, 9, 12],
+      },
+    },
+    {
+      name: 'Ícone em linha',
+      props: {
+        label: 'Pedidos abertos',
+        value: 42,
+        icon: 'pi pi-inbox',
+        severity: 'info',
+        iconStyle: 'inline',
+        hint: 'aguardando separação',
       },
     },
     {

@@ -48,6 +48,7 @@ export {
   WActionBar,
   WProgressFlow,
   WProgress,
+  WLoader,
   WNotice,
   WSegmented,
   WStepFlow,
@@ -92,6 +93,7 @@ export {
   useBreakpoint,
   BREAKPOINTS,
   useDelayedLoading,
+  useLoaderConfig,
   usePendingForm,
   setPendingForm,
   listPendingForms,
@@ -182,6 +184,8 @@ export type {
   SubviewCrudReturn,
   WPluginOptions,
   WPluginConfig,
+  WLoaderConfig,
+  WLoaderConfigResolved,
   DataProvider,
   DataProviderListParams,
   DataProviderListResponse,
@@ -221,7 +225,7 @@ export {
   mapApiFieldsToColumnDefs,
 } from './utils/fieldMapper'
 export type { ChartSelectEvent, ChartTheme, DonutOptionInput, WChartOption } from './utils/chart'
-export { buildChartTheme, buildPrintTheme, donutOption } from './utils/chart'
+export { buildChartTheme, buildEditorialTheme, buildPrintTheme, donutOption } from './utils/chart'
 export type { MeterSeverity } from './utils/meter'
 export { meterSeverity } from './utils/meter'
 export type { ToCsvOptions } from './utils/csv'

@@ -44,3 +44,39 @@ describe('absoluteColor', () => {
     expect((await carregar(null))('oklch(50% 0.1 20)')).toBe('oklch(50% 0.1 20)')
   })
 })
+
+interface Tema {
+  [chave: string]: Tema
+}
+
+describe('buildEditorialTheme', () => {
+  it('mantém a paleta, o texto e o tooltip do tema padrão', async () => {
+    vi.resetModules()
+    const { buildChartTheme, buildEditorialTheme } = await import('./chart')
+    const padrao = buildChartTheme()
+    const editorial = buildEditorialTheme()
+    expect(editorial.color).toEqual(padrao.color)
+    expect(editorial.textStyle).toEqual(padrao.textStyle)
+    expect(editorial.tooltip).toEqual(padrao.tooltip)
+    expect(editorial.pie).toEqual(padrao.pie)
+    expect(editorial.bar).toEqual(padrao.bar)
+  })
+
+  it('troca só o cromo: grade tracejada, eixo de valor sem linha, linha sem símbolo', async () => {
+    vi.resetModules()
+    const { buildEditorialTheme } = await import('./chart')
+    const t = buildEditorialTheme() as Tema
+    expect(t.valueAxis.axisLine).toEqual({ show: false })
+    expect(t.valueAxis.axisTick).toEqual({ show: false })
+    expect(t.valueAxis.splitLine).toMatchObject({
+      show: true,
+      lineStyle: { type: 'dashed', width: 1 },
+    })
+    expect(t.categoryAxis.splitLine).toEqual({ show: false })
+    expect(t.categoryAxis.axisLine.show).toBe(true)
+    expect(t.timeAxis.splitLine).toEqual({ show: false })
+    expect(t.valueAxis.axisLabel.fontSize).toBe(11)
+    expect(t.legend).toMatchObject({ itemWidth: 6, itemHeight: 6, textStyle: { fontSize: 11 } })
+    expect(t.line).toMatchObject({ showSymbol: false, lineStyle: { width: 2 } })
+  })
+})

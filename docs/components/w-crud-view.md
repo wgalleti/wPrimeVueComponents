@@ -124,6 +124,13 @@ o usuário estava. Exige `vue-router`; sem ele a prop é ignorada (avisa em dev 
   restaura filtros e busca como antes. Página, ordenação e `id` só existem na URL.
 - A query é lida na montagem; mudança externa dela depois (outra navegação) não é re-aplicada.
 
+## Loader de marca
+
+Opt-in: sem `loader` na configuração do plugin (`W_CONFIG_KEY`), nada muda. Com ele, a listagem troca o
+esqueleto (tabela e cartões) e o spinner da máscara da recarga pelo `WLoader`, e `loadingDelay` dá lugar
+ao `delay`/`minDuration` do loader. A área da lista guarda uma altura mínima por token (não colapsa
+antes do atraso). `:skeleton="false"` continua desligando o esqueleto/loader da primeira carga.
+
 ## Slots
 
 ### `header-actions`

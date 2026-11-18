@@ -1436,3 +1436,96 @@ describe('WCrudView — título do card por ColumnDef.card', () => {
     w.unmount()
   })
 })
+
+describe('WCrudView — loader de marca (opt-in)', () => {
+  const comLoader = { loader: { src: '/marca.gif', delay: 200, minDuration: 0 } }
+  const pendente = () => ({ list: vi.fn().mockReturnValue(new Promise(() => {})) })
+
+  function montarComLoader(
+    props: Record<string, unknown>,
+    provider: Partial<DataProvider>,
+    config: Record<string, unknown> = comLoader,
+  ) {
+    const Host = defineComponent({
+      setup() {
+        const crud = useCrudManager<Linha>({
+          endpoint: '/itens',
+          columns: [{ field: 'nome', header: 'Nome' }],
+          form: [{ field: 'nome', label: 'Nome', type: 'text' }],
+        })
+        return () => h(WCrudView, { crud, title: 'Itens', ...props })
+      },
+    })
+    return mount(Host, {
+      attachTo: document.body,
+      global: {
+        plugins: [PrimeVue],
+        directives: { tooltip: Tooltip },
+        provide: {
+          [W_DATA_PROVIDER_KEY as symbol]: provider as DataProvider,
+          [W_CONFIG_KEY as symbol]: { defaultPageSize: 20, locale: 'pt-BR', ...config },
+        },
+        stubs: { teleport: true },
+      },
+    })
+  }
+
+  afterEach(() => vi.useRealTimers())
+
+  it('sem loader na configuração: esqueleto de hoje, sem WLoader', async () => {
+    vi.useFakeTimers()
+    const w = montar({}, { loadingDelay: 150 }, pendente())
+    await nextTick()
+    vi.advanceTimersByTime(150)
+    await nextTick()
+    expect(w.find('.w-skeleton').isVisible()).toBe(true)
+    expect(w.find('.w-loader').exists()).toBe(false)
+    expect(w.find('.w-crud-loader').exists()).toBe(false)
+    w.unmount()
+  })
+
+  for (const [nome, props] of [
+    ['tabela', {}],
+    ['cartões', { defaultView: 'cards' }],
+  ] as const) {
+    it(`com loader (${nome}): sem esqueleto, WLoader só depois do atraso da configuração`, async () => {
+      vi.useFakeTimers()
+      const w = montarComLoader({ loadingDelay: 10, ...props }, pendente())
+      await nextTick()
+      expect(w.find('.w-crud-loader').exists()).toBe(true)
+      expect(w.find('.w-loader').exists()).toBe(false)
+      vi.advanceTimersByTime(199)
+      await nextTick()
+      expect(w.find('.w-loader').exists()).toBe(false)
+      vi.advanceTimersByTime(1)
+      await nextTick()
+      expect(w.find('.w-loader').exists()).toBe(true)
+      expect(w.find('.w-skeleton').exists()).toBe(false)
+      w.unmount()
+    })
+  }
+
+  it('recarga com linhas: a máscara do DataTable traz o WLoader no lugar do spinner', async () => {
+    const lista = vi
+      .fn()
+      .mockResolvedValueOnce({ data: [{ id: 1, nome: 'Soja' }], page: 1, page_size: 20, rows: 1 })
+      .mockReturnValueOnce(new Promise(() => {}))
+    const w = montarComLoader({}, { list: lista })
+    await flushPromises()
+    w.findComponent(WCrudView).props('crud').refresh()
+    await nextTick()
+    const mascara = w.find('.p-datatable-mask')
+    expect(mascara.classes()).toContain('w-crud-mask')
+    expect(mascara.find('.w-loader').exists()).toBe(true)
+    expect(mascara.find('.p-datatable-loading-icon').exists()).toBe(false)
+    w.unmount()
+  })
+
+  it('skeleton=false continua desligando o esqueleto e o loader da primeira carga', async () => {
+    const w = montarComLoader({ skeleton: false }, pendente())
+    await nextTick()
+    expect(w.find('.w-crud-loader').exists()).toBe(false)
+    expect(w.find('.w-skeleton').exists()).toBe(false)
+    w.unmount()
+  })
+})

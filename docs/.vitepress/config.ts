@@ -92,6 +92,7 @@ export default defineConfig({
               { text: 'WKanbanBoard', link: '/components/w-kanban-board' },
               { text: 'WKpiCard', link: '/components/w-kpi-card' },
               { text: 'WKpiGrid', link: '/components/w-kpi-grid' },
+              { text: 'WLoader', link: '/components/w-loader' },
               { text: 'WMapSelect', link: '/components/w-map-select' },
               { text: 'WMeter', link: '/components/w-meter' },
               { text: 'WMarkdownView', link: '/components/w-markdown-view' },

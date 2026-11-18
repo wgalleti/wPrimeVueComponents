@@ -466,6 +466,7 @@
 
 .w-kpi-grid--auto[data-count] > .w-kpi-grid__track {
   --w-kpi-cols: 1;
+  --w-kpi-hero-span: 1;
   grid-template-columns: repeat(var(--w-kpi-cols), minmax(0, 1fr));
 }
 
@@ -475,6 +476,7 @@
   .w-kpi-grid[data-count='6'] > .w-kpi-grid__track,
   .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
     --w-kpi-cols: 2;
+    --w-kpi-hero-span: 2;
   }
 }
 
@@ -484,6 +486,7 @@
   .w-kpi-grid[data-count='6'] > .w-kpi-grid__track,
   .w-kpi-grid[data-count='7'] > .w-kpi-grid__track {
     --w-kpi-cols: 3;
+    --w-kpi-hero-span: 2;
   }
 }
 
@@ -492,31 +495,54 @@
   .w-kpi-grid[data-count='7'] > .w-kpi-grid__track,
   .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
     --w-kpi-cols: 4;
+    --w-kpi-hero-span: 2;
   }
 }
 
 @container w-kpi-grid (min-width: 68rem) {
   .w-kpi-grid[data-count='5'] > .w-kpi-grid__track {
     --w-kpi-cols: 5;
+    --w-kpi-hero-span: 2;
   }
 }
 
 @container w-kpi-grid (min-width: 81.75rem) {
   .w-kpi-grid[data-count='6'] > .w-kpi-grid__track {
     --w-kpi-cols: 6;
+    --w-kpi-hero-span: 2;
   }
 }
 
 @container w-kpi-grid (min-width: 95.5rem) {
   .w-kpi-grid[data-count='7'] > .w-kpi-grid__track {
     --w-kpi-cols: 7;
+    --w-kpi-hero-span: 2;
   }
 }
 
 @container w-kpi-grid (min-width: 109.25rem) {
   .w-kpi-grid[data-count='8'] > .w-kpi-grid__track {
     --w-kpi-cols: 8;
+    --w-kpi-hero-span: 2;
   }
+}
+
+/* Herói: duas colunas. Nas fixas, de 600 px para cima (abaixo a grade é de 1 coluna e um span 2
+   criaria coluna implícita). No auto até 8 células, só onde o degrau tem 2+ colunas (--w-kpi-hero-span,
+   dentro de cada @container acima); com 1 coluna ocupa uma. Sem degrau (mais de 8 células, auto-fit) a
+   variável não existe, o span é inválido e vira auto: uma coluna. */
+.w-kpi-grid__track > .w-kpi-card--hero {
+  grid-column: span 2;
+}
+
+@media (max-width: 599px) {
+  .w-kpi-grid__track > .w-kpi-card--hero {
+    grid-column: auto;
+  }
+}
+
+.w-kpi-grid--auto > .w-kpi-grid__track > .w-kpi-card--hero {
+  grid-column: span var(--w-kpi-hero-span);
 }
 
 .w-kpi-grid--dense {
@@ -615,13 +641,18 @@
 }
 
 .w-kpi-card__hint {
-  font-family: var(--w-font-mono);
+  font-family: var(--w-kpi-hint-font);
   font-size: var(--w-text-xs);
   color: var(--w-fg-muted);
 }
 
 .w-kpi-card__footer {
   margin-top: auto;
+}
+
+/* Valor e trend: fora do herói o wrapper não existe para o layout. */
+.w-kpi-card__figure {
+  display: contents;
 }
 
 .w-kpi-card__trend {
@@ -657,6 +688,21 @@
   display: flex;
   align-items: center;
   gap: var(--w-space-3);
+}
+
+.w-kpi-card--brand-loader {
+  position: relative;
+}
+
+/* Cobre o card inteiro sem mexer na altura dele; o conteúdo segue por baixo. */
+.w-kpi-card__veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--w-loader-veil);
 }
 
 .w-kpi-card__loading-content {
@@ -791,7 +837,7 @@
   padding: var(--w-space-3);
 }
 
-.w-kpi-card--compact .w-kpi-card__header {
+:is(.w-kpi-card--compact, .w-kpi-card--icon-inline) .w-kpi-card__header {
   align-items: center;
   justify-content: flex-start;
   gap: var(--w-space-2);
@@ -805,12 +851,12 @@
   font-size: var(--w-text-sm);
 }
 
-.w-kpi-card--compact .w-kpi-card__label {
+:is(.w-kpi-card--compact, .w-kpi-card--icon-inline) .w-kpi-card__label {
   flex: 1;
   min-width: 0;
 }
 
-.w-kpi-card--compact .w-kpi-card__trend {
+:is(.w-kpi-card--compact, .w-kpi-card--icon-inline) .w-kpi-card__trend {
   margin-left: auto;
 }
 
@@ -820,6 +866,63 @@
 
 .w-kpi-card--compact .w-kpi-card__hint {
   font-size: var(--w-text-xs);
+}
+
+/* Ícone em linha (iconStyle="inline" e herói): sem quadrado nem fundo, ao lado do rótulo. Depois do
+   compacto e das severidades (mesma especificidade) para vencer o tamanho e a cor do quadrado. */
+.w-kpi-card--icon-inline .w-kpi-card__icon {
+  flex-shrink: 0;
+  width: auto;
+  height: auto;
+  background: none;
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-sm);
+}
+
+/* Com severidade o ícone leva o tom do card; sem ela fica no cinza do rótulo. */
+:is(
+    .w-kpi-card--primary,
+    .w-kpi-card--success,
+    .w-kpi-card--warning,
+    .w-kpi-card--danger,
+    .w-kpi-card--info,
+    .w-kpi-card--neutral
+  ).w-kpi-card--icon-inline
+  .w-kpi-card__icon {
+  color: var(--w-card-tone);
+}
+
+/* Herói: o número manda. Rótulo em cima, valor grande com o trend na mesma linha (pela base),
+   apoio embaixo e a sparkline mais alta, na base do card. */
+.w-kpi-card--hero .w-kpi-card__label {
+  font-size: var(--w-text-xs);
+}
+
+.w-kpi-card--hero .w-kpi-card__figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--w-space-3);
+}
+
+.w-kpi-card--hero .w-kpi-card__value {
+  font-size: var(--w-text-4xl);
+  line-height: 1;
+}
+
+.w-kpi-card--hero .w-kpi-card__trend {
+  margin-left: 0;
+}
+
+.w-kpi-card--hero .w-kpi-card__spark {
+  height: calc(var(--w-spark-h) * 2);
+}
+
+/* Herói em card estreito (celular): um degrau abaixo antes dos degraus gerais, que seguem valendo. */
+@container w-kpi-card (max-width: 20rem) {
+  .w-kpi-card--hero .w-kpi-card__value {
+    font-size: var(--w-text-3xl);
+  }
 }
 
 /* Degraus do valor pela largura do card (régua e cortes documentados em
@@ -2710,6 +2813,91 @@
     animation: none;
     width: 100%;
     opacity: 0.5;
+  }
+}
+
+/* ==========================================================
+   WLoader — .w-loader
+   ========================================================== */
+
+.w-loader {
+  --w-loader-size: var(--w-loader-md);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  width: var(--w-loader-size);
+  height: var(--w-loader-size);
+}
+
+.w-loader--sm {
+  --w-loader-size: var(--w-loader-sm);
+}
+
+.w-loader--lg {
+  --w-loader-size: var(--w-loader-lg);
+}
+
+.w-loader--overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: auto;
+  height: auto;
+  align-items: center;
+  justify-content: center;
+  background: var(--w-loader-veil);
+  border-radius: inherit;
+}
+
+.w-loader--overlay .w-loader__media,
+.w-loader--overlay .w-loader__img,
+.w-loader--overlay .w-loader__ring {
+  width: var(--w-loader-size);
+  height: var(--w-loader-size);
+}
+
+.w-loader__media,
+.w-loader__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.w-loader__ring {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: var(--w-space-1) solid var(--w-primary-soft);
+  border-top-color: var(--w-primary);
+  border-radius: var(--w-radius-full);
+  animation: w-loader-spin var(--w-motion-loop) linear infinite;
+}
+
+@keyframes w-loader-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.w-loader__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-loader__ring {
+    animation: none;
+  }
+}
+
+@media print {
+  .w-loader {
+    display: none;
   }
 }
 

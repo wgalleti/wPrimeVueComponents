@@ -92,6 +92,8 @@
   --w-text-lg: var(--text-lg, 1.0625rem);
   --w-text-xl: var(--text-xl, 1.25rem);
   --w-text-2xl: var(--text-2xl, 1.5rem);
+  --w-text-3xl: var(--text-3xl, 1.875rem);
+  --w-text-4xl: var(--text-4xl, 2.25rem); /* valor do WKpiCard hero */
   --w-fw-regular: var(--fw-regular, 400);
   --w-fw-medium: var(--fw-medium, 500);
   --w-fw-semibold: var(--fw-semibold, 600);
@@ -220,6 +222,13 @@
   --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
   --w-tab-viewport-padding: 0; /* respiro da página dentro do scroll da aba; o app define o seu */
+  --w-loader-sm: 1.75rem; /* WLoader sm */
+  --w-loader-md: 3rem; /* WLoader md */
+  --w-loader-lg: 4rem; /* WLoader lg */
+  /* texto de apoio do WKpiCard: mono por padrão; o app troca definindo --kpi-hint-font */
+  --w-kpi-hint-font: var(--kpi-hint-font, var(--w-font-mono));
+  /* véu sobre o conteúdo que recarrega (gráfico, KPI, tabela): o dado antigo fica só como sombra atrás do loader */
+  --w-loader-veil: color-mix(in srgb, var(--w-surface) 85%, transparent);
   --w-overlay-shift-x: 0px; /* WPopover/WMenu no pane: deslocamento do pane (o JS grava no pane) */
   --w-overlay-shift-y: 0px;
 

@@ -47,6 +47,13 @@
           "description": "Modo impressão: tema monocromático + SVG + sem animação (PDF Gotenberg)."
         },
         {
+          "name": "variant",
+          "type": "\"default\" | \"editorial\" | undefined",
+          "required": false,
+          "default": "\"default\"",
+          "description": "Tema do gráfico. `editorial`: grade tracejada, eixo de valor sem linha, legenda e rótulos discretos,\nlinha sem símbolo por ponto (mesma paleta). `print` vence a variante."
+        },
+        {
           "name": "height",
           "type": "string | undefined",
           "required": false,
@@ -2934,10 +2941,17 @@
         },
         {
           "name": "size",
-          "type": "\"default\" | \"compact\" | undefined",
+          "type": "\"default\" | \"compact\" | \"hero\" | undefined",
           "required": false,
           "default": "\"default\"",
-          "description": "`compact`: menos respiro, ícone menor ao lado do rótulo, valor menor."
+          "description": "`compact`: menos respiro, ícone menor ao lado do rótulo, valor menor. `hero`: o número manda\n— valor maior com o `trend` na mesma linha, sparkline mais alta e ícone sempre em linha\n(`iconStyle=\"inline\"`). No `WKpiGrid` o herói ocupa duas colunas."
+        },
+        {
+          "name": "iconStyle",
+          "type": "\"tile\" | \"inline\" | undefined",
+          "required": false,
+          "default": "\"tile\"",
+          "description": "Como o ícone aparece: `tile` (padrão) no quadrado tonal; `inline` pequeno, sem fundo, ao lado\ndo rótulo, na cor do tom (ou `--w-fg-muted` sem `severity`). Em `hero` é sempre `inline`."
         },
         {
           "name": "active",
@@ -3018,7 +3032,7 @@
           "type": "\"default\" | \"compact\" | undefined",
           "required": false,
           "default": null,
-          "description": "Tamanho de todos os cards. Precedência: `item.size` → `size` da grade →\n`dense` (compact) → default."
+          "description": "Tamanho de todos os cards. Precedência: `item.size` → `size` da grade →\n`dense` (compact) → default. O `hero` só vem do item (ocupa duas colunas)."
         },
         {
           "name": "ledger",
@@ -3042,6 +3056,41 @@
           "description": ""
         }
       ]
+    },
+    "WLoader": {
+      "file": "src/components/ui/WLoader.vue",
+      "props": [
+        {
+          "name": "size",
+          "type": "\"md\" | \"sm\" | \"lg\" | undefined",
+          "required": false,
+          "default": "\"md\"",
+          "description": ""
+        },
+        {
+          "name": "label",
+          "type": "string | undefined",
+          "required": false,
+          "default": "\"Carregando\"",
+          "description": "Texto só para leitor de tela."
+        },
+        {
+          "name": "overlay",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "false",
+          "description": "Véu sobre o cartão: absoluto, cobre o ancestral posicionado (`position: relative`)."
+        },
+        {
+          "name": "loading",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": "undefined",
+          "description": "Ausente: sempre desenha. true/false: aparece só depois do atraso e fica o mínimo."
+        }
+      ],
+      "events": [],
+      "slots": []
     },
     "WMapSelect": {
       "file": "src/components/ui/WMapSelect.vue",

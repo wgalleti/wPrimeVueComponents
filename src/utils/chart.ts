@@ -151,6 +151,46 @@ export function buildChartTheme(): ChartTheme {
 }
 
 /**
+ * Variante editorial (estilo Datawrapper/FT) do tema padrão: mesma paleta e mesmas cores de texto/tooltip,
+ * só o cromo muda — eixo de valor sem linha com grade horizontal tracejada fina, eixos de categoria/tempo com
+ * linha discreta e sem grade, rótulos e legenda pequenos, linha de traço 2 sem símbolo por ponto (o hover mostra).
+ * Opt-in pelo `variant="editorial"` do WChart; a cor da série continua sendo do `option` de quem usa.
+ */
+export function buildEditorialTheme(): ChartTheme {
+  const fgMuted = tokenColor('--w-fg-muted')
+  const border = tokenColor('--w-border')
+
+  const base = {
+    axisTick: { show: false },
+    axisLabel: { color: fgMuted, fontSize: 11 },
+    nameTextStyle: { color: fgMuted },
+  }
+  const eixoDeLeitura = {
+    ...base,
+    axisLine: { show: true, lineStyle: { color: border } },
+    splitLine: { show: false },
+  }
+
+  return {
+    ...buildChartTheme(),
+    categoryAxis: eixoDeLeitura,
+    timeAxis: eixoDeLeitura,
+    valueAxis: {
+      ...base,
+      axisLine: { show: false },
+      splitLine: { show: true, lineStyle: { color: border, width: 1, type: 'dashed' } },
+    },
+    legend: {
+      textStyle: { color: fgMuted, fontSize: 11 },
+      icon: 'circle',
+      itemWidth: 6,
+      itemHeight: 6,
+    },
+    line: { smooth: false, showSymbol: false, symbolSize: 6, lineStyle: { width: 2 } },
+  }
+}
+
+/**
  * Tema monocromático de impressão: escala neutra fixa (papel quase mono),
  * sem animação — o snapshot do PDF é estático. Os valores seguem a paleta de
  * impressão do design system do portal (slate).

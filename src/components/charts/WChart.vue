@@ -8,9 +8,13 @@
  * renderiza um gráfico não paga pela biblioteca. Se o import falhar
  * (offline, CSP), o gráfico vira a mensagem de indisponibilidade.
  */
-import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
+import WLoader from '@/components/ui/WLoader.vue'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
+import { useLoaderConfig } from '@/composables/useLoaderConfig'
 import {
   buildChartTheme,
+  buildEditorialTheme,
   buildLoadingOptions,
   buildPrintTheme,
   loadEcharts,
@@ -35,6 +39,11 @@ const props = withDefaults(
     renderer?: 'canvas' | 'svg'
     /** Modo impressão: tema monocromático + SVG + sem animação (PDF Gotenberg). */
     print?: boolean
+    /**
+     * Tema do gráfico. `editorial`: grade tracejada, eixo de valor sem linha, legenda e rótulos discretos,
+     * linha sem símbolo por ponto (mesma paleta). `print` vence a variante.
+     */
+    variant?: 'default' | 'editorial'
     /** Altura CSS do gráfico (default: token `--chart-h`, senão 18rem). */
     height?: string
     /**
@@ -49,6 +58,7 @@ const props = withDefaults(
     emptyMessage: 'Sem dados para exibir',
     renderer: 'canvas',
     print: false,
+    variant: 'default',
     height: '',
     clickable: false,
   },
@@ -58,6 +68,14 @@ const emit = defineEmits<{
   /** Clique num item de dado (só com `clickable`). */
   select: [event: ChartSelectEvent]
 }>()
+
+// Loader de marca configurado: camada DOM no lugar do `showLoading` (o `print` fica como sempre foi).
+const loader = useLoaderConfig()
+const comLoader = computed(() => !!loader && !props.print)
+const { showSkeleton } = useDelayedLoading(() => comLoader.value && props.loading, {
+  delay: loader?.delay,
+  minDuration: loader?.minDuration,
+})
 
 const container = ref<HTMLElement | null>(null)
 const chart = shallowRef<EChartsType | null>(null)
@@ -87,9 +105,14 @@ const disposeChart = () => {
 }
 
 const applyLoading = () => {
-  if (!chart.value) return
+  if (!chart.value || comLoader.value) return
   if (props.loading) chart.value.showLoading('default', buildLoadingOptions())
   else chart.value.hideLoading()
+}
+
+const currentTheme = () => {
+  if (props.print) return buildPrintTheme()
+  return props.variant === 'editorial' ? buildEditorialTheme() : buildChartTheme()
 }
 
 /** (Re)cria a instância — tema e renderer só mudam com init novo. */
@@ -102,7 +125,7 @@ const build = async () => {
   }
   unavailable.value = false
   disposeChart()
-  chart.value = core.init(container.value, props.print ? buildPrintTheme() : buildChartTheme(), {
+  chart.value = core.init(container.value, currentTheme(), {
     renderer: props.print ? 'svg' : props.renderer,
   })
   chart.value.on('click', onChartClick)
@@ -113,7 +136,7 @@ const build = async () => {
 watch(() => props.option, applyOption, { deep: true })
 watch(() => props.loading, applyLoading)
 watch(() => props.clickable, applyOption)
-watch([() => props.print, () => props.renderer], () => void build())
+watch([() => props.print, () => props.renderer, () => props.variant], () => void build())
 
 onMounted(() => {
   void build()
@@ -135,7 +158,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="w-chart" :style="height ? { '--w-chart-h': height } : undefined">
+  <div
+    class="w-chart"
+    :class="{ 'w-chart--loader': comLoader }"
+    :style="height ? { '--w-chart-h': height } : undefined"
+  >
     <div v-if="empty && !loading" class="w-chart__empty">
       <slot name="empty">{{ emptyMessage }}</slot>
     </div>
@@ -143,6 +170,7 @@ onBeforeUnmount(() => {
       <slot name="unavailable">Gráfico indisponível.</slot>
     </div>
     <div v-show="!empty && !unavailable" ref="container" class="w-chart__canvas" />
+    <div v-if="showSkeleton" class="w-chart__loading"><WLoader size="md" /></div>
   </div>
 </template>
 

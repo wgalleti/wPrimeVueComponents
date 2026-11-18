@@ -64,7 +64,7 @@ export type { CrudManagerConfig, CrudManagerReturn } from './manager'
 
 export type { SubviewCrudConfig, SubviewCrudReturn } from './subview'
 
-export type { WPluginOptions, WPluginConfig } from './plugin'
+export type { WPluginOptions, WPluginConfig, WLoaderConfig, WLoaderConfigResolved } from './plugin'
 export { W_AXIOS_KEY, W_CONFIG_KEY, W_DATA_PROVIDER_KEY } from './plugin'
 
 export type {

@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import WKpiCard from './WKpiCard.vue'
 import { hasListener } from '@/utils/interactiveCard'
+import { W_CONFIG_KEY } from '@/types/plugin'
 
 const Tela = { name: 'Tela', render: () => null }
 
@@ -169,5 +170,142 @@ describe('WKpiCard — ativo como filtro', () => {
     })
     expect(w.classes()).toContain('w-kpi-card--active')
     expect(w.attributes('aria-pressed')).toBe('true')
+  })
+})
+
+describe('WKpiCard — loader de marca', () => {
+  afterEach(() => vi.useRealTimers())
+
+  const loader = { src: '/marca.gif', delay: 100, minDuration: 300 }
+  const comConfig = (props: Record<string, unknown>, attrs: Record<string, unknown> = {}) =>
+    mount(WKpiCard, {
+      props: { ...base, ...props },
+      attrs,
+      global: { plugins: [PrimeVue], provide: { [W_CONFIG_KEY as symbol]: { loader } } },
+    })
+
+  it('sem configuração mantém o esqueleto de hoje', () => {
+    const w = montar({ loading: true })
+    expect(w.findAll('.p-skeleton')).toHaveLength(4)
+    expect(w.find('.w-loader').exists()).toBe(false)
+    expect(w.find('.w-kpi-card__veil').exists()).toBe(false)
+    expect(w.classes()).not.toContain('w-kpi-card--brand-loader')
+  })
+
+  it('com configuração o conteúdo fica, sem esqueleto, e o véu com o WLoader só entra após o delay', async () => {
+    vi.useFakeTimers()
+    const w = comConfig({ loading: true })
+    expect(w.findAll('.p-skeleton')).toHaveLength(0)
+    expect(w.find('.w-kpi-card__label').text()).toBe('Vendas')
+    expect(w.find('.w-kpi-card__veil').exists()).toBe(false)
+    expect(w.attributes('aria-busy')).toBeUndefined()
+
+    await vi.advanceTimersByTimeAsync(100)
+    expect(w.find('.w-kpi-card__veil .w-loader').exists()).toBe(true)
+    expect(w.find('.w-kpi-card__label').exists()).toBe(true)
+    expect(w.attributes('aria-busy')).toBe('true')
+  })
+
+  it('o véu fica até completar minDuration depois que loading termina', async () => {
+    vi.useFakeTimers()
+    const w = comConfig({ loading: true })
+    await vi.advanceTimersByTimeAsync(100)
+    await w.setProps({ loading: false })
+    await vi.advanceTimersByTimeAsync(299)
+    expect(w.find('.w-kpi-card__veil').exists()).toBe(true)
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(w.find('.w-kpi-card__veil').exists()).toBe(false)
+    expect(w.attributes('aria-busy')).toBeUndefined()
+  })
+
+  it('loading que termina antes do delay nunca mostra o véu', async () => {
+    vi.useFakeTimers()
+    const w = comConfig({ loading: true })
+    await vi.advanceTimersByTimeAsync(50)
+    await w.setProps({ loading: false })
+    await vi.advanceTimersByTimeAsync(500)
+    expect(w.find('.w-kpi-card__veil').exists()).toBe(false)
+  })
+
+  it('sob o véu o card clicável não emite click nem reage ao teclado', async () => {
+    vi.useFakeTimers()
+    const onClick = vi.fn()
+    const w = comConfig({ loading: true }, { onClick })
+    await w.trigger('click')
+    expect(onClick).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(100)
+    await w.trigger('click')
+    await w.trigger('keydown', { key: 'Enter' })
+    expect(onClick).toHaveBeenCalledTimes(1)
+
+    await w.setProps({ loading: false })
+    await vi.advanceTimersByTimeAsync(300)
+    await w.trigger('click')
+    expect(onClick).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('WKpiCard — herói e ícone em linha', () => {
+  it('padrão: ícone no quadrado e rótulo no conteúdo (sem classes novas)', () => {
+    const w = montar()
+    expect(w.classes()).not.toContain('w-kpi-card--hero')
+    expect(w.classes()).not.toContain('w-kpi-card--icon-inline')
+    expect(w.find('.w-kpi-card__content .w-kpi-card__label').exists()).toBe(true)
+  })
+
+  it('size="hero" aplica a classe e renderiza rótulo, valor, apoio, trend e sparkline', () => {
+    const w = montar({
+      size: 'hero',
+      hint: 'vs. mês anterior',
+      trend: { value: '+8%', direction: 'up' },
+      spark: [1, 3, 2, 5],
+    })
+    expect(w.classes()).toContain('w-kpi-card--hero')
+    expect(w.find('.w-kpi-card__label').text()).toBe('Vendas')
+    expect(w.find('.w-kpi-card__value').text()).toBe('R$ 1,2 mi')
+    expect(w.find('.w-kpi-card__hint').text()).toBe('vs. mês anterior')
+    expect(w.find('svg.w-kpi-card__spark').exists()).toBe(true)
+    // trend na linha do valor, nunca no cabeçalho
+    expect(w.find('.w-kpi-card__figure .w-kpi-card__trend-badge--up').text()).toBe('+8%')
+    expect(w.find('.w-kpi-card__header .w-kpi-card__trend').exists()).toBe(false)
+  })
+
+  it('hero põe o ícone em linha, ao lado do rótulo, mesmo com iconStyle="tile"', () => {
+    const w = montar({ size: 'hero', iconStyle: 'tile' })
+    expect(w.classes()).toContain('w-kpi-card--icon-inline')
+    const header = w.find('.w-kpi-card__header')
+    expect(header.find('.w-kpi-card__icon i.pi-dollar').exists()).toBe(true)
+    expect(header.find('.w-kpi-card__label').exists()).toBe(true)
+  })
+
+  it('hero com slot trend também o põe na linha do valor', () => {
+    const w = mount(WKpiCard, {
+      props: { ...base, size: 'hero' },
+      slots: { trend: '<b class="meu-trend">meta</b>' },
+      global: { plugins: [PrimeVue] },
+    })
+    expect(w.find('.w-kpi-card__figure .meu-trend').exists()).toBe(true)
+    expect(w.find('.w-kpi-card__header .meu-trend').exists()).toBe(false)
+  })
+
+  it('iconStyle="inline" no default: sem quadrado, ícone junto do rótulo e trend no cabeçalho', () => {
+    const w = montar({ iconStyle: 'inline', trend: { value: '-2%', direction: 'down' } })
+    expect(w.classes()).toContain('w-kpi-card--icon-inline')
+    expect(w.classes()).not.toContain('w-kpi-card--hero')
+    const header = w.find('.w-kpi-card__header')
+    expect(header.find('.w-kpi-card__icon i.pi-dollar').exists()).toBe(true)
+    expect(header.find('.w-kpi-card__label').text()).toBe('Vendas')
+    expect(header.find('.w-kpi-card__trend').exists()).toBe(true)
+    expect(w.find('.w-kpi-card__content .w-kpi-card__label').exists()).toBe(false)
+  })
+
+  it('iconStyle="inline" vale também no compact', () => {
+    const w = montar({ size: 'compact', iconStyle: 'inline' })
+    expect(w.classes()).toEqual(
+      expect.arrayContaining(['w-kpi-card--compact', 'w-kpi-card--icon-inline']),
+    )
+    expect(w.find('.w-kpi-card__header .w-kpi-card__label').exists()).toBe(true)
   })
 })

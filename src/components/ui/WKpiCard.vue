@@ -3,8 +3,11 @@ import { computed } from 'vue'
 import Skeleton from 'primevue/skeleton'
 import type { RouteLocationRaw } from 'vue-router'
 
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
+import { useLoaderConfig } from '@/composables/useLoaderConfig'
 import { useInteractiveCard } from '@/utils/interactiveCard'
 import { SPARK_H, SPARK_W, sparklineGeometry } from '@/utils/sparkline'
+import WLoader from './WLoader.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -29,8 +32,17 @@ const props = withDefaults(
      * NaN/null são descartados.
      */
     spark?: number[]
-    /** `compact`: menos respiro, ícone menor ao lado do rótulo, valor menor. */
-    size?: 'default' | 'compact'
+    /**
+     * `compact`: menos respiro, ícone menor ao lado do rótulo, valor menor. `hero`: o número manda
+     * — valor maior com o `trend` na mesma linha, sparkline mais alta e ícone sempre em linha
+     * (`iconStyle="inline"`). No `WKpiGrid` o herói ocupa duas colunas.
+     */
+    size?: 'default' | 'compact' | 'hero'
+    /**
+     * Como o ícone aparece: `tile` (padrão) no quadrado tonal; `inline` pequeno, sem fundo, ao lado
+     * do rótulo, na cor do tom (ou `--w-fg-muted` sem `severity`). Em `hero` é sempre `inline`.
+     */
+    iconStyle?: 'tile' | 'inline'
     /** Card usado como filtro e aplicado agora: destaca e anuncia `aria-pressed`. */
     active?: boolean
     /**
@@ -39,7 +51,7 @@ const props = withDefaults(
      */
     tint?: 'icon' | 'value'
   }>(),
-  { size: 'default', tint: 'icon' },
+  { size: 'default', iconStyle: 'tile', tint: 'icon' },
 )
 
 const emit = defineEmits<{
@@ -52,6 +64,29 @@ const { binding } = useInteractiveCard((event) => emit('click', event))
 const root = () => binding(props.to)
 const spark = computed(() => sparklineGeometry(props.spark))
 const compact = computed(() => props.size === 'compact')
+const hero = computed(() => props.size === 'hero')
+const inlineIcon = computed(() => hero.value || props.iconStyle === 'inline')
+/** Ícone em linha ou compacto: o rótulo sobe para o cabeçalho, ao lado do ícone. */
+const labelInHeader = computed(() => compact.value || inlineIcon.value)
+
+/**
+ * Com loader de marca configurado o conteúdo segue em tela durante a carga (a altura é a dele) e,
+ * passado o `delay`, um véu com o WLoader cobre o card até `minDuration`. Sem config: esqueleto.
+ */
+const loader = useLoaderConfig()
+const { showSkeleton } = useDelayedLoading(() => !!loader && !!props.loading, {
+  delay: loader?.delay,
+  minDuration: loader?.minDuration,
+})
+const esqueleto = computed(() => !loader && props.loading)
+
+/** Sob o véu o card não age: engole clique (inclusive o de RouterLink) e Enter/Espaço antes de o root vê-los. */
+function bloquear(event: MouseEvent | KeyboardEvent) {
+  if (!showSkeleton.value) return
+  if (event instanceof KeyboardEvent && event.key !== 'Enter' && event.key !== ' ') return
+  event.preventDefault()
+  event.stopPropagation()
+}
 </script>
 
 <template>
@@ -63,14 +98,20 @@ const compact = computed(() => props.size === 'compact')
       severity ? `w-kpi-card--${severity}` : '',
       {
         'w-kpi-card--compact': compact,
+        'w-kpi-card--hero': hero,
+        'w-kpi-card--icon-inline': inlineIcon,
         'w-kpi-card--interactive': root().interactive,
         'w-kpi-card--active': active,
         'w-kpi-card--tint-value': tint === 'value',
+        'w-kpi-card--brand-loader': loader,
       },
     ]"
+    :aria-busy="showSkeleton ? 'true' : undefined"
     :aria-pressed="root().is === 'div' ? (active ? 'true' : 'false') : undefined"
+    @click.capture="bloquear"
+    @keydown.capture="bloquear"
   >
-    <template v-if="loading">
+    <template v-if="esqueleto">
       <div class="w-kpi-card__loading">
         <Skeleton shape="circle" size="2.75rem" />
         <div class="w-kpi-card__loading-content">
@@ -88,8 +129,8 @@ const compact = computed(() => props.size === 'compact')
             <i v-if="icon" :class="icon" />
           </slot>
         </div>
-        <p v-if="compact" class="w-kpi-card__label">{{ label }}</p>
-        <div v-if="trend || $slots.trend" class="w-kpi-card__trend">
+        <p v-if="labelInHeader" class="w-kpi-card__label">{{ label }}</p>
+        <div v-if="!hero && (trend || $slots.trend)" class="w-kpi-card__trend">
           <slot name="trend">
             <span
               v-if="trend"
@@ -103,9 +144,23 @@ const compact = computed(() => props.size === 'compact')
       </div>
 
       <div class="w-kpi-card__content">
-        <p v-if="!compact" class="w-kpi-card__label">{{ label }}</p>
-        <div class="w-kpi-card__value">
-          <slot name="value">{{ value }}</slot>
+        <p v-if="!labelInHeader" class="w-kpi-card__label">{{ label }}</p>
+        <!-- Fora do herói o wrapper some do layout (display: contents); no herói alinha valor e trend pela base. -->
+        <div class="w-kpi-card__figure">
+          <div class="w-kpi-card__value">
+            <slot name="value">{{ value }}</slot>
+          </div>
+          <div v-if="hero && (trend || $slots.trend)" class="w-kpi-card__trend">
+            <slot name="trend">
+              <span
+                v-if="trend"
+                class="w-kpi-card__trend-badge"
+                :class="trend.direction ? `w-kpi-card__trend-badge--${trend.direction}` : ''"
+              >
+                {{ trend.value }}
+              </span>
+            </slot>
+          </div>
         </div>
         <p v-if="hint || $slots.hint" class="w-kpi-card__hint">
           <slot name="hint">{{ hint }}</slot>
@@ -132,5 +187,9 @@ const compact = computed(() => props.size === 'compact')
         <slot name="footer" />
       </footer>
     </template>
+
+    <div v-if="showSkeleton" class="w-kpi-card__veil">
+      <WLoader size="sm" />
+    </div>
   </component>
 </template>

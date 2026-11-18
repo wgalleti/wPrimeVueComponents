@@ -46,6 +46,24 @@ export default defineComponentMeta({
       },
     },
     {
+      name: 'Editorial',
+      description:
+        'variant="editorial": grade tracejada, eixo de valor sem linha, legenda discreta e linha sem símbolo por ponto.',
+      props: {
+        variant: 'editorial',
+        option: {
+          tooltip: { trigger: 'axis' },
+          legend: { bottom: 0 },
+          xAxis: { type: 'category', data: ['jan', 'fev', 'mar', 'abr'] },
+          yAxis: { type: 'value' },
+          series: [
+            { name: 'Análises', type: 'line', data: [12, 18, 9, 24] },
+            { name: 'Com resultado', type: 'line', data: [8, 15, 7, 20] },
+          ],
+        },
+      },
+    },
+    {
       name: 'Vazio',
       props: {
         option: {},

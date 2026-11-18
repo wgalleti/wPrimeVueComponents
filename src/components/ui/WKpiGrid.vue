@@ -21,7 +21,7 @@ const props = withDefaults(
     dense?: boolean
     /**
      * Tamanho de todos os cards. Precedência: `item.size` → `size` da grade →
-     * `dense` (compact) → default.
+     * `dense` (compact) → default. O `hero` só vem do item (ocupa duas colunas).
      */
     size?: 'default' | 'compact'
     /**
@@ -54,11 +54,24 @@ const cardListeners = (item: KpiItem, index: number) =>
 
 const cardSize = (item: KpiItem) => item.size ?? props.size ?? (props.dense ? 'compact' : 'default')
 
+/** `color` do item é identidade (produto, entidade), não status: troca o tom do card e vence a severidade. */
+const toneStyle = (item: KpiItem) =>
+  item.color
+    ? {
+        '--w-card-tone': item.color,
+        '--w-card-tone-soft': `color-mix(in srgb, ${item.color} 12%, var(--w-surface))`,
+      }
+    : undefined
+
 /* Até 8 itens o auto segue os degraus de ui.css (colunas que fecham a linha);
    acima disso não há degrau e a grade volta ao auto-fit pelo piso --w-kpi-min. */
 const STEPPED_MAX = 8
+/* O herói ocupa duas colunas (ui.css), então pesa 2 nas colunas que fecham a linha. */
+const cells = computed(
+  () => props.items.length + props.items.filter((i) => i.size === 'hero').length,
+)
 const dataCount = computed(() =>
-  props.columns === 'auto' && props.items.length <= STEPPED_MAX ? props.items.length : undefined,
+  props.columns === 'auto' && cells.value <= STEPPED_MAX ? cells.value : undefined,
 )
 
 const gridClass = computed(() => [
@@ -89,8 +102,10 @@ const gridClass = computed(() => [
           :to="item.to"
           :spark="item.spark"
           :size="cardSize(item)"
+          :icon-style="item.iconStyle"
           :active="item.active"
           :tint="item.tint"
+          :style="toneStyle(item)"
           v-on="cardListeners(item, index)"
         />
       </template>

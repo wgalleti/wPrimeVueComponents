@@ -13,6 +13,7 @@ export { useRouteTabs } from './useRouteTabs'
 export { useBreakpoint, BREAKPOINTS } from './useBreakpoint'
 export { useDelayedLoading } from './useDelayedLoading'
 export type { UseDelayedLoadingOptions } from './useDelayedLoading'
+export { useLoaderConfig } from './useLoaderConfig'
 export { usePendingForm, setPendingForm, listPendingForms } from './usePendingForms'
 export {
   createPublishedVersion,

@@ -22,6 +22,7 @@ export const WPrimeVuePlugin: Plugin = {
       currency: options.currency ?? 'BRL',
       keyboardNav: options.keyboardNav ?? false,
       cepLookup: options.cepLookup ?? lookupCep,
+      loader: options.loader,
     }
 
     if (options.axios) {

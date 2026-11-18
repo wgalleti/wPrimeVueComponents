@@ -2,6 +2,23 @@ import type { AxiosInstance } from 'axios'
 import type { DataProvider } from './dataProvider'
 import type { CepLookup } from './field'
 
+/** Loader de marca (opt-in): imagem animada que os componentes de carregamento usam no lugar do neutro. */
+export interface WLoaderConfig {
+  /** Imagem animada (ex.: WebP). */
+  src: string
+  /** Densidades, ex.: `"…@2x.webp 2x"`. */
+  srcset?: string
+  /** Quadro parado, usado com `prefers-reduced-motion: reduce`. */
+  still?: string
+  /** Ms de carregamento antes de o loader aparecer. Default 300. */
+  delay?: number
+  /** Ms mínimos em tela depois que apareceu. Default 500. */
+  minDuration?: number
+}
+
+/** `WLoaderConfig` com `delay` e `minDuration` já resolvidos (o que `useLoaderConfig` devolve). */
+export type WLoaderConfigResolved = WLoaderConfig & { delay: number; minDuration: number }
+
 export interface WPluginOptions {
   axios?: AxiosInstance
   dataProvider?: DataProvider
@@ -26,6 +43,11 @@ export interface WPluginOptions {
    * trocar a sua com `FieldDef.cepLookup`. Default: ViaCEP direto do navegador.
    */
   cepLookup?: CepLookup
+  /**
+   * Loader de marca (opt-in). Sem ele nada muda: os componentes seguem com o esqueleto e o
+   * indicador neutro de hoje. Leitura por `useLoaderConfig()`.
+   */
+  loader?: WLoaderConfig
 }
 
 export interface WPluginConfig {
@@ -39,6 +61,8 @@ export interface WPluginConfig {
   currency: string
   keyboardNav: boolean
   cepLookup: CepLookup
+  /** Repassado como veio; quem lê é `useLoaderConfig()`, que aplica os padrões. */
+  loader?: WLoaderConfig
 }
 
 /** Mensagem dos componentes de dados quando o plugin foi registrado sem provedor. */

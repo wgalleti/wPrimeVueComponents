@@ -29,7 +29,9 @@ import { useCardFit } from '@/composables/useCardFit'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useUrlState } from '@/composables/useUrlState'
 import { useDelayedLoading } from '@/composables/useDelayedLoading'
+import { useLoaderConfig } from '@/composables/useLoaderConfig'
 import WSkeleton from '@/components/ui/WSkeleton.vue'
+import WLoader from '@/components/ui/WLoader.vue'
 import WCrudColumnRenderer from './WCrudColumnRenderer.vue'
 import WCrudFormDialog from './WCrudFormDialog.vue'
 import WCrudFilters from '@/internal/WCrudFilters.vue'
@@ -183,8 +185,12 @@ const emit = defineEmits<{
 
 const slots: Slots = useSlots()
 const { formatNumber } = useFormatters()
+// Loader de marca (opt-in): quando o app configurou, ele troca o esqueleto e o spinner da máscara,
+// e `delay`/`minDuration` passam a ser os dele.
+const loader = useLoaderConfig()
 const { showSkeleton } = useDelayedLoading(() => props.crud.loading.value, {
-  delay: () => props.loadingDelay,
+  delay: () => loader?.delay ?? props.loadingDelay,
+  minDuration: () => loader?.minDuration ?? 0,
 })
 
 const expandedRows = ref({})
@@ -1020,6 +1026,7 @@ const tableStyle = computed(() => (pisoCss.value ? { '--w-crud-min': pisoCss.val
  *  que deixa a faixa curta; aqui ela ocupa a largura toda. */
 const tablePt = computed(() => ({
   pcPaginator: { root: { class: 'w-crud-paginator' } },
+  ...(loader ? { mask: { class: 'w-crud-mask' } } : {}),
   ...(isGrouped.value
     ? {
         rowGroupHeaderCell: {
@@ -1467,10 +1474,15 @@ onMounted(() => {
               </div>
             </template>
 
+            <template v-if="loader" #loading><WLoader size="md" /></template>
+
             <template #empty>
               <!-- Carregando sem linhas: esqueleto (depois do delay) em vez de "nenhum registro". -->
+              <div v-if="skeleton && loader && crud.loading.value" class="w-crud-loader">
+                <WLoader v-if="showSkeleton" size="md" />
+              </div>
               <WSkeleton
-                v-if="skeleton && crud.loading.value"
+                v-else-if="skeleton && crud.loading.value"
                 v-show="showSkeleton"
                 variant="rows"
                 :count="Math.min(crud.pagination.pageSize, 8)"
@@ -1717,7 +1729,10 @@ onMounted(() => {
             class="w-crud-cards-loading"
           >
             <template v-if="skeleton">
-              <WSkeleton v-if="showSkeleton" variant="card" />
+              <div v-if="loader" class="w-crud-loader">
+                <WLoader v-if="showSkeleton" size="md" />
+              </div>
+              <WSkeleton v-else-if="showSkeleton" variant="card" />
             </template>
             <i v-else class="pi pi-spin pi-spinner" />
           </div>
