@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.4.0...v2.5.0) (2026-11-18)
+
+### Funcionalidades
+
+* **ui:** brand loader, hero KPI with inline icon and editorial chart variant ([d69cd49](https://github.com/wgalleti/wPrimeVueComponents/commit/d69cd490ea65e13635da73b42053f1e6c179dadd))
 ## [2.4.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.3.3...v2.4.0) (2026-11-17)
 
 ### Funcionalidades
