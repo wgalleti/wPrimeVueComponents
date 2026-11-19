@@ -121,6 +121,54 @@
   display: none;
 }
 
+/* Bordas que esmaecem só do lado com aba escondida: máscara (serve a qualquer fundo e
+   aos dois temas), com a largura animada pela posição de rolagem. Sem rolagem a
+   timeline fica inativa e nada esmaece; sem suporte, a barra só corta a seco. */
+@property --w-fade-ini {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --w-fade-fim {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@supports (animation-timeline: scroll()) {
+  .w-tab-nav__list {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--w-fade-ini),
+      black calc(100% - var(--w-fade-fim)),
+      transparent
+    );
+    /* Longhands: o build expande o shorthand com `duration: 0s`, que zera a timeline de rolagem. */
+    animation-name: w-tab-nav-fade-ini, w-tab-nav-fade-fim;
+    animation-duration: auto;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(self inline);
+    animation-range:
+      0 var(--w-space-8),
+      calc(100% - var(--w-space-8)) 100%;
+  }
+
+  @keyframes w-tab-nav-fade-ini {
+    to {
+      --w-fade-ini: var(--w-space-8);
+    }
+  }
+
+  @keyframes w-tab-nav-fade-fim {
+    from {
+      --w-fade-fim: var(--w-space-8);
+    }
+  }
+}
+
 .w-tab-nav__item {
   display: inline-flex;
   align-items: center;
