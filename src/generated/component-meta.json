@@ -3419,7 +3419,7 @@
           "name": "maxHeight",
           "type": "string | undefined",
           "required": false,
-          "default": "\"calc(100vh - 14rem)\"",
+          "default": "\"calc(100dvh - 14rem)\"",
           "description": "Teto da lista — o índice se ajusta à altura disponível."
         }
       ],

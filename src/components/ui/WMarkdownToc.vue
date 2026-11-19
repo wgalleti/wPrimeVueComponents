@@ -28,7 +28,7 @@ const props = withDefaults(
     title: 'Nesta página',
     minHeadings: 2,
     searchable: false,
-    maxHeight: 'calc(100vh - 14rem)',
+    maxHeight: 'calc(100dvh - 14rem)',
   },
 )
 
