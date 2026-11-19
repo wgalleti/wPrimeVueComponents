@@ -148,7 +148,8 @@ onBeforeUnmount(() => observador?.disconnect())
               @click="alternar(grupo)"
             >
               <i
-                :class="expandido(grupo) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                class="pi pi-chevron-right w-turn"
+                :class="{ 'w-turn--on': expandido(grupo) }"
                 aria-hidden="true"
               />
             </button>

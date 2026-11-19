@@ -1017,7 +1017,13 @@ defineExpose({
           :title="collapseTitle"
           @click="toggleCollapsed"
         >
-          <i class="pi" :class="collapsed ? 'pi-list' : 'pi-chevron-right'" />
+          <Transition name="w-glyph-swap" mode="out-in">
+            <i
+              :key="collapsed ? 'list' : 'chevron'"
+              class="pi"
+              :class="collapsed ? 'pi-list' : 'pi-chevron-right'"
+            />
+          </Transition>
           <span v-if="modelValue.length" class="w-map-select__collapse-count">
             {{ modelValue.length }}
           </span>

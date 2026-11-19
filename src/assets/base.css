@@ -219,3 +219,42 @@
   font-size: var(--w-text-2xs);
   cursor: pointer;
 }
+
+/* ==========================================================
+   Troca de ícone — .w-turn / .w-glyph-swap
+   ==========================================================
+   Abrir/fechar: UM chevron-right que gira (.w-turn + .w-turn--on = aberto), em vez
+   de trocar de glifo. Troca de glifo de verdade (lápis↔olho): <Transition
+   name="w-glyph-swap" mode="out-in"> com chave no <i>; cada fase leva ~60% do
+   token rápido, então a troca inteira fica perto dele. Sob reduced-motion: seca. */
+
+.w-turn {
+  transition: transform var(--w-motion-fast) var(--w-ease);
+}
+
+.w-turn--on {
+  transform: rotate(90deg);
+}
+
+.w-glyph-swap-enter-active,
+.w-glyph-swap-leave-active {
+  transition:
+    opacity calc(var(--w-motion-fast) * 0.6) var(--w-ease),
+    scale calc(var(--w-motion-fast) * 0.6) var(--w-ease),
+    filter calc(var(--w-motion-fast) * 0.6) var(--w-ease);
+}
+
+.w-glyph-swap-enter-from,
+.w-glyph-swap-leave-to {
+  opacity: 0;
+  scale: 0.6;
+  filter: blur(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w-turn,
+  .w-glyph-swap-enter-active,
+  .w-glyph-swap-leave-active {
+    transition: none;
+  }
+}

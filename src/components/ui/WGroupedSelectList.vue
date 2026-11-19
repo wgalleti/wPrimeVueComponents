@@ -328,7 +328,8 @@ function rowLabel(data: Record<string, unknown>) {
                     @click="toggleCollapsed(group.key)"
                   >
                     <i
-                      :class="group.scope.collapsed ? 'pi pi-chevron-right' : 'pi pi-chevron-down'"
+                      class="pi pi-chevron-right w-turn"
+                      :class="{ 'w-turn--on': !group.scope.collapsed }"
                       aria-hidden="true"
                     />
                   </button>

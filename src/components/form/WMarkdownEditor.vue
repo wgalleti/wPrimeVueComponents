@@ -265,7 +265,13 @@ const tools: ToolDef[] = [
         :aria-pressed="previewing"
         @click="togglePreview"
       >
-        <i :class="previewing ? 'pi pi-pencil' : 'pi pi-eye'" aria-hidden="true" />
+        <Transition name="w-glyph-swap" mode="out-in">
+          <i
+            :key="previewing ? 'edit' : 'view'"
+            :class="previewing ? 'pi pi-pencil' : 'pi pi-eye'"
+            aria-hidden="true"
+          />
+        </Transition>
       </button>
     </div>
 

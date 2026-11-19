@@ -73,8 +73,8 @@ function toggle() {
         </span>
         <span v-if="count != null" class="w-section-panel__count">{{ count }}</span>
         <i
-          class="w-section-panel__chevron"
-          :class="open ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          class="w-section-panel__chevron pi pi-chevron-right w-turn"
+          :class="{ 'w-turn--on': open }"
           aria-hidden="true"
         />
       </button>

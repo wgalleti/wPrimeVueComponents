@@ -83,8 +83,8 @@ function toggle() {
             @click="toggle"
           >
             <i
-              class="w-step-section__chevron"
-              :class="open ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+              class="w-step-section__chevron pi pi-chevron-right w-turn"
+              :class="{ 'w-turn--on': open }"
             />
             <h2 class="w-step-section__title">{{ title }}</h2>
             <span v-if="count != null" class="w-step-section__count">{{ count }}</span>
