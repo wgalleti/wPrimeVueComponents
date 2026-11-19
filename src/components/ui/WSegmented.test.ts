@@ -53,7 +53,7 @@ describe('WSegmented', () => {
   it('grupo na altura do controle, opção com raio derivado do grupo menos o recuo', () => {
     const css = readFileSync('src/assets/ui.css', 'utf8')
     expect(css).toMatch(
-      /\.p-selectbutton\.w-segmented \.p-togglebutton \{\s*border-radius: max\(0px, calc\(var\(--w-radius-md\) - var\(--w-space-05\)\)\);/,
+      /\.p-selectbutton\.w-segmented \.p-togglebutton \{\s*border-radius: var\(--w-radius-inner-md\);/,
     )
     expect(css).toMatch(/\.p-selectbutton\.w-segmented--sm \{\s*height: var\(--w-control-h-sm\);/)
   })

@@ -656,7 +656,7 @@
   padding: 0 var(--w-control-px);
   border: 0;
   /* raio aninhado: o do grupo menos o recuo */
-  border-radius: max(0px, calc(var(--w-radius) - var(--w-space-05)));
+  border-radius: var(--w-radius-inner);
   background: transparent;
   color: var(--w-fg-muted);
   font-family: inherit;

@@ -2625,7 +2625,7 @@
 
 /* Raio aninhado: o da opção é o do grupo menos o recuo — se um mudar, o outro acompanha. */
 .p-selectbutton.w-segmented .p-togglebutton {
-  border-radius: max(0px, calc(var(--w-radius-md) - var(--w-space-05)));
+  border-radius: var(--w-radius-inner-md);
 }
 
 .w-segmented--sm.p-selectbutton .p-togglebutton,
