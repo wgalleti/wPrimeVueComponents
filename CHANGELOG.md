@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.0...v2.5.1) (2026-11-19)
+
+### Correções
+
+* **form:** keep invalid typed dates visible instead of silently reverting ([0af92d6](https://github.com/wgalleti/wPrimeVueComponents/commit/0af92d6a345f3193650b2d7835ee9c8271afdebc))
 ## [2.5.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.4.0...v2.5.0) (2026-11-18)
 
 ### Funcionalidades
