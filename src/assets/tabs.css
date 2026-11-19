@@ -178,7 +178,7 @@
 
 .w-tab-nav__item--grupo.w-tab-nav__item--ativa {
   color: var(--w-fg);
-  background: color-mix(in srgb, var(--w-tab-group-color) 9%, transparent);
+  background: color-mix(in oklch, var(--w-tab-group-color) 9%, transparent);
   border-bottom-color: var(--w-tab-group-color);
 }
 

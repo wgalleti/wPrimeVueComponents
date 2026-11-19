@@ -131,7 +131,7 @@
 .w-markdown-view a {
   color: var(--w-primary);
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--w-primary) 30%, transparent);
+  border-bottom: 1px solid color-mix(in oklch, var(--w-primary) 30%, transparent);
   transition: border-color var(--w-motion-fast) var(--w-ease);
 }
 
@@ -152,7 +152,7 @@
 }
 
 .w-markdown-view mark {
-  background: color-mix(in srgb, var(--w-accent) 28%, transparent);
+  background: color-mix(in oklch, var(--w-accent) 28%, transparent);
   color: inherit;
   padding: 0 0.15em;
   border-radius: var(--w-radius-xs);
@@ -213,7 +213,7 @@
   padding: 0.1em 0.35em;
   border-radius: var(--w-radius-xs);
   background: var(--w-surface-3);
-  color: color-mix(in srgb, var(--w-primary) 70%, var(--w-fg));
+  color: color-mix(in oklch, var(--w-primary) 70%, var(--w-fg));
 }
 
 .md-code {
@@ -229,7 +229,7 @@
   align-items: center;
   gap: var(--w-space-2);
   padding: var(--w-space-2) var(--w-space-3);
-  border-bottom: 1px solid color-mix(in srgb, var(--w-fg) 8%, transparent);
+  border-bottom: 1px solid color-mix(in oklch, var(--w-fg) 8%, transparent);
   font-size: var(--w-text-2xs);
   color: var(--w-fg-muted);
 }
@@ -398,7 +398,7 @@
 
 .w-markdown-view td {
   padding: var(--w-space-2) var(--w-space-3);
-  border-bottom: 1px solid color-mix(in srgb, var(--w-border) 60%, transparent);
+  border-bottom: 1px solid color-mix(in oklch, var(--w-border) 60%, transparent);
   vertical-align: top;
 }
 
@@ -460,7 +460,7 @@
   padding: var(--w-space-3) var(--w-space-4);
   border-left: 3px solid var(--md-tone);
   border-radius: 0 var(--w-radius-md) var(--w-radius-md) 0;
-  background: color-mix(in srgb, var(--md-tone) 7%, var(--w-surface));
+  background: color-mix(in oklch, var(--md-tone) 7%, var(--w-surface));
 }
 
 .md-alert--dica {
@@ -501,7 +501,7 @@
   align-items: center;
   gap: var(--w-space-2);
   margin: 0 0 var(--w-space-2);
-  color: color-mix(in srgb, var(--md-tone) 70%, var(--w-fg));
+  color: color-mix(in oklch, var(--md-tone) 70%, var(--w-fg));
   font-weight: var(--w-fw-medium);
   font-size: var(--w-text-2xs);
   text-transform: uppercase;

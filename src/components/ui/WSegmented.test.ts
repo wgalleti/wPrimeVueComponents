@@ -62,7 +62,7 @@ describe('WSegmented', () => {
     const t = mountIt({ options: [{ label: 'X', value: true }], modelValue: true })
     expect(t.classes()).toContain('w-segmented--on')
     expect(readFileSync('src/assets/ui.css', 'utf8')).toMatch(
-      /\.w-segmented--toggle\.w-segmented--on \{\s*background: color-mix\(in srgb, var\(--w-primary\)/,
+      /\.w-segmented--toggle\.w-segmented--on \{\s*background: color-mix\(in oklch, var\(--w-primary\)/,
     )
   })
 })

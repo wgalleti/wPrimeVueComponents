@@ -357,7 +357,7 @@ function confirmCrop() {
   justify-content: center;
   gap: var(--w-space-1);
   padding: var(--w-space-1);
-  background: color-mix(in srgb, #000 45%, transparent); /* véu sobre a foto */
+  background: color-mix(in oklch, #000 45%, transparent); /* véu sobre a foto */
   opacity: 0;
   transition: opacity var(--w-motion-fast) var(--w-ease);
 }
@@ -415,7 +415,7 @@ function confirmCrop() {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: 0 0 0 1px color-mix(in srgb, #fff 60%, transparent) inset; /* traço sobre a foto */
+  box-shadow: 0 0 0 1px color-mix(in oklch, #fff 60%, transparent) inset; /* traço sobre a foto */
 }
 .w-imgcropper-stencil.is-circular {
   border-radius: 50%;

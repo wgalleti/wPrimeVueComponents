@@ -981,7 +981,7 @@
 }
 
 .w-crud-card:hover {
-  border-color: color-mix(in srgb, var(--w-primary) 40%, var(--w-border));
+  border-color: color-mix(in oklch, var(--w-primary) 40%, var(--w-border));
 }
 
 .w-crud-card-body {
@@ -1287,7 +1287,7 @@
 }
 
 .w-editable-table__add--accent:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--w-primary) 18%, transparent);
+  background: color-mix(in oklch, var(--w-primary) 18%, transparent);
 }
 
 .w-editable-table__table {

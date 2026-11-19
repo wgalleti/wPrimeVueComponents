@@ -38,30 +38,30 @@
   --w-surface-3: var(--surface-3, var(--p-content-hover-background));
   --w-surface-subtle: var(
     --surface-subtle,
-    color-mix(in srgb, var(--w-surface) 60%, var(--w-surface-2))
+    color-mix(in oklch, var(--w-surface) 60%, var(--w-surface-2))
   );
   --w-fg: var(--fg, var(--p-text-color));
   --w-fg-muted: var(--fg-muted, var(--p-text-muted-color));
   --w-fg-subtle: var(--fg-subtle, var(--p-text-muted-color));
   --w-border: var(--border, var(--p-content-border-color));
   --w-border-strong: var(--border-strong, var(--p-content-border-color));
-  --w-line-subtle: var(--line-subtle, color-mix(in srgb, var(--w-border) 62%, transparent));
+  --w-line-subtle: var(--line-subtle, color-mix(in oklch, var(--w-border) 62%, transparent));
 
   /* ---- Marca ------------------------------------------------------------- */
   --w-primary: var(--primary, var(--p-primary-color));
   --w-primary-fg: var(--primary-fg, var(--p-primary-contrast-color));
-  --w-primary-soft: var(--primary-soft, color-mix(in srgb, var(--w-primary) 10%, transparent));
+  --w-primary-soft: var(--primary-soft, color-mix(in oklch, var(--w-primary) 10%, transparent));
   --w-accent: var(--accent, var(--w-primary));
 
   /* ---- Status (uma função por cor; o soft é o fundo da mesma cor) -------- */
   --w-success: var(--success, var(--p-green-500));
-  --w-success-soft: var(--success-soft, color-mix(in srgb, var(--w-success) 12%, transparent));
+  --w-success-soft: var(--success-soft, color-mix(in oklch, var(--w-success) 12%, transparent));
   --w-danger: var(--danger, var(--p-red-500));
-  --w-danger-soft: var(--danger-soft, color-mix(in srgb, var(--w-danger) 12%, transparent));
+  --w-danger-soft: var(--danger-soft, color-mix(in oklch, var(--w-danger) 12%, transparent));
   --w-warning: var(--warning, var(--p-yellow-500));
-  --w-warning-soft: var(--warning-soft, color-mix(in srgb, var(--w-warning) 12%, transparent));
+  --w-warning-soft: var(--warning-soft, color-mix(in oklch, var(--w-warning) 12%, transparent));
   --w-info: var(--info, var(--p-sky-500));
-  --w-info-soft: var(--info-soft, color-mix(in srgb, var(--w-info) 12%, transparent));
+  --w-info-soft: var(--info-soft, color-mix(in oklch, var(--w-info) 12%, transparent));
 
   /* ---- Série categórica (gráficos, grupos de abas) — nunca cor de status.
      OKLCH de croma contido alinhado à direção Carbon & Terracotta. --------- */
@@ -206,7 +206,7 @@
   --w-chart-h: 18rem; /* altura do WChart */
   --w-palette-w: 36rem; /* largura da WCommandPalette */
   --w-palette-max-h: 32rem; /* altura máxima da WCommandPalette */
-  --w-palette-top: 12vh; /* distância da WCommandPalette ao topo */
+  --w-palette-top: 12dvh; /* distância da WCommandPalette ao topo */
   --w-z-overlay: var(--z-overlay, 1100); /* camada dos overlays próprios da suíte */
   --w-skeleton-row-h: 1.25rem; /* altura da linha do WSkeleton */
   --w-skeleton-px: var(
@@ -228,7 +228,7 @@
   /* texto de apoio do WKpiCard: mono por padrão; o app troca definindo --kpi-hint-font */
   --w-kpi-hint-font: var(--kpi-hint-font, var(--w-font-mono));
   /* véu sobre o conteúdo que recarrega (gráfico, KPI, tabela): o dado antigo fica só como sombra atrás do loader */
-  --w-loader-veil: color-mix(in srgb, var(--w-surface) 85%, transparent);
+  --w-loader-veil: color-mix(in oklch, var(--w-surface) 85%, transparent);
   --w-overlay-shift-x: 0px; /* WPopover/WMenu no pane: deslocamento do pane (o JS grava no pane) */
   --w-overlay-shift-y: 0px;
 
@@ -245,9 +245,9 @@
      transparente (não tom sólido) porque a mesma tabela aparece sobre fundos
      diferentes — card e expansão de outra tabela. Sem variante dark: o app
      troca o valor de --primary entre os temas. */
-  --w-zebra: color-mix(in srgb, var(--w-primary) 7%, transparent);
+  --w-zebra: color-mix(in oklch, var(--w-primary) 7%, transparent);
   /* Realce da linha sob o cursor: o mesmo azul, um degrau acima. */
-  --w-row-hover: color-mix(in srgb, var(--w-primary) 14%, transparent);
+  --w-row-hover: color-mix(in oklch, var(--w-primary) 14%, transparent);
 }
 
 /* Perfil compacto pronto: <html data-density="compact">. Densidade é escolha

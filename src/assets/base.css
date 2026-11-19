@@ -119,7 +119,7 @@
 .p-tag.w-tag {
   font-size: var(--w-text-xs);
   font-weight: var(--w-fw-medium);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, currentColor 18%, transparent);
 }
 
 .p-tag.w-tag--success {

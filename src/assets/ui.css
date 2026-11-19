@@ -334,7 +334,7 @@
 }
 
 .w-form-section--muted {
-  background: color-mix(in srgb, var(--w-surface) 88%, var(--w-primary) 2%);
+  background: color-mix(in oklch, var(--w-surface) 88%, var(--w-primary) 2%);
 }
 
 .w-form-section--outlined {
@@ -2668,7 +2668,7 @@
 /* Alternador ligado: o fundo da pílula (surface) quase não se distingue do desligado
    (surface-2), sobretudo no escuro — o ligado ganha um tom da cor primária. */
 .w-segmented--toggle.w-segmented--on {
-  background: color-mix(in srgb, var(--w-primary) 18%, var(--w-surface-2));
+  background: color-mix(in oklch, var(--w-primary) 18%, var(--w-surface-2));
   color: var(--w-fg);
 }
 

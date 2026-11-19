@@ -59,7 +59,7 @@ const toneStyle = (item: KpiItem) =>
   item.color
     ? {
         '--w-card-tone': item.color,
-        '--w-card-tone-soft': `color-mix(in srgb, ${item.color} 12%, var(--w-surface))`,
+        '--w-card-tone-soft': `color-mix(in oklch, ${item.color} 12%, var(--w-surface))`,
       }
     : undefined
 

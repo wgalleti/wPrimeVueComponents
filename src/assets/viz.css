@@ -437,8 +437,8 @@
 .w-map-select--overlay .w-map-select__footer {
   /* Sobre imagem os cinzas de apoio perdem contraste: sobem um degrau,
      derivados do --fg do tema para continuarem certos no claro E no escuro. */
-  --fg-muted: color-mix(in srgb, var(--w-fg) 74%, transparent);
-  --fg-subtle: color-mix(in srgb, var(--w-fg) 56%, transparent);
+  --fg-muted: color-mix(in oklch, var(--w-fg) 74%, transparent);
+  --fg-subtle: color-mix(in oklch, var(--w-fg) 56%, transparent);
   position: absolute;
   z-index: 900; /* acima dos controles do Leaflet, que param em 800 */
   margin: 0;
@@ -449,7 +449,7 @@
   /* 1ª declaração = fallback sólido para quem não tem color-mix; a 2ª só vale
      onde ele existe (o navegador descarta a que não entende). */
   background: var(--w-surface);
-  background: color-mix(in srgb, var(--w-surface) 92%, transparent);
+  background: color-mix(in oklch, var(--w-surface) 92%, transparent);
   -webkit-backdrop-filter: blur(14px) saturate(140%); /* sobre a foto de satélite: sem tema */
   backdrop-filter: blur(14px) saturate(140%); /* sobre a foto de satélite: sem tema */
 }
@@ -654,7 +654,7 @@
   padding: var(--w-space-1) var(--w-space-3);
   min-height: var(--w-control-h-sm);
   border-radius: var(--w-radius-md);
-  background: color-mix(in srgb, var(--w-kanban-accent) 14%, var(--w-surface));
+  background: color-mix(in oklch, var(--w-kanban-accent) 14%, var(--w-surface));
   transition:
     background-color var(--w-motion) var(--w-ease),
     box-shadow var(--w-motion) var(--w-ease);
@@ -665,7 +665,7 @@
   font-weight: var(--w-fw-semibold);
   text-transform: uppercase;
   letter-spacing: var(--w-tracking-caps);
-  color: color-mix(in srgb, var(--w-kanban-accent) 78%, var(--w-fg));
+  color: color-mix(in oklch, var(--w-kanban-accent) 78%, var(--w-fg));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -680,16 +680,16 @@
   height: var(--w-badge-h);
   padding: 0 var(--w-space-2);
   border-radius: var(--w-radius-sm);
-  background: color-mix(in srgb, var(--w-kanban-accent) 26%, var(--w-surface));
-  color: color-mix(in srgb, var(--w-kanban-accent) 82%, var(--w-fg));
+  background: color-mix(in oklch, var(--w-kanban-accent) 26%, var(--w-surface));
+  color: color-mix(in oklch, var(--w-kanban-accent) 82%, var(--w-fg));
   font-size: var(--w-text-2xs);
   font-variant-numeric: tabular-nums;
 }
 
 /* Realce de drop: a pílula acende e a lista ganha moldura tracejada. */
 .w-kanban-board__column--over .w-kanban-board__header {
-  background: color-mix(in srgb, var(--w-kanban-accent) 24%, var(--w-surface));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
+  background: color-mix(in oklch, var(--w-kanban-accent) 24%, var(--w-surface));
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--w-kanban-accent) 45%, transparent);
 }
 
 .w-kanban-board__list {
@@ -708,12 +708,12 @@
 }
 
 .w-kanban-board--dragging .w-kanban-board__list {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--w-kanban-accent) 22%, transparent);
 }
 
 .w-kanban-board__column--over .w-kanban-board__list {
-  background: color-mix(in srgb, var(--w-kanban-accent) 6%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
+  background: color-mix(in oklch, var(--w-kanban-accent) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--w-kanban-accent) 45%, transparent);
 }
 
 .w-kanban-board__card {
@@ -732,7 +732,7 @@
 
 .w-kanban-board__card:hover {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--w-kanban-accent) 40%, var(--w-border));
+  border-color: color-mix(in oklch, var(--w-kanban-accent) 40%, var(--w-border));
   box-shadow: var(--w-shadow-md);
 }
 
@@ -775,7 +775,7 @@
   margin: -1px 0;
   border-radius: var(--w-radius-full);
   background: var(--w-kanban-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--w-kanban-accent) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--w-kanban-accent) 16%, transparent);
   animation: w-kanban-indicator var(--w-motion-fast) var(--w-ease);
 }
 
@@ -810,8 +810,8 @@
 }
 
 .w-kanban-board--dragging .w-kanban-board__empty {
-  border-color: color-mix(in srgb, var(--w-kanban-accent) 45%, transparent);
-  color: color-mix(in srgb, var(--w-kanban-accent) 70%, var(--w-fg-muted));
+  border-color: color-mix(in oklch, var(--w-kanban-accent) 45%, transparent);
+  color: color-mix(in oklch, var(--w-kanban-accent) 70%, var(--w-fg-muted));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -958,7 +958,7 @@
   ); /* a grade é superfície própria, não herda o fundo da página */
   background-image:
     linear-gradient(var(--w-line-subtle) 1px, transparent 1px),
-    linear-gradient(color-mix(in srgb, var(--w-line-subtle) 45%, transparent) 1px, transparent 1px);
+    linear-gradient(color-mix(in oklch, var(--w-line-subtle) 45%, transparent) 1px, transparent 1px);
   background-size:
     100% var(--w-calendar-hour-h),
     100% calc(var(--w-calendar-hour-h) / 2);
@@ -973,7 +973,7 @@
 }
 
 .w-calendar-grid__column--today {
-  background-color: color-mix(in srgb, var(--w-primary-soft) 50%, transparent);
+  background-color: color-mix(in oklch, var(--w-primary-soft) 50%, transparent);
 }
 
 .w-calendar-grid__ghost,
@@ -1004,13 +1004,13 @@
 
 .w-calendar-grid__ghost--move {
   border-color: var(--w-primary);
-  background: color-mix(in srgb, var(--w-primary-soft) 70%, transparent);
+  background: color-mix(in oklch, var(--w-primary-soft) 70%, transparent);
   color: var(--w-primary);
 }
 
 .w-calendar-grid__event {
   --w-calendar-accent-c: var(--w-calendar-accent, var(--w-fg-subtle));
-  --w-calendar-tone: color-mix(in srgb, var(--w-calendar-accent-c) 14%, var(--w-surface));
+  --w-calendar-tone: color-mix(in oklch, var(--w-calendar-accent-c) 14%, var(--w-surface));
   left: calc(var(--w-calendar-lane) / var(--w-calendar-lanes) * 100% + var(--w-space-05));
   width: calc(100% / var(--w-calendar-lanes) - var(--w-space-1));
   z-index: 1; /* escala da grade: ver cabeçalho */
@@ -1054,7 +1054,7 @@
 
 .w-calendar-grid__event--selected {
   z-index: 2; /* escala da grade: ver cabeçalho */
-  background: color-mix(in srgb, var(--w-calendar-accent-c) 26%, var(--w-surface));
+  background: color-mix(in oklch, var(--w-calendar-accent-c) 26%, var(--w-surface));
   box-shadow:
     inset 3px 0 0 var(--w-calendar-accent-c),
     0 0 0 2px var(--w-calendar-accent-c);

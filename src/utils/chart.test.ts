@@ -29,7 +29,7 @@ afterEach(() => vi.restoreAllMocks())
 describe('absoluteColor', () => {
   it('resolve color-mix/oklch para rgb, que o ECharts sabe clarear no hover', async () => {
     const cor = await carregar(contexto([57, 49, 103, 255]))
-    expect(cor('color-mix(in srgb, oklch(21% 0.01 285) 35%, oklch(42% 0.13 285))')).toBe(
+    expect(cor('color-mix(in oklch, oklch(21% 0.01 285) 35%, oklch(42% 0.13 285))')).toBe(
       'rgb(57, 49, 103)',
     )
   })
