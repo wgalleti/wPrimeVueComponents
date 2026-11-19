@@ -655,7 +655,8 @@
   flex: 1 0 auto;
   padding: 0 var(--w-control-px);
   border: 0;
-  border-radius: var(--w-radius-sm);
+  /* raio aninhado: o do grupo menos o recuo */
+  border-radius: max(0px, calc(var(--w-radius) - var(--w-space-05)));
   background: transparent;
   color: var(--w-fg-muted);
   font-family: inherit;

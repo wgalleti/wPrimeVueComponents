@@ -50,6 +50,14 @@ describe('WSegmented', () => {
     expect(t.classes()).toContain('w-segmented--fluid')
   })
 
+  it('grupo na altura do controle, opção com raio derivado do grupo menos o recuo', () => {
+    const css = readFileSync('src/assets/ui.css', 'utf8')
+    expect(css).toMatch(
+      /\.p-selectbutton\.w-segmented \.p-togglebutton \{\s*border-radius: max\(0px, calc\(var\(--w-radius-md\) - var\(--w-space-05\)\)\);/,
+    )
+    expect(css).toMatch(/\.p-selectbutton\.w-segmented--sm \{\s*height: var\(--w-control-h-sm\);/)
+  })
+
   it('alternador ligado ganha fundo próprio, distinto do desligado', async () => {
     const t = mountIt({ options: [{ label: 'X', value: true }], modelValue: true })
     expect(t.classes()).toContain('w-segmented--on')

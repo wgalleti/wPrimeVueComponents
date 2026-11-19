@@ -9,6 +9,8 @@ do app; sem valor literal na tela.
 - `ariaLabel` dá o nome do grupo; `size="sm"` para barras de ferramentas densas.
 - `fluid` ocupa a largura do contêiner, com as opções dividindo-a por igual (popovers, painéis).
 - O alternador ligado ganha um fundo próprio (tom da cor primária), distinto do desligado em claro e escuro.
+- O grupo tem a altura do controle (`--w-control-h`, ou `-sm`) e alinha com os campos da barra; o
+  raio da opção é o do grupo menos o recuo, então trocar um token não deixa o canto torto.
 
 ## API
 

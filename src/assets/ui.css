@@ -2623,10 +2623,31 @@
   transition: background var(--w-motion-fast) var(--w-ease);
 }
 
+/* Raio aninhado: o da opção é o do grupo menos o recuo — se um mudar, o outro acompanha. */
+.p-selectbutton.w-segmented .p-togglebutton {
+  border-radius: max(0px, calc(var(--w-radius-md) - var(--w-space-05)));
+}
+
 .w-segmented--sm.p-selectbutton .p-togglebutton,
 .w-segmented--toggle.w-segmented--sm {
   height: var(--w-control-h-sm);
   font-size: var(--w-text-sm);
+}
+
+/* O grupo tem a altura do controle (alinha com os campos da barra) e as opções a preenchem
+   por dentro do recuo. Sem isso o `.w-segmented` do form.css fixava a altura e as opções
+   vazavam o recuo de baixo. */
+.p-selectbutton.w-segmented {
+  box-sizing: border-box;
+  height: var(--w-control-h);
+}
+
+.p-selectbutton.w-segmented--sm {
+  height: var(--w-control-h-sm);
+}
+
+.p-selectbutton.w-segmented .p-togglebutton {
+  height: 100%;
 }
 
 .w-segmented .p-togglebutton::before {
