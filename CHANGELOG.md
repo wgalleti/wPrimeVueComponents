@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.1...v2.5.2) (2026-11-19)
+
+### Correções
+
+* **ui:** derive segmented option radius from the group and fit the group to the control height ([6f3ebd1](https://github.com/wgalleti/wPrimeVueComponents/commit/6f3ebd120e69c642bc6e8be84f91af5e94b20daf))
+* **ui:** size the markdown TOC default height with dvh ([70d4355](https://github.com/wgalleti/wPrimeVueComponents/commit/70d43556cfbd82f2f7e441e873cd0b1d8f15cfba))
 ## [2.5.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.0...v2.5.1) (2026-11-19)
 
 ### Correções
