@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import dayjs from 'dayjs'
 import DatePicker from 'primevue/datepicker'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
@@ -12,7 +13,9 @@ import { useDateInput, type DateValueFormat } from '@/composables/useDateInput'
 /**
  * Campo de data pt-BR padronizado.
  * - Exibe `DD/MM/YYYY` (ou `DD/MM/YYYY HH:mm` com `showTime`) e salva `YYYY-MM-DD`.
- * - Digitação direta com máscara: `30051988` vira `30/05/1988`.
+ * - Digitação direta com máscara: `30051988` vira `30/05/1988`. Ao sair do campo, ano com 2
+ *   dígitos completa (`19/11/26` → 2026); texto que não forma data (ou fora de min/max) limpa o
+ *   valor e fica marcado inválido, em vez de voltar em silêncio ao valor anterior.
  * - Ícone de calendário abre o seletor (Hoje / Limpar). Com `showTime` o seletor não fecha ao
  *   escolher (falta a hora): os atalhos viram "Agora" / "Limpar" à esquerda e um **OK** à
  *   direita confirma e fecha, devolvendo o foco ao campo. `Esc` fecha sem mudar nada.
@@ -57,6 +60,8 @@ const di = useDateInput({
 })
 
 const typed = ref('') // texto no input (DD/MM/YYYY[ HH:mm])
+const typedInvalid = ref(false) // saiu do campo com texto que não forma data válida
+let lastValue = '' // último valor emitido ou recebido, em texto de exibição
 const panelDate = ref<Date | null>(null) // valor do calendário
 const op = ref<InstanceType<typeof WPopover> | null>(null)
 const inputRef = ref<InstanceType<typeof InputText> | null>(null)
@@ -71,28 +76,56 @@ watch(
   (v) => {
     const d = di.toDate(v)
     panelDate.value = d
-    typed.value = di.toDisplay(d)
+    lastValue = di.toDisplay(d)
+    // O `null` que o próprio blur emitiu não apaga o texto inválido: a pessoa precisa vê-lo.
+    if (d || !typedInvalid.value) {
+      typed.value = di.toDisplay(d)
+      typedInvalid.value = false
+    }
   },
   { immediate: true },
 )
 
+function inRange(date: Date) {
+  const unit = props.showTime ? 'minute' : 'day'
+  const d = dayjs(date)
+  return (
+    !(minDateObj.value && d.isBefore(minDateObj.value, unit)) &&
+    !(maxDateObj.value && d.isAfter(maxDateObj.value, unit))
+  )
+}
+
 function commit(date: Date | null) {
+  // A máscara dispara `input` duas vezes por tecla, antes de a prop voltar: não reemite o mesmo valor.
+  const display = di.toDisplay(date)
+  if (display === lastValue) return
+  lastValue = display
   emit('update:modelValue', di.toValue(date))
 }
 
 function onTypedInput() {
+  typedInvalid.value = false
   if (typed.value === '') {
     commit(null)
     return
   }
-  // Só comita quando o texto formar uma data completa e válida.
+  // Só comita quando o texto formar uma data completa, válida e dentro de min/max.
   const d = di.fromDisplay(typed.value)
-  if (d) commit(d)
+  if (d && inRange(d)) commit(d)
 }
 
 function onBlur() {
-  // Ao sair, normaliza o texto para o último valor válido (descarta digitação incompleta).
-  typed.value = di.toDisplay(di.toDate(props.modelValue))
+  if (typed.value === '') return
+  const d = di.fromDisplayLenient(typed.value)
+  if (d && inRange(d)) {
+    commit(d)
+    typed.value = di.toDisplay(d)
+    return
+  }
+  // Texto que não forma data: nunca volta em silêncio ao valor anterior. Limpa o valor (o
+  // formulário acusa o obrigatório) e deixa o texto à vista, marcado como inválido.
+  typedInvalid.value = true
+  commit(null)
 }
 
 function onKeydown(e: KeyboardEvent) {
@@ -145,7 +178,7 @@ onMounted(() => {
         v-maska="maskaOptions"
         :placeholder="placeholder ?? di.placeholder()"
         :disabled="disabled"
-        :invalid="invalid"
+        :invalid="invalid || typedInvalid"
         fluid
         autocomplete="off"
         inputmode="numeric"

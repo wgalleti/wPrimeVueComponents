@@ -9,6 +9,19 @@ traz os atalhos **Agora** e **Limpar** à esquerda e um **OK** à direita, que c
 e devolve o foco ao campo. O Limpar fica longe do OK para não apagar a data sem querer;
 `Esc` fecha sem mudar nada.
 
+### Digitação
+
+O valor só muda quando o texto forma uma data completa, válida e dentro de `minDate`/`maxDate`
+(no meio da digitação o modelo segue com o valor anterior). Ao sair do campo:
+
+- ano com 2 dígitos completa: `19/11/26` vira `19/11/2026` (acima de 68 vira 19xx);
+- texto que não forma data, ou fora de `minDate`/`maxDate`, emite `null` e **fica à vista,
+  marcado como inválido** — nunca volta em silêncio ao valor anterior.
+
+Com `valueFormat="date"` (o padrão do `WFormRenderer`) o valor é um `Date`. Para comparar
+duas datas num `validate`, normalize as duas (`dayjs(a).isBefore(b, 'day')`): `String(Date)`
+começa pelo dia da semana e a comparação de texto fica alfabética.
+
 Com `autonow`, no mount o campo preenche hoje se o valor estiver `null` — valor já existente
 é preservado.
 

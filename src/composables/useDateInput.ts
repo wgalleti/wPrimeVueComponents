@@ -70,10 +70,31 @@ export function useDateInput(opts: UseDateInputOptions = {}) {
     return d.isValid() ? d.toDate() : null
   }
 
+  /**
+   * Como `fromDisplay`, mas aceita também o ano com 2 dígitos (`19/11/26` → 2026; regra do dayjs:
+   * acima de 68 vira 19xx). Só para quando a digitação termina: no meio dela `19/11/20` seria 2020.
+   */
+  function fromDisplayLenient(text: string): Date | null {
+    const d = fromDisplay(text)
+    if (d || !text) return d
+    const short = dayjs(text, withTime() ? 'DD/MM/YY HH:mm' : 'DD/MM/YY', true)
+    return short.isValid() ? short.toDate() : null
+  }
+
   /** Hoje: date-only zera a hora; datetime mantém a hora atual. */
   function today(): Date {
     return withTime() ? new Date() : dayjs().startOf('day').toDate()
   }
 
-  return { toDate, toValue, toDisplay, fromDisplay, today, mask, placeholder, displayFormat }
+  return {
+    toDate,
+    toValue,
+    toDisplay,
+    fromDisplay,
+    fromDisplayLenient,
+    today,
+    mask,
+    placeholder,
+    displayFormat,
+  }
 }
