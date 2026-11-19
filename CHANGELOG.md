@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.2...v2.5.3) (2026-11-19)
+
+### Correções
+
+* **tabs:** fade the tab strip edges with a scroll-driven mask ([1711154](https://github.com/wgalleti/wPrimeVueComponents/commit/1711154d809bc0b3e799dc21f6b38401ed61f43e))
+* **ui:** derive nested radii from a shared inner-radius token ([ef27d38](https://github.com/wgalleti/wPrimeVueComponents/commit/ef27d38d230ee0043e0fa2d819b8ca34e29fa63b))
+* **ui:** mix colors in oklch and size the palette offset with dvh ([fc2c359](https://github.com/wgalleti/wPrimeVueComponents/commit/fc2c359dcd57392d11614869c5033d5476ec0c0d))
+* **ui:** rotate disclosure chevrons and blur glyph swaps ([d78ea0d](https://github.com/wgalleti/wPrimeVueComponents/commit/d78ea0d40b1765b8e0d9380a8e7927c7503b2df4))
 ## [2.5.2](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.1...v2.5.2) (2026-11-19)
 
 ### Correções
