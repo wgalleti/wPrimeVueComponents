@@ -68,6 +68,8 @@ Outros campos: `format(value, row) => string` (render próprio), `visible`, `dec
 
 Campos comuns: `field`, `label`, `type`, `required`, `colSpan` (`'full'` | `0.5` | inteiro), `defaultValue`, `disabled` (bool | fn), `visible` (bool | fn), `placeholder`, `validate(v, { formData, isEditing }) => string|null` (regra por modo, ex.: senha obrigatória só na criação, mora no schema — a tela não injeta getter), `autofocus`.
 
+`required` vazio (null, undefined, só espaços, lista vazia; `false` e `0` não são vazios) vira "X é obrigatório" no campo: `validateAll`/`save` ordenam `validate` → `required` → `maxLength` e marcam todos os erros. Não reimplemente `required` em `validate`. Erro limpa sozinho ao corrigir. `update:field` e `crud.setFormField(field, value, automatico?)` levam `automatico` (escrita do próprio formulário não conta em `isDirty`): em diálogo montado à mão use `@update:field="crud.setFormField"`.
+
 `type` (FieldType): `text · email · password · number · currency · date · datetime · select · autocomplete · fk · switch · textarea · color · cpf_cnpj · mask · image · cep · transfer`.
 
 Props por tipo:

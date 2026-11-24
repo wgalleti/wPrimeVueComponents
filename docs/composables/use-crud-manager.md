@@ -57,7 +57,7 @@ const crud = useCrudManager({
 | `saving` | `Ref<boolean>` | Salvando registro |
 | `search` | `Ref<string>` | Termo de busca atual |
 | `dialogVisible` | `Ref<boolean>` | Dialog aberto/fechado |
-| `isDirty` | `ComputedRef<boolean>` | Dialog aberto (fora do modo leitura) com valor diferente do que abriu; entra sozinho no registro de [pendentes](./use-pending-form) e, dentro de uma aba de rota, pergunta antes de a aba fechar |
+| `isDirty` | `ComputedRef<boolean>` | Dialog aberto (fora do modo leitura) com valor diferente do que abriu (escrita automática do formulário não conta); entra sozinho no registro de [pendentes](./use-pending-form) e, dentro de uma aba de rota, pergunta antes de a aba fechar |
 | `editingItem` | `Ref<T \| null>` | Item sendo editado |
 | `formData` | `Record<string, unknown>` | Dados reativos do formulario |
 | `pagination` | `PaginationState` | Estado da paginacao |
@@ -85,9 +85,9 @@ const crud = useCrudManager({
 | `onSort(event)` | Handler para mudanca de ordenacao |
 | `openCreateDialog()` | Abre dialog para novo registro |
 | `openEditDialog(item)` | Abre dialog para editar item (com `fetchDetailOnEdit`, devolve a Promise da busca do detail) |
-| `save()` | Salva o registro (cria ou atualiza) |
+| `save()` | Salva o registro (cria ou atualiza). Antes confere `validate`, `required` e `maxLength` (mesma regra do `validateAll`) |
 | `confirmDelete(item)` | Abre confirmacao e exclui |
-| `setFormField(field, value)` | Altera um campo do formulario |
+| `setFormField(field, value, automatico?)` | Altera um campo do formulario e tira a chave de `fieldErrors`. `automatico` (`true` só em escrita do próprio formulário) atualiza também o retrato do campo, sem contar como alteração; escrita da tela depois de abrir conta |
 | `resetForm()` | Reseta formulario para defaults |
 | `goToPage(page)` | Navega para pagina especifica |
 | `firstPage()` | Vai para primeira pagina |

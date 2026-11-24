@@ -47,7 +47,7 @@ Mantém seu layout, troca os inputs manuais por `FieldDef[]` + `<WFormRenderer>`
 
 ## 4. Validação de data/obrigatório
 
-Não valide data na mão. Use `FieldDef.required` + `validate(v)`; o `WDatePicker`/`WFormRenderer` já tratam estado inválido e o `*` de obrigatório.
+Não valide data na mão. Use `FieldDef.required` (vazio vira "X é obrigatório", sem `validate` à mão) e `validate(v)` só para regra própria; o `WDatePicker`/`WFormRenderer` já tratam estado inválido e o `*` de obrigatório.
 
 ## Checklist por tela migrada
 

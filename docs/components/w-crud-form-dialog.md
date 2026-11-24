@@ -16,7 +16,7 @@ Normalmente voce nao usa este componente diretamente — o `WCrudView` ja o rend
   :saving="crud.saving.value"
   width="600px"
   @update:visible="(v) => { crud.dialogVisible.value = v }"
-  @update:field="(field, val) => crud.setFormField(field, val)"
+  @update:field="crud.setFormField"
   @save="crud.save()"
 />
 ```
@@ -63,6 +63,10 @@ form: [
 
 ## Validacao
 
+Campo `required` vazio barra o `save` e o erro aparece no campo, não só no toast. `validate` roda
+antes, `maxLength` depois. O argumento opcional `automatico` do `update:field` (escrita do próprio
+formulário) não conta como alteração: por isso o `@update:field="crud.setFormField"` repassa tudo.
+
 ```ts
 form: [
   {
@@ -71,7 +75,6 @@ form: [
     type: 'cpf_cnpj',
     required: true,
     validate: (value) => {
-      if (!value) return 'CPF obrigatorio'
       const digits = String(value).replace(/\D/g, '')
       if (digits.length !== 11) return 'CPF deve ter 11 digitos'
       return null // sem erro

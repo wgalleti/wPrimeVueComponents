@@ -18,8 +18,22 @@ import { WFormRenderer } from '@wgalleti/primevue-components'
 
 | Metodo | Retorno | Descricao |
 |---|---|---|
-| `validateAll()` | `string[]` | Executa validacoes customizadas de todos os campos. Retorna array de mensagens de erro (vazio = valido) |
+| `validateAll()` | `string[]` | Valida, na ordem, `validate` → `required` → `maxLength` em todo campo visível e marca todos os erros de uma vez. Retorna as mensagens (vazio = valido); o foco vai para o primeiro campo inválido |
 | `clearErrors()` | `void` | Limpa todas as mensagens de erro |
+
+## Obrigatório e erros
+
+Vazio é `null`, `undefined`, texto só de espaços ou lista vazia; `false` e `0` não são vazios.
+Campo obrigatório vazio mostra "X é obrigatório" no campo. O `validateAll` marca todos de uma vez
+e leva o foco ao primeiro inválido (campo de slot: rola até a mensagem). O blur só roda o `validate`.
+
+Campo com erro é reavaliado a cada mudança de valor, dele ou de outro campo (validação cruzada):
+o erro some quando o campo fica válido e nunca nasce enquanto se digita. Erro do servidor
+(`errors`) some quando o próprio campo muda.
+
+O `update:field` leva um último argumento opcional, `automatico`, `true` só quando o formulário
+escreve sozinho (auto-seleção da FK com `autoSelectSingle`, campo calculado). Essas escritas não
+contam como alteração não salva. Repasse o argumento: `@update:field="crud.setFormField"`.
 
 ## Acessibilidade — rótulo programático
 
@@ -39,7 +53,7 @@ Cada campo ganha um `id` estável e único por instância do form (`${formId}-${
 ```
 
 O slot `field-{field}` recebe `fieldId` — use-o no seu controle para o `<label>` do renderer
-continuar apontando para ele:
+continuar apontando para ele. O erro do campo aparece em linha inteira abaixo do slot:
 
 ```vue
 <template #field-geo="{ fieldId, formData, setFormField }">
@@ -202,7 +216,7 @@ deles é candidato a foco inicial (não têm campo de digitação).
 Em `text`, `email`, `password` e `textarea`, `maxLength` vira o `maxlength` nativo: a digitação
 para no limite. O contador `n/max` aparece sob o campo — ligado por padrão no `textarea`;
 `showCounter` liga ou desliga em qualquer um. O `validateAll` confere o limite de novo (valor que
-veio da API maior que o permitido), depois do `validate` próprio do campo.
+veio da API maior que o permitido), depois do `validate` e do `required`.
 
 ```ts
 { field: 'titulo', label: 'Título', maxLength: 80, showCounter: true },

@@ -140,7 +140,7 @@ interface FieldDef {
     | 'date' | 'datetime' | 'select' | 'autocomplete' | 'fk'
     | 'switch' | 'textarea' | 'color' | 'cpf_cnpj' | 'mask' | 'image'
 
-  /** Campo obrigatorio. Default: false. Campo oculto (`visible` falso) não é validado. */
+  /** Campo obrigatorio. Default: false. Vazio (null, undefined, só espaços, lista vazia) vira "X é obrigatório"; `false` e `0` não são vazios. Campo oculto (`visible` falso) não é validado. */
   required?: boolean
 
   /** Largura no grid: 1 = full width, 0.5 = metade. Default: 1 */
@@ -200,7 +200,8 @@ interface FieldDef {
   crudColumns?: ColumnDef[]
 
   /** Lista com um registro so ja entra selecionada (ao abrir sem valor e ao
-   *  preencher a cascata). Default: false (opt-in) */
+   *  preencher a cascata). Default: false (opt-in). A escolha sai com
+   *  `automatico = true` e não conta como alteração não salva */
   autoSelectSingle?: boolean
 
   // --- Opcoes para 'number' e 'currency' ---
@@ -227,7 +228,7 @@ interface FieldDef {
 
   // --- Opcoes para 'text', 'email', 'password' e 'textarea' ---
 
-  /** Limite de caracteres: maxlength no input + conferido no validateAll */
+  /** Limite de caracteres: maxlength no input + conferido no validateAll (depois de validate e required) */
   maxLength?: number
 
   /** Contador "n/max" (exige maxLength). Default: true no textarea */
@@ -502,7 +503,7 @@ interface CrudManagerReturn<T> {
   openEditDialog(item: T): void
   save(): Promise<T | null>
   confirmDelete(item: T): void
-  setFormField(field: string, value: unknown): void
+  setFormField(field: string, value: unknown, automatico?: boolean): void
   resetForm(): void
   goToPage(page: number): void
   firstPage(): void

@@ -52,7 +52,7 @@ selecionado não é "novo".
 ### Único registro já vem preenchido (`autoSelectSingle`)
 
 Quando a lista — com `endpointParams` e a cascata (`drilldown`) atuais — tem **um registro só**,
-ele já entra selecionado (e sai no `update:modelValue`). Dispara ao montar sem valor e quando a
+ele já entra selecionado (e sai no `update:modelValue`, com `automatico = true` no último argumento: não conta como alteração não salva). Dispara ao montar sem valor e quando a
 cascata passa a estar preenchida; **não** dispara quando o usuário limpa o campo, senão limpar
 ficaria impossível. Só no modo simples (`multiple` ignora). Default `false` (opt-in; era `true` nas versões até 2.0, o que pré-filtrava listagens e pré-preenchia criações) — `true` liga:
 
@@ -81,6 +81,7 @@ Quando `crudFields` e `crudColumns` sao fornecidos, o modal de busca inclui boto
 - Botao "Novo" aparece no modal de busca
 - Botao de editar aparece em cada linha da tabela
 - Criar/editar abre um sub-dialog com formulario gerado pelo `WFormRenderer`
+- O sub-dialog confere `required`, `validate` e `maxLength` antes de salvar
 - Apos salvar, a tabela e atualizada automaticamente
 - O registro criado/editado pode ser selecionado imediatamente
 
