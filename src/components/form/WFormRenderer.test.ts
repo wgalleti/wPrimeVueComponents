@@ -611,6 +611,23 @@ describe('required no validateAll', () => {
     w.unmount()
   })
 
+  it('switch e transfer também mostram a mensagem', async () => {
+    const w = montar(
+      [
+        { field: 'ativo', label: 'Ativo', type: 'switch', required: true },
+        { field: 'itens', label: 'Itens', type: 'transfer', required: true, options: [] },
+      ],
+      { ativo: null, itens: [] },
+    )
+    validar(w)
+    await w.vm.$nextTick()
+    expect(w.findAll('.w-crud-form-error').map((e) => e.text())).toEqual([
+      'Ativo é obrigatório',
+      'Itens é obrigatório',
+    ])
+    w.unmount()
+  })
+
   it('false e 0 passam; campo oculto não barra', () => {
     const w = montar(campos, { nome: 'a', ativo: false, qtd: 0 })
     expect(validar(w)).toEqual([])

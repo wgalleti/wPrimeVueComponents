@@ -801,6 +801,10 @@
   margin-top: 0;
 }
 
+.w-crud-form-switch--hint .w-crud-form-error {
+  grid-column: 2;
+}
+
 .w-crud-form-switch-label {
   font-size: var(--w-text-base);
   font-weight: var(--w-fw-medium);

@@ -698,7 +698,7 @@ defineExpose({ validateAll, clearErrors })
             <div
               v-if="field.type === 'switch'"
               class="w-crud-form-switch"
-              :class="{ 'w-crud-form-switch--hint': field.hint }"
+              :class="{ 'w-crud-form-switch--hint': field.hint || fieldError(field) }"
               :style="fieldSpanStyle(field, group)"
             >
               <ToggleSwitch
@@ -715,6 +715,14 @@ defineExpose({ validateAll, clearErrors })
               </label>
               <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
                 {{ field.hint }}
+              </small>
+              <small
+                v-if="fieldErrors[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-error"
+                role="alert"
+              >
+                {{ fieldErrors[field.field] }}
               </small>
             </div>
 
@@ -820,6 +828,14 @@ defineExpose({ validateAll, clearErrors })
               </div>
               <small v-if="field.hint" :id="hintId(field)" class="w-crud-form-hint">
                 {{ field.hint }}
+              </small>
+              <small
+                v-if="fieldErrors[field.field]"
+                :id="errorId(field)"
+                class="w-crud-form-error"
+                role="alert"
+              >
+                {{ fieldErrors[field.field] }}
               </small>
             </div>
 
