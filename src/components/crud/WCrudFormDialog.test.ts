@@ -117,3 +117,33 @@ describe('WCrudFormDialog — required e slot field-*', () => {
     w.unmount()
   })
 })
+
+describe('WCrudFormDialog — update:field', () => {
+  it('repassa o terceiro argumento (escrita automática) e o omite na edição do usuário', async () => {
+    const w = montar(
+      {},
+      {
+        fields: [
+          { field: 'nome', label: 'Nome', type: 'text' },
+          {
+            field: 'eco',
+            label: 'Eco',
+            type: 'text',
+            calculate: (f: Record<string, unknown>) => `${f.nome}!`,
+          },
+        ],
+        formData: { nome: 'a', eco: '' },
+      },
+    )
+    await w.vm.$nextTick()
+    expect(w.emitted('update:field')).toContainEqual(['eco', 'a!', true])
+    const input = document.body.querySelector('form.w-crud-form input') as HTMLInputElement
+    input.value = 'b'
+    input.dispatchEvent(new Event('input'))
+    await w.vm.$nextTick()
+    const ultimo = w.emitted('update:field')!.at(-1)!
+    expect(ultimo.slice(0, 2)).toEqual(['nome', 'b'])
+    expect(ultimo[2]).toBeUndefined()
+    w.unmount()
+  })
+})

@@ -89,6 +89,10 @@ async function digitar(w: ReturnType<typeof montar>['wrapper'], texto: string) {
   await el.trigger('input')
 }
 
+/** Segundo argumento (`automatico`) de cada emissão. */
+const automatico = (w: ReturnType<typeof montar>['wrapper']) =>
+  (w.emitted('update:modelValue') ?? []).map((e) => (e as [unknown, boolean?])[1])
+
 const emitido = (w: ReturnType<typeof montar>['wrapper']) =>
   (w.emitted('update:modelValue') ?? []).map((e) => (e as [unknown])[0])
 
@@ -128,6 +132,16 @@ describe('WAutoCompleteFK — único registro já vem preenchido', () => {
     expect(provider.list).toHaveBeenCalledWith('/itens', { page_size: 2 })
     expect(emitido(wrapper)).toEqual([{ id: 1, nome: 'Único' }])
     expect(input(wrapper).element.value).toBe('Único')
+    wrapper.unmount()
+  })
+
+  it('a auto-seleção emite automatico=true; a escolha manual não', async () => {
+    const { wrapper } = montar({ autoSelectSingle: true }, [{ id: 1, nome: 'Único' }])
+    await flushPromises()
+    expect(automatico(wrapper)).toEqual([true])
+    await wrapper.setProps({ modelValue: { id: 1, nome: 'Único' } })
+    await wrapper.find('.w-autocompletefk-clear').trigger('click')
+    expect(automatico(wrapper)).toEqual([true, undefined])
     wrapper.unmount()
   })
 
@@ -375,6 +389,30 @@ describe('WAutoCompleteFK — destino da gravação do cadastro embutido', () =>
       '/cadastro',
       expect.objectContaining({ nome: 'Lote A', produto: 7 }),
     )
+    wrapper.unmount()
+  })
+})
+
+describe('WAutoCompleteFK — cadastro embutido com campo obrigatório', () => {
+  it('com o required vazio não chama provider.create e mostra o erro no campo', async () => {
+    const obrigatorios: FieldDef[] = [
+      { field: 'nome', label: 'Nome', type: 'text', required: true },
+    ]
+    const { wrapper, provider } = montar({
+      autoSelectSingle: false,
+      canCreate: true,
+      crudFields: obrigatorios,
+    })
+    await flushPromises()
+    await wrapper.find('.w-autocompletefk-trigger').trigger('click')
+    await flushPromises()
+    const novo = wrapper.findAll('button').find((b) => b.text() === 'Novo')!
+    await novo.trigger('click')
+    // submit do form real: é o diálogo que valida o required antes de emitir `save`
+    await wrapper.findComponent(WCrudFormDialog).find('form').trigger('submit')
+    await flushPromises()
+    expect(provider.create).not.toHaveBeenCalled()
+    expect(wrapper.findComponent(WCrudFormDialog).text()).toMatch(/obrigat/i)
     wrapper.unmount()
   })
 })

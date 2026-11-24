@@ -896,3 +896,22 @@ describe('erro some ao corrigir o valor', () => {
     w.unmount()
   })
 })
+
+describe('update:field — escrita automática', () => {
+  it('campo calculado emite com automatico=true, também na montagem', () => {
+    const w = montar(
+      [
+        { field: 'a', label: 'A', type: 'number' },
+        { field: 'dobro', label: 'Dobro', type: 'number', calculate: (f) => Number(f.a) * 2 },
+      ],
+      { a: 2, dobro: 0 },
+    )
+    expect(emitido(w)).toEqual([['dobro', 4, true]])
+  })
+
+  it('edição do usuário emite sem o terceiro argumento', async () => {
+    const w = montar([{ field: 'nome', label: 'Nome', type: 'text' }], { nome: '' })
+    await w.find('input').setValue('x')
+    expect(emitido(w).at(-1)).toEqual(['nome', 'x'])
+  })
+})

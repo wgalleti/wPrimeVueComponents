@@ -38,7 +38,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  'update:field': [field: string, value: unknown]
+  /** `automatico`: escrita do próprio formulário (calculado, auto-seleção da FK), não do usuário. */
+  'update:field': [field: string, value: unknown, automatico?: boolean]
 }>()
 const slots = useSlots()
 
@@ -248,7 +249,7 @@ watch(
   () => calculatedFields.value.map((f) => f.calculate!(props.formData, props.isEditing)),
   (nexts) => {
     calculatedFields.value.forEach((f, i) => {
-      if (props.formData[f.field] !== nexts[i]) emit('update:field', f.field, nexts[i])
+      if (props.formData[f.field] !== nexts[i]) emit('update:field', f.field, nexts[i], true)
     })
   },
   { immediate: true },
@@ -1047,7 +1048,7 @@ defineExpose({ validateAll, clearErrors })
                 :can-edit="field.canEdit"
                 :can-delete="field.canDelete"
                 :auto-select-single="field.autoSelectSingle"
-                @update:model-value="(val) => emit('update:field', field.field, val)"
+                @update:model-value="(val, auto) => emit('update:field', field.field, val, auto)"
               />
 
               <!-- Date -->

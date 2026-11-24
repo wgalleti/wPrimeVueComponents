@@ -127,7 +127,8 @@ export interface CrudManagerReturn<T> {
   /** Exclui o item sem o confirm de serviço — para quem controla a própria
    *  confirmação (ex.: WCrudView com o slot `delete-message`). */
   performDelete(item: T): Promise<void>
-  setFormField(field: string, value: unknown): void
+  /** `automatico`: escrita do próprio formulário (calculado, auto-seleção da FK) — não suja. */
+  setFormField(field: string, value: unknown, automatico?: boolean): void
   resetForm(): void
   goToPage(page: number): void
   firstPage(): void

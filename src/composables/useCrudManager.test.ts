@@ -376,6 +376,77 @@ describe('useCrudManager — alteração não salva', () => {
   })
 })
 
+describe('useCrudManager — escrita automática não suja', () => {
+  const form = [
+    { field: 'nome', label: 'Nome', type: 'text' as const },
+    { field: 'total', label: 'Total', type: 'number' as const },
+  ]
+  const abrir = () => {
+    const crud = setup({ endpoint: '/p', columns: [], form }, { list: okList() })
+    crud.openCreateDialog()
+    return crud
+  }
+
+  it('escrita automática logo após abrir não suja nem entra nos pendentes', async () => {
+    const crud = abrir()
+    crud.setFormField('total', 10, true)
+    crud.setFormField('chave_nova', 'x', true) // campo fora de `form`, ausente no retrato
+    await nextTick()
+    expect(crud.isDirty.value).toBe(false)
+    expect(listPendingForms()).toHaveLength(0)
+  })
+
+  it('usuário muda → sujo; desfaz → limpo', async () => {
+    const crud = abrir()
+    const inicial = crud.formData.nome
+    crud.setFormField('nome', 'A')
+    expect(crud.isDirty.value).toBe(true)
+    crud.setFormField('nome', inicial)
+    expect(crud.isDirty.value).toBe(false)
+  })
+
+  it('digitar e apagar volta ao vazio: null e texto vazio não são diferença', () => {
+    const crud = abrir()
+    expect(crud.formData.nome).toBeNull()
+    crud.setFormField('nome', 'A')
+    expect(crud.isDirty.value).toBe(true)
+    crud.setFormField('nome', '')
+    expect(crud.isDirty.value).toBe(false)
+  })
+
+  it('automático depois de o usuário mexer em OUTRO campo mantém sujo', () => {
+    const crud = abrir()
+    const inicial = crud.formData.nome
+    crud.setFormField('nome', 'A')
+    crud.setFormField('total', 5, true)
+    expect(crud.isDirty.value).toBe(true)
+    crud.setFormField('nome', inicial)
+    expect(crud.isDirty.value).toBe(false)
+  })
+
+  it('automático que não muda o valor não deixa isDirty velho', () => {
+    const crud = abrir()
+    crud.setFormField('total', 5)
+    expect(crud.isDirty.value).toBe(true)
+    // o calculado acompanha o retrato mesmo que o formData já tenha o valor
+    crud.setFormField('total', 5, true)
+    expect(crud.isDirty.value).toBe(false)
+  })
+
+  it('edição: o valor automático entra no PATCH sem sujar', async () => {
+    const update = vi.fn().mockResolvedValue({ data: { id: 1 } })
+    const crud = setup(
+      { endpoint: '/p', columns: [], form, pk: 'id', partialUpdate: true, refetchOnSave: false },
+      { list: okList(), update },
+    )
+    crud.openEditDialog({ id: 1, nome: 'A', total: 1 })
+    crud.setFormField('total', 2, true)
+    expect(crud.isDirty.value).toBe(false)
+    await crud.save()
+    expect(update).toHaveBeenCalledWith('/p', 1, { total: 2 }, undefined)
+  })
+})
+
 describe('useCrudManager — padrão do app e aba', () => {
   const form = [{ field: 'nome', label: 'Nome', type: 'text' as const }]
 

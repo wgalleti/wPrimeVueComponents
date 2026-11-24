@@ -42,7 +42,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:visible': [value: boolean]
-  'update:field': [field: string, value: unknown]
+  'update:field': [field: string, value: unknown, automatico?: boolean]
   save: []
 }>()
 
@@ -110,7 +110,7 @@ watch(
           :disabled="disabled"
           :columns="formColumns"
           :errors="errors"
-          @update:field="(f, v) => emit('update:field', f, v)"
+          @update:field="(f, v, auto) => emit('update:field', f, v, auto)"
         >
           <!-- Forward field-* slots from parent. Só os fornecidos: o renderer usa a
                presença do slot para mostrar o erro do campo e abrir mão do fallback. -->

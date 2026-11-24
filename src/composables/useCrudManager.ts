@@ -297,7 +297,10 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     }
   }
 
-  function setFormField(field: string, value: unknown): void {
+  function setFormField(field: string, value: unknown, automatico?: boolean): void {
+    // Escrita automática (auto-seleção da FK, campo calculado) não é alteração do usuário:
+    // o retrato do campo acompanha, antes de escrever, para o isDirty nunca ver a diferença.
+    if (automatico) retrato[field] = serializar(value)
     formData[field] = value
     // Escreve o valor antes de apagar o erro: o renderer vê a troca do valor primeiro e
     // só então o `errors` mudar, sem regravar a chave que acabou de sair.
@@ -399,19 +402,29 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     dialogVisible.value = true
   }
 
-  // Alteração não salva: retrato do formulário no momento em que o diálogo abre (todos os
-  // `open*` preenchem o formData antes de mostrar). Alimenta o registro de pendentes — aviso
-  // de saída da página e bloqueio da recarga por versão nova.
-  let retratoAoAbrir = ''
+  // Alteração não salva: retrato por campo (campo → JSON do valor) tirado quando o diálogo abre
+  // (todos os `open*` preenchem o formData antes de mostrar). Alimenta o registro de pendentes —
+  // aviso de saída da página e bloqueio da recarga por versão nova. Reativo, e por campo, para
+  // a escrita automática poder atualizar o retrato de um campo só.
+  const retrato = reactive<Record<string, string>>({})
+  // Vazio é um só: o campo que nasce `null` vira `''` quando o usuário digita e apaga.
+  const serializar = (v: unknown): string => (v == null || v === '' ? '' : JSON.stringify(v))
   watch(
     dialogVisible,
     (aberto) => {
-      if (aberto) retratoAoAbrir = JSON.stringify(formData)
+      if (!aberto) return
+      for (const k of Object.keys(retrato)) delete retrato[k]
+      for (const k of Object.keys(formData)) retrato[k] = serializar(formData[k])
     },
     { flush: 'sync' },
   )
   const isDirty = computed(
-    () => dialogVisible.value && !viewMode.value && JSON.stringify(formData) !== retratoAoAbrir,
+    () =>
+      dialogVisible.value &&
+      !viewMode.value &&
+      [...new Set([...Object.keys(formData), ...Object.keys(retrato)])].some(
+        (k) => serializar(formData[k]) !== (retrato[k] ?? ''),
+      ),
   )
   usePendingForm(isDirty)
   // Dentro de uma aba de rota, fechar a aba com o diálogo alterado pergunta antes.

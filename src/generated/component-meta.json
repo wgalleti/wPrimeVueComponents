@@ -212,7 +212,7 @@
         },
         {
           "name": "update:field",
-          "type": "[field: string, value: unknown]",
+          "type": "[field: string, value: unknown, automatico?: boolean | undefined]",
           "description": ""
         },
         {
@@ -1122,7 +1122,7 @@
       "events": [
         {
           "name": "update:modelValue",
-          "type": "[value: Record<string, unknown> | Record<string, unknown>[] | null]",
+          "type": "[value: Record<string, unknown> | Record<string, unknown>[] | null, automatico?: boolean | undefined]",
           "description": ""
         }
       ],
@@ -1402,7 +1402,7 @@
       "events": [
         {
           "name": "update:field",
-          "type": "[field: string, value: unknown]",
+          "type": "[field: string, value: unknown, automatico?: boolean | undefined]",
           "description": ""
         }
       ],

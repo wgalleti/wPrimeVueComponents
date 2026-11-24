@@ -1983,7 +1983,7 @@ onMounted(() => {
             if (!v) crud.editingItem.value = null
           }
         "
-        @update:field="(field, val) => crud.setFormField(field, val)"
+        @update:field="(field, val, auto) => crud.setFormField(field, val, auto)"
         @save="crud.save()"
       >
         <template

@@ -122,7 +122,11 @@ const acPt = computed(() => ({ pcInputText: { root: props.inputAttrs } }))
 
 const emit = defineEmits<{
   /** Objeto selecionado — ou a lista de objetos quando `multiple`. */
-  'update:modelValue': [value: Record<string, unknown> | Record<string, unknown>[] | null]
+  /** `automatico` é true só na auto-seleção do registro único (não foi escolha do usuário). */
+  'update:modelValue': [
+    value: Record<string, unknown> | Record<string, unknown>[] | null,
+    automatico?: boolean,
+  ]
 }>()
 
 // O template tem múltiplos nós raiz (o campo + os overlays Dialog/WCrudFormDialog).
@@ -534,7 +538,7 @@ async function tentarAutoSelecao() {
       typeof response.rows === 'number' ? response.rows === 1 : response.data.length === 1
     if (!unico || !response.data[0]) return
     selectedItem.value = response.data[0]
-    emit('update:modelValue', response.data[0])
+    emit('update:modelValue', response.data[0], true)
   } catch {
     // Auto-seleção é conveniência: falhou, o campo segue vazio.
   }
