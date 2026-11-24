@@ -211,6 +211,8 @@ describe('useCrudManager — erros do servidor por campo', () => {
     await crud.save()
     crud.setFormField('nome', 'A')
     expect({ ...crud.fieldErrors }).toEqual({ valor: 'y' })
+    crud.setFormField('valor', crud.formData.valor) // mesmo valor: a recusa continua
+    expect({ ...crud.fieldErrors }).toEqual({ valor: 'y' })
     crud.dialogVisible.value = false // o form sujo entra no registro global de pendentes
     await nextTick()
   })

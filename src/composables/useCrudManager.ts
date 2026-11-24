@@ -301,10 +301,11 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     // Escrita automática (auto-seleção da FK, campo calculado) não é alteração do usuário:
     // o retrato do campo acompanha, antes de escrever, para o isDirty nunca ver a diferença.
     if (automatico) retrato[field] = serializar(value)
+    const mudou = !Object.is(formData[field], value)
     formData[field] = value
     // Escreve o valor antes de apagar o erro: o renderer vê a troca do valor primeiro e
     // só então o `errors` mudar, sem regravar a chave que acabou de sair.
-    delete fieldErrors[field]
+    if (mudou) delete fieldErrors[field]
   }
 
   function openCreateDialog(): void {

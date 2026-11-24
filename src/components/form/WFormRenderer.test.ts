@@ -681,6 +681,27 @@ describe('required no validateAll', () => {
     w.unmount()
   })
 
+  it('o foco vai para quem barrou, não para a recusa do servidor acima dele', async () => {
+    const w = mount(WFormRenderer, {
+      attachTo: document.body,
+      props: {
+        fields: [
+          { field: 'a', label: 'A' },
+          { field: 'b', label: 'B', required: true },
+        ] as FieldDef[],
+        formData: { a: 'x', b: '' },
+        isEditing: false,
+        errors: { a: 'Já existe' },
+      },
+      global: { plugins: [PrimeVue] },
+    })
+    validar(w)
+    await w.vm.$nextTick()
+    await w.vm.$nextTick()
+    expect(document.activeElement?.id).toMatch(/-b$/)
+    w.unmount()
+  })
+
   it('erro de campo de slot rola até a mensagem', async () => {
     const w = mount(WFormRenderer, {
       attachTo: document.body,
@@ -840,6 +861,13 @@ describe('erro some ao corrigir o valor', () => {
     errors.outra = 'x' // mexe no objeto sem tocar na chave `nome`
     await nextTick()
     expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('passar pelo campo sem mudar o valor não desfaz a recusa do servidor', async () => {
+    const { w } = reativo([email], { email: 'a@b' }, { email: 'Duplicado' })
+    await w.find('input').trigger('blur')
+    expect(textos(w)).toEqual(['Duplicado'])
     w.unmount()
   })
 

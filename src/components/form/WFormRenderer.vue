@@ -499,6 +499,8 @@ function resolveDrilldown(field: FieldDef) {
 function validateField(field: FieldDef) {
   if (typeof field.validate === 'function') {
     const error = field.validate(props.formData[field.field], validateContext())
+    // Passar pelo campo sem mudar o valor não desfaz a recusa do servidor.
+    if (!error && serverKeys.has(field.field)) return
     forgetOrigin(field.field)
     fieldErrors[field.field] = error || null
   }
@@ -517,6 +519,7 @@ function forgetOrigin(k: string) {
  */
 function validateAll(): string[] {
   const errors: string[] = []
+  const reprovados = new Set<string>()
   cleared = {}
   for (const field of props.fields) {
     if (!isFieldVisible(field, props.formData, props.isEditing)) {
@@ -528,32 +531,29 @@ function validateAll(): string[] {
     if (!error && (serverKeys.has(field.field) || imageKeys.has(field.field))) continue
     forgetOrigin(field.field)
     fieldErrors[field.field] = error
-    if (error) errors.push(error)
+    if (!error) continue
+    errors.push(error)
+    reprovados.add(field.field)
   }
   // O erro pode estar fora da área visível do diálogo: sem levar o usuário até ele,
   // o save barrado seria uma falha silenciosa.
-  if (errors.length) void nextTick(focusFirstError)
+  if (errors.length) void nextTick(() => focusFirstError(reprovados))
   return errors
 }
 
 const rootEl = ref<HTMLElement | null>(null)
 const FOCUSABLE = 'input, select, textarea, button, [tabindex]:not([tabindex="-1"])'
 
-/** Primeiro erro na ordem da tela: foco no controle, ou rola até a mensagem do campo de slot. */
-function focusFirstError() {
-  const target = rootEl.value?.querySelector<HTMLElement>(
-    '[aria-invalid="true"], .w-crud-form-error--slot',
-  )
-  if (!target) return
-  if (target.classList.contains('w-crud-form-error--slot')) {
-    target.scrollIntoView?.({ block: 'nearest' })
-    return
-  }
-  // Grupo (pílulas, chips, transfer) leva o aria-invalid no contêiner: foca o 1º controle dentro.
-  const focusable = target.matches(FOCUSABLE)
-    ? target
-    : target.querySelector<HTMLElement>(FOCUSABLE)
-  ;(focusable ?? target).focus?.()
+/** Primeiro reprovado na ordem da tela: foco no controle, ou rola até a mensagem do campo de slot. */
+function focusFirstError(reprovados: Set<string>) {
+  const field = groupedFields.value.flatMap((g) => g.fields).find((f) => reprovados.has(f.field))
+  if (!field) return
+  const porId = (id: string) => rootEl.value?.querySelector<HTMLElement>(`[id="${id}"]`)
+  const alvo = porId(fieldId(field))
+  // Grupo (pílulas, chips, transfer) leva o id no contêiner: foca o 1º controle dentro.
+  const foco = alvo?.matches(FOCUSABLE) ? alvo : alvo?.querySelector<HTMLElement>(FOCUSABLE)
+  if (foco) foco.focus()
+  else porId(errorId(field))?.scrollIntoView?.({ block: 'nearest' })
 }
 
 function clearErrors() {

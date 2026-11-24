@@ -25,7 +25,8 @@ import { WFormRenderer } from '@wgalleti/primevue-components'
 
 Vazio é `null`, `undefined`, texto só de espaços ou lista vazia; `false` e `0` não são vazios.
 Campo obrigatório vazio mostra "X é obrigatório" no campo. O `validateAll` marca todos de uma vez
-e leva o foco ao primeiro inválido (campo de slot: rola até a mensagem). O blur só roda o `validate`.
+e leva o foco ao primeiro que barrou (campo de slot: ao controle que usa o `fieldId`; sem ele, rola até
+a mensagem). O blur só roda o `validate`.
 
 Campo com erro é reavaliado a cada mudança de valor, dele ou de outro campo (validação cruzada):
 o erro some quando o campo fica válido e nunca nasce enquanto se digita. Erro do servidor
