@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.6.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.3...v2.6.0) (2026-11-24)
+
+### Correções
+
+* **crud:** keep an untouched dialog clean when the form fills fields by itself ([a324530](https://github.com/wgalleti/wPrimeVueComponents/commit/a32453048ed10d62362e49e1197eebdce857e2a3))
+* **form:** clear a field error when its value changes ([25d4968](https://github.com/wgalleti/wPrimeVueComponents/commit/25d496826c3fd53c52d8121b9e972469ad94c209))
+* **form:** keep a server refusal until its value changes and focus the blocking field ([cab6fbf](https://github.com/wgalleti/wPrimeVueComponents/commit/cab6fbfb6ee609a7955c069a804b28977ae78c7d))
+* **form:** mark empty required fields in validateAll and focus the first error ([a44cfed](https://github.com/wgalleti/wPrimeVueComponents/commit/a44cfedde236ac2eb77c6339f81921032295f236))
+* **form:** paint the FK field border when it has an error ([09a10f9](https://github.com/wgalleti/wPrimeVueComponents/commit/09a10f9ced6b401867a7fb4fb3f4f97fc70b87ce))
+* **form:** show the field error on switch and transfer fields ([38ff703](https://github.com/wgalleti/wPrimeVueComponents/commit/38ff703dc9190e1d1b19ddf9b2cfc4a18fbba081))
+
+### Documentação
+
+* **form:** describe required marking, error clearing and automatic writes ([1b6f68b](https://github.com/wgalleti/wPrimeVueComponents/commit/1b6f68bedfc6c4029a33be9b3bae05f52abb4e10))
 ## [2.5.3](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.2...v2.5.3) (2026-11-19)
 
 ### Correções
