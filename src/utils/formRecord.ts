@@ -92,14 +92,41 @@ export function isFieldVisible(
   return field.visible
 }
 
+/** Vazio para `required`: `false` e `0` são respostas, não ausência. */
+function isEmptyValue(val: unknown): boolean {
+  if (val === null || val === undefined) return true
+  if (typeof val === 'string') return val.trim() === ''
+  return Array.isArray(val) && val.length === 0
+}
+
+/**
+ * Erro de UM campo, ou `null`. A ordem importa: o `validate` do campo vence a
+ * obrigatoriedade, para a mensagem específica ("CNPJ inválido") aparecer no lugar
+ * da genérica; o `maxLength` fecha, pois o `maxlength` nativo não barra o valor
+ * que já veio da API. Não olha `visible`: quem chama decide.
+ */
+export function validateFieldRecord(
+  field: FieldDef,
+  formData: Record<string, unknown>,
+  isEditing = false,
+): string | null {
+  const val = formData[field.field]
+  if (field.validate) {
+    const result = field.validate(val, { formData, isEditing })
+    if (result) return result
+  }
+  if (field.required && isEmptyValue(val)) return `${field.label} é obrigatório`
+  if (field.maxLength && (val == null ? 0 : String(val).length) > field.maxLength) {
+    return `Máximo de ${field.maxLength} caracteres.`
+  }
+  return null
+}
+
 /**
  * Primeira mensagem de erro do form, ou `null` se está tudo certo.
  *
  * Campo oculto (`visible` falso para o form atual) não é validado: o usuário não
  * tem como preenchê-lo, então `required`/`validate` dele não podem barrar o save.
- *
- * A ordem importa: o `validate` do campo vence a obrigatoriedade, para a mensagem
- * específica ("CNPJ inválido") aparecer no lugar da genérica.
  */
 export function validateFormRecord(
   fields: FieldDef[],
@@ -108,16 +135,8 @@ export function validateFormRecord(
 ): string | null {
   for (const f of fields) {
     if (!isFieldVisible(f, formData, isEditing)) continue
-    if (f.validate) {
-      const result = f.validate(formData[f.field], { formData, isEditing })
-      if (result) return result
-    }
-    if (f.required) {
-      const val = formData[f.field]
-      if (val === null || val === undefined || val === '') {
-        return `${f.label} é obrigatório`
-      }
-    }
+    const error = validateFieldRecord(f, formData, isEditing)
+    if (error) return error
   }
   return null
 }

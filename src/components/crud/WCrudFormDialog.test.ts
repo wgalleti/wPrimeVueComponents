@@ -78,3 +78,42 @@ describe('WCrudFormDialog — slot aside', () => {
     w.unmount()
   })
 })
+
+describe('WCrudFormDialog — required e slot field-*', () => {
+  async function pronto(w: ReturnType<typeof montar>) {
+    await w.vm.$nextTick()
+    await w.vm.$nextTick()
+    return document.body.querySelector('form.w-crud-form') as HTMLFormElement
+  }
+
+  it('required vazio barra o save e mostra o erro no campo', async () => {
+    const w = montar()
+    const form = await pronto(w)
+    form.dispatchEvent(new Event('submit', { cancelable: true }))
+    await w.vm.$nextTick()
+    expect(w.emitted('save')).toBeUndefined()
+    expect(form.querySelector('.w-crud-form-error')?.textContent).toContain('Nome é obrigatório')
+    w.unmount()
+  })
+
+  it('campo montado por slot mostra o erro atravessando o diálogo', async () => {
+    const w = montar({ 'field-nome': '<input class="meu" />' })
+    const form = await pronto(w)
+    form.dispatchEvent(new Event('submit', { cancelable: true }))
+    await w.vm.$nextTick()
+    expect(w.emitted('save')).toBeUndefined()
+    expect(form.querySelectorAll('.w-crud-form-error--slot').length).toBe(1)
+    w.unmount()
+  })
+
+  it('sem slot fornecido o conteúdo padrão continua e o erro não duplica', async () => {
+    const w = montar()
+    const form = await pronto(w)
+    expect(form.querySelector('input')).not.toBeNull()
+    form.dispatchEvent(new Event('submit', { cancelable: true }))
+    await w.vm.$nextTick()
+    expect(form.querySelectorAll('.w-crud-form-error').length).toBe(1)
+    expect(form.querySelector('.w-crud-form-error--slot')).toBeNull()
+    w.unmount()
+  })
+})

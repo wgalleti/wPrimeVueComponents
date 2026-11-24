@@ -1987,7 +1987,7 @@ onMounted(() => {
         @save="crud.save()"
       >
         <template
-          v-for="field in crud.config.form"
+          v-for="field in crud.config.form.filter((f) => $slots[`field-${f.field}`])"
           :key="field.field"
           #[`field-${field.field}`]="scope"
         >

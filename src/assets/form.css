@@ -827,3 +827,9 @@
 .w-chips__summary:empty {
   display: none;
 }
+
+/* Erro do campo montado por slot `field-*`: o fallback do renderer não existe, então a
+   mensagem vem logo após o slot, ocupando a linha inteira do grid. */
+.w-crud-form-error--slot {
+  grid-column: 1 / -1;
+}

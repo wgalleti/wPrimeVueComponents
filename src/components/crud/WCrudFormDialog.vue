@@ -112,9 +112,10 @@ watch(
           :errors="errors"
           @update:field="(f, v) => emit('update:field', f, v)"
         >
-          <!-- Forward field-* slots from parent -->
+          <!-- Forward field-* slots from parent. Só os fornecidos: o renderer usa a
+               presença do slot para mostrar o erro do campo e abrir mão do fallback. -->
           <template
-            v-for="field in fields"
+            v-for="field in fields.filter((f) => $slots[`field-${f.field}`])"
             :key="`fwd-${field.field}`"
             #[`field-${field.field}`]="slotData"
           >

@@ -590,3 +590,94 @@ describe('WFormRenderer — switch com ajuda', () => {
     expect(css).toMatch(/\.w-crud-form-switch--hint \.w-crud-form-hint \{[^}]*grid-column: 2;/)
   })
 })
+
+describe('required no validateAll', () => {
+  const validar = (w: VueWrapper) =>
+    (w.vm as unknown as { validateAll: () => string[] }).validateAll()
+
+  const campos: FieldDef[] = [
+    { field: 'nome', label: 'Nome', required: true },
+    { field: 'ativo', label: 'Ativo', type: 'switch', required: true },
+    { field: 'qtd', label: 'Qtd', type: 'number', required: true },
+    { field: 'obs', label: 'Obs', required: true, visible: false },
+  ]
+
+  it('marca todos os vazios de uma vez, com aria-invalid e mensagem no campo', async () => {
+    const w = montar(campos, { nome: '  ', ativo: null, qtd: null })
+    expect(validar(w)).toEqual(['Nome é obrigatório', 'Ativo é obrigatório', 'Qtd é obrigatório'])
+    await w.vm.$nextTick()
+    expect(w.find('input[aria-invalid="true"]').exists()).toBe(true)
+    expect(w.findAll('.w-crud-form-error').map((e) => e.text())).toContain('Nome é obrigatório')
+    w.unmount()
+  })
+
+  it('false e 0 passam; campo oculto não barra', () => {
+    const w = montar(campos, { nome: 'a', ativo: false, qtd: 0 })
+    expect(validar(w)).toEqual([])
+  })
+
+  it('validate próprio vence a mensagem de obrigatório', () => {
+    const w = montar([{ field: 'n', label: 'N', required: true, validate: () => 'N inválido' }], {
+      n: '',
+    })
+    expect(validar(w)).toEqual(['N inválido'])
+  })
+
+  it('o blur não marca required', async () => {
+    const w = montar([campos[0]], { nome: '' })
+    await w.find('input').trigger('blur')
+    expect(w.find('.w-crud-form-error').exists()).toBe(false)
+  })
+
+  it('campo de slot field-* mostra o erro; sem slot a mensagem não duplica', async () => {
+    const comSlot = montar([campos[0]], { nome: '' }, { 'field-nome': '<input class="meu" />' })
+    validar(comSlot)
+    await comSlot.vm.$nextTick()
+    expect(comSlot.findAll('.w-crud-form-error--slot').map((e) => e.text())).toEqual([
+      'Nome é obrigatório',
+    ])
+    const semSlot = montar([campos[0]], { nome: '' })
+    validar(semSlot)
+    await semSlot.vm.$nextTick()
+    expect(semSlot.findAll('.w-crud-form-error').length).toBe(1)
+    expect(semSlot.find('.w-crud-form-error--slot').exists()).toBe(false)
+  })
+
+  it('foca o primeiro campo inválido na ordem da tela', async () => {
+    const w = mount(WFormRenderer, {
+      attachTo: document.body,
+      props: {
+        fields: [
+          { field: 'a', label: 'A' },
+          { field: 'b', label: 'B', required: true },
+          { field: 'c', label: 'C', required: true },
+        ] as FieldDef[],
+        formData: { a: 'x', b: '', c: '' },
+        isEditing: false,
+      },
+      global: { plugins: [PrimeVue] },
+    })
+    validar(w)
+    await w.vm.$nextTick()
+    await w.vm.$nextTick()
+    expect(document.activeElement?.id).toMatch(/-b$/)
+    w.unmount()
+  })
+
+  it('erro de campo de slot rola até a mensagem', async () => {
+    const w = mount(WFormRenderer, {
+      attachTo: document.body,
+      props: { fields: [campos[0]], formData: { nome: '' }, isEditing: false },
+      slots: { 'field-nome': '<input />' },
+      global: { plugins: [PrimeVue] },
+    })
+    const rolar = vi.fn()
+    Element.prototype.scrollIntoView = rolar
+    validar(w)
+    await w.vm.$nextTick()
+    await w.vm.$nextTick()
+    expect(rolar).toHaveBeenCalledWith({ block: 'nearest' })
+    w.unmount()
+    Reflect.deleteProperty(Element.prototype, 'scrollIntoView')
+  })
+})

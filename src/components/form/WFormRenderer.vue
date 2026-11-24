@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, inject, reactive, isRef, watch, useId, useSlots } from 'vue'
+import { computed, inject, nextTick, reactive, ref, isRef, watch, useId, useSlots } from 'vue'
 import { vMaska } from 'maska/vue'
-import { isFieldVisible } from '@/utils/formRecord'
+import { isFieldVisible, validateFieldRecord } from '@/utils/formRecord'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Textarea from 'primevue/textarea'
@@ -130,12 +130,6 @@ function showsCounter(field: FieldDef): boolean {
 function charCount(field: FieldDef): number {
   const v = props.formData[field.field]
   return v == null ? 0 : String(v).length
-}
-
-/** O `maxlength` barra a digitação, não o valor que já veio da API. */
-function lengthError(field: FieldDef): string | null {
-  if (!field.maxLength || charCount(field) <= field.maxLength) return null
-  return `Máximo de ${field.maxLength} caracteres.`
 }
 
 /** Grupos sem input único (pílulas, chips, transfer, imagem): rotulados pelo label. */
@@ -499,15 +493,6 @@ function validateField(field: FieldDef) {
   }
 }
 
-/** Erro do campo no salvar: o `validate` próprio, senão o limite de `maxLength`. */
-function runValidation(field: FieldDef): string | null {
-  const own =
-    typeof field.validate === 'function'
-      ? field.validate(props.formData[field.field], validateContext())
-      : null
-  return own || lengthError(field)
-}
-
 /**
  * Só campos visíveis: um `validate` de campo oculto barraria o save sem ter onde
  * mostrar o erro (o campo não está na tela). O erro de campo que ficou oculto é
@@ -520,13 +505,34 @@ function validateAll(): string[] {
       fieldErrors[field.field] = null
       continue
     }
-    if (typeof field.validate === 'function' || field.maxLength) {
-      const error = runValidation(field)
-      fieldErrors[field.field] = error
-      if (error) errors.push(error)
-    }
+    const error = validateFieldRecord(field, props.formData, props.isEditing)
+    fieldErrors[field.field] = error
+    if (error) errors.push(error)
   }
+  // O erro pode estar fora da área visível do diálogo: sem levar o usuário até ele,
+  // o save barrado seria uma falha silenciosa.
+  if (errors.length) void nextTick(focusFirstError)
   return errors
+}
+
+const rootEl = ref<HTMLElement | null>(null)
+const FOCUSABLE = 'input, select, textarea, button, [tabindex]:not([tabindex="-1"])'
+
+/** Primeiro erro na ordem da tela: foco no controle, ou rola até a mensagem do campo de slot. */
+function focusFirstError() {
+  const target = rootEl.value?.querySelector<HTMLElement>(
+    '[aria-invalid="true"], .w-crud-form-error--slot',
+  )
+  if (!target) return
+  if (target.classList.contains('w-crud-form-error--slot')) {
+    target.scrollIntoView?.({ block: 'nearest' })
+    return
+  }
+  // Grupo (pílulas, chips, transfer) leva o aria-invalid no contêiner: foca o 1º controle dentro.
+  const focusable = target.matches(FOCUSABLE)
+    ? target
+    : target.querySelector<HTMLElement>(FOCUSABLE)
+  ;(focusable ?? target).focus?.()
 }
 
 function clearErrors() {
@@ -620,7 +626,7 @@ defineExpose({ validateAll, clearErrors })
 </script>
 
 <template>
-  <div class="w-crud-form">
+  <div ref="rootEl" class="w-crud-form">
     <div v-for="group in groupedFields" :key="group.id" class="w-crud-form-group">
       <div v-if="group.title" class="w-crud-form-group-header">
         <h3 class="w-crud-form-group-title">{{ group.title }}</h3>
@@ -1227,6 +1233,15 @@ defineExpose({ validateAll, clearErrors })
               </small>
             </div>
           </slot>
+          <!-- O campo de slot engole o erro do fallback: mostra aqui, em linha inteira. -->
+          <small
+            v-if="slots[`field-${field.field}`] && fieldError(field)"
+            :id="errorId(field)"
+            class="w-crud-form-error w-crud-form-error--slot"
+            role="alert"
+          >
+            {{ fieldError(field) }}
+          </small>
         </template>
       </div>
     </div>

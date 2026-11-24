@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isFieldVisible, validateFormRecord } from './formRecord'
+import { isFieldVisible, validateFieldRecord, validateFormRecord } from './formRecord'
 import type { FieldDef } from '@/types/field'
 
 const campos: FieldDef[] = [
@@ -40,5 +40,31 @@ describe('validateFormRecord', () => {
   it('visible que depende de isEditing usa o modo informado', () => {
     expect(validateFormRecord(campos, { nome: 'x', preco: 1 }, false)).toBeNull()
     expect(validateFormRecord(campos, { nome: 'x', preco: 1 }, true)).toBe('Código é obrigatório')
+  })
+})
+
+describe('validateFieldRecord — vazio do required', () => {
+  const campo: FieldDef = { field: 'x', label: 'Campo', required: true }
+  const erro = (v: unknown) => validateFieldRecord(campo, { x: v })
+
+  it('null, undefined, vazio, só espaços e array vazio barram', () => {
+    for (const v of [null, undefined, '', '  ', []]) expect(erro(v)).toBe('Campo é obrigatório')
+  })
+
+  it('false, 0 e valor preenchido passam', () => {
+    for (const v of [false, 0, 'a', [1]]) expect(erro(v)).toBeNull()
+  })
+
+  it('validateFormRecord também barra espaços e array vazio', () => {
+    expect(validateFormRecord([campo], { x: '  ' })).toBe('Campo é obrigatório')
+    expect(validateFormRecord([campo], { x: [] })).toBe('Campo é obrigatório')
+  })
+
+  it('validate próprio vence required; maxLength fecha', () => {
+    const f: FieldDef = { ...campo, validate: () => 'inválido', maxLength: 2 }
+    expect(validateFieldRecord(f, { x: '' })).toBe('inválido')
+    expect(validateFieldRecord({ ...campo, maxLength: 2 }, { x: 'abc' })).toBe(
+      'Máximo de 2 caracteres.',
+    )
   })
 })
