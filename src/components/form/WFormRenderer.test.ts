@@ -4,7 +4,7 @@
 // são exercitados pelos testes de CRUD.
 import { readFileSync } from 'node:fs'
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick, reactive } from 'vue'
 import { mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import WFormRenderer from './WFormRenderer.vue'
@@ -679,5 +679,203 @@ describe('required no validateAll', () => {
     expect(rolar).toHaveBeenCalledWith({ block: 'nearest' })
     w.unmount()
     Reflect.deleteProperty(Element.prototype, 'scrollIntoView')
+  })
+})
+
+describe('erro some ao corrigir o valor', () => {
+  type Vm = { validateAll: () => string[] }
+  const nomeObr: FieldDef = { field: 'nome', label: 'Nome', required: true }
+  const email: FieldDef = {
+    field: 'email',
+    label: 'Email',
+    validate: (v) => (typeof v === 'string' && v.includes('@') ? null : 'Email inválido'),
+  }
+  const textos = (w: VueWrapper) => w.findAll('.w-crud-form-error').map((e) => e.text())
+
+  function reativo(
+    fields: FieldDef[],
+    dados: Record<string, unknown>,
+    errors?: Record<string, string>,
+  ) {
+    const formData = reactive(dados)
+    const w = mount(WFormRenderer, {
+      props: { fields, formData, isEditing: false, errors },
+      global: { plugins: [PrimeVue] },
+    })
+    return { w, formData }
+  }
+
+  it('some quando fica válido; permanece (com a nova mensagem) enquanto inválido', async () => {
+    const { w, formData } = reativo([email], { email: 'x' })
+    ;(w.vm as unknown as Vm).validateAll()
+    await nextTick()
+    expect(textos(w)).toEqual(['Email inválido'])
+    formData.email = 'xy'
+    await nextTick()
+    expect(textos(w)).toEqual(['Email inválido'])
+    formData.email = 'a@b'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('required some ao digitar', async () => {
+    const { w, formData } = reativo([nomeObr], { nome: '' })
+    ;(w.vm as unknown as Vm).validateAll()
+    await nextTick()
+    expect(textos(w)).toEqual(['Nome é obrigatório'])
+    formData.nome = 'A'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('validação cruzada: corrigir o início limpa o erro do fim', async () => {
+    const fim: FieldDef = {
+      field: 'fim',
+      label: 'Fim',
+      validate: (v, { formData }) =>
+        Number(v) < Number(formData.inicio) ? 'Fim antes do início' : null,
+    }
+    const { w, formData } = reativo([{ field: 'inicio', label: 'Início', type: 'number' }, fim], {
+      inicio: 10,
+      fim: 5,
+    })
+    ;(w.vm as unknown as Vm).validateAll()
+    await nextTick()
+    expect(textos(w)).toEqual(['Fim antes do início'])
+    formData.inicio = 1
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('nunca cria erro: digitar num campo sem erro (ou em outro) não marca ninguém', async () => {
+    const { w, formData } = reativo([nomeObr, email], { nome: 'A', email: '' })
+    formData.nome = ''
+    formData.email = 'zz'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('erro do servidor some quando o próprio campo muda; o de outro campo permanece', async () => {
+    const errors = reactive<Record<string, string>>({ nome: 'Já existe', email: 'Duplicado' })
+    const { w, formData } = reativo([nomeObr, email], { nome: 'A', email: 'a@b' }, errors)
+    expect(textos(w)).toEqual(['Já existe', 'Duplicado'])
+    formData.nome = 'B'
+    await nextTick()
+    expect(textos(w)).toEqual(['Duplicado'])
+    w.unmount()
+  })
+
+  it('servidor + reactive errors, nas duas ordens: nada ressuscita, nada de cliente se perde', async () => {
+    for (const valorPrimeiro of [true, false]) {
+      const errors = reactive<Record<string, string>>({ nome: 'Já existe', email: 'Duplicado' })
+      const { w, formData } = reativo([nomeObr, email], { nome: 'A', email: 'a@b' }, errors)
+      if (valorPrimeiro) {
+        formData.nome = 'B'
+        delete errors.nome
+      } else {
+        delete errors.nome
+        formData.nome = 'B'
+      }
+      await nextTick()
+      expect(textos(w)).toEqual(['Duplicado'])
+      // outra chave muda: a limpa não volta
+      formData.email = 'c@d'
+      delete errors.email
+      await nextTick()
+      expect(textos(w)).toEqual([])
+      w.unmount()
+    }
+  })
+
+  it('valor inválido no campo com erro de servidor vira erro do cliente e sobrevive ao errors', async () => {
+    const errors = reactive<Record<string, string>>({ nome: 'Já existe', email: 'Duplicado' })
+    const { w, formData } = reativo([nomeObr, email], { nome: 'A', email: 'a@b' }, errors)
+    formData.nome = ''
+    delete errors.nome
+    await nextTick()
+    expect(textos(w)).toEqual(['Nome é obrigatório', 'Duplicado'])
+    w.unmount()
+  })
+
+  it('duas recusas seguidas com a mesma mensagem: o erro reaparece', async () => {
+    const errors = reactive<Record<string, string>>({ nome: 'Já existe' })
+    const { w, formData } = reativo([nomeObr], { nome: 'A' }, errors)
+    formData.nome = 'B'
+    delete errors.nome
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    errors.nome = 'Já existe'
+    await nextTick()
+    expect(textos(w)).toEqual(['Já existe'])
+    w.unmount()
+  })
+
+  it('errors fixo: o erro limpo localmente não volta enquanto a chave não muda', async () => {
+    const errors = reactive<Record<string, string>>({ nome: 'Já existe' })
+    const { w, formData } = reativo([nomeObr, email], { nome: 'A', email: '' }, errors)
+    formData.nome = 'B'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    errors.outra = 'x' // mexe no objeto sem tocar na chave `nome`
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('salvar de novo: a mesma recusa, em objeto novo, reaparece', async () => {
+    const { w, formData } = reativo([nomeObr], { nome: 'A' }, { nome: 'Já existe' })
+    formData.nome = 'B'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    expect((w.vm as unknown as Vm).validateAll()).toEqual([])
+    await w.setProps({ errors: { nome: 'Já existe' } })
+    expect(textos(w)).toEqual(['Já existe'])
+    w.unmount()
+  })
+
+  it('recusa do servidor em valor que não mudou continua à vista no validateAll, sem barrar', async () => {
+    const { w } = reativo([nomeObr, email], { nome: 'A', email: 'x' }, { nome: 'Já existe' })
+    expect((w.vm as unknown as Vm).validateAll()).toEqual(['Email inválido'])
+    await nextTick()
+    expect(textos(w)).toEqual(['Já existe', 'Email inválido'])
+    w.unmount()
+  })
+
+  it('erro do cropper e do CEP não somem porque OUTRO campo mudou; o do cropper some com o próprio valor', async () => {
+    const campos: FieldDef[] = [
+      { field: 'foto', label: 'Foto', type: 'image' },
+      { field: 'cep', label: 'CEP', type: 'cep' },
+      { field: 'nome', label: 'Nome' },
+    ]
+    const { w, formData } = reativo(campos, { foto: null, cep: '', nome: 'A' })
+    w.findComponent({ name: 'WImageCropper' }).vm.$emit('error', 'Arquivo muito grande')
+    await nextTick()
+    formData.nome = 'B'
+    await nextTick()
+    expect(textos(w)).toEqual(['Arquivo muito grande'])
+    formData.foto = 'x.png'
+    await nextTick()
+    expect(textos(w)).toEqual([])
+    w.unmount()
+  })
+
+  it('erro de CEP não some porque OUTRO campo mudou', async () => {
+    vi.useFakeTimers()
+    const cep: FieldDef = { field: 'cep', label: 'CEP', type: 'cep', cepLookup: async () => null }
+    const { w, formData } = reativo([cep, nomeObr], { cep: '', nome: 'A' })
+    const input = w.find('input')
+    ;(input.element as HTMLInputElement).value = '78000000'
+    await input.trigger('input')
+    await vi.advanceTimersByTimeAsync(400)
+    expect(w.find('.w-crud-form-cep-error').exists()).toBe(true)
+    formData.nome = 'B'
+    await nextTick()
+    expect(w.find('.w-crud-form-cep-error').exists()).toBe(true)
+    vi.useRealTimers()
+    w.unmount()
   })
 })

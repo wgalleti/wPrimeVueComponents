@@ -204,6 +204,17 @@ describe('useCrudManager — erros do servidor por campo', () => {
     expect({ ...crud.fieldErrors }).toEqual({})
   })
 
+  it('setFormField tira a chave de fieldErrors, só a do campo', async () => {
+    const create = vi.fn().mockRejectedValue(err400({ nome: ['x'], valor: ['y'] }))
+    const crud = setup({ endpoint: '/p', columns: [], form }, { list: okList(), create })
+    crud.openCreateDialog()
+    await crud.save()
+    crud.setFormField('nome', 'A')
+    expect({ ...crud.fieldErrors }).toEqual({ valor: 'y' })
+    crud.dialogVisible.value = false // o form sujo entra no registro global de pendentes
+    await nextTick()
+  })
+
   it('500 sem corpo não gera erro por campo', async () => {
     const create = vi.fn().mockRejectedValue({ response: { status: 500, data: undefined } })
     const crud = setup({ endpoint: '/p', columns: [], form }, { list: okList(), create })

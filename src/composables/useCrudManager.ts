@@ -299,6 +299,9 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
 
   function setFormField(field: string, value: unknown): void {
     formData[field] = value
+    // Escreve o valor antes de apagar o erro: o renderer vê a troca do valor primeiro e
+    // só então o `errors` mudar, sem regravar a chave que acabou de sair.
+    delete fieldErrors[field]
   }
 
   function openCreateDialog(): void {

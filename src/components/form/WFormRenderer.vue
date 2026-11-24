@@ -45,13 +45,22 @@ const slots = useSlots()
 const fieldErrors = reactive<Record<string, string | null>>({})
 
 // Erros do servidor entram no mesmo mapa do `validate`; o que saiu do conjunto é limpo.
-let serverKeys: string[] = []
+let serverKeys = new Set<string>()
+// Mensagem do servidor que o usuário já corrigiu: enquanto o consumidor seguir mandando a
+// MESMA mensagem para a chave (objeto fixo, ou re-render com literal), ela não volta. O
+// próximo salvar zera: a mesma recusa, de novo, tem de aparecer.
+let cleared: Record<string, string> = {}
 watch(
   () => props.errors,
   (errs) => {
     for (const k of serverKeys) fieldErrors[k] = null
-    serverKeys = Object.keys(errs ?? {})
-    for (const k of serverKeys) fieldErrors[k] = errs![k]
+    serverKeys = new Set()
+    for (const k of Object.keys(cleared)) if (errs?.[k] !== cleared[k]) delete cleared[k]
+    for (const k of Object.keys(errs ?? {})) {
+      if (cleared[k] !== undefined) continue
+      serverKeys.add(k)
+      fieldErrors[k] = errs![k]
+    }
   },
   { deep: true, immediate: true },
 )
@@ -489,8 +498,15 @@ function resolveDrilldown(field: FieldDef) {
 function validateField(field: FieldDef) {
   if (typeof field.validate === 'function') {
     const error = field.validate(props.formData[field.field], validateContext())
+    forgetOrigin(field.field)
     fieldErrors[field.field] = error || null
   }
+}
+
+/** O erro passa a ser do cliente: deixa de contar como do servidor ou do cropper. */
+function forgetOrigin(k: string) {
+  serverKeys.delete(k)
+  imageKeys.delete(k)
 }
 
 /**
@@ -500,12 +516,16 @@ function validateField(field: FieldDef) {
  */
 function validateAll(): string[] {
   const errors: string[] = []
+  cleared = {}
   for (const field of props.fields) {
     if (!isFieldVisible(field, props.formData, props.isEditing)) {
       fieldErrors[field.field] = null
       continue
     }
     const error = validateFieldRecord(field, props.formData, props.isEditing)
+    // Recusa do servidor ou do cropper em valor que não mudou: não barra, mas segue à vista.
+    if (!error && (serverKeys.has(field.field) || imageKeys.has(field.field))) continue
+    forgetOrigin(field.field)
     fieldErrors[field.field] = error
     if (error) errors.push(error)
   }
@@ -536,7 +556,39 @@ function focusFirstError() {
 }
 
 function clearErrors() {
-  Object.keys(fieldErrors).forEach((k) => delete fieldErrors[k])
+  cleared = {}
+  Object.keys(fieldErrors).forEach((k) => {
+    forgetOrigin(k)
+    delete fieldErrors[k]
+  })
+}
+
+// --- Erro some ao corrigir o valor ---
+// Só reavalia campo que JÁ tem erro (nunca cria: erro novo é do blur/save). O getter lê o
+// valor de cada campo (o watch deep de `formData` por prop não é confiável, como no
+// `calculate`) e a comparação é por NOME e por identidade — `props.fields` pode trocar.
+const imageKeys = new Set<string>() // erro do WImageCropper: só some quando o próprio valor muda
+watch(
+  () => Object.fromEntries(props.fields.map((f) => [f.field, props.formData[f.field]])),
+  (atual, anterior) => {
+    for (const f of props.fields) {
+      const k = f.field
+      if (!fieldErrors[k] || !isFieldVisible(f, props.formData, props.isEditing)) continue
+      const mudou = k in anterior && !Object.is(anterior[k], atual[k])
+      if (!mudou && (serverKeys.has(k) || imageKeys.has(k))) continue
+      if (mudou) {
+        if (serverKeys.has(k)) cleared[k] = fieldErrors[k]!
+        forgetOrigin(k)
+      }
+      // Quem NÃO mudou também reavalia (validação cruzada: corrigir o início limpa o fim).
+      fieldErrors[k] = validateFieldRecord(f, props.formData, props.isEditing)
+    }
+  },
+)
+
+function onImageError(field: FieldDef, msg: string) {
+  fieldErrors[field.field] = msg
+  imageKeys.add(field.field)
 }
 
 // --- Field Groups ---
@@ -725,11 +777,7 @@ defineExpose({ validateAll, clearErrors })
                     :model-value="formData[field.field] as File | string | null"
                     :accept="field.accept || 'image/*'"
                     @update:model-value="(file) => emit('update:field', field.field, file)"
-                    @error="
-                      (msg) => {
-                        fieldErrors[field.field] = msg
-                      }
-                    "
+                    @error="(msg) => onImageError(field, msg)"
                   />
                 </slot>
               </div>
