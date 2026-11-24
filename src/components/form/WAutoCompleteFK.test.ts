@@ -101,6 +101,13 @@ const buscas = (provider: { list: ReturnType<typeof vi.fn> }) =>
   provider.list.mock.calls.filter((c) => (c[1] as Linha).page_size === 20)
 
 describe('WAutoCompleteFK — seta para baixo abre a lista', () => {
+  it('aria-invalid do formulário marca a borda do campo, não só o input', async () => {
+    const { wrapper } = montar({ inputAttrs: { 'aria-invalid': 'true' } })
+    expect(wrapper.find('input').classes()).toContain('p-invalid')
+    await wrapper.setProps({ inputAttrs: {} })
+    expect(wrapper.find('input').classes()).not.toContain('p-invalid')
+  })
+
   it('↓ com o painel fechado busca na hora, sem minLength nem debounce', async () => {
     const { wrapper, provider } = montar({ autoSelectSingle: false, minLength: 3 })
     await flushPromises()

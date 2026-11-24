@@ -1089,6 +1089,7 @@ function confirmDelete(item: Record<string, unknown>) {
       :option-label="optionLabel"
       :placeholder="placeholderVisivel"
       :disabled="disabled"
+      :invalid="inputAttrs?.['aria-invalid'] === 'true'"
       :force-selection="forceSelection"
       :loading="searching"
       :show-clear="false"
