@@ -2385,8 +2385,29 @@
     },
     "WDialog": {
       "file": "src/components/ui/WDialog.vue",
-      "props": [],
-      "events": [],
+      "props": [
+        {
+          "name": "urlKey",
+          "type": "string | undefined",
+          "required": false,
+          "default": null,
+          "description": "Liga `visible` à query `?<urlKey>=1`. Exige `vue-router`; sem ele avisa em dev."
+        },
+        {
+          "name": "visible",
+          "type": "boolean | undefined",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ],
+      "events": [
+        {
+          "name": "update:visible",
+          "type": "[value: boolean]",
+          "description": ""
+        }
+      ],
       "slots": []
     },
     "WEmptyState": {

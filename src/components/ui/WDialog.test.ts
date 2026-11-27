@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest'
-import { shallowRef } from 'vue'
+import { defineComponent, h, ref, shallowRef } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import { createMemoryHistory, createRouter, type Router } from 'vue-router'
 import WDialog from './WDialog.vue'
 import { W_TAB_HOST_KEY, type TabHostContext } from '@/types/routeTabs'
 
@@ -94,5 +95,100 @@ describe('WDialog — breakpoints', () => {
     await montar(undefined, { breakpoints: { '700px': '50vw' } })
     expect(css()).toMatch(/max-width:\s*700px[^}]*50vw/)
     expect(css()).not.toMatch(/max-width:\s*(839|599)px/)
+  })
+})
+
+describe('WDialog — urlKey', () => {
+  let router: Router
+  let aberto: ReturnType<typeof ref<boolean>>
+  let pedidos: boolean[]
+
+  // Consumidor típico: `v-model:visible`; `recusarFechar` simula o formulário sujo.
+  async function montarComUrl(
+    inicial: string,
+    recusarFechar = false,
+    urlKey: string | null = 'importar',
+  ) {
+    router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: { render: () => null } }],
+    })
+    await router.push(inicial)
+    aberto = ref(false)
+    pedidos = []
+    const Host = defineComponent({
+      setup: () => () =>
+        h(
+          WDialog,
+          {
+            urlKey: urlKey ?? undefined,
+            visible: aberto.value,
+            'onUpdate:visible': (v: boolean) => {
+              pedidos.push(v)
+              if (!v && recusarFechar) return
+              aberto.value = v
+            },
+          },
+          () => h('p', { class: 'conteudo' }, 'corpo'),
+        ),
+    })
+    mount(Host, { global: { plugins: [PrimeVue, router] }, attachTo: document.body })
+    await flushPromises()
+  }
+  const url = () => router.currentRoute.value.fullPath
+  const ir = async (to: string) => {
+    await router.push(to)
+    await flushPromises()
+  }
+
+  it('abre pela URL pedindo update:visible(true)', async () => {
+    await montarComUrl('/?importar=1')
+    expect(pedidos).toEqual([true])
+    expect(document.querySelector('.conteudo')).toBeTruthy()
+    expect(url()).toBe('/?importar=1')
+  })
+
+  it('grava a chave ao abrir e remove ao fechar', async () => {
+    await montarComUrl('/?x=1')
+    aberto.value = true
+    await flushPromises()
+    expect(url()).toBe('/?x=1&importar=1')
+    aberto.value = false
+    await flushPromises()
+    expect(url()).toBe('/?x=1')
+  })
+
+  it('a chave sumir da URL pede o fechamento pelo mesmo evento', async () => {
+    await montarComUrl('/?importar=1')
+    pedidos.length = 0
+    await ir('/')
+    expect(pedidos).toEqual([false])
+    expect(aberto.value).toBe(false)
+    expect(url()).toBe('/')
+  })
+
+  it('consumidor que recusa o fechamento vê a chave voltar', async () => {
+    await montarComUrl('/?importar=1', true)
+    await ir('/')
+    expect(aberto.value).toBe(true)
+    expect(url()).toBe('/?importar=1')
+  })
+
+  it('valor diferente de 1 é tratado como ausente e limpo', async () => {
+    await montarComUrl('/?importar=abc')
+    expect(pedidos).toEqual([])
+    expect(aberto.value).toBe(false)
+    expect(url()).toBe('/')
+  })
+
+  it('sem urlKey a URL nunca é lida nem escrita', async () => {
+    await montarComUrl('/?importar=1', false, null)
+    expect(pedidos).toEqual([])
+    aberto.value = true
+    await flushPromises()
+    expect(url()).toBe('/?importar=1')
+    aberto.value = false
+    await flushPromises()
+    expect(url()).toBe('/?importar=1')
   })
 })

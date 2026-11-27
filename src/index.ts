@@ -90,6 +90,7 @@ export {
   useFormatters,
   useDateInput,
   useRouteTabs,
+  useUrlParam,
   useBreakpoint,
   BREAKPOINTS,
   useDelayedLoading,
@@ -106,6 +107,7 @@ export {
 export type {
   DateValueFormat,
   UseDelayedLoadingOptions,
+  UseUrlParamOptions,
   PublishedVersion,
   PublishedVersionDeps,
   InstallPublishedVersionOptions,
