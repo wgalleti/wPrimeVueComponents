@@ -40,6 +40,9 @@
     --surface-subtle,
     color-mix(in oklch, var(--w-surface) 60%, var(--w-surface-2))
   );
+  /* Fundo da página, atrás das superfícies. O tema do PrimeVue não tem esse papel: sem o
+     `--bg` do app, cai no tom entre a superfície e o hover (distinto dos dois). */
+  --w-bg: var(--bg, var(--w-surface-subtle));
   --w-fg: var(--fg, var(--p-text-color));
   --w-fg-muted: var(--fg-muted, var(--p-text-muted-color));
   --w-fg-subtle: var(--fg-subtle, var(--p-text-muted-color));
@@ -222,8 +225,10 @@
   --w-skeleton-block-md: 6rem; /* WSkeleton size md: figura de painel (KPI) */
   --w-skeleton-block-lg: var(--w-chart-h); /* WSkeleton size lg: área de gráfico */
   --w-arrival-shift: 0.375rem; /* deslocamento inicial da .w-chegada */
-  --w-tabnav-h: var(--w-icon-box); /* altura da barra de abas de rota */
+  /* altura da barra de abas de rota: a aba (controle pequeno) + o respiro de cima */
+  --w-tabnav-h: calc(var(--w-control-h-sm) + var(--w-space-2));
   --w-tabnav-btn: var(--w-icon-btn); /* botão de fechar/menu da aba */
+  --w-tabnav-active-bg: var(--w-bg); /* fundo da aba ativa: o da página, para emendar no painel */
   --w-tab-viewport-padding: 0; /* respiro da página dentro do scroll da aba; o app define o seu */
   --w-loader-sm: 1.75rem; /* WLoader sm */
   --w-loader-md: 3rem; /* WLoader md */

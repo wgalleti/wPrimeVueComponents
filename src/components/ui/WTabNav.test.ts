@@ -4,9 +4,9 @@ import { defineComponent } from 'vue'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createMemoryHistory, createRouter, type Router } from 'vue-router'
-import WTabNav from './WTabNav.vue'
+import WTabNav, { abasNaFaixa } from './WTabNav.vue'
 import { useRouteTabs } from '@/composables/useRouteTabs'
-import type { RouteTabsApi } from '@/types/routeTabs'
+import type { RouteTabsApi, UseRouteTabsOptions } from '@/types/routeTabs'
 
 // jsdom não implementa matchMedia e o ContextMenu do PrimeVue consulta na montagem
 window.matchMedia ??= ((query: string) =>
@@ -26,13 +26,21 @@ const Tela = defineComponent({ name: 'Tela', render: () => null })
 let router: Router
 let api: RouteTabsApi
 
-function montar(): VueWrapper {
+function montar(
+  resolveTabMeta: UseRouteTabsOptions['resolveTabMeta'] = (r) => ({
+    title: String(r.name),
+    icon: 'pi pi-file',
+    closable: r.path !== '/a',
+  }),
+): VueWrapper {
   router = createRouter({
     history: createMemoryHistory(),
     routes: [
       { path: '/', name: 'home', component: Tela },
       { path: '/a', name: 'a', component: Tela },
       { path: '/b', name: 'b', component: Tela },
+      { path: '/c', name: 'c', component: Tela },
+      { path: '/d', name: 'd', component: Tela },
     ],
   })
   // '/' fica fora das abas para a navegação inicial não deslocar os índices
@@ -40,11 +48,7 @@ function montar(): VueWrapper {
     router,
     storage: null,
     isTabRoute: (r) => r.path !== '/',
-    resolveTabMeta: (r) => ({
-      title: String(r.name),
-      icon: 'pi pi-file',
-      closable: r.path !== '/a',
-    }),
+    resolveTabMeta,
   })
   return mount(WTabNav, {
     props: { tabs: api },
@@ -128,7 +132,6 @@ describe('WTabNav — render', () => {
     const abas = w.findAll('[role="tab"]')
     const grupos = w.findAll('.w-tab-nav__group')
     const corA = (abas[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')
-    expect(abas[0].classes()).toContain('w-tab-nav__item--grupo')
     // Série N (1..6): token do app → série categórica da suíte (--w-viz-N, tokens.css)
     expect(corA).toMatch(/^var\(--w-tab-group-([1-6]), var\(--w-viz-\1\)\)$/)
     expect((grupos[0].element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe(
@@ -140,13 +143,34 @@ describe('WTabNav — render', () => {
     )
   })
 
-  it('aba sem grupo não recebe cor', async () => {
+  const corDe = (aba: { element: Element }): string =>
+    (aba.element as HTMLElement).style.getPropertyValue('--w-tab-group-color')
+
+  it('aba sem grupo e sem cor ganha a série derivada da chave, e o ícone a recebe', async () => {
     const w = montar()
     await router.push('/a')
+    await router.push('/b')
     await flushPromises()
-    const aba = w.find('[role="tab"]')
-    expect(aba.classes()).not.toContain('w-tab-nav__item--grupo')
-    expect((aba.element as HTMLElement).style.getPropertyValue('--w-tab-group-color')).toBe('')
+    const abas = w.findAll('[role="tab"]')
+    // Valor fixado de propósito: o hash da chave não pode mudar entre versões (a cor volta igual).
+    expect(corDe(abas[0])).toBe('var(--w-tab-group-1, var(--w-viz-1))')
+    expect(corDe(abas[1])).toBe('var(--w-tab-group-2, var(--w-viz-2))')
+    // O CSS pinta `.w-tab-nav__item > i`: o ícone da aba precisa ser filho direto do item.
+    expect(abas[0].element.querySelector('i.pi-file')?.parentElement).toBe(abas[0].element)
+  })
+
+  it('color da rota vence a série derivada também na aba sem grupo', async () => {
+    const w = montar((r) => ({
+      title: String(r.name),
+      icon: 'pi pi-file',
+      color: r.path === '/a' ? 'rebeccapurple' : undefined,
+    }))
+    await router.push('/a')
+    await router.push('/b')
+    await flushPromises()
+    const abas = w.findAll('[role="tab"]')
+    expect(corDe(abas[0])).toBe('rebeccapurple')
+    expect(corDe(abas[1])).toBe('var(--w-tab-group-2, var(--w-viz-2))')
   })
 
   it('aba closable: false não mostra o X', async () => {
@@ -232,57 +256,165 @@ describe('WTabNav — ações', () => {
   })
 })
 
-describe('WTabNav — aba ativa à vista', () => {
-  // jsdom não calcula layout: a faixa mede 0–378 e a aba ativa fica em 966–1100 (caso do celular).
-  function medir(faixa: [number, number], ativa: [number, number]) {
-    return vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+describe('abasNaFaixa — prioridade+', () => {
+  it('cabe tudo: todas ficam e o "Mais" não é reservado', () => {
+    expect(abasNaFaixa([100, 100, 100], 300, 0, 60)).toEqual([true, true, true])
+  })
+
+  it('não cabe: reserva o "Mais" e tira do fim para o começo', () => {
+    expect(abasNaFaixa([100, 100, 100, 100], 260, 0, 60)).toEqual([true, true, false, false])
+  })
+
+  it('ativa no fim fica na faixa; saem as do meio', () => {
+    expect(abasNaFaixa([100, 100, 100, 100], 260, 3, 60)).toEqual([true, false, false, true])
+  })
+
+  it('só cabe a ativa: ela fica mesmo sem caber', () => {
+    expect(abasNaFaixa([100, 100, 100], 120, 1, 60)).toEqual([false, true, false])
+    expect(abasNaFaixa([100, 100], 40, 0, 60)).toEqual([true, false])
+  })
+
+  it('nenhuma aba, ou nenhuma ativa', () => {
+    expect(abasNaFaixa([], 100, -1, 60)).toEqual([])
+    expect(abasNaFaixa([100, 100], 120, -1, 60)).toEqual([false, false])
+  })
+
+  it('rótulo do grupo conta enquanto houver aba dele na faixa', () => {
+    // Dois grupos de duas abas (rótulos de 50 nas abas 0 e 2); sem os rótulos caberiam 3 abas.
+    const larguras = [100, 100, 100, 100]
+    const rotulos = [50, 0, 50, 0]
+    const blocos = [0, 0, 2, 2]
+    expect(abasNaFaixa(larguras, 400, 0, 60, rotulos, blocos)).toEqual([true, true, false, false])
+    // A ativa segura o rótulo do grupo dela mesmo com a primeira aba do grupo fora da faixa.
+    expect(abasNaFaixa(larguras, 250, 3, 60, rotulos, blocos)).toEqual([false, false, false, true])
+  })
+})
+
+describe('WTabNav — quando as abas não cabem', () => {
+  // jsdom não calcula layout: a barra, cada aba, cada rótulo de grupo e o "Mais" medem o que o teste diz.
+  let redimensionar: () => void = () => undefined
+
+  function medir(barra: number): void {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
       this: HTMLElement,
     ) {
-      const [left, right] = this.classList.contains('w-tab-nav__list')
-        ? faixa
-        : this.getAttribute('aria-selected') === 'true'
-          ? ativa
-          : [0, 0]
-      return { left, right, top: 0, bottom: 0, width: right - left, height: 0 } as DOMRect
+      const width = this.classList.contains('w-tab-nav')
+        ? barra
+        : this.getAttribute('role') === 'tab'
+          ? 100
+          : this.classList.contains('w-tab-nav__more')
+            ? 60
+            : this.classList.contains('w-tab-nav__group')
+              ? 50
+              : 0
+      return { left: 0, right: width, top: 0, bottom: 0, width, height: 0 } as DOMRect
     })
   }
-  afterEach(() => vi.restoreAllMocks())
 
-  it('ao trocar a aba ativa, rola a faixa até ela (sem tocar na página)', async () => {
-    const w = montar()
-    await router.push('/a')
-    await flushPromises()
-    medir([0, 378], [966, 1100])
-    const lista = w.find('.w-tab-nav__list').element as HTMLElement
-    const pagina = vi.spyOn(window, 'scrollTo')
-    await router.push('/b')
-    await flushPromises()
-    expect(lista.scrollLeft).toBe(1100 - 378)
-    expect(pagina).not.toHaveBeenCalled()
+  beforeEach(() => {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(cb: () => void) {
+          redimensionar = cb
+        }
+        observe(): void {}
+        disconnect(): void {}
+      },
+    )
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
-  it('ao montar com a aba já ativa, também a traz à vista', async () => {
-    const primeira = montar()
-    await router.push('/a')
+  /** Quatro abas de 100 numa barra de `barra` px; a ativa é a última aberta. */
+  async function abrir(
+    barra: number,
+    meta?: UseRouteTabsOptions['resolveTabMeta'],
+    ordem = ['/a', '/b', '/c', '/d'],
+  ): Promise<VueWrapper> {
+    medir(barra)
+    const w = montar(meta)
+    for (const rota of ordem) await router.push(rota)
     await flushPromises()
-    primeira.unmount()
-    medir([0, 378], [966, 1100])
-    const w = mount(WTabNav, {
-      props: { tabs: api },
-      global: { plugins: [router, PrimeVue] },
-      attachTo: document.body,
-    })
-    await flushPromises()
-    expect((w.find('.w-tab-nav__list').element as HTMLElement).scrollLeft).toBe(1100 - 378)
+    return w
+  }
+  const naFaixa = (w: VueWrapper): string[] =>
+    w.findAll('[role="tab"]:not([hidden])').map((aba) => aba.find('.w-tab-nav__title').text())
+  const noMenu = (): HTMLElement[] => Array.from(document.querySelectorAll('[role="menuitem"]'))
+
+  it('"Mais (n)" aparece com a contagem das abas que saíram da faixa', async () => {
+    const w = await abrir(260)
+    const mais = w.find('.w-tab-nav__more')
+    expect(naFaixa(w)).toEqual(['a', 'd'])
+    expect(mais.attributes('hidden')).toBeUndefined()
+    expect(mais.attributes('aria-label')).toBe('Mais abas (2)')
+    expect(mais.attributes('aria-haspopup')).toBe('menu')
+    expect(mais.attributes('aria-expanded')).toBe('false')
+    expect(mais.find('.w-tab-nav__more-count').text()).toBe('2')
   })
 
-  it('aba que já está visível não rola nada', async () => {
-    const w = montar()
-    await router.push('/a')
+  it('a barra alarga: as abas voltam à faixa e o "Mais" some', async () => {
+    const w = await abrir(260)
+    medir(1000)
+    redimensionar()
     await flushPromises()
-    medir([0, 378], [10, 120])
-    await router.push('/b')
+    expect(naFaixa(w)).toEqual(['a', 'b', 'c', 'd'])
+    expect(w.find('.w-tab-nav__more').attributes('hidden')).toBeDefined()
+  })
+
+  it('a aba ativa nunca sai da faixa, nem quando só ela cabe', async () => {
+    const w = await abrir(120)
+    expect(naFaixa(w)).toEqual(['d'])
+    expect(w.find('[aria-selected="true"]').attributes('hidden')).toBeUndefined()
+    expect(w.find('.w-tab-nav__more').attributes('aria-label')).toBe('Mais abas (3)')
+  })
+
+  it('item do menu ativa a aba, que passa a ocupar a faixa', async () => {
+    const w = await abrir(260)
+    await w.find('.w-tab-nav__more').trigger('click')
     await flushPromises()
-    expect((w.find('.w-tab-nav__list').element as HTMLElement).scrollLeft).toBe(0)
+    expect(noMenu().map((item) => item.textContent?.trim())).toEqual(['b', 'c'])
+    noMenu()[0].querySelector('a')?.click()
+    await flushPromises()
+    expect(router.currentRoute.value.path).toBe('/b')
+    expect(w.emitted('activate')?.[0]?.[0]).toMatchObject({ key: '/b' })
+    expect(naFaixa(w)).toEqual(['a', 'b'])
+  })
+
+  it('X do item do menu fecha a aba sem ativá-la', async () => {
+    const w = await abrir(260)
+    await w.find('.w-tab-nav__more').trigger('click')
+    await flushPromises()
+    noMenu()[0].querySelector<HTMLElement>('.w-tab-nav__close')?.click()
+    await flushPromises()
+    expect(api.tabs.value.map((t) => t.key)).toEqual(['/a', '/c', '/d'])
+    expect(w.emitted('close')?.[0]?.[0]).toMatchObject({ key: '/b' })
+    expect(router.currentRoute.value.path).toBe('/d')
+  })
+
+  it('←/→ circulam só pelas abas da faixa', async () => {
+    const w = await abrir(260)
+    await w.find('[aria-selected="true"]').trigger('keydown', { key: 'ArrowLeft' })
+    await flushPromises()
+    expect(router.currentRoute.value.path).toBe('/a')
+  })
+
+  it('rótulo do grupo sai com a última aba dele; no menu, as abas vêm sob o nome do grupo', async () => {
+    const w = await abrir(240, (r) => ({
+      title: String(r.name),
+      group: r.path < '/c' ? 'Sementes' : 'Estoque',
+    }))
+    expect(naFaixa(w)).toEqual(['d'])
+    const rotulos = w.findAll('.w-tab-nav__group')
+    expect(rotulos.map((r) => r.text())).toEqual(['Sementes', 'Estoque'])
+    expect(rotulos[0].attributes('hidden')).toBeDefined()
+    expect(rotulos[1].attributes('hidden')).toBeUndefined()
+    await w.find('.w-tab-nav__more').trigger('click')
+    await flushPromises()
+    const grupos = Array.from(document.querySelectorAll('[data-pc-section="submenulabel"]'))
+    expect(grupos.map((g) => g.textContent?.trim())).toEqual(['Sementes', 'Estoque'])
+    expect(noMenu().map((item) => item.textContent?.trim())).toEqual(['a', 'b', 'c'])
   })
 })

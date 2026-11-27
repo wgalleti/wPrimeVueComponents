@@ -62,7 +62,8 @@
   font-size: var(--w-text-xs);
 }
 
-.w-tab-bar__badge {
+.w-tab-bar__badge,
+.w-tab-nav__more-count {
   display: inline-flex;
   align-items: center;
   height: 1.125rem;
@@ -95,159 +96,117 @@
    WTabNav — .w-tab-nav
    ==========================================================
    Barra da navegação por abas de ROTA (par do WTabViewport) — não confundir
-   com o .w-tab-bar (abas de seção dentro de uma tela). Aqui o overflow ROLA
-   na horizontal de propósito: aba de rota não pode quebrar linha, a barra é
-   parte do shell e tem altura fixa. A scrollbar fica invisível — quem traz a
-   aba à vista é o scrollIntoView da ativa. */
+   com o .w-tab-bar (abas de seção dentro de uma tela). Faixa sobre a
+   superfície, sem fio: a aba ativa tem o fundo da página e emenda no painel
+   logo abaixo, como uma pasta. A barra é parte do shell: altura fixa, uma
+   linha só e sem rolagem — a aba que não cabe na largura da barra sai da
+   faixa e vai para o menu do "Mais (n)" (`ajustar`, no WTabNav.vue). */
 
 .w-tab-nav {
   display: flex;
   align-items: stretch;
   gap: var(--w-space-2);
+  /* border-box: o respiro de cima cabe DENTRO de --w-tabnav-h; as abas assentam na base. */
+  box-sizing: border-box;
+  min-width: 0;
   height: var(--w-tabnav-h);
-  border-bottom: 1px solid var(--w-border);
+  padding-top: var(--w-space-2);
+  background: var(--w-surface);
 }
 
+/* Do tamanho das abas (o "Mais" encosta na última). O overflow escondido é só a rede:
+   entre uma medida e a seguinte nada vaza da barra. */
 .w-tab-nav__list {
   display: flex;
   align-items: stretch;
-  flex: 1;
+  gap: var(--w-space-1);
   min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
 }
 
-.w-tab-nav__list::-webkit-scrollbar {
+/* Fora da faixa (está no "Mais"): sai do layout, da tabulação e do leitor de tela. */
+.w-tab-nav__list > [hidden],
+.w-tab-nav__more[hidden] {
   display: none;
 }
 
-/* Bordas que esmaecem só do lado com aba escondida: máscara (serve a qualquer fundo e
-   aos dois temas), com a largura animada pela posição de rolagem. Sem rolagem a
-   timeline fica inativa e nada esmaece; sem suporte, a barra só corta a seco. */
-@property --w-fade-ini {
-  syntax: '<length>';
-  inherits: false;
-  initial-value: 0px;
+/* Medida (`ajustar`): por um instante, sem pintura, tudo volta à faixa na largura natural. */
+.w-tab-nav[data-medindo] .w-tab-nav__list > [hidden],
+.w-tab-nav[data-medindo] .w-tab-nav__more[hidden] {
+  display: inline-flex;
 }
 
-@property --w-fade-fim {
-  syntax: '<length>';
-  inherits: false;
-  initial-value: 0px;
-}
-
-@supports (animation-timeline: scroll()) {
-  .w-tab-nav__list {
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      black var(--w-fade-ini),
-      black calc(100% - var(--w-fade-fim)),
-      transparent
-    );
-    /* Longhands: o build expande o shorthand com `duration: 0s`, que zera a timeline de rolagem. */
-    animation-name: w-tab-nav-fade-ini, w-tab-nav-fade-fim;
-    animation-duration: auto;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(self inline);
-    animation-range:
-      0 var(--w-space-8),
-      calc(100% - var(--w-space-8)) 100%;
-  }
-
-  @keyframes w-tab-nav-fade-ini {
-    to {
-      --w-fade-ini: var(--w-space-8);
-    }
-  }
-
-  @keyframes w-tab-nav-fade-fim {
-    from {
-      --w-fade-fim: var(--w-space-8);
-    }
-  }
-}
-
-.w-tab-nav__item {
+/* O "Mais" tem a caixa de uma aba inativa: é parte da faixa, não uma ação da tela. */
+.w-tab-nav__item,
+.w-tab-nav__more {
   display: inline-flex;
   align-items: center;
   gap: var(--w-space-2);
   padding: 0 var(--w-space-3);
-  margin-bottom: -1px;
-  border-bottom: 2px solid transparent;
+  border-radius: var(--w-radius-md) var(--w-radius-md) 0 0;
   color: var(--w-fg-muted);
-  font-size: var(--w-ui-font);
+  font-size: var(--w-text-sm);
+  font-weight: var(--w-fw-medium);
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
   transition:
     color var(--w-motion-fast) var(--w-ease),
-    border-color var(--w-motion-fast) var(--w-ease);
+    background-color var(--w-motion-fast) var(--w-ease);
 }
 
-.w-tab-nav__item:hover {
+.w-tab-nav__item:hover,
+.w-tab-nav__more:hover,
+.w-tab-nav__more[aria-expanded='true'] {
   color: var(--w-fg);
+  background: var(--w-surface-2);
 }
 
-.w-tab-nav__item:focus-visible {
+.w-tab-nav__item:focus-visible,
+.w-tab-nav__more:focus-visible {
   outline: 2px solid var(--w-primary);
   outline-offset: -2px;
-  border-radius: var(--w-radius-sm);
 }
 
-/* A ativa é um cartão: tint primário suave, cantos superiores arredondados e
-   o fio embaixo — destaque imediato mesmo com muitas abas abertas. */
-.w-tab-nav__item--ativa {
-  color: var(--w-primary);
-  font-weight: var(--w-fw-medium);
-  background: var(--w-primary-soft);
-  border-radius: var(--w-radius-sm) var(--w-radius-sm) 0 0;
-  border-bottom-color: var(--w-primary);
-}
-
-/* Cor por grupo: só acentos (ícone, fio da ativa, ponto do rótulo). O texto
-   segue neutro para não brigar com o contraste — a cor identifica, não fala. */
-.w-tab-nav__item--grupo i {
-  color: var(--w-tab-group-color);
-}
-
-/* Fio contínuo embaixo, na cor do grupo, do rótulo até a última aba do bloco:
-   é a "linha" que liga o agrupamento (sobrepõe a borda da barra, como o fio
-   da ativa). A ativa se distingue pelo tint. */
-.w-tab-nav__item--grupo {
-  border-bottom-color: var(--w-tab-group-color);
-}
-
-.w-tab-nav__group {
-  margin-bottom: -1px;
-  border-bottom: 2px solid var(--w-tab-group-color, transparent); /* cor da aba vem por :style; sem grupo, sem traço */
-}
-
-.w-tab-nav__item--grupo.w-tab-nav__item--ativa {
+/* A ativa tem o fundo da página: emenda no painel de baixo, sem fio. Texto na cor
+   natural — a cor fica no ícone. O `:hover` repetido segura o fundo sob o cursor. */
+.w-tab-nav__item--ativa,
+.w-tab-nav__item--ativa:hover {
   color: var(--w-fg);
-  background: color-mix(in oklch, var(--w-tab-group-color) 9%, transparent);
-  border-bottom-color: var(--w-tab-group-color);
+  font-weight: var(--w-fw-semibold);
+  background: var(--w-tabnav-active-bg);
+}
+
+/* Barra mais estreita que a ativa + "Mais" (celular): a ativa cede, e só no título —
+   ícone e botões não encolhem. Na medida vale a largura natural. */
+.w-tab-nav__item--ativa {
+  min-width: 0;
+}
+
+.w-tab-nav[data-medindo] .w-tab-nav__item--ativa {
+  flex: none;
+}
+
+/* Ícone sempre na cor da aba (a da rota, a do grupo ou a derivada da chave — vem por
+   :style). Só o ícone da aba, filho direto: os de ⋮ e X seguem a cor do botão. */
+.w-tab-nav__item > i {
+  flex: none;
+  color: var(--w-tab-group-color);
 }
 
 /* Rótulo do grupo (módulo) antes do bloco de abas dele — eco da sidebar. */
 .w-tab-nav__group {
   display: inline-flex;
   align-items: center;
-  gap: var(--w-space-1);
-  align-self: stretch;
+  gap: var(--w-space-15);
   padding: 0 var(--w-space-2) 0 var(--w-space-3);
-  color: var(--w-fg-subtle);
-  font-family: var(--w-font-mono);
-  font-size: var(--w-text-2xs);
-  font-weight: var(--w-fw-medium);
-  letter-spacing: var(--w-tracking-caps);
-  text-transform: uppercase;
+  color: var(--w-fg-muted);
+  font-size: var(--w-text-xs);
   white-space: nowrap;
   user-select: none;
 }
 
-/* Ponto na cor do grupo — a mesma que acende a aba ativa do bloco. */
+/* Ponto na cor do grupo — a mesma dos ícones do bloco. */
 .w-tab-nav__group::before {
   content: '';
   width: 0.375rem;
@@ -271,6 +230,16 @@
   text-overflow: ellipsis;
 }
 
+/* Reserva a largura do título em semibold: trocar de aba não empurra as vizinhas. */
+.w-tab-nav__title::after {
+  content: attr(title);
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: var(--w-fw-semibold);
+}
+
 /* X e ⋮ só se anunciam no hover/ativa — barra cheia de ícones é ruído.
    Caixa clicável de 28px (mínimo de alvo no desktop); o ícone segue pequeno
    dentro dela, e a caixa não altera a altura da faixa (item centraliza). */
@@ -279,6 +248,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: none;
   width: var(--w-tabnav-btn);
   height: var(--w-tabnav-btn);
   margin-left: calc(-1 * var(--w-space-1));
@@ -324,10 +294,61 @@
   color: var(--w-fg);
 }
 
+/* "Mais (n)": abre o menu com as abas que não couberam na faixa. */
+.w-tab-nav__more {
+  flex: none;
+  gap: var(--w-space-15);
+  border: 0;
+  background: none;
+  font-family: inherit;
+}
+
+.w-tab-nav__more i {
+  font-size: var(--w-text-2xs);
+}
+
+/* Largura fixa para 1 ou 2 dígitos: a medida do botão não muda com a contagem. */
+.w-tab-nav__more-count {
+  justify-content: center;
+  min-width: calc(2ch + 2 * var(--w-space-2));
+}
+
+/* Item do menu do "Mais" (teleportado: fora do .w-tab-nav). A caixa, o hover e o foco são
+   os do item de menu do tema; aqui só o ícone na cor da aba, o corte do título e o X. */
+.w-tab-nav__more-item {
+  display: flex;
+  align-items: center;
+}
+
+.w-tab-nav__more-item > a {
+  flex: 1;
+  min-width: 0;
+}
+
+.w-tab-nav__more-item > a > i {
+  color: var(--w-tab-group-color);
+}
+
+.w-tab-nav__more-item > a > span {
+  max-width: min(18rem, 50vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* No menu o X fica sempre à vista: não há hover no toque. */
+.w-tab-nav__more-item > .w-tab-nav__close {
+  margin: 0 var(--w-space-1) 0 0;
+  opacity: 1;
+}
+
+/* Sempre no fim da barra, depois do "Mais". */
 .w-tab-nav__actions {
   display: inline-flex;
   align-items: center;
+  flex: none;
   gap: var(--w-space-2);
+  margin-left: auto;
 }
 
 /* ==========================================================

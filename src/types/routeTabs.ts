@@ -21,8 +21,8 @@ export interface RouteTabMeta {
    */
   group?: string
   /**
-   * Cor do grupo (qualquer cor CSS). Sem ela, o WTabNav deriva uma cor estável
-   * do nome do grupo — informe só para fixar a cor de um módulo.
+   * Cor da aba (qualquer cor CSS), usada no ícone. Sem ela, o WTabNav deriva uma cor estável
+   * do nome do grupo ou, em aba sem grupo, da chave da aba — informe só para fixar a cor.
    */
   color?: string
 }
