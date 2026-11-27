@@ -1,3 +1,8 @@
+<script lang="ts">
+// Por rota, quantos WCrudView sem prefixo de URL estão montados (aviso em dev).
+const unprefixedOnPath = new Map<string, number>()
+</script>
+
 <script setup lang="ts">
 import {
   ref,
@@ -5,6 +10,7 @@ import {
   computed,
   nextTick,
   onMounted,
+  onBeforeUnmount,
   watch,
   useSlots,
   getCurrentInstance,
@@ -28,6 +34,7 @@ import { useTabHost } from '@/types/routeTabs'
 import { useCardFit } from '@/composables/useCardFit'
 import { useBreakpoint } from '@/composables/useBreakpoint'
 import { useUrlState } from '@/composables/useUrlState'
+import { useAppConfirm } from '@/composables/useAppConfirm'
 import { useDelayedLoading } from '@/composables/useDelayedLoading'
 import { useLoaderConfig } from '@/composables/useLoaderConfig'
 import WSkeleton from '@/components/ui/WSkeleton.vue'
@@ -122,7 +129,9 @@ const props = withDefaults(
      *  e às abas de rota. LIGADO por padrão; `false` desliga — obrigatório em lista embutida
      *  (diálogo, aba de detalhe), que não pode escrever na URL da página. `true` ou prefixo (`string`, p.ex. `'orc'` → `orc_page`) para duas
      *  listas na mesma tela. Chaves: `search`, `page`, `sort` (`campo` / `-campo`), `f_<param>`
-     *  (filtro de coluna; lista em CSV) e `id` (linha selecionada, só com `v-model:selected-row`).
+     *  (filtro de coluna; lista em CSV), `id` (linha selecionada, só com `v-model:selected-row`),
+     *  `novo=1` (formulário de criar/duplicar aberto) e `abrir=<pk>` (editar/ver aberto; o F5 e o
+     *  link reabrem buscando o registro pelo id).
      *  Valor padrão fica fora da URL. Filtros só os declarados em `ColumnDef.filter`; os de
      *  `toolbar-filters` e os não serializáveis (objeto, data) ficam fora. Restaura antes do
      *  primeiro fetch (uma só chamada). Com `persistState`, a URL ganha quando traz busca ou
@@ -782,11 +791,11 @@ function isInteractiveTarget(event: Event): boolean {
 // diálogo só fica visível depois do GET — `opening` cobre essa janela.
 let opening = false
 
-/** Caminho único de "abrir" a linha — o do duplo clique no card. */
-function openRow(row: Record<string, unknown>) {
-  if (props.crud.config.canEdit === false) return
+/** Caminho único de "abrir" a linha — o do duplo clique no card e o do link `?abrir=`. */
+function openRow(row: Record<string, unknown>, mode: 'edit' | 'view' = 'edit') {
+  if (mode === 'edit' && props.crud.config.canEdit === false) return
   if (props.crud.dialogVisible.value || opening) return
-  const pending = props.crud.openEditDialog(row)
+  const pending = mode === 'edit' ? props.crud.openEditDialog(row) : props.crud.openViewDialog(row)
   if (pending) {
     opening = true
     pending.finally(() => (opening = false))
@@ -1153,6 +1162,120 @@ if (urlSync) {
   )
 }
 
+// --- Formulário na URL: `novo=1` (criar, duplicar) e `abrir=<pk>` (editar, ver) ---
+
+// Como o link abre um registro: o modo do `openRow`. Ver só quando a configuração tem a ação
+// `view` sem handler próprio (o "Ver detalhes" fixo do menu de contexto não conta).
+function urlOpenMode(): 'edit' | 'view' | null {
+  if (props.crud.config.canEdit !== false) return 'edit'
+  return effectiveRowActions.value.some((a) => a.action === 'view' && !a.handler) ? 'view' : null
+}
+// Formulário embutido que não abre de jeito nenhum (a tela tem o seu): as chaves são do app.
+const urlDialogOn = (): boolean => !!urlSync && (canCreate.value || urlOpenMode() !== null)
+
+type DialogKeys = { novo: string | null; abrir: string | null }
+const NO_DIALOG: DialogKeys = { novo: null, abrir: null }
+/** O que o diálogo aberto agora põe na URL. */
+function dialogKeys(): DialogKeys {
+  const c = props.crud
+  if (!c.dialogVisible.value) return NO_DIALOG
+  const item = c.editingItem.value as Record<string, unknown> | null
+  if (!item) return { novo: '1', abrir: null }
+  const id = item[c.config.pk || 'id']
+  return id === undefined || id === null ? NO_DIALOG : { novo: null, abrir: String(id) }
+}
+// O último valor escrito pelo próprio componente: a query voltar com ele não é mudança de fora.
+let urlDialog: DialogKeys = NO_DIALOG
+function writeDialogKeys(): void {
+  urlDialog = dialogKeys()
+  urlSync?.write(urlDialog)
+}
+// Cada aplicação da URL ganha um número; a que foi superada (ou a tela desmontou) não abre nem escreve.
+let dialogSeq = 0
+let applying = false
+let unmounted = false
+const { confirmDiscard } = useAppConfirm()
+
+/** Fecha pelo caminho normal; com alteração, pergunta antes. `false` = a pessoa ficou. */
+async function closeDialogForUrl(): Promise<boolean> {
+  const c = props.crud
+  if (!c.dialogVisible.value) return true
+  if (c.isDirty?.value && !(await confirmDiscard())) return false
+  c.dialogVisible.value = false
+  c.editingItem.value = null
+  return true
+}
+
+/** Leva o diálogo ao que a URL pede; ao fim, a URL reflete o que ficou aberto. */
+async function applyDialogUrl(novo?: string, abrir?: string): Promise<void> {
+  const my = ++dialogSeq
+  applying = true
+  // `abrir` ganha de `novo`; os dois juntos terminam com `novo` limpo.
+  const want: DialogKeys = abrir
+    ? { novo: null, abrir }
+    : novo === '1'
+      ? { novo: '1', abrir: null }
+      : NO_DIALOG
+  try {
+    const cur = dialogKeys()
+    if (cur.novo === want.novo && cur.abrir === want.abrir) return
+    if (!(await closeDialogForUrl()) || my !== dialogSeq) return
+    if (want.novo) {
+      if (canCreate.value) props.crud.openCreateDialog()
+      return
+    }
+    const mode = urlOpenMode()
+    if (!want.abrir || !mode) return
+    // Sempre pelo id: a linha pode nem estar na página atual.
+    const row = await props.crud.fetchById(want.abrir)
+    if (row && my === dialogSeq && !unmounted) openRow(row as Record<string, unknown>, mode)
+  } finally {
+    if (my === dialogSeq && !unmounted) {
+      applying = false
+      writeDialogKeys()
+    }
+  }
+}
+
+if (urlSync && urlDialogOn()) {
+  const router = getCurrentInstance()?.appContext.config.globalProperties.$router as
+    { currentRoute: { value: { path: string } } } | undefined
+  const mountPath = router?.currentRoute.value.path
+  // Abrir, fechar, salvar, descartar: a URL acompanha (salvo no meio de uma aplicação da URL).
+  watch(
+    () => JSON.stringify(dialogKeys()),
+    () => {
+      if (!applying) writeDialogKeys()
+    },
+  )
+  // Mudança de fora (link para a mesma tela, URL editada); a própria escrita volta igual e passa.
+  watch([urlSync.ref('novo'), urlSync.ref('abrir')], ([novo, abrir]) => {
+    // Saindo para outra rota a query some, mas não é pedido para fechar (nem perguntar).
+    if (router?.currentRoute.value.path !== mountPath) return
+    if ((novo ?? null) === urlDialog.novo && (abrir ?? null) === urlDialog.abrir) return
+    void applyDialogUrl(novo, abrir)
+  })
+  if (import.meta.env?.DEV && typeof props.urlState !== 'string') {
+    // Dois sem prefixo na mesma rota reagiriam ao mesmo `abrir`.
+    const path = mountPath
+    if (path) {
+      const n = (unprefixedOnPath.get(path) ?? 0) + 1
+      unprefixedOnPath.set(path, n)
+      if (n > 1) {
+        warnOnce(
+          `crud-url-prefix:${path}`,
+          `[WCrudView] dois WCrudView sem prefixo em ${path}: os dois reagem a \`novo\`/\`abrir\`. Dê \`url-state="<prefixo>"\` a um deles.`,
+        )
+      }
+      onBeforeUnmount(() => unprefixedOnPath.set(path, (unprefixedOnPath.get(path) ?? 1) - 1))
+    }
+  }
+}
+onBeforeUnmount(() => {
+  unmounted = true
+  dialogSeq++
+})
+
 // --- Init ---
 
 onMounted(() => {
@@ -1163,6 +1286,11 @@ onMounted(() => {
   restoreFromUrl() // tudo restaurado ANTES do init: o primeiro fetch já sai com o estado
   if (props.autoInit) {
     props.crud.init()
+  }
+  if (urlSync && urlDialogOn()) {
+    const novo = urlSync.get('novo')
+    const abrir = urlSync.get('abrir')
+    if (novo !== undefined || abrir !== undefined) void applyDialogUrl(novo, abrir)
   }
 })
 </script>

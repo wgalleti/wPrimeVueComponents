@@ -109,6 +109,8 @@ o usuário estava. Exige `vue-router`; sem ele a prop é ignorada (avisa em dev 
 | `sort` | `campo` (asc) ou `-campo` (desc), só de coluna `sortable` | sem ordenação |
 | `f_<param>` | filtro de coluna (`ColumnDef.filter`; lista vira CSV) | sem valor |
 | `id` | linha selecionada, só com `v-model:selected-row` | sem seleção |
+| `novo` | `1`: formulário de criar (ou duplicar) aberto | diálogo fechado |
+| `abrir` | pk do registro aberto para editar ou ver | diálogo fechado |
 
 ```vue
 <WCrudView :crud="crud" title="Imóveis" v-model:selected-row="linha" />
@@ -122,7 +124,38 @@ o usuário estava. Exige `vue-router`; sem ele a prop é ignorada (avisa em dev 
   (`numeric` → número, `boolean` → `true`/`false`, `select` → a opção de mesmo valor).
 - Com `persistState`: a URL ganha quando traz `search` ou algum `f_*`; sem eles, o localStorage
   restaura filtros e busca como antes. Página, ordenação e `id` só existem na URL.
-- A query é lida na montagem; mudança externa dela depois (outra navegação) não é re-aplicada.
+- A query da lista é lida na montagem; mudança externa dela depois (outra navegação) não é
+  re-aplicada. `novo`/`abrir` são a exceção (abaixo).
+
+### O formulário na URL (`novo`, `abrir`)
+
+Abrir o formulário grava a chave; fechar (salvar, cancelar, descartar) a tira. O F5 mantém o
+diálogo aberto e o link compartilhado já abre a tela com o registro — sem nada no app.
+
+- **`abrir=<pk>`** busca o registro pelo id (`crud.fetchById` → `provider.get`), sempre, mesmo com
+  `fetchDetailOnEdit` desligado (a linha pode nem estar na página), e abre pelo mesmo caminho do
+  clique na linha: edição se `canEdit` não é `false`; senão visualização, se `rowActions` tem a
+  ação `view` sem `handler`; senão nada. O registro buscado não é buscado de novo ao abrir.
+- Registro inexistente, sem acesso (404/403) ou erro na busca: nada abre, a chave sai e o toast diz
+  "Registro não encontrado." (sem id nem detalhe do servidor).
+- **`novo=1`** abre o formulário de criar, se `canCreate` não é `false`; sem permissão, a chave sai
+  sem aviso. `novo` e `abrir` juntos: `abrir` ganha e `novo` sai.
+- **Duplicar** grava `novo=1`: o F5 reabre o formulário de criar **vazio** (o pré-preenchimento
+  não volta).
+- **Com a tela montada**, a chave que aparece, muda ou some por fora (link para a mesma tela com
+  outro id, URL editada) fecha o que está aberto e abre o novo alvo. Com alteração não salva,
+  pergunta antes de descartar; se a pessoa fica, o diálogo continua e a URL volta a mostrá-lo.
+  A escrita do próprio componente não dispara esse fluxo. Duas trocas rápidas terminam no último
+  alvo; desmontar no meio da busca não abre nada.
+- **Formulário próprio do app**: com `canCreate: false`, `canEdit: false` e sem a ação `view` em
+  `rowActions`, o formulário embutido não abre de jeito nenhum, e o `WCrudView` **não lê, não
+  escreve e não limpa** `novo`/`abrir` — ficam para a tela tratar com o seu componente. O "Ver
+  detalhes" fixo do menu de contexto não conta como visualização.
+- **Prefixo**: `url-state="orc"` → `orc_novo`, `orc_abrir`. Duas listas na mesma rota precisam de
+  prefixos diferentes; sem prefixo as duas reagiriam ao mesmo `abrir` (em dev, a segunda montada
+  sem prefixo na mesma rota avisa no console).
+- Ficam fora da URL: gaveta de filtros, confirmação de exclusão, cadastro embutido do
+  `WAutoCompleteFK` e o `WCrudSubview`.
 
 ## Loader de marca
 

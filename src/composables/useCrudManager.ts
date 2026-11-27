@@ -344,13 +344,32 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     }
   }
 
+  // Registros que já vieram de `fetchById` (link `?abrir=`): são o detalhe — abrir não busca de novo.
+  const detalhados = new WeakSet<object>()
+
+  /**
+   * Busca um registro pelo id — o link `?abrir=` do WCrudView, onde só existe o id. Falha
+   * (404, 403, rede) avisa com mensagem genérica, sem o id nem o detalhe do servidor, e
+   * devolve `null`.
+   */
+  async function fetchById(id: string | number): Promise<T | null> {
+    try {
+      const { data } = await provider.get<T>(endpoint, id)
+      detalhados.add(data)
+      return data
+    } catch {
+      toast.warn('Registro não encontrado.')
+      return null
+    }
+  }
+
   /**
    * Abre o diálogo com o item resolvido: síncrono no caminho comum (a linha da
    * lista já basta) e assíncrono só com `fetchDetailOnEdit` — quem chama sem a
    * opção pode seguir mexendo no formData logo após o open, como sempre pôde.
    */
   function openWithItem(item: T, open: (full: T) => void): void | Promise<void> {
-    if (!fetchDetailOnEdit) return open(item)
+    if (!fetchDetailOnEdit || detalhados.has(item)) return open(item)
     return fetchDetail(item).then((full) => {
       if (full) open(full)
     })
@@ -669,6 +688,7 @@ export function useCrudManager<T extends Record<string, unknown> = Record<string
     openEditDialog,
     openViewDialog,
     openDuplicateDialog,
+    fetchById,
     save,
     updateField,
     confirmDelete,

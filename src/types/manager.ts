@@ -120,6 +120,10 @@ export interface CrudManagerReturn<T> {
   openEditDialog(item: T): void | Promise<void>
   openViewDialog(item: T): void | Promise<void>
   openDuplicateDialog(item: T): void | Promise<void>
+  /** Busca o registro pelo id (`GET /:pk/`), para abrir por link (`?abrir=`). Falha (404,
+   *  403, rede) avisa "Registro não encontrado." e devolve `null`. Abrir o resultado não
+   *  busca de novo, mesmo com `fetchDetailOnEdit`. */
+  fetchById(id: string | number): Promise<T | null>
   save(): Promise<T | null>
   /** Salva um único campo de um item (edição inline por célula) via PATCH. */
   updateField(item: T, field: string, value: unknown): Promise<void>
