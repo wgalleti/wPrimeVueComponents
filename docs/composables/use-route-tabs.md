@@ -118,6 +118,7 @@ existir mais, `activeGroup` é `undefined` até a primeira aba ser ativada.
 
 Dentro de uma tela renderizada pelo viewport, `useTabHost()` retorna o `TabHostContext`
 da aba (ou `null` fora de abas): `hostEl` (alvo de `appendTo` de dialogs), `active`,
+`route` (a rota da aba — só muda enquanto ela é a ativa),
 `setTitle`, `onTabActivated`/`onTabDeactivated` (equivalentes a
 `onActivated`/`onDeactivated`) e `registerCloseGuard` (veto de fechamento — alterações
 não salvas). Registros são desfeitos sozinhos quando a instância da tela morre.

@@ -203,6 +203,9 @@ import { useTabHost } from '@wgalleti/primevue-components'
 
 const host = useTabHost() // null fora de abas — tudo degrada para o padrão
 
+// Rota DA ABA (não a global): numa aba oculta segue com a query e o path dela
+const abrir = computed(() => host?.route?.query.abrir)
+
 // Título dinâmico da aba ("NF 000123"); null restaura o default da rota
 watchEffect(() => host?.setTitle(nota.value?.numero))
 

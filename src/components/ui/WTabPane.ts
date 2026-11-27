@@ -58,6 +58,7 @@ export default defineComponent({
     const host: TabHostContext = {
       hostEl: props.hostEl,
       active: toRef(props, 'active'),
+      route: runtime.route,
       setTitle: (title) => props.api.setTitle(props.tab.key, title),
       onTabActivated: (fn) => register(runtime.activatedHooks, fn),
       onTabDeactivated: (fn) => register(runtime.deactivatedHooks, fn),

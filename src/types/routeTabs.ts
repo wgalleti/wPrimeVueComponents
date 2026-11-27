@@ -176,6 +176,12 @@ export interface TabHostContext {
   /** Container do pane — alvo de `appendTo` para o dialog viver NA aba. */
   hostEl: Ref<HTMLElement | null>
   active: Ref<boolean>
+  /**
+   * Rota DA ABA (snapshot reativo, o mesmo que `useRoute()` injeta na tela): só muda
+   * enquanto a aba é a ativa — uma aba oculta segue com a query e o path dela. Opcional
+   * só para hosts feitos à mão (testes); o `WTabViewport` sempre fornece.
+   */
+  route?: RouteLocationNormalizedLoaded
   /** Título dinâmico da aba; `null` restaura o default da rota. */
   setTitle: (title: string | null | undefined) => void
   /** Chamado ao voltar para a aba (equivalente a onActivated). */
