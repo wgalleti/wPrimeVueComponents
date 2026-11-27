@@ -161,6 +161,105 @@ A partir da versão com `tokens.css`, todo valor do CSS da suíte sai de `--w-*`
 - **Patch local do Esc em dialogs empilhados** (`Dialog.methods.onKeyDown`): apague — o plugin
   faz isso (`patchDialogEscape`, default `true`).
 
+## Migrando de 2.x para 3.0
+
+A 3.0.0 é uma major com três mudanças. Só a primeira exige alteração de CSS; a segunda é opt-in;
+a terceira muda o comportamento padrão do `WCrudView` e pede uma conferência na tela antes de
+subir. A API do `WTabNav`, do `useRouteTabs` e do `WCrudView` continua compatível.
+
+### 1. Abas de rota com visual novo (`WTabNav`) — quebra visual
+
+Nenhuma prop mudou; mudou o desenho da barra. Detalhes em [WTabNav](./components/w-tab-nav.md).
+
+- **Aba ativa ligada ao conteúdo**: usa o fundo da página (`--w-tabnav-active-bg` → `--w-bg` →
+  `--bg` do app), sem fio embaixo; a barra fica sobre `--w-surface`.
+- **Ícone sempre colorido** (cor da aba, do grupo ou derivada da chave) e **rótulo de grupo em
+  caixa natural**.
+- **Sem rolagem horizontal nem máscara**: as abas que não cabem vão para o botão "Mais (n)"
+  (dropdown); a ativa nunca sai da faixa.
+- **`--w-tabnav-h` mudou de base** (aba + respiro de cima): 40px no padrão, 36px no
+  `data-density="compact"`. A classe `w-tab-nav__item--grupo` foi removida.
+
+O que o app faz:
+
+- Definir **`--bg`** no `:root` com a cor do fundo da página — sem ele a aba ativa não emenda no
+  painel.
+- Pôr o **recuo lateral no wrapper da barra**, com a mesma superfície (`--surface`), **sem borda
+  inferior** e com `min-width: 0` (a barra precisa encolher para o "Mais (n)" funcionar).
+- Apagar overrides de borda/contorno sobre `.w-tab-nav` e qualquer regra sobre
+  `.w-tab-nav__item--grupo`.
+- Conferir, se o painel das abas tem fundo diferente do `--bg`:
+  `:root { --w-tabnav-active-bg: var(--surface-2) }`.
+
+### 2. Abas por espaço de trabalho (`scopeByGroup`) — aditivo, opt-in
+
+Sem `scopeByGroup` nada muda: uma lista só, como na 2.x. Com ele, a barra mostra só as abas do
+grupo ativo ([useRouteTabs](./composables/use-route-tabs.md#abas-por-espaco-de-trabalho)):
+
+- novos no retorno: `visibleTabs` (o que a barra desenha), `activeGroup` e
+  `activateGroup(group)`;
+- `closeAll({ allGroups: true })` fecha as abas de todos os grupos (troca de organização, saída);
+  sem o argumento, fecha só as do grupo ativo;
+- fechar a aba ativa assume a vizinha **do mesmo grupo**; cada grupo lembra a última aba ativa.
+
+```ts
+export const tabsApi = useRouteTabs({
+  router,
+  scopeByGroup: true,
+  resolveTabMeta: (r) => ({ title: tituloDaRota(r), group: appDaRota(r) }),
+})
+
+// seletor de espaços: volta à última aba do espaço ou cai na tela inicial dele
+async function irPara(app: string) {
+  if (!(await tabsApi.activateGroup(app))) await router.push(telaInicialDe(app))
+}
+```
+
+### 3. Diálogo na URL — mudança de comportamento por padrão
+
+Com `urlState` (o default), o `WCrudView` passa a gravar o diálogo aberto na query:
+
+- criar → `?novo=1`; editar/ver → `?abrir=<pk>` (com o prefixo do `urlState`, quando houver, ex.:
+  `?orc_abrir=<pk>`);
+- F5 mantém o diálogo aberto e o link já abre com ele; id inexistente ou sem acesso limpa a
+  chave e avisa;
+- a URL é trocada por `router.replace`: o Voltar do navegador não fecha o diálogo. Só o estado
+  "aberto" volta — o que foi digitado no formulário não.
+
+**O que conferir no app antes de subir:**
+
+1. **Duas `WCrudView` na mesma rota sem prefixo**: as duas reagiriam ao mesmo `abrir`. Dê
+   `url-state="<prefixo>"` a cada uma.
+2. **Tela que já lê `route.query.abrir`/`novo` por conta própria**: ou o cadastro tem `canCreate` e
+   `canEdit` falsos e nenhuma ação `view` sem `handler` em `rowActions` (aí o `WCrudView` não lê,
+   não escreve e não limpa essas chaves), ou a leitura própria sai e a tela passa a depender do
+   `WCrudView`. Tela com slot `form-dialog` ou `handler` de edição próprio: o link abre pelo
+   `openEditDialog` do manager — confira.
+3. **Quem não quer o comportamento**: `:url-state="false"`. Atenção: desliga também busca,
+   filtros e página na URL.
+4. **Testes de ponta a ponta** que conferem a URL exata ou recarregam a página com um diálogo
+   aberto — a query agora traz a chave do diálogo.
+
+Opt-in por diálogo, fora do `WCrudView`: `WDialog` ganha `urlKey` (diálogo booleano, grava
+`?<chave>=1`) — ver [WDialog](./components/w-dialog.md) — e há um composable público para ligar um
+ref a uma chave da query (diálogo por id, gaveta) — ver [`useUrlParam`](./composables/use-url-param.md).
+
+Dentro de uma aba de rota, `TabHostContext` ganhou `route` (opcional): a rota da própria aba, que
+só muda enquanto ela é a ativa. Use `useTabHost()?.route` para ler a query da aba, não a global.
+
+### Subindo para a 3.0
+
+- [ ] Fixar `@wgalleti/primevue-components` em `3.0.0` (versão exata).
+- [ ] Definir `--bg` no `:root` com o fundo da página.
+- [ ] Mover o recuo lateral das abas para o wrapper (`--surface`, sem borda inferior,
+      `min-width: 0`) e apagar overrides sobre `.w-tab-nav` e `.w-tab-nav__item--grupo`.
+- [ ] Telas com duas `WCrudView` na mesma rota: um `url-state="<prefixo>"` para cada.
+- [ ] Telas que leem `route.query.abrir`/`novo`: `canCreate`/`canEdit` falsos ou leitura própria
+      removida; onde não se quer a URL, `:url-state="false"`.
+- [ ] Ajustar os testes e2e que conferem a URL exata ou recarregam com diálogo aberto.
+- [ ] Abrir o app e conferir: abas (ativa emendada ao painel, "Mais (n)" com a janela estreita)
+      e F5 com diálogo aberto num cadastro; opcional, ligar `scopeByGroup`.
+
 ## Notas
 
 - A migracao pode ser **incremental** — views nao migradas continuam usando o codigo local
