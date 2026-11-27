@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.7.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.6.0...v2.7.0) (2026-11-27)
+
+### Funcionalidades
+
+* **crud:** keep the create and edit dialog in the URL ([f3b3638](https://github.com/wgalleti/wPrimeVueComponents/commit/f3b3638aa60f12990318dc09b7c39099d0f4e178))
+* **dialog:** bind a dialog to a URL query key ([f9bcb05](https://github.com/wgalleti/wPrimeVueComponents/commit/f9bcb055f8b87899ec290de05ade64f1df7a6740))
+* **tabs:** connect the active tab to the content and move overflow into a dropdown ([8462be2](https://github.com/wgalleti/wPrimeVueComponents/commit/8462be270a8d2aff38910818022fbbf520d789a8))
+* **tabs:** scope route tabs by group ([8c0c832](https://github.com/wgalleti/wPrimeVueComponents/commit/8c0c832a0101b80085adbbbfc7b2803ab9b812fa))
+* **url-state:** read the tab's own route and react to query changes ([a169318](https://github.com/wgalleti/wPrimeVueComponents/commit/a1693181f4493c06b9dd98ae33cead3aadbae4df))
+
+### Correções
+
+* **crud:** validate and encode the record id taken from the URL ([1fb418f](https://github.com/wgalleti/wPrimeVueComponents/commit/1fb418f1cb90f5489632504bf625a66f72df0ec8))
+
+### Documentação
+
+* add the 2.6 to 2.7 migration notes ([a568730](https://github.com/wgalleti/wPrimeVueComponents/commit/a568730cac32c2b8ab679231e0072ab29ab3ac1f))
+* target 2.7 in the migration notes ([e11d1d2](https://github.com/wgalleti/wPrimeVueComponents/commit/e11d1d212edb4db0c7a3bb016a1fba9bc05e896e))
 ## [2.6.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.5.3...v2.6.0) (2026-11-24)
 
 ### Correções
