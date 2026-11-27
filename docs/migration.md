@@ -161,9 +161,9 @@ A partir da versão com `tokens.css`, todo valor do CSS da suíte sai de `--w-*`
 - **Patch local do Esc em dialogs empilhados** (`Dialog.methods.onKeyDown`): apague — o plugin
   faz isso (`patchDialogEscape`, default `true`).
 
-## Migrando de 2.x para 3.0
+## Migrando de 2.6 para 2.7
 
-A 3.0.0 é uma major com três mudanças. Só a primeira exige alteração de CSS; a segunda é opt-in;
+A 2.7.0 traz três mudanças. Só a primeira exige alteração de CSS; a segunda é opt-in;
 a terceira muda o comportamento padrão do `WCrudView` e pede uma conferência na tela antes de
 subir. A API do `WTabNav`, do `useRouteTabs` e do `WCrudView` continua compatível.
 
@@ -193,7 +193,7 @@ O que o app faz:
 
 ### 2. Abas por espaço de trabalho (`scopeByGroup`) — aditivo, opt-in
 
-Sem `scopeByGroup` nada muda: uma lista só, como na 2.x. Com ele, a barra mostra só as abas do
+Sem `scopeByGroup` nada muda: uma lista só, como na 2.6. Com ele, a barra mostra só as abas do
 grupo ativo ([useRouteTabs](./composables/use-route-tabs.md#abas-por-espaco-de-trabalho)):
 
 - novos no retorno: `visibleTabs` (o que a barra desenha), `activeGroup` e
@@ -223,6 +223,8 @@ Com `urlState` (o default), o `WCrudView` passa a gravar o diálogo aberto na qu
   `?orc_abrir=<pk>`);
 - F5 mantém o diálogo aberto e o link já abre com ele; id inexistente ou sem acesso limpa a
   chave e avisa;
+- o id lido da URL é validado (só letras, números, `-` e `_`; outro valor é ignorado e a chave
+  sai, sem aviso) e vai codificado no caminho do pedido;
 - a URL é trocada por `router.replace`: o Voltar do navegador não fecha o diálogo. Só o estado
   "aberto" volta — o que foi digitado no formulário não.
 
@@ -247,9 +249,9 @@ ref a uma chave da query (diálogo por id, gaveta) — ver [`useUrlParam`](./com
 Dentro de uma aba de rota, `TabHostContext` ganhou `route` (opcional): a rota da própria aba, que
 só muda enquanto ela é a ativa. Use `useTabHost()?.route` para ler a query da aba, não a global.
 
-### Subindo para a 3.0
+### Subindo para a 2.7
 
-- [ ] Fixar `@wgalleti/primevue-components` em `3.0.0` (versão exata).
+- [ ] Fixar `@wgalleti/primevue-components` em `2.7.0` (versão exata).
 - [ ] Definir `--bg` no `:root` com o fundo da página.
 - [ ] Mover o recuo lateral das abas para o wrapper (`--surface`, sem borda inferior,
       `min-width: 0`) e apagar overrides sobre `.w-tab-nav` e `.w-tab-nav__item--grupo`.
