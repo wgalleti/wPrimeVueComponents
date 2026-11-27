@@ -136,6 +136,7 @@ diálogo aberto e o link compartilhado já abre a tela com o registro — sem na
   `fetchDetailOnEdit` desligado (a linha pode nem estar na página), e abre pelo mesmo caminho do
   clique na linha: edição se `canEdit` não é `false`; senão visualização, se `rowActions` tem a
   ação `view` sem `handler`; senão nada. O registro buscado não é buscado de novo ao abrir.
+- O valor de `abrir` só vale com letras, números, `-` e `_` (uuid, inteiro, slug); outro valor é tratado como ausente (a chave sai, sem aviso e sem requisição), e o provedor axios codifica o id no caminho.
 - Registro inexistente, sem acesso (404/403) ou erro na busca: nada abre, a chave sai e o toast diz
   "Registro não encontrado." (sem id nem detalhe do servidor).
 - **`novo=1`** abre o formulário de criar, se `canCreate` não é `false`; sem permissão, a chave sai

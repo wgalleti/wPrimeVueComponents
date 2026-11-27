@@ -345,3 +345,43 @@ describe('WCrudView — formulário na URL', () => {
     w.unmount()
   })
 })
+
+describe('WCrudView — id da URL validado', () => {
+  it.each(['../../x', 'a?b=1', 'a/b', 'a#b'])(
+    'abrir=%s: sem pedido, sem diálogo, chave limpa',
+    async (v) => {
+      const { w, crud, get, query } = await montar(`/lista?abrir=${encodeURIComponent(v)}&page=1`)
+      expect(get).not.toHaveBeenCalled()
+      expect(crud().dialogVisible.value).toBe(false)
+      expect(query()).toEqual({ page: '1' })
+      expect(toast.warn).not.toHaveBeenCalled()
+      w.unmount()
+    },
+  )
+
+  it('abrir inválido por fora (query muda depois): mesma regra', async () => {
+    const { w, crud, get, router, query } = await montar('/lista')
+    await router.replace({ path: '/lista', query: { abrir: '../../x' } })
+    await flushPromises()
+    expect(get).not.toHaveBeenCalled()
+    expect(crud().dialogVisible.value).toBe(false)
+    expect(query()).toEqual({})
+    w.unmount()
+  })
+
+  it('uuid e inteiro seguem funcionando', async () => {
+    const uuid = '0190a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b'
+    BANCO[uuid] = { id: uuid, nome: 'U' }
+    const a = await montar(`/lista?abrir=${uuid}`)
+    expect(a.get).toHaveBeenCalledWith('/itens', uuid)
+    expect(a.crud().dialogVisible.value).toBe(true)
+    a.w.unmount()
+    delete BANCO[uuid]
+    const b = await montar('/lista?abrir=42', {
+      get: async () => ({ data: { id: 42, nome: 'X' } }),
+    })
+    expect(b.get).toHaveBeenCalledWith('/itens', '42')
+    expect(b.crud().dialogVisible.value).toBe(true)
+    b.w.unmount()
+  })
+})

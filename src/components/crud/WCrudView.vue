@@ -1173,6 +1173,8 @@ function urlOpenMode(): 'edit' | 'view' | null {
 // Formulário embutido que não abre de jeito nenhum (a tela tem o seu): as chaves são do app.
 const urlDialogOn = (): boolean => !!urlSync && (canCreate.value || urlOpenMode() !== null)
 
+const SAFE_ID = /^[A-Za-z0-9_-]+$/
+
 type DialogKeys = { novo: string | null; abrir: string | null }
 const NO_DIALOG: DialogKeys = { novo: null, abrir: null }
 /** O que o diálogo aberto agora põe na URL. */
@@ -1207,8 +1209,10 @@ async function closeDialogForUrl(): Promise<boolean> {
 }
 
 /** Leva o diálogo ao que a URL pede; ao fim, a URL reflete o que ficou aberto. */
-async function applyDialogUrl(novo?: string, abrir?: string): Promise<void> {
+async function applyDialogUrl(novo?: string, abrirRaw?: string): Promise<void> {
   const my = ++dialogSeq
+  // O id vem de fora (link): só formato seguro (uuid, inteiro, slug); o resto é ausente e a chave sai.
+  const abrir = abrirRaw && SAFE_ID.test(abrirRaw) ? abrirRaw : undefined
   applying = true
   // `abrir` ganha de `novo`; os dois juntos terminam com `novo` limpo.
   const want: DialogKeys = abrir

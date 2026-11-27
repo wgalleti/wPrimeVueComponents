@@ -43,6 +43,9 @@ function normalizeListResponse<T>(
   }
 }
 
+// O id entra no caminho: codificado, para `/`, `..`, `?` e `#` não saírem do recurso.
+const pathId = (id: string | number): string => encodeURIComponent(String(id))
+
 export function createAxiosDataProvider(axios: AxiosInstance): DataProvider {
   return {
     async list<T = Record<string, unknown>>(
@@ -62,7 +65,7 @@ export function createAxiosDataProvider(axios: AxiosInstance): DataProvider {
       id: string | number,
       config?: DataProviderRequestConfig,
     ): Promise<DataProviderResponse<T>> {
-      const response = await axios.get<T>(`${endpoint}${id}/`, config)
+      const response = await axios.get<T>(`${endpoint}${pathId(id)}/`, config)
       return { data: response.data }
     },
 
@@ -81,12 +84,12 @@ export function createAxiosDataProvider(axios: AxiosInstance): DataProvider {
       payload: Record<string, unknown> | FormData,
       config?: DataProviderRequestConfig,
     ): Promise<DataProviderResponse<T>> {
-      const response = await axios.patch<T>(`${endpoint}${id}/`, payload, config)
+      const response = await axios.patch<T>(`${endpoint}${pathId(id)}/`, payload, config)
       return { data: response.data }
     },
 
     async delete(endpoint: string, id: string | number): Promise<void> {
-      await axios.delete(`${endpoint}${id}/`)
+      await axios.delete(`${endpoint}${pathId(id)}/`)
     },
   }
 }
