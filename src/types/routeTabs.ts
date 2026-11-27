@@ -1,4 +1,4 @@
-import { inject, type Component, type InjectionKey, type Ref } from 'vue'
+import { inject, type Component, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 
 /**
@@ -18,6 +18,7 @@ export interface RouteTabMeta {
   /**
    * Grupo da aba (ex.: o módulo do menu — "Sementes", "Estoque"). Abas do
    * mesmo grupo ficam juntas na barra, com o rótulo do grupo antes do bloco.
+   * Com `scopeByGroup`, é o espaço de trabalho: a barra mostra um grupo por vez.
    */
   group?: string
   /**
@@ -108,19 +109,54 @@ export interface UseRouteTabsOptions {
   storageKey?: string | (() => string)
   /** Destino ao fechar a última aba. Default: `/`. */
   homePath?: string
-  /** Acima disso, a aba mais antiga não-ativa é fechada (guards respeitados). */
+  /**
+   * Acima disso, a aba mais antiga não-ativa é fechada (guards respeitados). O limite
+   * é global; com `scopeByGroup` sai primeiro uma do grupo ativo e, só se ele não
+   * tiver o que fechar, a mais antiga de outro grupo.
+   */
   maxTabs?: number
+  /**
+   * Abas por espaço de trabalho. Com `true`, `visibleTabs` (o que o WTabNav desenha)
+   * traz só as abas do grupo da aba ativa — trocar de grupo troca o conjunto — e
+   * fechar atua dentro do grupo: a ativa fechada passa a vez à vizinha do mesmo grupo
+   * (a última dele leva ao `homePath`), `closeOthers` e `closeAll` não tocam nos outros
+   * grupos. Abas sem `group` formam um grupo à parte. Os painéis de todas as abas
+   * seguem montados no WTabViewport. Default `false`: uma lista só, como sempre foi.
+   */
+  scopeByGroup?: boolean
 }
 
 export interface RouteTabsApi {
   tabs: Ref<RouteTab[]>
   activeKey: Ref<string | null>
+  /** O que a barra desenha: todas as abas, ou — com `scopeByGroup` — só as do `activeGroup`. */
+  visibleTabs: ComputedRef<RouteTab[]>
+  /**
+   * Grupo da aba ativa; em rota fora das abas, o da última aba que esteve ativa.
+   * `undefined` = aba sem grupo (ou nenhuma aba ativada ainda).
+   */
+  activeGroup: ComputedRef<string | undefined>
+  /** A opção `scopeByGroup` como foi passada — o WTabNav lê para não repetir o rótulo do grupo. */
+  scopeByGroup: boolean
   /** Ativa a aba (navega para o fullPath dela). */
   activate: (key: string) => Promise<void>
+  /**
+   * Volta ao grupo: ativa a última aba que esteve ativa nele (sem registro, a última
+   * dele na lista). `false` = o grupo não tem aba aberta — o app navega para a tela
+   * inicial do grupo. Funciona com ou sem `scopeByGroup`.
+   */
+  activateGroup: (group: string) => Promise<boolean>
   /** Fecha respeitando os close guards da aba. `false` = algum guard vetou. */
   close: (key: string) => Promise<boolean>
+  /** Fecha as outras abas — com `scopeByGroup`, só as do grupo de `key`. */
   closeOthers: (key: string) => Promise<void>
-  closeAll: () => Promise<void>
+  /**
+   * Fecha todas — com `scopeByGroup`, só as do grupo ativo. `allGroups: true` fecha as
+   * de todos os grupos (troca de organização, saída): se sobrar aba (não fechável ou
+   * vetada), assume a do grupo ativo, senão a primeira da lista; sem sobra, `homePath`.
+   * Sem `scopeByGroup` o argumento não muda nada.
+   */
+  closeAll: (options?: { allGroups?: boolean }) => Promise<void>
   /** Remonta o componente da aba (o estado da tela é descartado). */
   reload: (key: string) => void
   /** Título dinâmico ("NF 000123"). `null` volta ao título default da rota. */

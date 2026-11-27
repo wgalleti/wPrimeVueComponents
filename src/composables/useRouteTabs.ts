@@ -1,4 +1,4 @@
-import { ref, shallowReactive, type Component } from 'vue'
+import { computed, ref, shallowReactive, type Component } from 'vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import type {
   RouteTab,
@@ -20,6 +20,10 @@ import type {
  * interna — ver `UseRouteTabsOptions`). A lista sobrevive a reload via
  * storage; as abas voltam como "shells" (`hydrated: false`) e só montam
  * quando ativadas — a URL do reload sempre ganha a disputa pela aba ativa.
+ *
+ * `scopeByGroup` liga as abas por espaço de trabalho: a barra (`visibleTabs`)
+ * mostra só as abas do grupo da aba ativa, cada grupo lembra a sua última aba
+ * ativa (`activateGroup` volta a ela) e fechar/limite atuam dentro do grupo.
  */
 
 interface PersistedTab {
@@ -36,6 +40,9 @@ interface PersistedState {
   v: 1
   activeKey: string | null
   tabs: PersistedTab[]
+  /** Última aba ativa de cada grupo ('' = abas sem grupo). Opcional: estado gravado
+   *  antes de o campo existir continua válido — por isso o `v` não mudou. */
+  lastActive?: Record<string, string>
 }
 
 function snapshotRoute(to: RouteLocationNormalizedLoaded): Record<string, unknown> {
@@ -83,6 +90,7 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     storageKey = 'w-route-tabs',
     homePath = '/',
     maxTabs,
+    scopeByGroup = false,
   } = options
 
   if (mode === 'module' && !moduleRoot) {
@@ -95,7 +103,17 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
 
   const tabs = ref<RouteTab[]>([])
   const activeKey = ref<string | null>(null)
+  /** Grupo da última aba ativa: rota fora das abas não o apaga (a barra segue no mesmo espaço). */
+  const currentGroup = ref<string | undefined>()
+  /** Última aba ativa de cada grupo ('' = sem grupo): para onde `activateGroup` volta. */
+  const lastActive = new Map<string, string>()
   const runtimes = new Map<string, RouteTabRuntime>()
+
+  /** Grupo vazio é "sem grupo", como na barra e no `insertTab`. */
+  const groupOf = (tab: RouteTab | undefined): string | undefined => tab?.group || undefined
+  const visibleTabs = computed(() =>
+    scopeByGroup ? tabs.value.filter((t) => groupOf(t) === currentGroup.value) : tabs.value,
+  )
   let restored = false
   /** Chave usada no último restore — muda quando o usuário troca sem reload. */
   let restoredKey: string | null = null
@@ -120,6 +138,7 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
         group,
         color,
       })),
+      lastActive: Object.fromEntries(lastActive),
     }
     try {
       storage.setItem(resolveStorageKey(), JSON.stringify(state))
@@ -136,6 +155,8 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     restoredKey = resolveStorageKey()
     tabs.value = []
     activeKey.value = null
+    currentGroup.value = undefined
+    lastActive.clear()
     runtimes.clear()
     if (!storage) return
     try {
@@ -147,6 +168,13 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
         .filter((t) => t && typeof t.key === 'string' && typeof t.fullPath === 'string')
         .filter((t) => stillATab(t.fullPath))
         .map((t) => ({ ...t, hydrated: false, remount: 0 }))
+      // Só o que ainda aponta uma aba do próprio grupo; estado antigo não traz o campo.
+      for (const [group, key] of Object.entries(state.lastActive ?? {})) {
+        const tab = findTab(key)
+        if (tab && (tab.group || '') === group) lastActive.set(group, key)
+      }
+      // Reload numa rota fora das abas: a barra volta no espaço da última aba ativa.
+      currentGroup.value = groupOf(findTab(state.activeKey ?? ''))
     } catch {
       /* estado corrompido = começar sem abas */
     }
@@ -249,7 +277,9 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
 
   function enforceMaxTabs(): void {
     if (!maxTabs || tabs.value.length <= maxTabs) return
-    const victim = tabs.value.find((t) => t.key !== activeKey.value && t.closable)
+    const closable = (t: RouteTab): boolean => t.key !== activeKey.value && t.closable
+    // O limite é global, mas quem paga primeiro é o grupo que está abrindo abas.
+    const victim = visibleTabs.value.find(closable) ?? tabs.value.find(closable)
     if (victim) void close(victim.key)
   }
 
@@ -296,6 +326,8 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     }
     hydrate(tab, to)
     activeKey.value = key
+    currentGroup.value = groupOf(tab)
+    lastActive.set(tab.group || '', key)
     enforceMaxTabs()
     persist()
   })
@@ -304,6 +336,15 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     const tab = findTab(key)
     if (!tab || key === activeKey.value) return
     await router.push(tab.fullPath)
+  }
+
+  async function activateGroup(group: string): Promise<boolean> {
+    const ofGroup = tabs.value.filter((t) => t.group === group)
+    const target =
+      ofGroup.find((t) => t.key === lastActive.get(group)) ?? ofGroup[ofGroup.length - 1]
+    if (!target) return false
+    await activate(target.key)
+    return true
   }
 
   async function runCloseGuards(key: string): Promise<boolean> {
@@ -325,35 +366,38 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     if (!tab) return true
     if (!tab.closable) return false
     if (!(await runCloseGuards(key))) return false
-    const index = tabs.value.findIndex((t) => t.key === key)
+    // Quem assume a ativa: a vizinha da esquerda; sem esquerda, a da direita. Com
+    // `scopeByGroup` só vale vizinha do MESMO grupo — fechar a última dele vai ao homePath.
+    const pool = scopeByGroup ? tabs.value.filter((t) => groupOf(t) === groupOf(tab)) : tabs.value
+    const index = pool.findIndex((t) => t.key === key)
+    const next = pool[index - 1] ?? pool[index + 1] ?? null
     const wasActive = key === activeKey.value
     removeTab(key)
     if (wasActive) {
-      // Vizinha da esquerda; sem esquerda, a nova ocupante do índice (direita).
-      const next = tabs.value[index - 1] ?? tabs.value[index] ?? null
-      if (next) {
-        activeKey.value = null
-        await router.push(next.fullPath)
-      } else {
-        activeKey.value = null
-        await router.push(homePath)
-      }
+      activeKey.value = null
+      await router.push(next ? next.fullPath : homePath)
     }
     persist()
     return true
   }
 
   async function closeOthers(key: string): Promise<void> {
-    for (const other of tabs.value.filter((t) => t.key !== key && t.closable)) {
+    const group = groupOf(findTab(key))
+    const others = tabs.value.filter(
+      (t) => t.key !== key && t.closable && (!scopeByGroup || groupOf(t) === group),
+    )
+    for (const other of others) {
       await runCloseGuards(other.key).then((ok) => ok && removeTab(other.key))
     }
     persist()
     await activate(key)
   }
 
-  async function closeAll(): Promise<void> {
+  // `visibleTabs` é a lista inteira sem `scopeByGroup` e só o grupo ativo com ele;
+  // `allGroups` passa por cima do escopo (troca de organização, saída).
+  async function closeAll({ allGroups = false }: { allGroups?: boolean } = {}): Promise<void> {
     let activeSurvived = false
-    for (const tab of [...tabs.value]) {
+    for (const tab of [...(allGroups ? tabs.value : visibleTabs.value)]) {
       if (!tab.closable || !(await runCloseGuards(tab.key))) {
         activeSurvived ||= tab.key === activeKey.value
         continue
@@ -362,7 +406,8 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
     }
     persist()
     if (!activeSurvived && activeKey.value) {
-      const next = tabs.value[0]
+      // Quem sobrou do grupo ativo; com `allGroups`, senão a primeira que sobrou na lista.
+      const next = visibleTabs.value[0] ?? (allGroups ? tabs.value[0] : undefined)
       activeKey.value = null
       await router.push(next ? next.fullPath : homePath)
     }
@@ -396,7 +441,11 @@ export function useRouteTabs(options: UseRouteTabsOptions): RouteTabsApi {
   return {
     tabs,
     activeKey,
+    visibleTabs,
+    activeGroup: computed(() => currentGroup.value),
+    scopeByGroup,
     activate,
+    activateGroup,
     close,
     closeOthers,
     closeAll,

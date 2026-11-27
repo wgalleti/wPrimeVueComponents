@@ -32,6 +32,7 @@ function montar(
     icon: 'pi pi-file',
     closable: r.path !== '/a',
   }),
+  extra: Partial<UseRouteTabsOptions> = {},
 ): VueWrapper {
   router = createRouter({
     history: createMemoryHistory(),
@@ -49,6 +50,7 @@ function montar(
     storage: null,
     isTabRoute: (r) => r.path !== '/',
     resolveTabMeta,
+    ...extra,
   })
   return mount(WTabNav, {
     props: { tabs: api },
@@ -171,6 +173,24 @@ describe('WTabNav — render', () => {
     const abas = w.findAll('[role="tab"]')
     expect(corDe(abas[0])).toBe('rebeccapurple')
     expect(corDe(abas[1])).toBe('var(--w-tab-group-2, var(--w-viz-2))')
+  })
+
+  it('scopeByGroup: desenha só as abas do grupo ativo, sem rótulo de grupo', async () => {
+    const w = montar(
+      (r) => ({ title: String(r.name), group: r.path < '/c' ? 'Sementes' : 'Estoque' }),
+      { scopeByGroup: true },
+    )
+    const titulos = (): string[] =>
+      w.findAll('[role="tab"]').map((aba) => aba.find('.w-tab-nav__title').text())
+    for (const rota of ['/a', '/b', '/c', '/d']) await router.push(rota)
+    await flushPromises()
+    expect(titulos()).toEqual(['c', 'd'])
+    expect(w.find('.w-tab-nav__group').exists()).toBe(false)
+    // trocar de grupo troca o conjunto de abas da barra
+    await router.push('/a')
+    await flushPromises()
+    expect(titulos()).toEqual(['a', 'b'])
+    expect(w.find('.w-tab-nav__group').exists()).toBe(false)
   })
 
   it('aba closable: false não mostra o X', async () => {
@@ -333,9 +353,10 @@ describe('WTabNav — quando as abas não cabem', () => {
     barra: number,
     meta?: UseRouteTabsOptions['resolveTabMeta'],
     ordem = ['/a', '/b', '/c', '/d'],
+    extra: Partial<UseRouteTabsOptions> = {},
   ): Promise<VueWrapper> {
     medir(barra)
-    const w = montar(meta)
+    const w = montar(meta, extra)
     for (const rota of ordem) await router.push(rota)
     await flushPromises()
     return w
@@ -416,5 +437,20 @@ describe('WTabNav — quando as abas não cabem', () => {
     const grupos = Array.from(document.querySelectorAll('[data-pc-section="submenulabel"]'))
     expect(grupos.map((g) => g.textContent?.trim())).toEqual(['Sementes', 'Estoque'])
     expect(noMenu().map((item) => item.textContent?.trim())).toEqual(['a', 'b', 'c'])
+  })
+
+  it('scopeByGroup: "Mais (n)" conta só as abas do grupo ativo, sem cabeçalho de grupo no menu', async () => {
+    const w = await abrir(
+      160,
+      (r) => ({ title: String(r.name), group: r.path < '/c' ? 'Sementes' : 'Estoque' }),
+      undefined,
+      { scopeByGroup: true },
+    )
+    expect(naFaixa(w)).toEqual(['d'])
+    expect(w.find('.w-tab-nav__more').attributes('aria-label')).toBe('Mais abas (1)')
+    await w.find('.w-tab-nav__more').trigger('click')
+    await flushPromises()
+    expect(noMenu().map((item) => item.textContent?.trim())).toEqual(['c'])
+    expect(document.querySelector('[data-pc-section="submenulabel"]')).toBeNull()
   })
 })

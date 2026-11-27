@@ -402,6 +402,207 @@ describe('useRouteTabs — persistência', () => {
   })
 })
 
+describe('useRouteTabs — scopeByGroup (abas por espaço de trabalho)', () => {
+  /** '/notas/*' = Sementes · '/livre' = sem grupo · o resto = Cadastros. */
+  const grupoDe = (path: string): string | undefined =>
+    path.startsWith('/notas') ? 'Sementes' : path === '/livre' ? undefined : 'Cadastros'
+  const porGrupo = (extra: Partial<Parameters<typeof useRouteTabs>[0]> = {}): void =>
+    montar({
+      scopeByGroup: true,
+      resolveTabMeta: (r) => ({ title: String(r.name), group: grupoDe(r.path) }),
+      ...extra,
+    })
+  const chaves = (lista: { key: string }[]): string[] => lista.map((t) => t.key)
+  const abrir = async (...rotas: string[]): Promise<void> => {
+    for (const rota of rotas) await router.push(rota)
+  }
+  /** Estado gravado antes de `lastActive` existir: só `v`, `activeKey` e `tabs`. */
+  const estadoAntigo = (activeKey: string | null): string =>
+    JSON.stringify({
+      v: 1,
+      activeKey,
+      tabs: [
+        { key: '/clientes', fullPath: '/clientes', title: 'c', closable: true, group: 'Cadastros' },
+        { key: '/notas/1', fullPath: '/notas/1', title: 'n1', closable: true, group: 'Sementes' },
+        { key: '/notas/2', fullPath: '/notas/2', title: 'n2', closable: true, group: 'Sementes' },
+      ],
+    })
+
+  it('visibleTabs traz só as abas do grupo ativo e troca ao ativar aba de outro grupo', async () => {
+    porGrupo()
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/notas/1', '/notas/2'])
+    expect(api.activeGroup.value).toBe('Sementes')
+    expect(chaves(api.visibleTabs.value)).toEqual(['/notas/1', '/notas/2'])
+    await api.activate('/clientes')
+    expect(api.activeGroup.value).toBe('Cadastros')
+    expect(chaves(api.visibleTabs.value)).toEqual(['/clientes'])
+  })
+
+  it('sem scopeByGroup, visibleTabs é a própria lista', async () => {
+    montar({ resolveTabMeta: (r) => ({ group: grupoDe(r.path) }) })
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    expect(api.scopeByGroup).toBe(false)
+    expect(api.visibleTabs.value).toHaveLength(3)
+    expect(api.visibleTabs.value).toEqual(api.tabs.value)
+    expect(api.activeGroup.value).toBe('Sementes')
+  })
+
+  it('rota fora das abas mantém o grupo da última aba ativa', async () => {
+    porGrupo({ isTabRoute: (r) => r.path !== '/modulo/painel' })
+    await abrir('/clientes', '/notas/1', '/modulo/painel')
+    expect(api.activeKey.value).toBeNull()
+    expect(api.activeGroup.value).toBe('Sementes')
+    expect(chaves(api.visibleTabs.value)).toEqual(['/notas/1'])
+  })
+
+  it('abas sem grupo formam um grupo à parte (undefined)', async () => {
+    porGrupo()
+    await abrir('/clientes', '/livre')
+    expect(api.activeGroup.value).toBeUndefined()
+    expect(chaves(api.visibleTabs.value)).toEqual(['/livre'])
+  })
+
+  it('activateGroup volta à última aba ativa do grupo; grupo sem aba devolve false', async () => {
+    porGrupo()
+    await abrir('/clientes', '/notas/1', '/notas/2', '/notas/1', '/clientes')
+    expect(await api.activateGroup('Sementes')).toBe(true)
+    expect(api.activeKey.value).toBe('/notas/1')
+    expect(await api.activateGroup('Estoque')).toBe(false)
+    expect(api.activeKey.value).toBe('/notas/1')
+  })
+
+  it('o último ativo por grupo sobrevive a persistir + restaurar', async () => {
+    porGrupo()
+    await abrir('/clientes', '/notas/1', '/notas/2', '/notas/1', '/clientes')
+    expect(JSON.parse(dados['w-route-tabs']).lastActive).toEqual({
+      Cadastros: '/clientes',
+      Sementes: '/notas/1',
+    })
+    // reload: instância e router novos sobre o mesmo storage
+    api = useRouteTabs({
+      router: (router = criarRouter()),
+      storage: criarStorage(dados),
+      scopeByGroup: true,
+    })
+    await router.push('/clientes')
+    expect(await api.activateGroup('Sementes')).toBe(true)
+    expect(api.activeKey.value).toBe('/notas/1')
+  })
+
+  it('estado persistido antigo (sem lastActive) restaura; activateGroup cai na última do grupo', async () => {
+    porGrupo()
+    dados['w-route-tabs'] = estadoAntigo('/notas/1')
+    await router.push('/clientes')
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/notas/1', '/notas/2'])
+    expect(chaves(api.visibleTabs.value)).toEqual(['/clientes'])
+    expect(await api.activateGroup('Sementes')).toBe(true)
+    expect(api.activeKey.value).toBe('/notas/2')
+  })
+
+  it('reload em rota fora das abas volta no grupo da última aba ativa', async () => {
+    porGrupo({ isTabRoute: (r) => r.path !== '/modulo/painel' })
+    dados['w-route-tabs'] = estadoAntigo('/notas/1')
+    await router.push('/modulo/painel')
+    expect(api.activeKey.value).toBeNull()
+    expect(api.activeGroup.value).toBe('Sementes')
+    expect(chaves(api.visibleTabs.value)).toEqual(['/notas/1', '/notas/2'])
+  })
+
+  it('fechar a ativa passa a vez à vizinha do MESMO grupo; a última do grupo leva ao homePath', async () => {
+    porGrupo()
+    await abrir('/clientes', '/notas/1', '/notas/2', '/notas/1')
+    // a vizinha da esquerda na lista é /clientes, de outro grupo: quem assume é a /notas/2
+    await api.close('/notas/1')
+    expect(api.activeKey.value).toBe('/notas/2')
+    await api.close('/notas/2')
+    expect(router.currentRoute.value.path).toBe('/')
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/'])
+  })
+
+  it('fechar aba que não é a ativa não navega', async () => {
+    porGrupo()
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    await api.close('/clientes')
+    expect(api.activeKey.value).toBe('/notas/2')
+    expect(chaves(api.tabs.value)).toEqual(['/notas/1', '/notas/2'])
+  })
+
+  it('closeOthers fecha só as outras abas do grupo da aba', async () => {
+    porGrupo()
+    await abrir('/clientes', '/', '/notas/1', '/notas/2')
+    await api.closeOthers('/notas/2')
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/', '/notas/2'])
+    expect(api.activeKey.value).toBe('/notas/2')
+  })
+
+  it('closeAll fecha só o grupo ativo; a aba que sobrou nele assume', async () => {
+    porGrupo({
+      resolveTabMeta: (r) => ({ group: grupoDe(r.path), closable: r.path !== '/notas/1' }),
+    })
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    await api.closeAll()
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/notas/1'])
+    expect(api.activeKey.value).toBe('/notas/1')
+  })
+
+  it('closeAll sem sobra no grupo vai ao homePath e não toca nos outros grupos', async () => {
+    porGrupo({ homePath: '/livre' })
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    await api.closeAll()
+    expect(router.currentRoute.value.path).toBe('/livre')
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/livre'])
+  })
+
+  it('closeAll({ allGroups: true }) fecha as abas de todos os grupos e mantém as não fecháveis', async () => {
+    porGrupo({
+      resolveTabMeta: (r) => ({
+        group: grupoDe(r.path),
+        closable: r.path !== '/clientes' && r.path !== '/notas/1',
+      }),
+    })
+    await abrir('/clientes', '/', '/notas/1', '/notas/2')
+    await api.closeAll({ allGroups: true })
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/notas/1'])
+    // assume a que sobrou do grupo ativo, não a primeira da lista
+    expect(api.activeKey.value).toBe('/notas/1')
+  })
+
+  it('closeAll({ allGroups: true }): grupo ativo sem sobra assume a primeira da lista; sem sobra nenhuma, homePath', async () => {
+    porGrupo({
+      homePath: '/livre',
+      resolveTabMeta: (r) => ({ group: grupoDe(r.path), closable: r.path !== '/clientes' }),
+    })
+    await abrir('/clientes', '/notas/1', '/notas/2')
+    await api.closeAll({ allGroups: true })
+    expect(chaves(api.tabs.value)).toEqual(['/clientes'])
+    expect(api.activeKey.value).toBe('/clientes')
+
+    porGrupo({ homePath: '/livre' })
+    await abrir('/clientes', '/notas/1')
+    await api.closeAll({ allGroups: true })
+    expect(router.currentRoute.value.path).toBe('/livre')
+    expect(chaves(api.tabs.value)).toEqual(['/livre'])
+  })
+
+  it('sem scopeByGroup, allGroups não muda nada', async () => {
+    await abrir('/clientes', '/notas/1')
+    await api.closeAll({ allGroups: true })
+    expect(router.currentRoute.value.path).toBe('/')
+    expect(chaves(api.tabs.value)).toEqual(['/'])
+  })
+
+  it('maxTabs fecha primeiro do grupo ativo; sem vítima nele, a mais antiga de outro grupo', async () => {
+    porGrupo({ maxTabs: 3 })
+    await abrir('/clientes', '/', '/notas/1', '/notas/2')
+    // sem scopeByGroup sairia a /clientes (a mais antiga da lista)
+    expect(chaves(api.tabs.value)).toEqual(['/clientes', '/', '/notas/2'])
+    // /livre fica sozinha no grupo dela: a vítima vem de outro grupo
+    await router.push('/livre')
+    expect(chaves(api.tabs.value)).toEqual(['/', '/notas/2', '/livre'])
+  })
+})
+
 describe('useRouteTabs — maxTabs', () => {
   it('acima do limite fecha a mais antiga não-ativa', async () => {
     montar({ maxTabs: 2 })

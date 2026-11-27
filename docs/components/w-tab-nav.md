@@ -21,6 +21,16 @@ O par funciona junto e todo o estado vem do composable
   um snapshot **congelado** da rota — `useRoute()` da tela oculta não reage à navegação
   global — e fornece o contexto `useTabHost()` (título dinâmico, `appendTo`, close guards).
 
+### Abas por espaço de trabalho
+
+A barra desenha `tabs.visibleTabs`. Com
+[`scopeByGroup`](/composables/use-route-tabs#abas-por-espaco-de-trabalho) no `useRouteTabs`,
+isso é só o grupo da aba ativa: trocar de grupo troca as abas da barra, o "Mais (n)" e as
+setas ←/→ contam só as dele, e "Fechar outras"/"Fechar todas" ficam dentro do grupo. O
+**rótulo de grupo não é desenhado** (nem na faixa, nem no menu do "Mais"): a barra é de um
+grupo só e o app já mostra o nome do espaço em outro lugar. A cor do grupo continua no
+ícone. O `WTabViewport` não muda — os painéis das abas dos outros grupos seguem montados.
+
 ### Quando as abas não cabem
 
 A faixa tem uma linha só e **não rola**. Quando a soma das abas passa da largura da barra,

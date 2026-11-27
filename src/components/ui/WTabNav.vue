@@ -44,8 +44,9 @@ import type { RouteTab, RouteTabsApi } from '@/types/routeTabs'
  * uma cor (fixa via `RouteTabMeta.color`, senão derivada do grupo ou da chave),
  * só em acentos — ícone e ponto do rótulo do grupo — para o texto seguir
  * neutro. A faixa não rola: as abas que não cabem na largura da barra vão para
- * o menu do botão "Mais (n)", e a ativa fica sempre à vista. Todo o estado vem
- * do `useRouteTabs` via prop.
+ * o menu do botão "Mais (n)", e a ativa fica sempre à vista. Com
+ * `scopeByGroup` no `useRouteTabs`, a barra desenha só as abas do grupo ativo,
+ * sem o rótulo do grupo. Todo o estado vem do `useRouteTabs` via prop.
  */
 const props = defineProps<{
   /** Instância retornada por `useRouteTabs` — o dono do estado. */
@@ -60,7 +61,8 @@ const emit = defineEmits<{
   reload: [tab: RouteTab]
 }>()
 
-const items = computed(() => props.tabs.tabs.value)
+// `visibleTabs` é a lista inteira, ou — com `scopeByGroup` — só as abas do grupo ativo.
+const items = computed(() => props.tabs.visibleTabs.value)
 const activeKey = computed(() => props.tabs.activeKey.value)
 
 const botoes = ref<HTMLElement[]>([])
@@ -146,7 +148,7 @@ const itensMais = computed<MenuItem[]>(() => {
     if (!ocultas.value.has(tab.key)) continue
     const item: MenuItem = { label: tab.title, icon: tab.icon, tab, command: () => ativar(tab) }
     const ultimo = menu[menu.length - 1]
-    if (!tab.group) menu.push(item)
+    if (!tab.group || props.tabs.scopeByGroup) menu.push(item)
     else if (ultimo?.items && ultimo.label === tab.group) ultimo.items.push(item)
     else menu.push({ label: tab.group, items: [item] })
   }
@@ -250,10 +252,13 @@ function estiloDaAba(tab: RouteTab): Record<string, string> {
   return { '--w-tab-group-color': corDaAba(tab) }
 }
 
-/** Rótulo do grupo antes do primeiro item de cada bloco (abas já vêm contíguas). */
+/**
+ * Rótulo do grupo antes do primeiro item de cada bloco (abas já vêm contíguas). Com
+ * `scopeByGroup` a barra é de um grupo só e o app já diz qual: sem rótulo.
+ */
 function inicioDeGrupo(indice: number): boolean {
   const grupo = items.value[indice]?.group
-  return Boolean(grupo) && grupo !== items.value[indice - 1]?.group
+  return !props.tabs.scopeByGroup && Boolean(grupo) && grupo !== items.value[indice - 1]?.group
 }
 </script>
 

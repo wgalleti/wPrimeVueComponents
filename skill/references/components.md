@@ -88,4 +88,8 @@ Dentro de uma tela, `useTabHost()` (null fora de abas) dá: `setTitle('NF 000123
 `hostEl` (alvo de `:append-to` p/ Dialog viver NA aba), `registerCloseGuard` (veto de
 fechar com alterações não salvas) e `onTabActivated`/`onTabDeactivated`.
 Identidade da aba = `route.path` (mudar só a query atualiza a aba, não abre outra).
+Vários espaços de trabalho (apps de um portal)? `scopeByGroup: true` + `group` no
+`resolveTabMeta`: a barra mostra só as abas do grupo da aba ativa, cada grupo lembra a sua
+última aba, e trocar de espaço é `await tabsApi.activateGroup(grupo)` (`false` = grupo sem
+aba aberta: navegue para a tela inicial dele). Nunca filtre `tabs` no app.
 Não confundir com `WTabBar` (abas de seção dentro de uma tela).
