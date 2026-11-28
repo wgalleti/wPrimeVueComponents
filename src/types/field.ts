@@ -156,7 +156,9 @@ export interface FieldDef {
   /** Filtro em cascata: torna esta FK dependente do valor de outro(s) campo(s) do
    *  formulário, aplicando-o(s) como filtro na busca da API (ex.: um "local" que só
    *  lista os da "unidade_producao" selecionada). Com `required` (default true), a
-   *  busca só ocorre após o campo de origem estar preenchido. */
+   *  busca só ocorre após o campo de origem estar preenchido. O cadastro embutido
+   *  da FK abre com o valor de origem no campo de mesmo nome (`param`) e o salvar
+   *  completa o pai se faltar. */
   dependsOn?: FieldDependency | FieldDependency[]
   /** Placeholder da FK enquanto uma cascata obrigatória (`dependsOn`) não estiver
    *  preenchida — ex.: "Selecione a unidade primeiro". */

@@ -291,6 +291,52 @@ describe('WAutoCompleteFK — Enter sem correspondência abre o cadastro', () =>
     wrapper.unmount()
   })
 
+  it('o cadastro abre com o pai da cascata no campo de mesmo nome; salvar grava o id', async () => {
+    const herbicidas = { id: 3, nome: 'Herbicidas' }
+    const { wrapper, provider } = montar({
+      autoSelectSingle: false,
+      canCreate: true,
+      drilldown: { field: 'grupo', value: herbicidas },
+      crudFields: [{ field: 'grupo', label: 'Grupo', type: 'fk', endpoint: '/grupos' }, ...campos],
+    })
+    await flushPromises()
+    await digitar(wrapper, 'Pós-emergentes')
+    await input(wrapper).trigger('keydown', { key: 'Enter', code: 'Enter' })
+    await flushPromises()
+
+    const form = wrapper.findComponent(WCrudFormDialog)
+    expect((form.props('formData') as Linha).grupo).toEqual(herbicidas)
+
+    form.vm.$emit('save')
+    await flushPromises()
+    expect(provider.create).toHaveBeenCalledWith('/itens', {
+      grupo: 3,
+      codigo: null,
+      nome: 'Pós-emergentes',
+    })
+    wrapper.unmount()
+  })
+
+  it('pai da cascata sem campo no form não entra no form (só no save)', async () => {
+    const { wrapper, provider } = montar({
+      autoSelectSingle: false,
+      canCreate: true,
+      drilldown: { field: 'unidade', value: 5 },
+      crudFields: campos,
+    })
+    await flushPromises()
+    await digitar(wrapper, 'Talhão 9')
+    await input(wrapper).trigger('keydown', { key: 'Enter', code: 'Enter' })
+    await flushPromises()
+
+    const form = wrapper.findComponent(WCrudFormDialog)
+    expect(form.props('formData') as Linha).not.toHaveProperty('unidade')
+    form.vm.$emit('save')
+    await flushPromises()
+    expect(provider.create).toHaveBeenCalledWith('/itens', { codigo: null, nome: 'Talhão 9', unidade: 5 })
+    wrapper.unmount()
+  })
+
   it('com sugestões, Enter não abre o cadastro', async () => {
     const { wrapper, provider } = montar(
       { autoSelectSingle: false, canCreate: true, crudFields: campos },

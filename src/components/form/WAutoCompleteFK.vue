@@ -897,6 +897,11 @@ function getDefaults(): Record<string, unknown> {
           : f.defaultValue
         : null
   }
+  // O filho nasce no pai da cascata (o mesmo que o save semeia): o campo do form com o nome do
+  // filtro já abre com o valor do pai, inteiro (objeto da FK), para não se escolher de novo.
+  for (const d of drilldownList.value) {
+    if (d.field in defaults && !isEmptyValue(normalizeDrillValue(d.value))) defaults[d.field] = d.value
+  }
   // `createDefaults` da tela da entidade (ex.: FK-pai oculta) vale aqui também.
   return { ...defaults, ...(props.crud?.createDefaults?.() ?? {}) }
 }
