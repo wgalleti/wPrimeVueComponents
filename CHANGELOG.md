@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.7.1](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.7.0...v2.7.1) (2026-11-28)
+
+### Correções
+
+* **fk:** open the inline create form with the cascade parent filled in ([c42dcf3](https://github.com/wgalleti/wPrimeVueComponents/commit/c42dcf3fbb93d2b651b4e80cb0af9feae97c6df2))
 ## [2.7.0](https://github.com/wgalleti/wPrimeVueComponents/compare/v2.6.0...v2.7.0) (2026-11-27)
 
 ### Funcionalidades
